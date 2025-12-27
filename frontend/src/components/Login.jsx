@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [fullName, setFullName] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     const navigate = useNavigate();
 
@@ -13,7 +14,7 @@ const Login = () => {
         e.preventDefault();
         const endpoint = isRegistering ? '/api/auth/register' : '/api/auth/login';
         const payload = isRegistering
-            ? { email, password_hash: password, full_name: "TEST User" } // Simplification
+            ? { email, password_hash: password, full_name: fullName }
             : new URLSearchParams({ username: email, password: password });
 
         try {
@@ -125,6 +126,19 @@ const Login = () => {
                     </p>
                 </div>
                 <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    {isRegistering && (
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>Full Name</label>
+                            <input
+                                type="text"
+                                placeholder="Alex Johnson"
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                                required={isRegistering}
+                                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'rgba(255,255,255,0.1)', color: '#fff' }}
+                            />
+                        </div>
+                    )}
                     <div>
                         <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>University Email</label>
                         <input
