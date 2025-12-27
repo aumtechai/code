@@ -9,7 +9,7 @@ import WellnessCheck from './WellnessCheck';
 import {
     LayoutDashboard, MessageSquare, Calendar, BookOpen,
     TrendingUp, User, Settings, LogOut, Search, Clock,
-    Users, FileText, Heart, GraduationCap, ChevronRight
+    Users, FileText, Heart, GraduationCap, ChevronRight, Edit3
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -55,7 +55,7 @@ const Sidebar = ({ activeTab, onTabChange, userData }) => {
 
             {/* Bottom Config */}
             <div style={{ marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
-                <div className="nav-item"><Settings size={20} /> Settings</div>
+                <div className="nav-item" onClick={() => onTabChange('edit-profile')}><Settings size={20} /> Settings</div>
                 <div onClick={handleLogout} className="nav-item" style={{ color: '#ef4444' }}>
                     <LogOut size={20} /> Logout
                 </div>
@@ -77,7 +77,7 @@ const Sidebar = ({ activeTab, onTabChange, userData }) => {
     );
 };
 
-const DashboardHome = ({ onNavigate, userData }) => {
+const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
             {/* Hero Section */}
@@ -103,6 +103,14 @@ const DashboardHome = ({ onNavigate, userData }) => {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-0.5rem' }}>
+                        <button
+                            onClick={onEditStats}
+                            style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white' }}
+                        >
+                            <Edit3 size={16} />
+                        </button>
+                    </div>
                     <div className="stat-card-glass">
                         <div style={{ fontSize: '2rem', fontWeight: '700' }}>{userData?.gpa?.toFixed(1) || '0.0'}</div>
                         <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Current GPA</div>
@@ -177,19 +185,69 @@ const DashboardHome = ({ onNavigate, userData }) => {
     );
 };
 
+const EditProfileModal = ({ userData, onClose, onRefresh }) => {
+    const [fullName, setFullName] = useState(userData?.full_name || '');
+    const [gpa, setGpa] = useState(userData?.gpa || 0.0);
+    const [onTrackScore, setOnTrackScore] = useState(userData?.on_track_score || 0);
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        try {
+            await api.put('/api/users/me', {
+                full_name: fullName,
+                gpa: parseFloat(gpa),
+                on_track_score: parseInt(onTrackScore)
+            });
+            onRefresh();
+            onClose();
+        } catch (error) {
+            console.error("Update failed:", error);
+            alert("Failed to update profile");
+        }
+    };
+
+    return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card-white" style={{ width: '400px', padding: '2rem' }}>
+                <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '700' }}>Edit Profile</h3>
+                <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Full Name</label>
+                        <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Current GPA</label>
+                        <input type="number" step="0.1" max="4.0" value={gpa} onChange={(e) => setGpa(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>On-track Score (%)</label>
+                        <input type="number" value={onTrackScore} onChange={(e) => setOnTrackScore(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                    </div>
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                        <button type="button" onClick={onClose} style={{ flex: 1, padding: '0.75rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Cancel</button>
+                        <button type="submit" style={{ flex: 1, padding: '0.75rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Save Changes</button>
+                    </div>
+                </form>
+            </motion.div>
+        </div>
+    );
+};
+
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [userData, setUserData] = useState(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    const fetchUser = async () => {
+        try {
+            const response = await api.get('/api/users/me');
+            setUserData(response.data);
+        } catch (error) {
+            console.error("Failed to fetch user data:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await api.get('/api/users/me');
-                setUserData(response.data);
-            } catch (error) {
-                console.error("Failed to fetch user data:", error);
-            }
-        };
         fetchUser();
     }, []);
 
@@ -198,7 +256,7 @@ const Dashboard = () => {
             <Sidebar activeTab={activeTab} onTabChange={setActiveTab} userData={userData} />
 
             <main style={{ flex: 1, padding: '2rem 3rem', overflowY: 'auto' }}>
-                {activeTab === 'dashboard' && <DashboardHome onNavigate={setActiveTab} userData={userData} />}
+                {activeTab === 'dashboard' && <DashboardHome onNavigate={setActiveTab} userData={userData} onEditStats={() => setIsEditModalOpen(true)} />}
 
                 {activeTab === 'chat' && (
                     <div style={{ height: '100%' }}>
@@ -217,6 +275,18 @@ const Dashboard = () => {
 
                 {activeTab === 'wellness' && <WellnessCheck />}
             </main>
+
+            {/* Modal can be triggered from anywhere */}
+            {(isEditModalOpen || activeTab === 'edit-profile') && (
+                <EditProfileModal
+                    userData={userData}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        if (activeTab === 'edit-profile') setActiveTab('dashboard');
+                    }}
+                    onRefresh={fetchUser}
+                />
+            )}
         </div>
     );
 };

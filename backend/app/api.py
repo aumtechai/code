@@ -78,6 +78,29 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
 
 from pydantic import BaseModel
 
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    gpa: Optional[float] = None
+    on_track_score: Optional[int] = None
+
+@router.put("/users/me")
+async def update_user_me(
+    user_update: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    if user_update.full_name is not None:
+        current_user.full_name = user_update.full_name
+    if user_update.gpa is not None:
+        current_user.gpa = user_update.gpa
+    if user_update.on_track_score is not None:
+        current_user.on_track_score = user_update.on_track_score
+    
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    return current_user
+
 class BookingRequest(BaseModel):
     advisor_name: str
     date: str
