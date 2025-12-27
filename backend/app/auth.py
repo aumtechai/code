@@ -47,13 +47,19 @@ import os
 from sqlmodel import create_engine
 
 # Database configuration – use Neon (or any PostgreSQL) via DATABASE_URL
+# Handle missing DATABASE_URL gracefully to avoid Vercel startup crashes
 DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL environment variable not set. Provide a Neon PostgreSQL connection string.")
-# Neon requires SSL
-engine = create_engine(DATABASE_URL, echo=False, connect_args={"sslmode": "require"})
+engine = None
+if DATABASE_URL:
+    # Neon requires SSL
+    engine = create_engine(DATABASE_URL, echo=False, connect_args={"sslmode": "require"})
 
 def get_session():
+    if not engine:
+        raise HTTPException(
+            status_code=500,
+            detail="DATABASE_URL environment variable is not set in Vercel. Please add it to your project settings."
+        )
     with Session(engine) as session:
         yield session
 

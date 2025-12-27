@@ -24,6 +24,11 @@ def on_startup():
     from sqlalchemy import text
     from app.auth import engine
     from app.models import Tutor
+    
+    if engine is None:
+        print("DATABASE_URL not set, skipping DB initialization")
+        return
+
     SQLModel.metadata.create_all(engine)
     
     # Simple migration: Add missing columns to 'user' table if they don't exist
