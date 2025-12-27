@@ -20,9 +20,24 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup():
-    from sqlmodel import SQLModel
+    from sqlmodel import SQLModel, Session, select
     from app.auth import engine
+    from app.models import Tutor
     SQLModel.metadata.create_all(engine)
+    
+    # Seed Tutors if empty
+    with Session(engine) as session:
+        statement = select(Tutor)
+        existing_tutors = session.exec(statement).first()
+        if not existing_tutors:
+            tutors = [
+                Tutor(name="Alex Rivera", subjects="Calculus, Physics", rating=4.9, reviews=124, image="AR", color="#4f46e5"),
+                Tutor(name="Sarah Chen", subjects="Chemistry, Biology", rating=4.8, reviews=89, image="SC", color="#10b981"),
+                Tutor(name="Marcus Bell", subjects="History, English", rating=5.0, reviews=215, image="MB", color="#f59e0b"),
+                Tutor(name="Elena Frost", subjects="Computer Science, Data Structures", rating=4.7, reviews=56, image="EF", color="#ec4899"),
+            ]
+            session.add_all(tutors)
+            session.commit()
 
 @app.get("/")
 async def root():

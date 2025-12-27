@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from typing import List
 
 from app.auth import get_session, User, create_access_token, get_password_hash, verify_password, get_current_user
-from app.models import ChatSession, ChatMessage
+from app.models import ChatSession, ChatMessage, Tutor
 from app.agent.graph import app_graph
 from langchain_core.messages import HumanMessage
 
@@ -136,3 +136,13 @@ async def delete_course(
     session.delete(course)
     session.commit()
     return {"message": "Course deleted"}
+
+# --- Tutor Endpoints ---
+
+@router.get("/tutors", response_model=List[Tutor])
+async def get_tutors(
+    session: Session = Depends(get_session)
+):
+    statement = select(Tutor)
+    tutors = session.exec(statement).all()
+    return tutors

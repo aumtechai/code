@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../api';
 import { Users, Search, BookOpen, Star, Calendar, Clock, ChevronRight, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const tutors = [
-    { id: 1, name: 'Alex Rivera', subjects: ['Calculus', 'Physics'], rating: 4.9, reviews: 124, image: 'AR', color: '#4f46e5' },
-    { id: 2, name: 'Sarah Chen', subjects: ['Chemistry', 'Biology'], rating: 4.8, reviews: 89, image: 'SC', color: '#10b981' },
-    { id: 3, name: 'Marcus Bell', subjects: ['History', 'English'], rating: 5.0, reviews: 215, image: 'MB', color: '#f59e0b' },
-    { id: 4, name: 'Elena Frost', subjects: ['Computer Science', 'Data Structures'], rating: 4.7, reviews: 56, image: 'EF', color: '#ec4899' },
-];
+// Hardcoded tutors removed, using state instead
 
 const TutoringCenter = () => {
     const [view, setView] = useState('browse'); // 'browse', 'sessions', or 'availability'
@@ -16,6 +12,24 @@ const TutoringCenter = () => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [bookingSuccess, setBookingSuccess] = useState(false);
     const [bookedSessions, setBookedSessions] = useState([]);
+    const [tutors, setTutors] = useState([]);
+
+    useEffect(() => {
+        const fetchTutors = async () => {
+            try {
+                const response = await api.get('/api/tutors');
+                // Backend sends subjects as "Sub1, Sub2", frontend expects array
+                const formattedTutors = response.data.map(t => ({
+                    ...t,
+                    subjects: typeof t.subjects === 'string' ? t.subjects.split(',').map(s => s.trim()) : (t.subjects || [])
+                }));
+                setTutors(formattedTutors);
+            } catch (error) {
+                console.error("Error fetching tutors:", error);
+            }
+        };
+        fetchTutors();
+    }, []);
 
     const timeSlots = ["09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"];
 
@@ -95,7 +109,7 @@ const TutoringCenter = () => {
                                     {slot}
                                 </td>
                                 {tutors.map(tutor => {
-                                    const isDefaultAvailable = tutorAvailability[tutor.id].includes(slot);
+                                    const isDefaultAvailable = (tutorAvailability[tutor.id] || []).includes(slot);
                                     const isAlreadBooked = bookedSessions.some(s => s.tutorName === tutor.name && s.time === slot);
                                     const isAvailable = isDefaultAvailable && !isAlreadBooked;
 

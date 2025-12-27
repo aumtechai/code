@@ -40,3 +40,12 @@ class Course(SQLModel, table=True):
     credits: int
     
     user: User = Relationship(back_populates="courses")
+
+class Tutor(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    subjects: str  # Comma-separated or JSON
+    rating: float = 5.0
+    reviews: int = 0
+    image: str # Initials or URL
+    color: str # Hex color
