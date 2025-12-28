@@ -12,11 +12,11 @@ import Progress from './Progress';
 import {
     LayoutDashboard, MessageSquare, Calendar, BookOpen,
     TrendingUp, User, Settings, LogOut, Search, Clock,
-    Users, FileText, Heart, GraduationCap, ChevronRight, Edit3
+    Users, FileText, Heart, GraduationCap, ChevronRight, Edit3, Menu, X
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const Sidebar = ({ activeTab, onTabChange, userData }) => {
+const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
     const navigate = useNavigate();
     const isLoggedIn = !!localStorage.getItem('token');
     const handleLogout = () => { localStorage.removeItem('token'); navigate('/login'); };
@@ -27,92 +27,101 @@ const Sidebar = ({ activeTab, onTabChange, userData }) => {
             navigate('/login');
         } else {
             onTabChange(tab);
+            if (window.innerWidth <= 768) {
+                onClose(); // Close sidebar on mobile after selection
+            }
         }
     };
 
     return (
-        <div className="sidebar" style={{ width: '260px', flexShrink: 0 }}>
-            {/* Logo */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
-                <div style={{ background: '#4f46e5', padding: '8px', borderRadius: '10px' }}>
-                    <GraduationCap color="white" size={24} />
-                </div>
-                <div>
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: '700', margin: 0 }}>Navigator</h2>
-                    <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Student Success</span>
-                </div>
-            </div>
+        <>
+            {/* Mobile Overlay */}
+            <div
+                className={`sidebar-overlay ${isOpen ? 'visible' : ''}`}
+                onClick={onClose}
+            ></div>
 
-            {/* Nav Items */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
-                <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => onTabChange('dashboard')}>
-                    <LayoutDashboard size={20} /> Dashboard
-                </div>
-                <div className={`nav-item ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => handleProtectedTab('chat')}>
-                    <MessageSquare size={20} /> AI Navigator
-                </div>
-                <div className={`nav-item ${activeTab === 'schedule' ? 'active' : ''}`} onClick={() => handleProtectedTab('schedule')}>
-                    <Calendar size={20} /> Schedule
-                </div>
-                <div className={`nav-item ${activeTab === 'courses' ? 'active' : ''}`} onClick={() => handleProtectedTab('courses')}>
-                    <BookOpen size={20} /> Courses
-                </div>
-                <div className={`nav-item ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => handleProtectedTab('timer')}>
-                    <Clock size={20} /> Study Timer
-                </div>
-                <div className={`nav-item ${activeTab === 'forms' ? 'active' : ''}`} onClick={() => handleProtectedTab('forms')}>
-                    <FileText size={20} /> Drop/Add Forms
-                </div>
-                <div className={`nav-item ${activeTab === 'progress' ? 'active' : ''}`} onClick={() => handleProtectedTab('progress')}>
-                    <TrendingUp size={20} /> Progress
-                </div>
-                <div className={`nav-item ${activeTab === 'tutoring' ? 'active' : ''}`} onClick={() => handleProtectedTab('tutoring')}>
-                    <Users size={20} /> Tutoring
-                </div>
-                <div className={`nav-item ${activeTab === 'wellness' ? 'active' : ''}`} onClick={() => handleProtectedTab('wellness')}>
-                    <Heart size={20} /> Wellness
-                </div>
-            </div>
-
-            {/* Bottom Config */}
-            <div style={{ marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
-                <div className="nav-item" onClick={() => handleProtectedTab('edit-profile')}><Settings size={20} /> Settings</div>
-                {isLoggedIn ? (
-                    <div onClick={handleLogout} className="nav-item" style={{ color: '#ef4444' }}>
-                        <LogOut size={20} /> Logout
-                    </div>
-                ) : (
-                    <div onClick={handleLogin} className="nav-item" style={{ color: '#4f46e5' }}>
-                        <User size={20} /> Login / Sign Up
-                    </div>
-                )}
-
-                {/* User Profile Micro */}
-                <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', background: '#f8fafc', borderRadius: '12px' }}>
-                    <div style={{ width: '40px', height: '40px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                        {userData?.full_name ? userData.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'A'}
-                    </div>
-                    <div style={{ overflow: 'hidden' }}>
-                        <div style={{ fontWeight: '600', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {userData?.full_name || 'Austin'}
+            <div className={`sidebar ${isOpen ? 'open' : ''}`} style={{ width: '260px', flexShrink: 0 }}>
+                {/* Logo & Close Button */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ background: '#4f46e5', padding: '8px', borderRadius: '10px' }}>
+                            <GraduationCap color="white" size={24} />
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Student Navigator</div>
+                        <div>
+                            <h2 style={{ fontSize: '1.2rem', fontWeight: '700', margin: 0 }}>Navigator</h2>
+                            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Student Success</span>
+                        </div>
                     </div>
+                    {/* Mobile Close Button */}
+                    <button className="mobile-only" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                        <X size={24} />
+                    </button>
                 </div>
 
-                {/* Legal Footer */}
-                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
-                    <div style={{ marginBottom: '0.25rem' }}>© 2025 Student Success</div>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                        <span onClick={() => handleProtectedTab('privacy')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>Privacy</span>
-                        <span onClick={() => handleProtectedTab('msa')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>MSA</span>
-                        <span onClick={() => handleProtectedTab('sla')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>SLA</span>
+                {/* Nav Items */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                    {/* ... existing dynamic nav items ... */}
+                    {['dashboard', 'chat', 'schedule', 'courses', 'timer', 'forms', 'progress', 'tutoring', 'wellness'].map(key => (
+                        <div
+                            key={key}
+                            className={`nav-item ${activeTab === key ? 'active' : ''}`}
+                            onClick={() => handleProtectedTab(key)}
+                        >
+                            {key === 'dashboard' && <><LayoutDashboard size={20} /> Dashboard</>}
+                            {key === 'chat' && <><MessageSquare size={20} /> AI Navigator</>}
+                            {key === 'schedule' && <><Calendar size={20} /> Schedule</>}
+                            {key === 'courses' && <><BookOpen size={20} /> Courses</>}
+                            {key === 'timer' && <><Clock size={20} /> Study Timer</>}
+                            {key === 'forms' && <><FileText size={20} /> Drop/Add Forms</>}
+                            {key === 'progress' && <><TrendingUp size={20} /> Progress</>}
+                            {key === 'tutoring' && <><Users size={20} /> Tutoring</>}
+                            {key === 'wellness' && <><Heart size={20} /> Wellness</>}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Bottom Config */}
+                <div style={{ marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
+                    <div className="nav-item" onClick={() => handleProtectedTab('edit-profile')}><Settings size={20} /> Settings</div>
+                    {isLoggedIn ? (
+                        <div onClick={handleLogout} className="nav-item" style={{ color: '#ef4444' }}>
+                            <LogOut size={20} /> Logout
+                        </div>
+                    ) : (
+                        <div onClick={handleLogin} className="nav-item" style={{ color: '#4f46e5' }}>
+                            <User size={20} /> Login / Sign Up
+                        </div>
+                    )}
+
+                    {/* User Profile Micro */}
+                    <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', background: '#f8fafc', borderRadius: '12px' }}>
+                        <div style={{ width: '40px', height: '40px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                            {userData?.full_name ? userData.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'A'}
+                        </div>
+                        <div style={{ overflow: 'hidden' }}>
+                            <div style={{ fontWeight: '600', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {userData?.full_name || 'Austin'}
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Student Navigator</div>
+                        </div>
+                    </div>
+
+                    {/* Legal Footer */}
+                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
+                        <div style={{ marginBottom: '0.25rem' }}>© 2025 Student Success</div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <span onClick={() => handleProtectedTab('privacy')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>Privacy</span>
+                            <span onClick={() => handleProtectedTab('msa')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>MSA</span>
+                            <span onClick={() => handleProtectedTab('sla')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>SLA</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
+
 
 const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
     return (
@@ -302,6 +311,7 @@ const Dashboard = () => {
     const [chatMode, setChatMode] = useState(null); // 'tutor', 'admin', 'coach', or null
     const [userData, setUserData] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     const fetchUser = async () => {
@@ -335,45 +345,73 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div style={{ display: 'flex', height: '100vh', background: '#f8fafc' }}>
-            <Sidebar activeTab={activeTab} onTabChange={(t) => handleFeatureNavigate(t, null)} userData={userData} />
-
-            <main style={{ flex: 1, padding: '2rem 3rem', overflowY: 'auto' }}>
-                {activeTab === 'dashboard' && <DashboardHome onNavigate={handleFeatureNavigate} userData={userData} onEditStats={() => handleFeatureNavigate('edit-profile')} />}
-
-                {activeTab === 'chat' && (
-                    <div style={{ height: '100%' }}>
-                        <h2 style={{ marginBottom: '1.5rem' }}>
-                            {chatMode === 'tutor' ? 'The Tutor' :
-                                chatMode === 'admin' ? 'The Admin' :
-                                    chatMode === 'coach' ? 'The Coach' : 'AI Navigator'}
-                        </h2>
-                        <div style={{ height: 'calc(100% - 60px)', background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden' }}>
-                            <ChatInterface mode={chatMode} />
-                        </div>
+        <div style={{ display: 'flex', height: '100vh', background: '#f8fafc', flexDirection: 'column' }}>
+            {/* Mobile Header - Only visible on small screens */}
+            <div className="mobile-only" style={{ padding: '1rem', background: 'white', borderBottom: '1px solid #e2e8f0', alignItems: 'center', justifyContent: 'space-between', zIndex: 30 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ background: '#4f46e5', padding: '6px', borderRadius: '8px' }}>
+                        <GraduationCap color="white" size={20} />
                     </div>
-                )}
+                    <span style={{ fontWeight: '700', fontSize: '1.2rem' }}>Navigator</span>
+                </div>
+                <button onClick={() => setIsMobileMenuOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1e293b' }}>
+                    <Menu size={24} />
+                </button>
+            </div>
 
-                {activeTab === 'schedule' && <BookAdvisor onBack={() => setActiveTab('dashboard')} />}
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+                <Sidebar
+                    activeTab={activeTab}
+                    onTabChange={(t) => handleFeatureNavigate(t, null)}
+                    userData={userData}
+                    isOpen={isMobileMenuOpen}
+                    onClose={() => setIsMobileMenuOpen(false)}
+                />
 
-                {activeTab === 'courses' && <Courses />}
+                <main style={{ flex: 1, padding: '2rem 3rem', overflowY: 'auto', position: 'relative' }} className="main-content">
+                    {/* Responsive Padding adjustment usually handled by CSS media queries on .main-content class, or simplistic inline approach here */}
+                    <style>{`
+                        @media (max-width: 768px) {
+                            .main-content { padding: 1.5rem !important; }
+                        }
+                    `}</style>
 
-                {activeTab === 'tutoring' && <TutoringCenter />}
+                    {activeTab === 'dashboard' && <DashboardHome onNavigate={handleFeatureNavigate} userData={userData} onEditStats={() => handleFeatureNavigate('edit-profile')} />}
 
-                {activeTab === 'wellness' && <WellnessCheck />}
+                    {activeTab === 'chat' && (
+                        <div style={{ height: '100%' }}>
+                            <h2 style={{ marginBottom: '1.5rem' }}>
+                                {chatMode === 'tutor' ? 'The Tutor' :
+                                    chatMode === 'admin' ? 'The Admin' :
+                                        chatMode === 'coach' ? 'The Coach' : 'AI Navigator'}
+                            </h2>
+                            <div style={{ height: 'calc(100% - 60px)', background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden' }}>
+                                <ChatInterface mode={chatMode} />
+                            </div>
+                        </div>
+                    )}
 
-                {activeTab === 'timer' && <StudyTimer onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'schedule' && <BookAdvisor onBack={() => setActiveTab('dashboard')} />}
 
-                {activeTab === 'forms' && <DropAddForms onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'courses' && <Courses />}
 
-                {activeTab === 'progress' && <Progress />}
+                    {activeTab === 'tutoring' && <TutoringCenter />}
 
-                {/* Legal Pages */}
-                {activeTab === 'privacy' && <PrivacyPolicy onBack={() => setActiveTab('dashboard')} />}
-                {activeTab === 'msa' && <MSA onBack={() => setActiveTab('dashboard')} />}
-                {activeTab === 'sla' && <SLA onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'wellness' && <WellnessCheck />}
 
-            </main>
+                    {activeTab === 'timer' && <StudyTimer onBack={() => setActiveTab('dashboard')} />}
+
+                    {activeTab === 'forms' && <DropAddForms onBack={() => setActiveTab('dashboard')} />}
+
+                    {activeTab === 'progress' && <Progress />}
+
+                    {/* Legal Pages */}
+                    {activeTab === 'privacy' && <PrivacyPolicy onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'msa' && <MSA onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'sla' && <SLA onBack={() => setActiveTab('dashboard')} />}
+
+                </main>
+            </div>
 
             {/* Modal can be triggered from anywhere */}
             {(isEditModalOpen || activeTab === 'edit-profile') && (

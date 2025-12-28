@@ -56,6 +56,62 @@ body {
   flex-direction: column;
   padding: 1.5rem;
   height: 100%;
+  transition: transform 0.3s ease-in-out;
+  z-index: 50;
+  /* Ensure sidebar is above content on mobile */
+}
+
+/* Mobile Sidebar Drawer Styles */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    width: 280px !important;
+    /* Fixed width for drawer */
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Overlay for when sidebar is open */
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    display: none;
+  }
+
+  .sidebar-overlay.visible {
+    display: block;
+  }
+}
+
+/* Utilities for responsive visibility */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: flex;
+    /* Or block depending on usage */
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Adjust root layout for mobile */
+  #root {
+    height: auto;
+    min-height: 100vh;
+  }
 }
 
 .nav-item {
