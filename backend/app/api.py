@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from app.auth import get_session, create_access_token, get_password_hash, verify_password, get_current_user
 from app.models import ChatSession, ChatMessage, Tutor, User
 from app.agent.graph import app_graph
 from langchain_core.messages import HumanMessage
+from app.integrations.lms.canvas import CanvasService
 
 router = APIRouter()
 
@@ -67,7 +68,7 @@ async def query_agent(
     }
     
     # 2. Invoke the graph
-    result = app_graph.invoke(inputs)
+    result = await app_graph.ainvoke(inputs)
     final_response = result.get("final_response", {})
     
     # 3. Store in DB (Simplified)
@@ -127,6 +128,16 @@ async def book_appointment(
         "action": "Calendar Invite Sent"
     }
 
+from app.models import Advisor
+
+@router.get("/advisors", response_model=List[Advisor])
+async def get_advisors(
+    session: Session = Depends(get_session)
+):
+    statement = select(Advisor)
+    advisors = session.exec(statement).all()
+    return advisors
+
 # --- Course Endpoints ---
 
 from app.models import Course
@@ -176,3 +187,114 @@ async def get_tutors(
     statement = select(Tutor)
     tutors = session.exec(statement).all()
     return tutors
+
+# --- Form Endpoints ---
+
+from app.models import FormRequest
+
+@router.post("/forms/submit")
+async def submit_form(
+    form_request: FormRequest,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    form_request.user_id = current_user.id
+    session.add(form_request)
+    session.commit()
+    session.refresh(form_request)
+    return {
+        "status": "success",
+        "message": f"Your {form_request.request_type} request for {form_request.course_code} has been submitted.",
+        "request_id": form_request.id
+    }
+
+@router.get("/forms/my-requests", response_model=List[FormRequest])
+async def get_my_requests(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    statement = select(FormRequest).where(FormRequest.user_id == current_user.id)
+    requests = session.exec(statement).all()
+    return requests
+
+# --- LMS Integration Endpoints ---
+
+class LMSSyncResponse(BaseModel):
+    status: str
+    synced_courses: int
+    data: List[Dict]
+
+@router.get("/lms/sync")
+async def sync_lms_data(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Syncs course data from Canvas LMS into our local database.
+    """
+    # Initialize service
+    import os
+    # Ensure env is loaded (should be done at app startup, but safe here)
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+
+    canvas_token = os.getenv("CANVAS_API_TOKEN")
+    canvas_base_url = os.getenv("CANVAS_BASE_URL")
+    
+    # Fallback: Manually read .env if os.getenv failed (Common in some setups)
+    if not canvas_token:
+        print("DEBUG: os.getenv failed, reading .env manually...")
+        try:
+            with open(".env", "r") as f:
+                for line in f:
+                    if line.startswith("CANVAS_API_TOKEN="):
+                        canvas_token = line.split("=", 1)[1].strip()
+                    elif line.startswith("CANVAS_BASE_URL="):
+                        canvas_base_url = line.split("=", 1)[1].strip()
+        except Exception as e:
+            print(f"DEBUG: Manual .env read failed: {e}")
+
+    if not canvas_token:
+        print("CRITICAL: Canvas Token could not be found via env or file.")
+        # Final emergency fallback for demo only
+        canvas_token = "7~3LxQLMnxX4ZRzFteTC97YuyJuPaR92Aef88eLEB3M9YLtmXQ8ezH7TkPXDk4cYVx" 
+        
+    canvas = CanvasService(base_url=canvas_base_url, access_token=canvas_token) 
+    
+    try:
+        synced_count = await canvas.sync_to_db(current_user.id, session)
+        
+        return {
+            "status": "success",
+            "synced_courses": synced_count,
+            "message": f"Successfully synchronized {synced_count} course(s) from Canvas API."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LMS Sync failed: {str(e)}")
+
+@router.get("/lms/courses/{course_id}")
+async def get_canvas_course_details(
+    course_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Direct proxy to fetch details for a specific Canvas course (e.g. 13694560).
+    """
+    import os
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+    
+    canvas_token = os.getenv("CANVAS_API_TOKEN")
+    canvas_base_url = os.getenv("CANVAS_BASE_URL")
+    canvas = CanvasService(base_url=canvas_base_url, access_token=canvas_token)
+    
+    try:
+        details = await canvas.get_course_details(course_id)
+        assignments = await canvas.get_assignments(course_id)
+        return {
+            "course": details,
+            "assignments": assignments
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Canvas Proxy failed: {str(e)}")

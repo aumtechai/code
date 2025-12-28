@@ -34,13 +34,13 @@ def router_node(state: AgentState):
         # Default to Tutor for general queries or Supervisor synthesis
         return {"next_step": "tutor"}
 
-def tutor_agent(state: AgentState):
+async def tutor_agent(state: AgentState):
     """
     Academic Tutor Agent.
     """
     query = state["messages"][-1].content
     # Reason: Check LMS for context
-    grades = lms_tool.get_student_grades(state["student_id"])
+    grades = await lms_tool.get_student_grades(state["student_id"])
     
     # Act: Use RAG for academic policies/resources or knowledge
     rag_info = rag_tool.query(query, category="academic")

@@ -7,6 +7,8 @@ import TutoringCenter from './TutoringCenter';
 import Courses from './Courses';
 import WellnessCheck from './WellnessCheck';
 import StudyTimer from './StudyTimer';
+import DropAddForms from './DropAddForms';
+import Progress from './Progress';
 import {
     LayoutDashboard, MessageSquare, Calendar, BookOpen,
     TrendingUp, User, Settings, LogOut, Search, Clock,
@@ -29,7 +31,7 @@ const Sidebar = ({ activeTab, onTabChange, userData }) => {
     };
 
     return (
-        <div className="sidebar" style={{ width: '280px', flexShrink: 0 }}>
+        <div className="sidebar" style={{ width: '260px', flexShrink: 0 }}>
             {/* Logo */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
                 <div style={{ background: '#4f46e5', padding: '8px', borderRadius: '10px' }}>
@@ -58,7 +60,12 @@ const Sidebar = ({ activeTab, onTabChange, userData }) => {
                 <div className={`nav-item ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => handleProtectedTab('timer')}>
                     <Clock size={20} /> Study Timer
                 </div>
-                <div className="nav-item" onClick={() => handleProtectedTab('progress')}><TrendingUp size={20} /> Progress</div>
+                <div className={`nav-item ${activeTab === 'forms' ? 'active' : ''}`} onClick={() => handleProtectedTab('forms')}>
+                    <FileText size={20} /> Drop/Add Forms
+                </div>
+                <div className={`nav-item ${activeTab === 'progress' ? 'active' : ''}`} onClick={() => handleProtectedTab('progress')}>
+                    <TrendingUp size={20} /> Progress
+                </div>
                 <div className={`nav-item ${activeTab === 'tutoring' ? 'active' : ''}`} onClick={() => handleProtectedTab('tutoring')}>
                     <Users size={20} /> Tutoring
                 </div>
@@ -81,7 +88,7 @@ const Sidebar = ({ activeTab, onTabChange, userData }) => {
                 )}
 
                 {/* User Profile Micro */}
-                <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#f8fafc', borderRadius: '12px' }}>
+                <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', background: '#f8fafc', borderRadius: '12px' }}>
                     <div style={{ width: '40px', height: '40px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                         {userData?.full_name ? userData.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'A'}
                     </div>
@@ -90,6 +97,16 @@ const Sidebar = ({ activeTab, onTabChange, userData }) => {
                             {userData?.full_name || 'Austin'}
                         </div>
                         <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Student Navigator</div>
+                    </div>
+                </div>
+
+                {/* Legal Footer */}
+                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
+                    <div style={{ marginBottom: '0.25rem' }}>© 2025 Student Success</div>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        <span style={{ cursor: 'pointer', hover: { textDecoration: 'underline' } }}>Privacy</span>
+                        <span style={{ cursor: 'pointer', hover: { textDecoration: 'underline' } }}>MSA</span>
+                        <span style={{ cursor: 'pointer', hover: { textDecoration: 'underline' } }}>SLA</span>
                     </div>
                 </div>
             </div>
@@ -114,7 +131,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                         Good afternoon, {userData?.full_name ? userData.full_name.split(' ')[0] : 'Austin'}!
                     </h1>
                     <p style={{ maxWidth: '500px', fontSize: '1.1rem', opacity: 0.9, marginBottom: '2rem', lineHeight: '1.6' }}>
-                        You have 3 assignments due this week and a chemistry midterm on Tuesday. I'm here to help you stay on track!
+                        {userData?.ai_insight || "Welcome to your Academic Success Navigator. I'm here to help you stay on track with your courses and goals."}
                     </p>
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <button onClick={() => onNavigate('chat')} style={{ border: 'none', background: 'white', color: '#4f46e5', padding: '12px 24px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Start a conversation</button>
@@ -148,7 +165,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                 {[
                     { icon: Calendar, color: '#6366f1', label: 'Book Advisor', sub: 'Schedule a meeting', action: 'schedule' },
                     { icon: BookOpen, color: '#10b981', label: 'Tutoring Center', sub: 'Get study help', action: 'tutoring' },
-                    { icon: FileText, color: '#f59e0b', label: 'Drop/Add Forms', sub: 'Deadline: Oct 15' },
+                    { icon: FileText, color: '#f59e0b', label: 'Drop/Add Forms', sub: 'Deadline: Oct 15', action: 'forms' },
                     { icon: Heart, color: '#ec4899', label: 'Wellness Check', sub: 'How are you feeling?', action: 'wellness' },
                     { icon: Clock, color: '#eab308', label: 'Study Timer', sub: 'Stay focused', action: 'timer' },
                 ].map((item, idx) => (
@@ -171,18 +188,16 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
             {/* AI Team */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2.5rem' }}>
                 <h3 className="section-title" style={{ margin: 0 }}>Your AI Support Team</h3>
-                <button onClick={() => onNavigate('chat')} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'white', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', color: '#64748b' }}>
-                    Open Chat <ChevronRight size={16} />
-                </button>
+                <button className="pill-btn" onClick={() => onNavigate('chat')} style={{ cursor: 'pointer', background: 'white', border: '1px solid #e2e8f0' }}>Open Chat <ChevronRight size={16} style={{ verticalAlign: 'middle' }} /></button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '1.5rem', paddingBottom: '2rem' }}>
                 {[
-                    { title: "The Tutor", role: "Course content specialist", color: "#4f46e5", icon: GraduationCap, tags: ["Explain photosynthesis", "Help with calculus", "Review my essay"] },
-                    { title: "The Admin", role: "Forms & deadlines expert", color: "#10b981", icon: FileText, tags: ["Drop deadline?", "Add a course", "Transcript request"] },
-                    { title: "The Coach", role: "Wellness & support guide", color: "#ec4899", icon: Heart, tags: ["Feeling stressed", "Find a club", "Mental health resouces"] },
+                    { title: "The Tutor", mode: "tutor", role: "Course content specialist", color: "#4f46e5", icon: GraduationCap, tags: ["Explain photosynthesis", "Help with calculus", "Review my essay"] },
+                    { title: "The Admin", mode: "admin", role: "Forms & deadlines expert", color: "#10b981", icon: FileText, tags: ["Drop deadline?", "Add a course", "Transcript request"] },
+                    { title: "The Coach", mode: "coach", role: "Wellness & support guide", color: "#ec4899", icon: Heart, tags: ["Feeling stressed", "Find a club", "Mental health resouces"] },
                 ].map((agent, idx) => (
-                    <motion.div key={idx} className="card-white" style={{ cursor: 'pointer' }} onClick={() => onNavigate('chat')}>
+                    <motion.div key={idx} className="card-white" style={{ cursor: 'pointer' }} onClick={() => onNavigate('chat', agent.mode)}>
                         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
                             <div style={{ background: agent.color, padding: '12px', borderRadius: '12px', color: 'white' }}>
                                 <agent.icon size={24} />
@@ -228,23 +243,48 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
 
     return (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card-white" style={{ width: '400px', padding: '2rem' }}>
-                <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '700' }}>Edit Profile</h3>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card-white" style={{ width: '450px', padding: '2rem' }}>
+                <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '700' }}>Profile Settings</h3>
                 <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+                    {/* Read-Only Identity Info */}
+                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ marginBottom: '0.5rem' }}>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Email Address</label>
+                            <div style={{ fontSize: '0.95rem', fontWeight: '500' }}>{userData?.email}</div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '1.5rem' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Student ID</label>
+                                <div style={{ fontSize: '0.95rem', fontFamily: 'monospace' }}>#{userData?.id?.toString().padStart(6, '0')}</div>
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Joined</label>
+                                <div style={{ fontSize: '0.95rem' }}>{userData?.created_at ? new Date(userData.created_at).toLocaleDateString() : 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
+
+                    {/* Editable Fields */}
                     <div>
                         <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Full Name</label>
                         <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
                     </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Current GPA</label>
-                        <input type="number" step="0.1" max="4.0" value={gpa} onChange={(e) => setGpa(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Current GPA</label>
+                            <input type="number" step="0.1" max="4.0" value={gpa} onChange={(e) => setGpa(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>On-track Score (%)</label>
+                            <input type="number" value={onTrackScore} onChange={(e) => setOnTrackScore(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                        </div>
                     </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>On-track Score (%)</label>
-                        <input type="number" value={onTrackScore} onChange={(e) => setOnTrackScore(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                    </div>
+
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                        <button type="button" onClick={onClose} style={{ flex: 1, padding: '0.75rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Cancel</button>
+                        <button type="button" onClick={onClose} style={{ flex: 1, padding: '0.75rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Close</button>
                         <button type="submit" style={{ flex: 1, padding: '0.75rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Save Changes</button>
                     </div>
                 </form>
@@ -255,6 +295,7 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
 
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [chatMode, setChatMode] = useState(null); // 'tutor', 'admin', 'coach', or null
     const [userData, setUserData] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -274,12 +315,13 @@ const Dashboard = () => {
         }
     };
 
-    const handleFeatureNavigate = (tab) => {
+    const handleFeatureNavigate = (tab, mode = null) => {
         const token = localStorage.getItem('token');
         if (!token) {
             navigate('/login');
         } else {
             setActiveTab(tab);
+            setChatMode(mode);
         }
     };
 
@@ -289,16 +331,20 @@ const Dashboard = () => {
 
     return (
         <div style={{ display: 'flex', height: '100vh', background: '#f8fafc' }}>
-            <Sidebar activeTab={activeTab} onTabChange={setActiveTab} userData={userData} />
+            <Sidebar activeTab={activeTab} onTabChange={(t) => handleFeatureNavigate(t, null)} userData={userData} />
 
             <main style={{ flex: 1, padding: '2rem 3rem', overflowY: 'auto' }}>
                 {activeTab === 'dashboard' && <DashboardHome onNavigate={handleFeatureNavigate} userData={userData} onEditStats={() => handleFeatureNavigate('edit-profile')} />}
 
                 {activeTab === 'chat' && (
                     <div style={{ height: '100%' }}>
-                        <h2 style={{ marginBottom: '1.5rem' }}>AI Navigator</h2>
+                        <h2 style={{ marginBottom: '1.5rem' }}>
+                            {chatMode === 'tutor' ? 'The Tutor' :
+                                chatMode === 'admin' ? 'The Admin' :
+                                    chatMode === 'coach' ? 'The Coach' : 'AI Navigator'}
+                        </h2>
                         <div style={{ height: 'calc(100% - 60px)', background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden' }}>
-                            <ChatInterface />
+                            <ChatInterface mode={chatMode} />
                         </div>
                     </div>
                 )}
@@ -312,6 +358,10 @@ const Dashboard = () => {
                 {activeTab === 'wellness' && <WellnessCheck />}
 
                 {activeTab === 'timer' && <StudyTimer onBack={() => setActiveTab('dashboard')} />}
+
+                {activeTab === 'forms' && <DropAddForms onBack={() => setActiveTab('dashboard')} />}
+
+                {activeTab === 'progress' && <Progress />}
             </main>
 
             {/* Modal can be triggered from anywhere */}

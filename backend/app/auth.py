@@ -47,19 +47,30 @@ import os
 from sqlmodel import create_engine
 
 # Database configuration – use Neon (or any PostgreSQL) via DATABASE_URL
-# Handle missing DATABASE_URL gracefully to avoid Vercel startup crashes
-DATABASE_URL = os.getenv("DATABASE_URL")
-engine = None
-if DATABASE_URL:
-    # Neon requires SSL
-    engine = create_engine(DATABASE_URL, echo=False, connect_args={"sslmode": "require"})
+# Fallback to SQLite for local development
+# Database configuration – use Neon (or any PostgreSQL) via DATABASE_URL
+# Fallback to SQLite for local development
+import os
+from dotenv import load_dotenv
+
+# Force load .env to ensure DATABASE_URL is available
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///database.db")
+
+# Handle potential 'postgres://' vs 'postgresql://' scheme for SQLAlchemy
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+if "postgresql" in DATABASE_URL:
+    # Remove 'sslmode=require' from URL if present to avoid conflicts with connect_args
+    # SQLAlchemy prefers connect_args for SSL configuration
+    clean_url = DATABASE_URL.split("?")[0]
+    engine = create_engine(clean_url, echo=False, connect_args={"sslmode": "require"})
+else:
+    engine = create_engine(DATABASE_URL, echo=False, connect_args={"check_same_thread": False})
 
 def get_session():
-    if not engine:
-        raise HTTPException(
-            status_code=500,
-            detail="DATABASE_URL environment variable is not set in Vercel. Please add it to your project settings."
-        )
     with Session(engine) as session:
         yield session
 

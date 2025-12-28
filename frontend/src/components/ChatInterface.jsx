@@ -3,7 +3,7 @@ import api from '../api';
 import { Send, BookOpen, CheckSquare, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const ChatInterface = () => {
+const ChatInterface = ({ mode }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -14,6 +14,11 @@ const ChatInterface = () => {
     }
 
     useEffect(scrollToBottom, [messages]);
+
+    // Clear messages when switching modes (optional, but good for context switching)
+    useEffect(() => {
+        setMessages([]);
+    }, [mode]);
 
     const sendMessage = async (e) => {
         e.preventDefault();
@@ -39,13 +44,21 @@ const ChatInterface = () => {
         }
     };
 
+    const getIntro = () => {
+        if (mode === 'tutor') return { title: "Hello! I am The Tutor.", sub: "I can help you understand course material, review essays, and solve problems." };
+        if (mode === 'admin') return { title: "Hello! I am The Admin.", sub: "Ask me about forms, deadlines, financial aid, and registration." };
+        if (mode === 'coach') return { title: "Hello! I am The Coach.", sub: "I'm here to support your mental health and well-being." };
+        return { title: "Hello! I am Student Success.", sub: "Ask me about your courses, grades, deadlines, or how you're feeling." };
+    };
+    const intro = getIntro();
+
     return (
         <div className="chat-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', borderRadius: 0, boxShadow: 'none' }}>
             <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {messages.length === 0 && (
                     <div style={{ textAlign: 'center', marginTop: 'auto', marginBottom: 'auto', opacity: 0.5 }}>
-                        <h3>Hello! I am Student Success.</h3>
-                        <p>Ask me about your courses, grades, deadlines, or how you're feeling.</p>
+                        <h3>{intro.title}</h3>
+                        <p>{intro.sub}</p>
                     </div>
                 )}
 
@@ -97,15 +110,39 @@ const ChatInterface = () => {
             </div>
 
             <div style={{ padding: '1.5rem', borderTop: '1px solid #f1f5f9', background: 'white' }}>
-                <form onSubmit={sendMessage} style={{ display: 'flex', gap: '1rem' }}>
+                <form onSubmit={sendMessage} style={{ display: 'flex', gap: '1rem', position: 'relative' }}>
                     <input
-                        style={{ flex: 1, color: 'black', border: '1px solid #e2e8f0', background: '#f8fafc' }}
+                        style={{
+                            flex: 1,
+                            color: 'black',
+                            border: '1px solid #e2e8f0',
+                            background: '#f8fafc',
+                            padding: '16px 20px',
+                            borderRadius: '30px',
+                            fontSize: '1rem',
+                            outline: 'none',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                        onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                         placeholder="Type your message..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                     />
-                    <button type="submit" className="btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Send size={20} />
+                    <button
+                        type="submit"
+                        className="btn-primary"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '50px',
+                            height: '50px',
+                            borderRadius: '50%',
+                            padding: 0
+                        }}
+                    >
+                        <Send size={22} />
                     </button>
                 </form>
             </div>

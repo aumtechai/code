@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, FileText, CheckCircle, AlertCircle, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api';
 
-const advisorList = [
-    { id: 1, name: 'Dr. Sarah Miller', role: 'Academic Advisor', expertise: 'Computer Science', availability: ['Mon', 'Wed', 'Fri'] },
-    { id: 2, name: 'Prof. James Chen', role: 'Career Counselor', expertise: 'Internships & Careers', availability: ['Tue', 'Thu'] },
-    { id: 3, name: 'Ms. Emily Davis', role: 'Wellness Coach', expertise: 'Stress Management', availability: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
-];
-
 const BookAdvisor = ({ onBack }) => {
+    const [advisorList, setAdvisorList] = useState([]);
+    const [loadingAdvisors, setLoadingAdvisors] = useState(true);
+    const [fetchError, setFetchError] = useState(null);
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         advisor_name: '',
@@ -19,6 +16,23 @@ const BookAdvisor = ({ onBack }) => {
     });
     const [status, setStatus] = useState(null); // null, 'loading', 'success', 'error'
     const [responseMsg, setResponseMsg] = useState('');
+
+    useEffect(() => {
+        const fetchAdvisors = async () => {
+            setLoadingAdvisors(true);
+            try {
+                const response = await api.get('/api/advisors');
+                setAdvisorList(response.data);
+                setFetchError(null);
+            } catch (error) {
+                console.error("Failed to fetch advisors", error);
+                setFetchError("Unable to load advisors at this time.");
+            } finally {
+                setLoadingAdvisors(false);
+            }
+        };
+        fetchAdvisors();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -89,26 +103,45 @@ const BookAdvisor = ({ onBack }) => {
                         {/* Advisor Selection */}
                         <div>
                             <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem', color: '#1e293b' }}>Select Advisor</label>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                                {advisorList.map(advisor => (
-                                    <div
-                                        key={advisor.id}
-                                        onClick={() => handleAdvisorSelect(advisor.name)}
-                                        style={{
-                                            padding: '1rem',
-                                            border: `2px solid ${formData.advisor_name === advisor.name ? '#4f46e5' : '#e2e8f0'}`,
-                                            borderRadius: '12px',
-                                            cursor: 'pointer',
-                                            background: formData.advisor_name === advisor.name ? '#eef2ff' : 'white',
-                                            transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: '600' }}>{advisor.name}</div>
-                                        <div style={{ fontSize: '0.9rem', color: '#64748b' }}>{advisor.role}</div>
-                                        <div style={{ fontSize: '0.8rem', color: '#4f46e5', marginTop: '4px' }}>{advisor.expertise}</div>
-                                    </div>
-                                ))}
-                            </div>
+
+                            {loadingAdvisors && (
+                                <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Loading advisors...</div>
+                            )}
+
+                            {fetchError && (
+                                <div style={{ padding: '1rem', background: '#fee2e2', color: '#b91c1c', borderRadius: '8px', marginBottom: '1rem' }}>
+                                    {fetchError}
+                                </div>
+                            )}
+
+                            {!loadingAdvisors && !fetchError && advisorList.length === 0 && (
+                                <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '12px' }}>
+                                    No advisors are currently available.
+                                </div>
+                            )}
+
+                            {!loadingAdvisors && advisorList.length > 0 && (
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                                    {advisorList.map(advisor => (
+                                        <div
+                                            key={advisor.id}
+                                            onClick={() => handleAdvisorSelect(advisor.name)}
+                                            style={{
+                                                padding: '1rem',
+                                                border: `2px solid ${formData.advisor_name === advisor.name ? '#4f46e5' : '#e2e8f0'}`,
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                background: formData.advisor_name === advisor.name ? '#eef2ff' : 'white',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: '600' }}>{advisor.name}</div>
+                                            <div style={{ fontSize: '0.9rem', color: '#64748b' }}>{advisor.availability}</div>
+                                            <div style={{ fontSize: '0.8rem', color: '#4f46e5', marginTop: '4px' }}>{advisor.specialty}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Date and Time */}

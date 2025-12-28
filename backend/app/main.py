@@ -16,34 +16,32 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup():
     from sqlmodel import SQLModel, Session, select
-    from sqlalchemy import text
+    from sqlalchemy import text, inspect
     from app.auth import engine
     from app.models import Tutor
     
-    if engine is None:
-        print("DATABASE_URL not set, skipping DB initialization")
-        return
-
     try:
         SQLModel.metadata.create_all(engine)
         
         # Simple migration: Add missing columns to 'user' table if they don't exist
+        inspector = inspect(engine)
+        existing_columns = [c["name"] for c in inspector.get_columns("user")]
+        
         with engine.connect() as conn:
             columns_to_add = [
                 ("full_name", "VARCHAR"),
-                ("gpa", "FLOAT DEFAULT 0.0"),
-                ("on_track_score", "INTEGER DEFAULT 0")
+                ("gpa", "FLOAT"),
+                ("on_track_score", "INTEGER")
             ]
             for col_name, col_type in columns_to_add:
-                try:
-                    # Check if column exists first to avoid unnecessary errors
-                    res = conn.execute(text(f"SELECT column_name FROM information_schema.columns WHERE table_name='user' AND column_name='{col_name}'"))
-                    if not res.fetchone():
+                if col_name not in existing_columns:
+                    try:
                         conn.execute(text(f'ALTER TABLE "user" ADD COLUMN {col_name} {col_type}'))
                         conn.commit()
                         print(f"Successfully added column {col_name} to user table")
-                except Exception:
-                    continue
+                    except Exception as e:
+                        print(f"Error adding column {col_name}: {e}")
+                        continue
         
         # Seed Tutors
         with Session(engine) as session:

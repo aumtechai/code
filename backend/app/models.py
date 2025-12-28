@@ -9,11 +9,13 @@ class User(SQLModel, table=True):
     full_name: Optional[str] = None
     gpa: float = Field(default=0.0)
     on_track_score: int = Field(default=0)
+    ai_insight: Optional[str] = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     
     
     chat_sessions: List["ChatSession"] = Relationship(back_populates="user")
     courses: List["Course"] = Relationship(back_populates="user")
+    form_requests: List["FormRequest"] = Relationship(back_populates="user")
 
 class ChatSession(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -40,6 +42,7 @@ class Course(SQLModel, table=True):
     code: str
     grade: str
     credits: int
+    suggestion: Optional[str] = Field(default=None)
     
     user: User = Relationship(back_populates="courses")
 
@@ -51,3 +54,24 @@ class Tutor(SQLModel, table=True):
     reviews: int = 0
     image: str # Initials or URL
     color: str # Hex color
+
+class FormRequest(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    request_type: str # "add" or "drop"
+    course_name: str
+    course_code: str
+    reason: str
+    explanation: Optional[str] = None
+    status: str = Field(default="pending") # pending, approved, rejected
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    user: User = Relationship(back_populates="form_requests")
+
+class Advisor(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str 
+    specialty: str
+    availability: str
+    email: str
+    image: Optional[str] = None
