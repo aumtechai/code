@@ -75,4 +75,14 @@ def on_startup():
 async def root():
     return {"message": "Welcome to Student Success API"}
 
+@app.get("/debug/env")
+async def debug_env():
+    """Debug endpoint to check environment variables"""
+    import os
+    return {
+        "GOOGLE_API_KEY": "SET" if os.getenv("GOOGLE_API_KEY") else "NOT SET",
+        "DATABASE_URL": "SET" if os.getenv("DATABASE_URL") else "NOT SET",
+        "CANVAS_API_TOKEN": "SET" if os.getenv("CANVAS_API_TOKEN") else "NOT SET"
+    }
+
 app.include_router(router, prefix="/api")
