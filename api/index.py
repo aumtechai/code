@@ -11,4 +11,19 @@ if root_dir not in sys.path:
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
-from backend.app.main import app
+try:
+    from backend.app.main import app
+    print("✓ Successfully imported app")
+except Exception as e:
+    print(f"✗ Failed to import app: {e}")
+    # Create a minimal FastAPI app as fallback
+    from fastapi import FastAPI
+    app = FastAPI()
+    
+    @app.get("/")
+    def root():
+        return {"error": "Backend import failed", "details": str(e)}
+    
+    @app.get("/api/")
+    def api_root():
+        return {"error": "Backend import failed", "details": str(e)}
