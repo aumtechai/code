@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
@@ -89,4 +89,4 @@ jobs:
           app-path: 'output/App.ipa'
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          api-key-content: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
