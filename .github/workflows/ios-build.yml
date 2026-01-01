@@ -65,6 +65,8 @@ jobs:
             -project frontend/ios/App/App.xcodeproj \
             -scheme App \
             -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -archivePath App.xcarchive \
             -allowProvisioningUpdates \
             -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
@@ -78,6 +80,7 @@ jobs:
             -archivePath App.xcarchive \
             -exportOptionsPlist ExportOptions.plist \
             -exportPath output \
+            -sdk iphoneos \
             -allowProvisioningUpdates \
             -authenticationKeyID ${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
             -authenticationKeyIssuerID ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }} \
