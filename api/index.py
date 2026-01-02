@@ -114,6 +114,19 @@ def test_db():
         import traceback
         return {"status": "error", "message": str(e), "traceback": traceback.format_exc()}
 
+@app.get("/api/debug/check-user")
+def debug_check_user(email: str):
+    from app.auth import engine
+    from sqlmodel import Session, select
+    from app.models import User
+    
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.email == email)).first()
+        if user:
+            return {"exists": True, "id": user.id, "email": user.email, "full_name": user.full_name}
+        else:
+            return {"exists": False, "email": email}
+
 # Try to import the full backend
 BACKEND_LOADED = False
 BACKEND_ERROR = None
