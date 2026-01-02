@@ -23,6 +23,18 @@ lane :release do
     is_key_content_base64: false
   )
 
+  # 2.5 Programmatic Cleanup of Certificates (Fix for Max Limit Reached)
+  # Since CI does not persist the private key, old certs are useless. 
+  # We revoke them to free up the 3-slot limit.
+  puts "Automated Cleanup: Checking for certificates to revoke..."
+  Spaceship::ConnectAPI::Certificate.all.each do |c|
+    # Check for distribution types
+    if c.certificate_type == "DISTRIBUTION" || c.certificate_type == "IOS_DISTRIBUTION"
+      puts "Revoking old certificate: #{c.id} (#{c.name})"
+      c.delete!
+    end
+  end
+
   # 3. Get Certificates
   cert(
     api_key: key,
