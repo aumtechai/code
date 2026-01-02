@@ -52,6 +52,7 @@ lane :release do
   # 5. Fix Project Settings
   update_code_signing_settings(
     use_automatic_signing: false,
+    targets: ["App"], # Explicitly target only the main app to avoid Test target issues
     path: "frontend/ios/App/App.xcodeproj",
     bundle_identifier: "com.studentsuccess.navigator",
     code_sign_identity: "Apple Distribution",
@@ -70,6 +71,7 @@ lane :release do
     # derived_data_path: "derived_data", # Let Fastlane handle this
     xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=#{ENV['SIGH_UUID']} CODE_SIGN_STYLE=Manual -sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO",
     export_options: {
+      signingStyle: "manual",
       compileBitcode: false,
       provisioningProfiles: {
         "com.studentsuccess.navigator" => ENV["SIGH_UUID"]
