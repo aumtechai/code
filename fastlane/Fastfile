@@ -16,29 +16,7 @@
     project: "frontend/ios/App/App.xcodeproj",
     scheme: "App",
     export_method: "app-store",
-    output_directory: "output",
-    output_name: "App.ipa",
-    clean: true,
-    # derived_data_path: "derived_data", # Let Fastlane handle this
-    xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=#{ENV['SIGH_UUID']} CODE_SIGN_STYLE=Manual -sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO",
-    export_options: {
-      compileBitcode: false,
-      provisioningProfiles: {
-        "com.studentsuccess.navigator" => ENV["SIGH_UUID"]
-      }
-    }
-  )
-  
-  create_keychain(
-    name: keychain_name,
-    password: keychain_password,
-    default_keychain: true,
-    unlock: true,
-    timeout: 0,
-    add_to_search_list: true
-  )
-
-  # 2. Authenticate
+  # 1. Authenticate
   key = app_store_connect_api_key(
     key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
     issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
@@ -46,7 +24,16 @@
     is_key_content_base64: false
   )
 
-  # 2.5 Programmatic Cleanup of Certificates (Fix for Max Limit Reached)
+  # 1.1 Ensure App ID exists
+  produce(
+    app_identifier: "com.studentsuccess.navigator",
+    app_name: "StudentSuccess",
+    language: "en-US",
+    app_version: "1.0.0",
+    sku: "studentsuccess_nav_001"
+  )
+
+  # 2. Cleanup Old Certs (Avoid Max Limit)
   # Since CI does not persist the private key, old certs are useless. 
   # We revoke them to free up the 3-slot limit.
   puts "Automated Cleanup: Checking for certificates to revoke..."
@@ -58,12 +45,8 @@
     end
   end
 
-  # 3. Get Certificates
-  cert(
-    api_key: key,
-    keychain_path: keychain_path,
-    keychain_password: keychain_password
-  )
+  # 3. Get Certificates (Stores in CI Keychain)
+  cert(api_key: key)
 
   # 4. Get Profiles
   sigh(
