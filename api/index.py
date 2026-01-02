@@ -103,6 +103,16 @@ try:
 except Exception as e:
     print(f"Failed to create tables or migrate on import: {e}")
 
+@app.get("/api/debug-routes")
+def debug_routes():
+    """List all registered routes to verify mounting"""
+    import inspect
+    routes = []
+    for route in app.routes:
+        methods = ", ".join(route.methods) if hasattr(route, "methods") else "None"
+        routes.append(f"{route.path} [{methods}]")
+    return {"registered_routes": routes}
+
 @app.get("/")
 def root():
     return {"message": "API is running", "env_check": {
