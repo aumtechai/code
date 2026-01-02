@@ -1,5 +1,6 @@
 {
     "version": 2,
+    "comment": "Force redeploy",
     "builds": [
         {
             "src": "api/index.py",
