@@ -1,13 +1,11 @@
 lane :release do
-  # 1. Manual Keychain Setup with Absolute Path
+  # 1. Manual Keychain Setup
   keychain_name = "ios_build_keychain"
   keychain_password = "build_password"
   keychain_path = File.expand_path("~/Library/Keychains/#{keychain_name}-db")
   
-  # Clean up any old attempts
   delete_keychain(name: keychain_name) if File.exist?(keychain_path)
   
-  # Create and UNLOCK the keychain thoroughly
   create_keychain(
     name: keychain_name,
     password: keychain_password,
@@ -25,7 +23,7 @@ lane :release do
     is_key_content_base64: false
   )
 
-  # 3. Get Certificates - EXPLICITLY pass keychain_path
+  # 3. Get Certificates
   cert(
     api_key: key,
     keychain_path: keychain_path,
@@ -50,14 +48,15 @@ lane :release do
     team_id: ENV["APPLE_TEAM_ID"]
   )
 
-  # 6. Build the App - EXPLICITLY pass keychain
+  # 6. Build the App - Using Xcodeproj explicitly
   build_app(
-    project: "frontend/ios/App/App.xcodeproj",
+    project: "frontend/ios/App/App.xcodeproj", # Use project instead of workspace
     scheme: "App",
     export_method: "app-store",
     output_directory: "output",
     output_name: "App.ipa",
     clean: false,
+    skip_build_archive: false,
     xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=#{ENV['SIGH_UUID']} CODE_SIGN_STYLE=Manual -sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO",
     export_options: {
       provisioningProfiles: {
