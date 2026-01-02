@@ -102,36 +102,45 @@ const Login = () => {
                 <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     {isRegistering && (
                         <div>
-                            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>Full Name</label>
+                            <label htmlFor="fullName" style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>Full Name</label>
                             <input
+                                id="fullName"
+                                name="fullName"
                                 type="text"
                                 placeholder="Alex Johnson"
                                 value={fullName}
                                 onChange={(e) => setFullName(e.target.value)}
                                 required={isRegistering}
+                                autoComplete="name"
                                 className="login-input"
                             />
                         </div>
                     )}
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>University Email</label>
+                        <label htmlFor="email" style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>University Email</label>
                         <input
+                            id="email"
+                            name="username"
                             type="email"
                             placeholder="student@university.edu"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            autoComplete="username"
                             className="login-input"
                         />
                     </div>
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>Password</label>
+                        <label htmlFor="password" style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#cbd5e1', marginBottom: '0.5rem' }}>Password</label>
                         <input
+                            id="password"
+                            name="password"
                             type="password"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            autoComplete={isRegistering ? "new-password" : "current-password"}
                             className="login-input"
                         />
                     </div>
