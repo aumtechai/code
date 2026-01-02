@@ -33,7 +33,11 @@ const Login = () => {
                 setIsRegistering(false);
             }
         } catch (error) {
-            alert("Authentication failed: " + (error.response?.data?.detail || error.message));
+            console.error("Login Error:", error);
+            const status = error.response ? error.response.status : "Unknown";
+            const url = error.config ? error.config.url : "Unknown";
+            const detail = error.response?.data?.detail || error.message;
+            alert(`Authentication failed!\nStatus: ${status}\nURL: ${url}\nError: ${detail}`);
         }
     };
 
