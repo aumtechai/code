@@ -1,21 +1,23 @@
 lane :release do
-  # 1. Manual Keychain Setup (Bulletproof method for remote CI)
+  # 1. Manual Keychain Setup with Absolute Path
   keychain_name = "ios_build_keychain"
   keychain_password = "build_password"
+  keychain_path = File.expand_path("~/Library/Keychains/#{keychain_name}-db")
   
-  # Ensure we start fresh
-  delete_keychain(name: keychain_name) if File.exist?("#{Dir.home}/Library/Keychains/#{keychain_name}-db")
+  # Clean up any old attempts
+  delete_keychain(name: keychain_name) if File.exist?(keychain_path)
   
+  # Create and UNLOCK the keychain thoroughly
   create_keychain(
     name: keychain_name,
     password: keychain_password,
     default_keychain: true,
     unlock: true,
-    timeout: 0, # Never lock again during this session
+    timeout: 0,
     add_to_search_list: true
   )
 
-  # 2. Create the API key
+  # 2. Authenticate
   key = app_store_connect_api_key(
     key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
     issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
@@ -23,9 +25,14 @@ lane :release do
     is_key_content_base64: false
   )
 
-  # 3. Get Certificates and Profiles
-  # cert will now install into our 'ios_build_keychain' automatically
-  cert(api_key: key)
+  # 3. Get Certificates - EXPLICITLY pass keychain_path
+  cert(
+    api_key: key,
+    keychain_path: keychain_path,
+    keychain_password: keychain_password
+  )
+
+  # 4. Get Profiles
   sigh(
     api_key: key,
     app_identifier: "com.studentsuccess.navigator",
@@ -33,7 +40,7 @@ lane :release do
     force: true
   )
 
-  # 4. Force settings at the project level
+  # 5. Fix Project Settings
   update_code_signing_settings(
     use_automatic_signing: false,
     path: "frontend/ios/App/App.xcodeproj",
@@ -43,7 +50,7 @@ lane :release do
     team_id: ENV["APPLE_TEAM_ID"]
   )
 
-  # 5. Build the App
+  # 6. Build the App - EXPLICITLY pass keychain
   build_app(
     project: "frontend/ios/App/App.xcodeproj",
     scheme: "App",
@@ -51,9 +58,14 @@ lane :release do
     output_directory: "output",
     output_name: "App.ipa",
     clean: false,
-    xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=#{ENV['SIGH_UUID']} CODE_SIGN_STYLE=Manual -sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO"
+    xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=#{ENV['SIGH_UUID']} CODE_SIGN_STYLE=Manual -sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO",
+    export_options: {
+      provisioningProfiles: {
+        "com.studentsuccess.navigator" => ENV["SIGH_UUID"]
+      }
+    }
   )
 
-  # 6. Upload to TestFlight
+  # 7. Upload to TestFlight
   upload_to_testflight(api_key: key)
 end
