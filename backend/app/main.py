@@ -61,6 +61,56 @@ def on_startup():
                         print(f"Error adding column {col_name}: {e}")
                         continue
         
+        # Seed Users (Test Accounts)
+        from app.auth import get_password_hash
+        
+        with Session(engine) as session:
+            # 1. Student
+            student = session.exec(select(User).where(User.email == "student@university.edu")).first()
+            if not student:
+                student = User(
+                    email="student@university.edu",
+                    password_hash=get_password_hash("student123"),
+                    full_name="Alex Student",
+                    gpa=3.8,
+                    major="Computer Science",
+                    on_track_score=92,
+                    background="First-gen college student interested in AI.",
+                    interests="Machine Learning, Robotics, History",
+                    is_admin=False,
+                    is_faculty=False
+                )
+                session.add(student)
+                print("Seeded student user")
+
+            # 2. Faculty
+            faculty = session.exec(select(User).where(User.email == "faculty@university.edu")).first()
+            if not faculty:
+                faculty = User(
+                    email="faculty@university.edu",
+                    password_hash=get_password_hash("faculty123"),
+                    full_name="Dr. Sarah Faculty",
+                    is_admin=False,
+                    is_faculty=True
+                )
+                session.add(faculty)
+                print("Seeded faculty user")
+
+            # 3. Admin
+            admin = session.exec(select(User).where(User.email == "admin@university.edu")).first()
+            if not admin:
+                admin = User(
+                    email="admin@university.edu",
+                    password_hash=get_password_hash("admin123"),
+                    full_name="System Admin",
+                    is_admin=True,
+                    is_faculty=False
+                )
+                session.add(admin)
+                print("Seeded admin user")
+            
+            session.commit()
+
         # Seed Tutors
         with Session(engine) as session:
             sample_tutors = [
