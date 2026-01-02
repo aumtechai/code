@@ -1,10 +1,33 @@
-lane :release do
+  # 0. CI Setup (Configures keychain, timeouts, etc. automatically)
+  setup_ci
+
   # 1. Manual Keychain Setup
   keychain_name = "ios_build_keychain"
   keychain_password = "build_password"
   keychain_path = File.expand_path("~/Library/Keychains/#{keychain_name}-db")
   
+  # ... (Existing auth and cleanup code matches, verify snippet context)
+  
   delete_keychain(name: keychain_name) if File.exist?(keychain_path)
+  # ...
+
+  # 6. Build the App
+  build_app(
+    project: "frontend/ios/App/App.xcodeproj",
+    scheme: "App",
+    export_method: "app-store",
+    output_directory: "output",
+    output_name: "App.ipa",
+    clean: true,
+    # derived_data_path: "derived_data", # Let Fastlane handle this
+    xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=#{ENV['SIGH_UUID']} CODE_SIGN_STYLE=Manual -sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO",
+    export_options: {
+      compileBitcode: false,
+      provisioningProfiles: {
+        "com.studentsuccess.navigator" => ENV["SIGH_UUID"]
+      }
+    }
+  )
   
   create_keychain(
     name: keychain_name,
