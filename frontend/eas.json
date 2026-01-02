@@ -1,0 +1,17 @@
+{
+    "cli": {
+        "version": ">= 12.0.0"
+    },
+    "build": {
+        "production": {
+            "ios": {
+                "image": "macos-14",
+                "bundlerVersion": "latest",
+                "nodeVersion": "22.12.0"
+            }
+        }
+    },
+    "submit": {
+        "production": {}
+    }
+}

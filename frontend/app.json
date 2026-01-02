@@ -1,0 +1,10 @@
+{
+    "expo": {
+        "name": "Student Success Navigator",
+        "slug": "student-success-navigator",
+        "version": "1.0.0",
+        "ios": {
+            "bundleIdentifier": "com.studentsuccess.navigator"
+        }
+    }
+}
