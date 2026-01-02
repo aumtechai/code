@@ -54,16 +54,16 @@ lane :release do
     force: true
   )
 
-  # 5. Fix Project Settings (Disabled to prevent SPM corruption)
-  # update_code_signing_settings(
-  #   use_automatic_signing: false,
-  #   targets: ["App"], 
-  #   path: "frontend/ios/App/App.xcodeproj",
-  #   bundle_identifier: "com.studentsuccess.navigator",
-  #   code_sign_identity: "Apple Distribution",
-  #   profile_uuid: ENV["SIGH_UUID"],
-  #   team_id: ENV["APPLE_TEAM_ID"]
-  # )
+  # 5. Fix Project Settings
+  update_code_signing_settings(
+    use_automatic_signing: false,
+    targets: ["App"], 
+    path: "frontend/ios/App/App.xcodeproj",
+    bundle_identifier: "com.studentsuccess.navigator",
+    code_sign_identity: "Apple Distribution",
+    profile_uuid: ENV["SIGH_UUID"],
+    team_id: ENV["APPLE_TEAM_ID"]
+  )
 
   # 5.5 Allow codesign to access the keychain without prompt (Crucial for CI)
   sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{keychain_password} #{keychain_path}")
