@@ -1,8 +1,21 @@
 lane :release do
-  # 0. CI Setup (Configures keychain, timeouts, etc. automatically)
-  setup_ci
+  # 1. Manual Keychain Setup
+  keychain_name = "ios_build_keychain"
+  keychain_password = "build_password"
+  keychain_path = File.expand_path("~/Library/Keychains/#{keychain_name}-db")
 
-  # 1. Authenticate
+  delete_keychain(name: keychain_name) if File.exist?(keychain_path)
+
+  create_keychain(
+    name: keychain_name,
+    password: keychain_password,
+    default_keychain: true,
+    unlock: true,
+    timeout: 0,
+    add_to_search_list: true
+  )
+
+  # 2. Authenticate
   key = app_store_connect_api_key(
     key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
     issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
@@ -12,7 +25,7 @@ lane :release do
 
 
 
-  # 2. Cleanup Old Certs (Avoid Max Limit)
+  # 3. Cleanup Old Certs (Avoid Max Limit)
   puts "Automated Cleanup: Checking for certificates to revoke..."
   Spaceship::ConnectAPI::Certificate.all.each do |c|
     if c.certificate_type == "DISTRIBUTION" || c.certificate_type == "IOS_DISTRIBUTION"
@@ -21,10 +34,14 @@ lane :release do
     end
   end
 
-  # 3. Get Certificates (Stores in CI Keychain)
-  cert(api_key: key)
+  # 4. Get Certificates (Explicit Keychain)
+  cert(
+    api_key: key,
+    keychain_path: keychain_path,
+    keychain_password: keychain_password
+  )
 
-  # 4. Get Profiles
+  # 5. Get Profiles
   sigh(
     api_key: key,
     app_identifier: "com.studentsuccess.navigator",
