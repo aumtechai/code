@@ -1,34 +1,20 @@
 {
-    "version": 2,
+    "crons": [
+        {
+            "path": "/api/texas/cron/refresh",
+            "schedule": "0 0 1 * *"
+        }
+    ],
     "builds": [
         {
             "src": "api/index.py",
             "use": "@vercel/python"
-        },
-        {
-            "src": "frontend/package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist"
-            }
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/api/(.*)",
-            "destination": "api/index.py"
-        },
-        {
-            "source": "/assets/(.*)",
-            "destination": "/frontend/assets/$1"
-        },
-        {
-            "source": "/logo.png",
-            "destination": "/frontend/logo.png"
-        },
-        {
-            "source": "/((?!api/|assets/|logo.png|favicon.ico).*)",
-            "destination": "/frontend/index.html"
+            "src": "/(.*)",
+            "dest": "/api/index.py"
         }
     ]
 }
