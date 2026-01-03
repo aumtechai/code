@@ -55,13 +55,19 @@ lane :release do
   )
 
   # 5. Fix Project Settings
-  # update_code_signing_settings(...) # Disabled, using sed instead to avoid pbxproj corruption
+  update_code_signing_settings(
+    use_automatic_signing: false,
+    targets: ["App"],
+    build_configurations: ["Release"],
+    path: "frontend/ios/App/App.xcodeproj",
+    bundle_identifier: "com.studentsuccess.navigator",
+    code_sign_identity: "Apple Distribution",
+    profile_uuid: ENV["SIGH_UUID"],
+    team_id: ENV["APPLE_TEAM_ID"]
+  )
   
-  # 5.1 Inject Team ID (Raw Text Replacement)
-  # Fresh Capacitor projects have empty Team ID. We inject it manually.
-  sh("sed -i '' 's/DEVELOPMENT_TEAM = \"\";/DEVELOPMENT_TEAM = #{ENV['APPLE_TEAM_ID']};/g' frontend/ios/App/App.xcodeproj/project.pbxproj || true")
-  sh("sed -i '' 's/bundleIdentifier = \"com.example.app\";/bundleIdentifier = \"com.studentsuccess.navigator\";/g' frontend/ios/App/App.xcodeproj/project.pbxproj || true")
-  
+  # 5.1 (Removed sed hacks, relying on update_code_signing_settings)
+
   # 5.5 Allow codesign to access the keychain without prompt (Crucial for CI)
   sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{keychain_password} #{keychain_path}")
 
@@ -75,7 +81,8 @@ lane :release do
     clean: true,
     suppress_xcode_output: false, # Show full log for debugging Exit Code 65
     # derived_data_path: "derived_data", # Let Fastlane handle this
-    xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=#{ENV['SIGH_UUID']} CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' -sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO",
+    # Don't pass PROVISIONING_PROFILE_SPECIFIER globally in xcargs, it breaks Pods!
+    xcargs: "-sdk iphoneos -destination 'generic/platform=iOS' ENABLE_BITCODE=NO",
     export_options: {
       signingStyle: "manual",
       compileBitcode: false,
