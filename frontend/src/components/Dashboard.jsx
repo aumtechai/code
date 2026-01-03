@@ -478,19 +478,22 @@ const Dashboard = () => {
 
     return (
         <div style={{ display: 'flex', height: '100vh', height: '100dvh', background: '#f8fafc', flexDirection: 'column' }}>
-            {/* Mobile Header - Only visible on small screens */}
-            {/* Mobile Header - Only visible on small screens */}
+            {/* Mobile Header - Fixed App Bar */}
             <div className="mobile-only" style={{
-                padding: 'calc(2rem + env(safe-area-inset-top)) 1rem 1rem 1rem',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                padding: 'calc(2rem + env(safe-area-inset-top)) 1rem 0.5rem 1rem',
                 background: 'rgba(255, 255, 255, 0.95)',
                 backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
                 borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
+                display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 zIndex: 50,
-                width: '100%',
-                flexShrink: 0
+                height: 'auto'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ padding: '0px', borderRadius: '8px' }}>
@@ -525,10 +528,13 @@ const Dashboard = () => {
                     }}
                     className="main-content"
                 >
-                    {/* Responsive Padding adjustment usually handled by CSS media queries on .main-content class, or simplistic inline approach here */}
+                    {/* Responsive Padding adjustment */}
                     <style>{`
                         @media (max-width: 768px) {
-                            .main-content { padding: ${activeTab === 'chat' ? 0 : '1.5rem'} !important; }
+                            .main-content { 
+                                padding: ${activeTab === 'chat' ? 0 : '1.5rem'} !important;
+                                padding-top: calc(5rem + env(safe-area-inset-top)) !important;
+                            }
                         }
                     `}</style>
 
