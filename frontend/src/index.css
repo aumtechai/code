@@ -43,8 +43,10 @@
 body {
   margin: 0;
   display: flex;
+  flex-direction: column;
   place-items: center;
-  min-width: 320px;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
   /* Modern mobile fix */
@@ -63,11 +65,14 @@ body {
 
 #root {
   width: 100%;
+  max-width: 100vw;
   height: 100vh;
   height: 100dvh;
   /* Modern mobile fix */
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+}
 }
 
 /* New Component Classes */
