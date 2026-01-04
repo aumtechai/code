@@ -527,4 +527,57 @@ def analyze_texas_college(req: TexasAnalyzeRequest):
         "source": "live_scrape"
     }
 
+@app.get("/api/texas/cron/refresh")
+def cron_refresh_texas_data():
+    """
+    Cron Job Endpoint: Refreshes outdated reports.
+    Scheduled: Monthly.
+    Limit: 5 colleges per run to avoid timeout.
+    """
+    if not texas_scraper:
+        return {"status": "skipped", "reason": "module_not_loaded"}
+    
+    updated_count = 0
+    errors = []
+    
+    try:
+        from sqlmodel import Session, select
+        from datetime import timedelta
+        
+        with Session(engine) as session:
+            # Find reports > 30 days old
+            cutoff = datetime.utcnow() - timedelta(days=30)
+            stale_reports = session.exec(select(TexasReport).where(TexasReport.last_updated < cutoff).limit(5)).all()
+            
+            for report in stale_reports:
+                try:
+                    print(f"Refreshing {report.name}...")
+                    # Scrape
+                    # We need type_id. We only stored sector. 
+                    # We can infer type_id or store it in DB.
+                    # For now, approximate: universities=1, twoYear=2.
+                    type_id = 1 if report.sector == 'universities' else 2 
+                    
+                    data = texas_scraper.fetch_college_metrics(report.inst_id, report.sector, type_id)
+                    insight = texas_scraper.generate_insights(report.name, data)
+                    
+                    report.data_json = json.dumps(data)
+                    report.ai_insight = insight
+                    report.last_updated = datetime.utcnow()
+                    session.add(report)
+                    updated_count += 1
+                except Exception as e:
+                    errors.append(f"{report.name}: {str(e)}")
+            
+            session.commit()
+            
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
+    return {
+        "status": "success",
+        "updated": updated_count,
+        "errors": errors
+    }
+
 

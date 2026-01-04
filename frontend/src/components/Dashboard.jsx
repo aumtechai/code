@@ -94,6 +94,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                     <div className="section-title">Home</div>
                     <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => handleProtectedTab('dashboard')}><LayoutDashboard size={20} /> Dashboard</div>
                     <div className={`nav-item ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => handleProtectedTab('chat')}><MessageSquare size={20} /> AI Navigator</div>
+                    <div className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => handleProtectedTab('analytics')}><TrendingUp size={20} /> Institutional Research</div>
 
                     <div className="section-title">Academics</div>
                     <div className={`nav-item ${activeTab === 'degree-roadmap' ? 'active' : ''}`} onClick={() => handleProtectedTab('degree-roadmap')}><Map size={20} /> Degree Roadmap</div>
