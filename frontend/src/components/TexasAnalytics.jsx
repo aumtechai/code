@@ -12,6 +12,7 @@ const TexasAnalytics = () => {
     const [loading, setLoading] = useState(false);
     const [analysisData, setAnalysisData] = useState(null);
     const [view, setView] = useState('overview'); // overview, college_detail
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         fetchColleges();
@@ -55,6 +56,11 @@ const TexasAnalytics = () => {
         }
     };
 
+    const filteredColleges = colleges.filter(c =>
+        c.name.toLowerCase().includes(search.toLowerCase()) ||
+        (c.sector && c.sector.toLowerCase().includes(search.toLowerCase()))
+    );
+
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header */}
@@ -78,14 +84,16 @@ const TexasAnalytics = () => {
                         <input
                             type="text"
                             placeholder="Search Texas Colleges..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
                             style={{ width: '100%', border: 'none', outline: 'none', fontSize: '1.1rem' }}
                         />
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem', maxHeight: '500px', overflowY: 'auto' }}>
-                        {colleges.map(college => (
+                        {filteredColleges.map((college, index) => (
                             <div
-                                key={college.id}
+                                key={`${college.id}-${index}`}
                                 onClick={() => handleAnalyze(college)}
                                 style={{
                                     padding: '1rem',
