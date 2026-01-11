@@ -1,8 +1,15 @@
 import axios from 'axios';
 
-// Hardcoded for stability on Vercel
+// Dynamic base URL to support www, non-www, and localhost
+const getBaseUrl = () => {
+    if (import.meta.env.MODE === 'development') {
+        return 'http://localhost:8000';
+    }
+    return ''; // Relative path for production (Same Origin)
+};
+
 const api = axios.create({
-    baseURL: 'https://studentsuccess-nu.vercel.app',
+    baseURL: getBaseUrl(),
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',

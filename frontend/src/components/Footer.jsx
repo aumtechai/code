@@ -54,7 +54,7 @@ const Footer = ({ onNavigate }) => {
 
                 {/* Copyright */}
                 <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                    © 2025 Student Success Navigator. All rights reserved.
+                    © 2026 Student Success Navigator | www.aumtech.ai. All rights reserved.
                 </div>
             </div>
             <style>{`

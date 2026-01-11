@@ -70,7 +70,7 @@ const Support = ({ onBack }) => {
                         </div>
                         <h3 style={{ fontWeight: '700', marginBottom: '0.5rem' }}>Email Support</h3>
                         <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Get a response within 24 hours.</p>
-                        <a href="mailto:support@studentsuccess.app" style={{ color: '#4f46e5', fontWeight: '600', textDecoration: 'none' }}>support@studentsuccess.app</a>
+                        <a href="mailto:support@aumtech.ai" style={{ color: '#4f46e5', fontWeight: '600', textDecoration: 'none' }}>support@aumtech.ai</a>
                     </div>
 
                     <div style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
@@ -99,7 +99,7 @@ const Support = ({ onBack }) => {
                     </h3>
                     <FAQItem
                         question="How does the AI Navigator help me?"
-                        answer="The AI Navigator uses Google Gemini to analyze your academic profile, syllabi, and goals. It can suggest study plans, explain complex concepts, and guide you through administrative processes."
+                        answer="The AI Navigator uses Student Success AI to analyze your academic profile, syllabi, and goals. It can suggest study plans, explain complex concepts, and guide you through administrative processes."
                     />
                     <FAQItem
                         question="Is my academic data secure?"
@@ -162,7 +162,7 @@ const Support = ({ onBack }) => {
 
                 {/* Footer Disclaimer */}
                 <div style={{ textAlign: 'center', marginTop: '4rem', color: '#94a3b8', fontSize: '0.9rem' }}>
-                    <p>© 2025 Student Success Navigator. All rights reserved.</p>
+                    <p>© 2026 Student Success Navigator | www.aumtech.ai. All rights reserved.</p>
                 </div>
             </div>
         </div>

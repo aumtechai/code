@@ -7,7 +7,7 @@ const PrivacyPolicy = ({ onBack }) => (
         <button onClick={onBack} style={{ marginBottom: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: '#6366f1' }}>← Back</button>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Privacy Policy</h1>
         <div className="card-white" style={{ lineHeight: '1.6', color: '#334155' }}>
-            <p><strong>Effective Date:</strong> January 1, 2025</p>
+            <p><strong>Effective Date:</strong> January 1, 2026</p>
             <p>At Student Success Navigator, we take your privacy seriously. This policy describes how we collect, use, and protect your personal information.</p>
 
             <h3 style={{ marginTop: '1.5rem', fontWeight: 'bold' }}>1. Information We Collect</h3>
@@ -29,7 +29,7 @@ const PrivacyPolicy = ({ onBack }) => (
             <p>We implement industry-standard security measures to encrypt and protect your data. We do not sell your personal information to third parties.</p>
 
             <h3 style={{ marginTop: '1.5rem', fontWeight: 'bold' }}>4. Contact Us</h3>
-            <p>If you have questions about this policy, please contact support@studentsuccess.edu.</p>
+            <p>If you have questions about this policy, please contact support@aumtech.ai.</p>
         </div>
     </div>
 );

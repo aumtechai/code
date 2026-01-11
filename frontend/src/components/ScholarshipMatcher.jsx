@@ -112,7 +112,7 @@ const ScholarshipMatcher = () => {
             <div className="scholarship-header">
                 <div>
                     <h1 className="title-gradient">AI Scholarship Matcher</h1>
-                    <p className="subtitle">Precision matching and personalized statement drafting powered by Gemini AI.</p>
+                    <p className="subtitle">Precision matching and personalized statement drafting powered by Student Success AI.</p>
                 </div>
                 <div className="header-stats">
                     <div className="stat-card">

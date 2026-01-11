@@ -132,13 +132,13 @@ const TexasAnalytics = () => {
                                 <div style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}>
                                     <TrendingUp size={24} color="#38bdf8" />
                                 </div>
-                                <h2 style={{ margin: 0, color: 'white' }}>Gemini Analysis</h2>
+                                <h2 style={{ margin: 0, color: 'white' }}>Student Success AI Analysis</h2>
                             </div>
                             {loading && <RefreshCw className="animate-spin" />}
                         </div>
 
                         {loading ? (
-                            <p style={{ color: '#94a3b8' }}>Analyzing institutional metrics with Gemini AI...</p>
+                            <p style={{ color: '#94a3b8' }}>Analyzing institutional metrics with Student Success AI...</p>
                         ) : (
                             <div style={{ color: '#e2e8f0', lineHeight: '1.6', width: '100%' }}>
                                 <ReactMarkdown>

@@ -1,22 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Star, Zap, Shield, CreditCard } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { getRevenueCatOfferings, purchaseRevenueCatPackage } from '../iap';
 import api from '../api';
 
 const Subscription = ({ userData, onBack }) => {
     const [loading, setLoading] = useState(false);
+    const [packages, setPackages] = useState([]);
+    const isNative = Capacitor.isNativePlatform();
 
-    const handleSubscribe = async (_priceId) => {
+    useEffect(() => {
+        const loadOfferings = async () => {
+            if (isNative) {
+                try {
+                    const offerings = await getRevenueCatOfferings();
+                    console.log("DEBUG: Offerings fetched:", offerings);
+
+                    if (!offerings) {
+                        // Alert 1: SDK might be null
+                        alert("Debug: IAP SDK failed to load or return offerings.");
+                        return;
+                    }
+
+                    if (!offerings.current) {
+                        // Alert 2: No 'current' (default) offering found
+                        // This usually means Offering identifier is not 'default' in Dashboard
+                        alert("Debug: No 'default' offering found in RevenueCat. Check Offering ID.");
+                        return;
+                    }
+
+                    if (offerings.current.availablePackages.length === 0) {
+                        // Alert 3: Offering empty
+                        alert("Debug: 'default' offering found but it has 0 packages. Check Product attachment.");
+                    } else {
+                        setPackages(offerings.current.availablePackages);
+                        // Optional: Alert success for confirmation
+                        // alert(`Debug: Found ${offerings.current.availablePackages.length} packages.`);
+                    }
+                } catch (e) {
+                    alert("Debug: Error fetching offerings: " + JSON.stringify(e));
+                }
+            }
+        };
+        loadOfferings();
+    }, [isNative]);
+
+    const handleSubscribe = async () => {
         setLoading(true);
         try {
-            // Price ID should come from environment or props, using placeholder
-            const res = await api.post('/api/payments/create-checkout-session', { price_id: 'price_premium_monthly' });
-            if (res.data.url) {
-                window.location.href = res.data.url;
+            if (isNative) {
+                // iOS / Android Native IAP
+                if (packages.length > 0) {
+                    const { customerInfo } = await purchaseRevenueCatPackage(packages[0]);
+                    if (customerInfo.entitlements.active['premium']) {
+                        alert("Upgrade Successful! Welcome to Premium.");
+                        // Ideally, call backend to sync status here
+                    }
+                } else {
+                    alert("No products available. Please check configuration.");
+                }
+            } else {
+                // Web Stripe Payment
+                const res = await api.post('/api/payments/create-checkout-session', { price_id: 'price_premium_monthly' });
+                if (res.data.url) {
+                    window.location.href = res.data.url;
+                }
             }
         } catch (err) {
-            console.error("Payment failed", err);
-            alert("Failed to initiate payment. Please ensure STRIPE_SECRET_KEY is configured on the backend.");
+            console.error("Payment/Purchase failed", err);
+            if (isNative && err.userCancelled) {
+                // User cancelled, do nothing
+            } else {
+                alert("Failed to initiate payment. " + (err.message || ""));
+            }
         } finally {
             setLoading(false);
         }
@@ -26,6 +83,9 @@ const Subscription = ({ userData, onBack }) => {
     const isSubscribed = subInfo.status === 'active';
     const isTrial = subInfo.status === 'trialing';
     const isExpired = subInfo.status === 'expired';
+
+    // Pricing Display Logic
+    const displayPrice = (isNative && packages.length > 0) ? packages[0].product.priceString : "$9.99";
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
@@ -112,7 +172,7 @@ const Subscription = ({ userData, onBack }) => {
                         <h3 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.75rem', color: '#1e293b' }}>Success Pass</h3>
                         <p style={{ color: '#64748b', fontSize: '0.95rem', marginBottom: '1.5rem' }}>Unlock the full power of Academic AI.</p>
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                            <span style={{ fontSize: '3.5rem', fontWeight: '800', color: '#1e293b' }}>$9.99</span>
+                            <span style={{ fontSize: '3.5rem', fontWeight: '800', color: '#1e293b' }}>{displayPrice}</span>
                             <span style={{ color: '#64748b', fontWeight: '600' }}>/ month</span>
                         </div>
                     </div>
@@ -123,8 +183,9 @@ const Subscription = ({ userData, onBack }) => {
                         <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1rem', color: '#475569' }}><Check size={20} color="#4f46e5" /> Advanced Career Pathfinder</li>
                         <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1rem', color: '#475569' }}><Check size={20} color="#4f46e5" /> Ad-Free Experience</li>
                     </ul>
+
                     <button
-                        onClick={() => handleSubscribe('price_premium_monthly')}
+                        onClick={handleSubscribe}
                         disabled={loading || isSubscribed}
                         style={{
                             width: '100%',
@@ -144,7 +205,7 @@ const Subscription = ({ userData, onBack }) => {
                             opacity: loading || isSubscribed ? 0.7 : 1
                         }}
                     >
-                        {loading ? 'Opening Stripe...' : isSubscribed ? 'Membership Active' : 'Upgrade to Premium'} <CreditCard size={20} />
+                        {loading ? (isNative ? 'Processing...' : 'Opening Stripe...') : isSubscribed ? 'Membership Active' : 'Upgrade to Premium'} <CreditCard size={20} />
                     </button>
                     <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8', marginTop: '1rem' }}>Cancel anytime. No hidden fees.</p>
                 </motion.div>
@@ -173,8 +234,9 @@ const Subscription = ({ userData, onBack }) => {
                     <span style={{ borderBottom: '1px solid #cbd5e1' }}>Continue with limited access</span>
                 </button>
             </div>
-        </div>
+        </div >
     );
 };
+
 
 export default Subscription;

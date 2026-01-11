@@ -6,7 +6,7 @@ const MSA = ({ onBack }) => (
         <button onClick={onBack} style={{ marginBottom: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: '#6366f1' }}>← Back</button>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Master Services Agreement (MSA)</h1>
         <div className="card-white" style={{ lineHeight: '1.6', color: '#334155' }}>
-            <p><strong>Last Updated:</strong> January 1, 2025</p>
+            <p><strong>Last Updated:</strong> January 1, 2026</p>
             <p>This Master Services Agreement ("Agreement") governs your use of the Student Success Navigator platform.</p>
 
             <h3 style={{ marginTop: '1.5rem', fontWeight: 'bold' }}>1. Services</h3>

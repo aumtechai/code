@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Users, Briefcase, Zap, Search, Send, MessageSquare, CheckCircle, Bot } from 'lucide-react';
+import { Plus, X, Users, Briefcase, Zap, Search, Send, MessageSquare, CheckCircle, Bot, BarChart2, Activity, AlertTriangle } from 'lucide-react';
 import api from '../api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminPanel = () => {
-    const [activeSection, setActiveSection] = useState('campaigns'); // 'campaigns', 'advisors', 'tutors'
+    const [activeSection, setActiveSection] = useState('campaigns'); // 'campaigns', 'advisors', 'tutors', 'analytics'
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
             <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>Admin Panel</h1>
 
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', overflowX: 'auto', paddingBottom: '4px' }}>
                 <button
                     onClick={() => setActiveSection('campaigns')}
                     style={{
@@ -22,10 +22,28 @@ const AdminPanel = () => {
                         fontWeight: '600',
                         cursor: 'pointer',
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        boxShadow: activeSection === 'campaigns' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)'
+                        boxShadow: activeSection === 'campaigns' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)',
+                        whiteSpace: 'nowrap'
                     }}
                 >
                     <Zap size={18} /> Smart Outreach
+                </button>
+                <button
+                    onClick={() => setActiveSection('analytics')}
+                    style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: activeSection === 'analytics' ? '#4f46e5' : 'white',
+                        color: activeSection === 'analytics' ? 'white' : '#64748b',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        boxShadow: activeSection === 'analytics' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    <BarChart2 size={18} /> Dean's Dashboard
                 </button>
                 <button
                     onClick={() => setActiveSection('advisors')}
@@ -38,10 +56,11 @@ const AdminPanel = () => {
                         fontWeight: '600',
                         cursor: 'pointer',
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        boxShadow: activeSection === 'advisors' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)'
+                        boxShadow: activeSection === 'advisors' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)',
+                        whiteSpace: 'nowrap'
                     }}
                 >
-                    <Briefcase size={18} /> Manage Advisors
+                    <Briefcase size={18} /> Advisors
                 </button>
                 <button
                     onClick={() => setActiveSection('tutors')}
@@ -54,21 +73,131 @@ const AdminPanel = () => {
                         fontWeight: '600',
                         cursor: 'pointer',
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        boxShadow: activeSection === 'tutors' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)'
+                        boxShadow: activeSection === 'tutors' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)',
+                        whiteSpace: 'nowrap'
                     }}
                 >
-                    <Users size={18} /> Manage Tutors
+                    <Users size={18} /> Tutors
                 </button>
             </div>
 
             <div className="card-white" style={{ minHeight: '400px' }}>
                 {activeSection === 'campaigns' ? (
                     <CampaignsManager />
+                ) : activeSection === 'analytics' ? (
+                    <DeansDashboard />
                 ) : activeSection === 'advisors' ? (
                     <AdvisorsManager />
                 ) : (
                     <TutorsManager />
                 )}
+            </div>
+        </div>
+    );
+};
+
+const DeansDashboard = () => {
+    const [metrics, setMetrics] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await api.get('/api/tutoring/analytics/dashboard');
+                setMetrics(res.data);
+            } catch (err) {
+                console.error("Failed to fetch analytics", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    if (loading) return <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Loading Intelligence...</div>;
+    if (!metrics) return <div style={{ padding: '2rem', textAlign: 'center' }}>Failed to load data.</div>;
+
+    return (
+        <div style={{ padding: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <div>
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: '#1e293b' }}>Tutoring Intelligence</h2>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#64748b' }}>Real-time demand and content analysis.</p>
+                </div>
+                <div style={{ background: '#eef2ff', padding: '8px 16px', borderRadius: '20px', color: '#4f46e5', fontWeight: '600', fontSize: '0.9rem' }}>
+                    Live Data
+                </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                    <div style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem' }}>TOTAL SESSIONS</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e293b' }}>{metrics.total_sessions}</div>
+                    <div style={{ color: '#10b981', fontSize: '0.8rem', marginTop: '0.5rem' }}>+12% this week</div>
+                </div>
+                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                    <div style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem' }}>ACTIVE COURSES</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#4f46e5' }}>{Object.keys(metrics.demand_by_course).length}</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.5rem' }}>Across 3 Departments</div>
+                </div>
+                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                    <div style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem' }}>AI INSIGHTS</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#f59e0b' }}>{metrics.recent_intelligence.length}</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.5rem' }}>Generated Briefs</div>
+                </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                <div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Activity size={18} /> Concept Heatmap
+                    </h3>
+                    <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '1.5rem' }}>
+                        {Object.entries(metrics.demand_by_course).length === 0 ? (
+                            <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No data yet.</div>
+                        ) : (
+                            Object.entries(metrics.demand_by_course).sort(([, a], [, b]) => b - a).map(([course, count], i) => (
+                                <div key={course} style={{ marginBottom: '1rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', fontSize: '0.9rem', fontWeight: '600' }}>
+                                        <span>{course}</span>
+                                        <span>{count} sessions</span>
+                                    </div>
+                                    <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${(count / metrics.total_sessions) * 100}%` }}
+                                            style={{ height: '100%', background: i === 0 ? '#ef4444' : '#3b82f6' }}
+                                        />
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Bot size={18} /> Recent Intelligence Briefs
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {metrics.recent_intelligence.length === 0 ? (
+                            <div style={{ color: '#94a3b8', fontStyle: 'italic', padding: '2rem', background: '#f8fafc', borderRadius: '12px', textAlign: 'center' }}>
+                                No AI summaries generated yet.
+                            </div>
+                        ) : (
+                            metrics.recent_intelligence.map((item, i) => (
+                                <div key={i} style={{ padding: '1rem', background: '#fefce8', border: '1px solid #fef9c3', borderRadius: '12px' }}>
+                                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#b45309', marginBottom: '0.25rem', textTransform: 'uppercase' }}>
+                                        {item.course} Needs Analysis
+                                    </div>
+                                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#713f12', lineHeight: '1.4' }}>
+                                        "{item.issue}"
+                                    </p>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

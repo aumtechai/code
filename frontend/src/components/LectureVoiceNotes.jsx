@@ -51,10 +51,57 @@ const LectureVoiceNotes = ({ onNavigate }) => {
         }
     };
 
+    const [availableMics, setAvailableMics] = useState([]);
+    const [selectedMicId, setSelectedMicId] = useState('');
+
+    useEffect(() => {
+        getMicrophones();
+    }, []);
+
+    const getMicrophones = async () => {
+        try {
+            // Request permission first to ensure labels are available
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const audioInputs = devices.filter(device => device.kind === 'audioinput');
+            setAvailableMics(audioInputs);
+            if (audioInputs.length > 0) {
+                setSelectedMicId(audioInputs[0].deviceId);
+            }
+        } catch (err) {
+            console.error("Error fetching microphones", err);
+        }
+    };
+
+    const getSupportedMimeType = () => {
+        const types = [
+            'audio/webm',
+            'audio/mp4',
+            'audio/ogg',
+            'audio/wav',
+            'audio/aac'
+        ];
+        for (const type of types) {
+            if (MediaRecorder.isTypeSupported(type)) {
+                return type;
+            }
+        }
+        return ''; // Let browser choose default
+    };
+
     const startRecording = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderRef.current = new MediaRecorder(stream);
+            const constraints = {
+                audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true
+            };
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+            // Detect supported mime type for iOS compatibility
+            const mimeType = getSupportedMimeType();
+            const options = mimeType ? { mimeType } : undefined;
+
+            mediaRecorderRef.current = new MediaRecorder(stream, options);
             chunksRef.current = [];
 
             mediaRecorderRef.current.ondataavailable = (e) => {
@@ -64,7 +111,9 @@ const LectureVoiceNotes = ({ onNavigate }) => {
             };
 
             mediaRecorderRef.current.onstop = () => {
-                const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                // Use the actual mime type of the recorder
+                const blobType = mediaRecorderRef.current.mimeType || 'audio/webm';
+                const blob = new Blob(chunksRef.current, { type: blobType });
                 setAudioBlob(blob);
                 const tracks = stream.getTracks();
                 tracks.forEach(track => track.stop());
@@ -81,7 +130,7 @@ const LectureVoiceNotes = ({ onNavigate }) => {
 
         } catch (err) {
             console.error("Error accessing microphone:", err);
-            alert("Could not access microphone. Please ensure permissions are granted.");
+            alert(`Could not access microphone: ${err.message}. Please check iOS Settings > Privacy > Microphone.`);
         }
     };
 
@@ -362,29 +411,47 @@ const LectureVoiceNotes = ({ onNavigate }) => {
                             </div>
 
                             {!isRecording && !audioBlob && (
-                                <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', alignItems: 'center' }}>
-                                    <button
-                                        onClick={startRecording}
-                                        style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }}
-                                    >
-                                        <Mic size={40} color="white" />
-                                    </button>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    {availableMics.length > 0 && (
+                                        <div style={{ marginBottom: '1.5rem' }}>
+                                            <select
+                                                value={selectedMicId}
+                                                onChange={e => setSelectedMicId(e.target.value)}
+                                                style={{ padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.9rem', maxWidth: '300px' }}
+                                            >
+                                                {availableMics.map(mic => (
+                                                    <option key={mic.deviceId} value={mic.deviceId}>
+                                                        {mic.label || `Microphone ${mic.deviceId.slice(0, 4)}...`}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
 
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
-                                        <input
-                                            type="file"
-                                            accept="audio/*"
-                                            ref={fileInputRef}
-                                            onChange={handleFileUpload}
-                                            style={{ display: 'none' }}
-                                        />
+                                    <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', alignItems: 'center' }}>
                                         <button
-                                            onClick={() => fileInputRef.current.click()}
-                                            style={{ padding: '0.8rem', borderRadius: '50%', background: 'white', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            onClick={startRecording}
+                                            style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }}
                                         >
-                                            <span style={{ fontSize: '24px' }}>📂</span>
+                                            <Mic size={40} color="white" />
                                         </button>
-                                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Upload</span>
+
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
+                                            <input
+                                                type="file"
+                                                accept="audio/*"
+                                                ref={fileInputRef}
+                                                onChange={handleFileUpload}
+                                                style={{ display: 'none' }}
+                                            />
+                                            <button
+                                                onClick={() => fileInputRef.current.click()}
+                                                style={{ padding: '0.8rem', borderRadius: '50%', background: 'white', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            >
+                                                <span style={{ fontSize: '24px' }}>📂</span>
+                                            </button>
+                                            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Upload</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}

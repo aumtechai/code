@@ -117,7 +117,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                     <div className={`nav-item ${activeTab === 'financial' ? 'active' : ''}`} onClick={() => handleProtectedTab('financial')}><GraduationCap size={20} /> Financial Nexus</div>
                     <div className={`nav-item ${activeTab === 'career' ? 'active' : ''}`} onClick={() => handleProtectedTab('career')}><Briefcase size={20} /> Career Pathfinder</div>
                     <div className={`nav-item ${activeTab === 'holds' ? 'active' : ''}`} onClick={() => handleProtectedTab('holds')}><ShieldAlert size={20} /> Holds & Alerts</div>
-                    <div className={`nav-item ${activeTab === 'subscription' ? 'active' : ''}`} onClick={() => handleProtectedTab('subscription')}><CreditCard size={20} /> Subscription</div>
+                    <div className={`nav-item ${activeTab === 'subscription' ? 'active' : ''}`} onClick={() => handleProtectedTab('subscription')}><CreditCard size={20} /> My Plan</div>
 
                     <div className="section-title">Campus Life</div>
                     <div className={`nav-item ${activeTab === 'social' ? 'active' : ''}`} onClick={() => handleProtectedTab('social')}><Users size={20} /> Social Campus</div>
@@ -165,7 +165,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
 
                         {/* Legal Footer */}
                         <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
-                            <div style={{ marginBottom: '0.25rem' }}>© 2026 Student Success (v1.1 CIP)</div>
+                            <div style={{ marginBottom: '0.25rem' }}>© 2026 Student Success | www.aumtech.ai</div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                                 <span onClick={() => handleProtectedTab('privacy')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>Privacy</span>
                                 <span onClick={() => handleProtectedTab('msa')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>MSA</span>
@@ -493,7 +493,7 @@ const Dashboard = () => {
                 backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
                 borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
-                display: 'flex',
+                borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 zIndex: 50,
@@ -537,7 +537,7 @@ const Dashboard = () => {
                         @media (max-width: 768px) {
                             .main-content {
                             padding: ${activeTab === 'chat' ? 0 : '1rem'} !important;
-                        padding-top: calc(7rem + env(safe-area-inset-top)) !important;
+                        padding-top: calc(8.5rem + env(safe-area-inset-top)) !important;
                             }
 
                         /* Force Stats Grid Side-by-Side */

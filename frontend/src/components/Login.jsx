@@ -38,8 +38,31 @@ const Login = () => {
             console.error("Login Error:", error);
             const status = error.response ? error.response.status : "Unknown";
             const url = error.config ? error.config.url : "Unknown";
-            const detail = error.response?.data?.detail || error.message;
-            alert(`Authentication failed!\nStatus: ${status}\nURL: ${url}\nError: ${detail}`);
+            const detail = typeof error.response?.data?.detail === 'string'
+                ? error.response?.data?.detail
+                : JSON.stringify(error.response?.data?.detail) || error.message;
+
+            // Self-Healing Logic for Schema Errors
+            if (detail && (detail.includes("UndefinedColumn") || detail.includes("is_active"))) {
+                try {
+                    // Attempt to fix the schema
+                    await api.get('/api/fix_db_schema');
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait a sec
+
+                    // Retry Login *once*
+                    const retryResponse = await api.post(endpoint, payload, config);
+                    if (!isRegistering) {
+                        localStorage.setItem('token', retryResponse.data.access_token);
+                        navigate('/dashboard');
+                        return; // Exit success
+                    }
+                } catch (repairError) {
+                    console.error("Auto-repair failed:", repairError);
+                    alert(`Authentication failed and auto-repair failed!\nError: ${detail}`);
+                }
+            } else {
+                alert(`Authentication failed!\nStatus: ${status}\nURL: ${url}\nError: ${detail}`);
+            }
         } finally {
             setLoading(false);
         }
