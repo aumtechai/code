@@ -1,34 +1,12 @@
 import React, { useEffect } from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { initializeIAP } from './iap';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import Support from './components/Support';
-
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  return token ? children : <Navigate to="/login" />;
-};
+import { HashRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
-  useEffect(() => {
-    // Wrap in try-catch to prevent app crash if plugin is missing
-    try {
-      initializeIAP();
-    } catch (e) {
-      console.error("IAP Init Failed", e);
-    }
-  }, []);
-
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/support" element={<Support onBack={() => window.history.back()} />} />
-        <Route path="/" element={<Login />} />
-      </Routes>
-    </HashRouter>
+    <div style={{ padding: '50px', background: 'white', height: '100vh', color: 'black' }}>
+      <h1>System Check</h1>
+      <p>If you can see this, the App is running.</p>
+    </div>
   );
 }
 
