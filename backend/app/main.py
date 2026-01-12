@@ -78,7 +78,8 @@ def on_startup():
                     background="First-gen college student interested in AI.",
                     interests="Machine Learning, Robotics, History",
                     is_admin=False,
-                    is_faculty=False
+                    is_faculty=False,
+                    is_active=True
                 )
                 session.add(student)
                 print("Seeded student user")
@@ -235,3 +236,7 @@ async def debug_env():
     }
 
 app.include_router(router, prefix="/api")
+
+from app.api_tutoring import router as tutoring_router
+app.include_router(tutoring_router, prefix="/api")
+

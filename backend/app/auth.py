@@ -72,12 +72,51 @@ if "postgresql" in DATABASE_URL:
     # Remove 'sslmode=require' from URL if present to avoid conflicts with connect_args
     # SQLAlchemy prefers connect_args for SSL configuration
     clean_url = DATABASE_URL.split("?")[0]
-    engine = create_engine(clean_url, echo=False, connect_args={"sslmode": "require"})
+    # PG-Bouncer Compatibility & connection pooling
+    engine = create_engine(
+        clean_url, 
+        echo=False, 
+        pool_size=20, # Keep 20 connections open
+        max_overflow=10, # Allow spiking to 30
+        pool_pre_ping=True, # Verify connection is alive before using
+        connect_args={"sslmode": "require"}
+    )
 else:
     engine = create_engine(DATABASE_URL, echo=False, connect_args={"check_same_thread": False})
 
+# Read Replica Configuration
+DATABASE_READ_URL = os.getenv("DATABASE_READ_URL", DATABASE_URL) # Fallback to primary if not set
+if DATABASE_READ_URL.startswith("postgres://"):
+    DATABASE_READ_URL = DATABASE_READ_URL.replace("postgres://", "postgresql://", 1)
+
+if "postgresql" in DATABASE_READ_URL:
+    clean_read_url = DATABASE_READ_URL.split("?")[0]
+    # In a real read replica, we might want separate connection args
+    engine_read = create_engine(
+        clean_read_url, 
+        echo=False, 
+        pool_size=20,
+        max_overflow=10,
+        pool_pre_ping=True,
+        connect_args={"sslmode": "require"}
+    )
+else:
+    # Use same engine for SQLite/Dev to avoid locking issues on same file
+    if DATABASE_READ_URL == DATABASE_URL:
+        engine_read = engine
+    else:
+        engine_read = create_engine(DATABASE_READ_URL, echo=False, connect_args={"check_same_thread": False})
+
 def get_session():
     with Session(engine) as session:
+        yield session
+
+def get_read_session():
+    """
+    Dependency for Read-Only operations.
+    Connects to the Read Replica if configured, otherwise falls back to primary.
+    """
+    with Session(engine_read) as session:
         yield session
 
 async def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)):

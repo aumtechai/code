@@ -12,7 +12,7 @@ from datetime import datetime
 
 # Configuration
 BASE_URL = "https://student-success-backend-cnya.onrender.com"
-FRONTEND_URL = "https://studentsuccess-nu.vercel.app"
+FRONTEND_URL = "https://aumtech.ai"
 
 # Test Results
 test_results = {

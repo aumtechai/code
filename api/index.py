@@ -11,9 +11,18 @@ from sqlmodel import SQLModel, Field
 app = FastAPI(title="Student Success API - Minimal")
 
 # CORS
+# CORS
+origins = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://studentsuccess-nu.vercel.app",
+    "https://aumtech.ai",
+    "https://www.aumtech.ai"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -44,17 +53,34 @@ try:
             ("major", "VARCHAR"),
             ("background", "VARCHAR"),
             ("interests", "VARCHAR"),
-            ("ai_insight", "VARCHAR")
+            ("ai_insight", "VARCHAR"),
+            ("is_active", "BOOLEAN")
         ]
         with engine.connect() as conn:
             for col_name, col_type in columns_to_add:
                 if col_name not in existing_columns:
                     try:
                         print(f"Migrating: Adding {col_name} to user table...")
-                        conn.execute(text(f'ALTER TABLE "user" ADD COLUMN {col_name} {col_type}'))
+                        if col_type == "BOOLEAN":
+                             conn.execute(text(f'ALTER TABLE "user" ADD COLUMN {col_name} {col_type} DEFAULT 0'))
+                        else:
+                             conn.execute(text(f'ALTER TABLE "user" ADD COLUMN {col_name} {col_type}'))
                         conn.commit()
                     except Exception as me:
                         print(f"Migration error for {col_name}: {me}")
+            
+            # FORCE UPDATE ACTIVE STATUS
+            try:
+                # 1. Deactivate everyone by default
+                conn.execute(text("UPDATE user SET is_active = 0"))
+                # 2. Activate Specific Users (Ram and Shiva)
+                conn.execute(text("UPDATE user SET is_active = 1 WHERE email LIKE '%shiva%' OR email LIKE '%ram%'"))
+                # 3. Ensure admins are active too
+                conn.execute(text("UPDATE user SET is_active = 1 WHERE is_admin = 1"))
+                conn.commit()
+                print("User activation statuses updated.")
+            except Exception as e:
+                print(f"Error updating active status: {e}")
 
         # SEED USERS (Test Accounts) - Critical for Vercel
         try:
@@ -98,6 +124,30 @@ try:
                     )
                     session.add(admin)
                 
+                # 4. Ram (Active)
+                if not session.exec(select(User).where(User.email == "ram@aumtech.ai")).first():
+                    print("Seeding ram@aumtech.ai...")
+                    ram = User(
+                        email="ram@aumtech.ai",
+                        password_hash=get_password_hash("ram123"),
+                        full_name="Ram User",
+                        is_active=True,
+                        is_admin=True
+                    )
+                    session.add(ram)
+                
+                # 5. Shiva (Active)
+                if not session.exec(select(User).where(User.email == "shiva@aumtech.ai")).first():
+                    print("Seeding shiva@aumtech.ai...")
+                    shiva = User(
+                        email="shiva@aumtech.ai",
+                        password_hash=get_password_hash("shiva123"),
+                        full_name="Shiva User",
+                        is_active=True,
+                        is_admin=True
+                    )
+                    session.add(shiva)
+
                 session.commit()
                 print("Seeding complete.")
         except Exception as seed_err:
@@ -106,6 +156,103 @@ try:
 
 except Exception as e:
     print(f"Failed to create tables or migrate on import: {e}")
+
+@app.get("/api/fix_db_schema")
+def fix_db_schema():
+    from app.auth import engine
+    from sqlalchemy import text, inspect
+    results = []
+    
+    try:
+        # Check current columns
+        inspector = inspect(engine)
+        if not inspector.has_table("user"):
+            return {"status": "error", "message": "Table 'user' does not exist!"}
+            
+        columns = [c["name"] for c in inspector.get_columns("user")]
+        results.append(f"Current columns: {columns}")
+        
+        with engine.connect() as conn:
+            # 1. Add is_active if missing
+            if "is_active" not in columns:
+                try:
+                    conn.execute(text('ALTER TABLE "user" ADD COLUMN is_active BOOLEAN DEFAULT FALSE'))
+                    conn.commit()
+                    results.append("Added is_active column successfully.")
+                except Exception as e:
+                    results.append(f"Failed to add is_active: {e}")
+            else:
+                results.append("is_active column already exists.")
+
+            # 2. Update Data
+            try:
+                 conn.execute(text("UPDATE \"user\" SET is_active = FALSE"))
+                 conn.execute(text("UPDATE \"user\" SET is_active = TRUE, is_admin = TRUE WHERE email LIKE '%shiva%' OR email LIKE '%ram%'"))
+                 conn.execute(text("UPDATE \"user\" SET is_active = TRUE WHERE is_admin = TRUE"))
+                 conn.commit()
+                 results.append("Updated user statuses.")
+            except Exception as e:
+                results.append(f"Update status error: {e}")
+                
+            # 3. Double check ram/shiva existence
+            try:
+                emails = conn.execute(text("SELECT email, is_active FROM \"user\" WHERE email LIKE '%shiva%' OR email LIKE '%ram%'")).fetchall()
+                results.append(f"Verification: {str(emails)}")
+            except Exception as e:
+                results.append(f"Verification error: {e}")
+
+    except Exception as e:
+        import traceback
+        return {"status": "connection_error", "message": str(e), "traceback": traceback.format_exc()}
+            
+    return {"status": "done", "results": results}
+
+@app.get("/api/admin/reset_users")
+def reset_demo_users():
+    """Forces deletion and recreation of Ram and Shiva users"""
+    from app.auth import engine, get_password_hash
+    from sqlmodel import Session, select
+    from app.models import User
+    
+    log = []
+    try:
+        with Session(engine) as session:
+            # Delete existing
+            users_to_reset = ["ram@aumtech.ai", "shiva@aumtech.ai"]
+            for email in users_to_reset:
+                user = session.exec(select(User).where(User.email == email)).first()
+                if user:
+                    session.delete(user)
+                    log.append(f"Deleted existing {email}")
+            
+            session.commit()
+            
+            # Create fresh
+            ram = User(
+                email="ram@aumtech.ai",
+                password_hash=get_password_hash("ram123"),
+                full_name="Ram User",
+                is_active=True,
+                is_admin=True
+            )
+            session.add(ram)
+            
+            shiva = User(
+                email="shiva@aumtech.ai",
+                password_hash=get_password_hash("shiva123"),
+                full_name="Shiva User",
+                is_active=True,
+                is_admin=True
+            )
+            session.add(shiva)
+            
+            session.commit()
+            log.append("Created ram@aumtech.ai (ram123) and shiva@aumtech.ai (shiva123)")
+            
+            return {"status": "success", "log": log}
+    except Exception as e:
+        import traceback
+        return {"status": "error", "message": str(e), "traceback": traceback.format_exc()}
 
 @app.get("/api/debug-routes")
 def debug_routes():
@@ -158,7 +305,7 @@ def test_gemini():
     try:
         import google.generativeai as genai
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-flash-latest')
+        model = genai.GenerativeModel('gemini-pro')
         response = model.generate_content("Ping")
         return {"status": "success", "response": response.text}
     except Exception as e:

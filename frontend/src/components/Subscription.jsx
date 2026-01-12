@@ -8,43 +8,41 @@ import api from '../api';
 const Subscription = ({ userData, onBack }) => {
     const [loading, setLoading] = useState(false);
     const [packages, setPackages] = useState([]);
-    const isNative = Capacitor.isNativePlatform();
+    const [debugOfferings, setDebugOfferings] = useState(null);
+    const [debugError, setDebugError] = useState(null);
+
+    // Improved Platform Detection
+    const [platform, setPlatform] = useState('unknown');
+    const [isNative, setIsNative] = useState(false);
 
     useEffect(() => {
+        // Determine platform safely on mount
+        const p = Capacitor.getPlatform();
+        const native = Capacitor.isNativePlatform();
+        setPlatform(p);
+        setIsNative(native);
+
+        console.log(`Platform detected: ${p}, Native: ${native}`);
+
         const loadOfferings = async () => {
-            if (isNative) {
+            if (native) {
                 try {
                     const offerings = await getRevenueCatOfferings();
-                    console.log("DEBUG: Offerings fetched:", offerings);
+                    setDebugOfferings(offerings);
 
-                    if (!offerings) {
-                        // Alert 1: SDK might be null
-                        alert("Debug: IAP SDK failed to load or return offerings.");
-                        return;
-                    }
-
-                    if (!offerings.current) {
-                        // Alert 2: No 'current' (default) offering found
-                        // This usually means Offering identifier is not 'default' in Dashboard
-                        alert("Debug: No 'default' offering found in RevenueCat. Check Offering ID.");
-                        return;
-                    }
-
-                    if (offerings.current.availablePackages.length === 0) {
-                        // Alert 3: Offering empty
-                        alert("Debug: 'default' offering found but it has 0 packages. Check Product attachment.");
-                    } else {
+                    if (offerings && offerings.current && offerings.current.availablePackages.length > 0) {
                         setPackages(offerings.current.availablePackages);
-                        // Optional: Alert success for confirmation
-                        // alert(`Debug: Found ${offerings.current.availablePackages.length} packages.`);
+                    } else {
+                        setDebugError("Offerings fetched but empty or malformed. " + JSON.stringify(offerings));
                     }
                 } catch (e) {
-                    alert("Debug: Error fetching offerings: " + JSON.stringify(e));
+                    console.error("Error fetching RevenueCat offerings", e);
+                    setDebugError(e.message || JSON.stringify(e));
                 }
             }
         };
         loadOfferings();
-    }, [isNative]);
+    }, []);
 
     const handleSubscribe = async () => {
         setLoading(true);
@@ -52,28 +50,32 @@ const Subscription = ({ userData, onBack }) => {
             if (isNative) {
                 // iOS / Android Native IAP
                 if (packages.length > 0) {
-                    const { customerInfo } = await purchaseRevenueCatPackage(packages[0]);
-                    if (customerInfo.entitlements.active['premium']) {
-                        alert("Upgrade Successful! Welcome to Premium.");
-                        // Ideally, call backend to sync status here
+                    try {
+                        const { customerInfo } = await purchaseRevenueCatPackage(packages[0]);
+                        if (customerInfo.entitlements.active['premium']) {
+                            alert("Upgrade Successful! Welcome to Premium.");
+                        }
+                    } catch (purchaseError) {
+                        alert("Purchase Error: " + purchaseError.message);
+                        if (purchaseError.userCancelled) return;
                     }
                 } else {
-                    alert("No products available. Please check configuration.");
+                    alert(`No available products. Packages: ${packages.length}. Debug Info: ${JSON.stringify(debugOfferings)}`);
                 }
             } else {
                 // Web Stripe Payment
-                const res = await api.post('/api/payments/create-checkout-session', { price_id: 'price_premium_monthly' });
-                if (res.data.url) {
-                    window.location.href = res.data.url;
+                try {
+                    const res = await api.post('/api/payments/create-checkout-session', { price_id: 'price_premium_monthly' });
+                    if (res.data.url) {
+                        window.location.href = res.data.url;
+                    }
+                } catch (webErr) {
+                    alert("Web Payment Failed: " + (webErr.response?.status || webErr.message));
                 }
             }
         } catch (err) {
             console.error("Payment/Purchase failed", err);
-            if (isNative && err.userCancelled) {
-                // User cancelled, do nothing
-            } else {
-                alert("Failed to initiate payment. " + (err.message || ""));
-            }
+            alert("Error: " + (err.message || JSON.stringify(err)));
         } finally {
             setLoading(false);
         }
@@ -89,6 +91,16 @@ const Subscription = ({ userData, onBack }) => {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
+
+            {/* DEBUG PANEL - TEMPORARY */}
+            <div style={{ background: '#333', color: '#0f0', padding: '15px', borderRadius: '8px', marginBottom: '20px', fontFamily: 'monospace', fontSize: '12px', wordBreak: 'break-all' }}>
+                <strong>IAP DEBUGGER v2</strong><br />
+                Detected Platform: {platform}<br />
+                Is Native: {isNative ? 'YES' : 'NO'}<br />
+                Packages Found: {packages.length}<br />
+                Status: {debugError ? <span style={{ color: 'red' }}>{debugError}</span> : 'OK'}
+            </div>
+
             <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}

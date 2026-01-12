@@ -16,6 +16,7 @@ class User(SQLModel, table=True):
     is_admin: bool = Field(default=False)
     is_faculty: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_active: bool = Field(default=False)
     
     # Subscription fields
     trial_ends_at: Optional[datetime] = Field(default=None)
@@ -176,3 +177,34 @@ class Campaign(SQLModel, table=True):
     status: str = Field(default="active") # active, completed, cancelled
 
 
+# --- Tutoring System Models (Added for Phase 1) ---
+
+class TutoringCourse(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    code: str = Field(index=True) # e.g. "CS101"
+    name: str # "Intro to CS"
+    department: str
+
+class TutoringSection(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    course_id: int = Field(foreign_key="tutoringcourse.id")
+    instructor_id: int = Field(foreign_key="user.id") # Faculty
+    term: str = Field(default="Spring 2026")
+
+class TutoringEnrollment(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    section_id: int = Field(foreign_key="tutoringsection.id")
+    role: str = Field(default="student") # student, ta
+
+class TutoringAppointment(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_id: int = Field(foreign_key="user.id")
+    tutor_id: int = Field(foreign_key="user.id")
+    section_id: int = Field(foreign_key="tutoringsection.id")
+    start_time: datetime
+    end_time: datetime
+    status: str = Field(default="scheduled") # scheduled, completed, cancelled
+    triage_note: Optional[str] = None
+    triage_image_url: Optional[str] = None
+    ai_summary: Optional[str] = None # Logic analysis of the problem

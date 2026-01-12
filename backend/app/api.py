@@ -86,6 +86,8 @@ async def stripe_webhook(request: Request, session: Session = Depends(get_sessio
     return {"status": "success"}
     
 async def verify_subscription(current_user: User = Depends(get_current_user)):
+    if current_user.is_admin:
+        return True
     if current_user.subscription_status == "active":
         return True
     if current_user.subscription_status == "trialing":
@@ -418,7 +420,8 @@ async def generate_flashcards(
     # 1. Gemini Generation (Preferred)
     debug_info = "Unknown Error"
     api_key = os.environ.get("GOOGLE_API_KEY")
-    print(f"DEBUG FLASHCARDS: API Key present? {bool(api_key)}")
+    # print(f"DEBUG FLASHCARDS: API Key present? {bool(api_key)}")
+    
     if api_key:
         print(f"DEBUG FLASHCARDS: Attempting Gemini generation for topic_request={is_topic_request}")
         try:
@@ -426,12 +429,13 @@ async def generate_flashcards(
             import json
             
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-flash-latest')
+            # Switch to 'gemini-1.5-flash' to avoid 404 on 'gemini-pro'
+            model = genai.GenerativeModel('gemini-1.5-flash')
             
             if is_topic_request:
-                prompt = f"Generate exactly 8 flashcards for the topic: '{topic_query}'. Return valid JSON array of objects with 'front' and 'back' keys."
+                prompt = f"Generate exactly 20 flashcards for the topic: '{topic_query}'. Return valid JSON array of objects with 'front' and 'back' keys."
             else:
-                prompt = f"Extract exactly 8 flashcards from the following notes. Return valid JSON array of objects with 'front' and 'back' keys.\n\nNotes:\n{request.note_content[:2000]}"
+                prompt = f"Extract exactly 20 flashcards from the following notes. Return valid JSON array of objects with 'front' and 'back' keys.\n\nNotes:\n{request.note_content[:2000]}"
 
             print(f"DEBUG FLASHCARDS: Sending prompt to Gemini...")
             response = model.generate_content(
@@ -439,9 +443,9 @@ async def generate_flashcards(
                 generation_config={"response_mime_type": "application/json"}
             )
             
-            print(f"DEBUG FLASHCARDS: Got response from Gemini, parsing...")
+            # print(f"DEBUG FLASHCARDS: Got response from Gemini, parsing...")
             data = json.loads(response.text)
-            # data is usually the array directly or an object, Gemini follows schema well but lets handle both
+            
             if isinstance(data, list):
                 cards_data = data
             elif isinstance(data, dict):
@@ -449,69 +453,110 @@ async def generate_flashcards(
             else:
                 cards_data = []
 
-            # Formate response
+            # Format response
             cards = [{"id": f"card-{i}", "front": c["front"], "back": c["back"]} for i, c in enumerate(cards_data)]
             print(f"DEBUG FLASHCARDS: Successfully generated {len(cards)} cards")
             return {"flashcards": cards}
             
         except Exception as e:
             import traceback
-            # Try to extract clean message from Google API error
             error_str = str(e)
             if "SERVICE_DISABLED" in error_str:
-                debug_info = "Google API Service is Disabled. Enable 'Generative Language API' in Google Cloud Console."
+                debug_info = "Google API Service is Disabled."
             elif "API_KEY_INVALID" in error_str or "403" in error_str:
                 debug_info = "Invalid or Blocked API Key."
+            elif "404" in error_str:
+                 debug_info = "Model not found (404). Check model name."
             else:
-                # Regex mock or simple find
-                import re
-                match = re.search(r'message: "(.*?)"', error_str)
-                if match:
-                    debug_info = f"Google Error: {match.group(1)}"
-                else:
-                    debug_info = f"Error: {error_str[:100]}..."
+                debug_info = f"Error: {error_str[:100]}..."
+                
             print(f"DEBUG: Gemini Flashcard Gen Failed. Error: {e}")
-            print(f"DEBUG: Traceback: {traceback.format_exc()}")
-            # Fallthrough to mock
+            # print(f"DEBUG: Traceback: {traceback.format_exc()}")
+            # Fallthrough to Rule-based
             
     else:
-        print("DEBUG FLASHCARDS: No API key found, using mock data")
+        print("DEBUG FLASHCARDS: No API key found, using fallback")
         debug_info = "GOOGLE_API_KEY not found"
             
-    # 2. Mock Logic (Fallback)
+    # 2. Rule-Based Generation (Fallback)
     if is_topic_request:
+        # For topic requests without AI, we can only return placeholder data
+        # or maybe search Wikipedia if we had that tool connected, but here just Mock.
         topic = topic_query or "General Knowledge"
         cards = []
-        for i in range(1, 9): # Reduced to 8 to match request
+        for i in range(1, 11): 
             cards.append({
                 "id": f"mock-{i}", 
-                "front": f"Concept {i} of {topic}", 
-                "back": f"This is the detailed explanation for concept {i} related to {topic}. It is automatically generated since the AI service is offline. (Debug: {debug_info})"
+                "front": f"{topic} Concept {i}", 
+                "back": f"This is a placeholder definition for concept {i} related to {topic}. (AI generation is disabled)"
             })
         return {"flashcards": cards}
 
+    # Content-based generation
     content = request.note_content or ""
-    sentences = [s.strip() for s in content.split('.') if len(s.strip()) > 10]
     cards = []
     
-    if len(sentences) < 5:
-        cards = [{"id": f"fallback-{i}", "front": f"Key Term {i}", "back": f"Definition derived from {content[:20]}..."} for i in range(1, 21)]
-        return {"flashcards": cards}
+    # Try line-based parsing first (common for notes)
+    import re
+    lines = [l.strip() for l in content.split('\n') if l.strip()]
+    
+    # If very few lines, might be a paragraph text, try splitting by periods
+    if len(lines) < 3 and len(content) > 50:
+        lines = [s.strip() for s in content.split('.') if len(s.strip()) > 5]
 
-    for i, sent in enumerate(sentences[:20]): 
-        if ':' in sent:
-            parts = sent.split(':', 1)
-            front, back = parts[0].strip(), parts[1].strip()
-        elif ' is ' in sent:
-            parts = sent.split(' is ', 1)
-            front, back = parts[0].strip(), parts[1].strip()
-        else:
-            front = f"Concept {i+1}"
-            back = sent
-            
-        cards.append({"id": f"card-{i}", "front": front, "back": back})
+    for i, line in enumerate(lines):
+        front = ""
+        back = ""
         
-    return {"flashcards": cards}
+        # Primary Delimiters: Colon or Dash
+        if ':' in line:
+            parts = line.split(':', 1)
+            f, b = parts[0].strip(), parts[1].strip()
+            if f and b and len(f) < 60: # Assume 'Front' is reasonably short
+                front, back = f, b
+        elif ' - ' in line:
+            parts = line.split(' - ', 1)
+            f, b = parts[0].strip(), parts[1].strip()
+            if f and b and len(f) < 60:
+                front, back = f, b
+        
+        # Keyword patterns if no delimiter found
+        if not front:
+            # "X is Y" pattern
+            match = re.match(r'^(.+?)\s+(is|are|refers to|means)\s+(.+)$', line, re.IGNORECASE)
+            if match:
+                f = match.group(1).strip()
+                b = match.group(3).strip()
+                if len(f) < 50:
+                    front, back = f, b
+        
+        # If we successfully extracted a pair
+        if front and back:
+            cards.append({
+                "id": f"card-{len(cards)}", 
+                "front": front, 
+                "back": back
+            })
+            
+    # If strict parsing yielded few results, fall back to sentence-based chunks
+    if len(cards) < 3:
+        sentences = [s.strip() for s in content.replace('\n', ' ').split('.') if len(s.strip()) > 10]
+        # Avoid duplicates if some were caught above
+        existing_backs = {c['back'] for c in cards}
+        
+        for i, sent in enumerate(sentences):
+            if sent in existing_backs: continue
+            
+            # Simple heuristic
+            front = f"Key Point {len(cards)+1}"
+            back = sent
+            cards.append({
+                "id": f"card-{len(cards)}", 
+                "front": front, 
+                "back": back
+            })
+            
+    return {"flashcards": cards[:30]}
 
 
 # --- Auth Endpoints ---
@@ -555,6 +600,12 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Sessi
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        if not user.is_active:
+             raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Account is inactive. Please contact your administrator.",
             )
         
         access_token = create_access_token(data={"sub": user.email})
