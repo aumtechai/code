@@ -2,10 +2,23 @@ import axios from 'axios';
 
 // Dynamic base URL to support www, non-www, and localhost
 const getBaseUrl = () => {
+    // If running in Capacitor (Native), use absolute URL
+    // We detect this by checking if window.Capacitor is defined or if protocol is not http(s)
+    const isNative = window.Capacitor?.isNativePlatform();
+
+    // Check if we are in development (localhost)
     if (import.meta.env.MODE === 'development') {
         return 'http://localhost:8000';
     }
-    return ''; // Relative path for production (Same Origin)
+
+    // PRODUCTION LOGIC
+    if (isNative) {
+        // Native App must point to remote server
+        return 'https://aumtech.ai';
+    } else {
+        // Web App (Vercel) uses relative path
+        return '';
+    }
 };
 
 const api = axios.create({
