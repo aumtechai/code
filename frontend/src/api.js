@@ -1,24 +1,26 @@
 import axios from 'axios';
 
-// Dynamic base URL to support www, non-www, and localhost
+// Dynamic base URL
 const getBaseUrl = () => {
-    // If running in Capacitor (Native), use absolute URL
-    // We detect this by checking if window.Capacitor is defined or if protocol is not http(s)
-    const isNative = window.Capacitor?.isNativePlatform();
+    const origin = window.location.origin;
+    const protocol = window.location.protocol;
 
-    // Check if we are in development (localhost)
+    // Development Environment
     if (import.meta.env.MODE === 'development') {
         return 'http://localhost:8000';
     }
 
-    // PRODUCTION LOGIC
-    if (isNative) {
-        // Native App must point to remote server
-        return 'https://studentsuccess-nu.vercel.app';
-    } else {
-        // Web App (Vercel) uses relative path
-        return '';
+    // Native App (Capacitor/Ionic/File)
+    // Identify by protocol (capacitor: or file:) or specific native origins
+    if (protocol === 'capacitor:' || protocol === 'file:' || origin.includes('localhost')) {
+        // Double check this isn't local dev server on port 5173
+        if (!origin.includes(':5173')) {
+            return 'https://studentsuccess-nu.vercel.app';
+        }
     }
+
+    // Fallback for Standard Web App (Relative path)
+    return '';
 };
 
 const api = axios.create({
