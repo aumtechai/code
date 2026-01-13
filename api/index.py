@@ -17,7 +17,10 @@ origins = [
     "http://localhost:5173",
     "https://studentsuccess-nu.vercel.app",
     "https://aumtech.ai",
-    "https://www.aumtech.ai"
+    "https://www.aumtech.ai",
+    "capacitor://localhost",
+    "http://localhost",
+    "ionic://localhost"
 ]
 
 app.add_middleware(
