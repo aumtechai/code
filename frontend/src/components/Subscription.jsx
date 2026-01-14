@@ -15,23 +15,17 @@ const Subscription = ({ userData, onBack }) => {
 
     useEffect(() => {
         const loadOfferings = async () => {
-            // Re-check native status just in case
-            const native = Capacitor.isNativePlatform();
-            setIsNative(native);
-
-            if (native) {
-                try {
-                    const offerings = await getRevenueCatOfferings();
-                    if (offerings && offerings.current && offerings.current.availablePackages.length > 0) {
-                        setPackages(offerings.current.availablePackages);
-                    } else {
-                        // Silent log for production, but essential for debugging
-                        console.warn("No IAP packages found. Check RevenueCat & App Store Connect configuration.");
-                    }
-                } catch (e) {
-                    console.error("Error fetching offerings", e);
-                    setDebugError(e.message);
+            // Unified Loading: Works for Web (Mock) and Native (Real)
+            try {
+                const offerings = await getRevenueCatOfferings();
+                if (offerings && offerings.current && offerings.current.availablePackages.length > 0) {
+                    setPackages(offerings.current.availablePackages);
+                } else {
+                    console.warn("No IAP packages found.");
                 }
+            } catch (e) {
+                console.error("Error fetching offerings", e);
+                setDebugError(e.message);
             }
         };
         loadOfferings();
@@ -40,31 +34,21 @@ const Subscription = ({ userData, onBack }) => {
     const handleSubscribe = async () => {
         setLoading(true);
         try {
-            if (isNative) {
-                if (packages.length > 0) {
-                    try {
-                        const { customerInfo } = await purchaseRevenueCatPackage(packages[0]);
-                        if (customerInfo.entitlements.active['premium']) {
-                            alert("Success! Your subscription is active.");
-                            // Ideally trigger a user profile refresh here
-                        }
-                    } catch (e) {
-                        if (!e.userCancelled) {
-                            alert("Purchase failed: " + e.message);
-                        }
+            // Unified Flow: Use iOS/Android Wrapper (Real) OR Web (Mock)
+            if (packages.length > 0) {
+                try {
+                    const { customerInfo } = await purchaseRevenueCatPackage(packages[0]);
+                    if (customerInfo.entitlements.active['premium']) {
+                        alert("Success! Your subscription is active.");
+                        // Ideally trigger a user profile refresh here
                     }
-                } else {
-                    alert("Store is temporarily unavailable. Please try again later.");
+                } catch (e) {
+                    if (!e.userCancelled) {
+                        alert("Purchase failed: " + e.message);
+                    }
                 }
             } else {
-                // Web Payment Logic (Strictly Non-Native Only)
-                // This block is unreachable on iOS/Android builds if isNative is correct
-                try {
-                    const res = await api.post('/api/payments/create-checkout-session', { price_id: 'price_premium_monthly' });
-                    if (res.data.url) window.location.href = res.data.url;
-                } catch (webErr) {
-                    alert("Payment initiation failed. Please try again.");
-                }
+                alert("Store is temporarily unavailable. Please try again later.");
             }
         } catch (err) {
             console.error(err);
@@ -180,7 +164,7 @@ const Subscription = ({ userData, onBack }) => {
                     {/* Button Rendering Logic: Only show if packages loaded OR if web */}
                     <button
                         onClick={handleSubscribe}
-                        disabled={loading || isSubscribed || (isNative && packages.length === 0)}
+                        disabled={loading || isSubscribed || (packages.length === 0)}
                         style={{
                             width: '100%',
                             padding: '16px',

@@ -11,12 +11,14 @@ const getBaseUrl = () => {
     }
 
     // Native App (Capacitor/Ionic/File)
-    // Identify by protocol (capacitor: or file:) or specific native origins
-    if (protocol === 'capacitor:' || protocol === 'file:' || origin.includes('localhost')) {
-        // Double check this isn't local dev server on port 5173
-        if (!origin.includes(':5173')) {
-            return 'https://studentsuccess-nu.vercel.app';
-        }
+    // Identify by protocol (capacitor: or file:)
+    if (protocol === 'capacitor:' || protocol === 'file:') {
+        return 'https://studentsuccess-nu.vercel.app';
+    }
+
+    // specific fix for localhost to ensure it hits local backend
+    if (origin.includes('localhost')) {
+        return 'http://localhost:8000';
     }
 
     // Fallback for Standard Web App (Relative path)
