@@ -164,7 +164,7 @@ const Subscription = ({ userData, onBack }) => {
                     {/* Button Rendering Logic: Only show if packages loaded OR if web */}
                     <button
                         onClick={handleSubscribe}
-                        disabled={loading || isSubscribed || (packages.length === 0)}
+                        disabled={loading || isSubscribed || (isNative && packages.length === 0)}
                         style={{
                             width: '100%',
                             padding: '16px',
@@ -189,6 +189,18 @@ const Subscription = ({ userData, onBack }) => {
                                     'Upgrade to Premium'}
                         {!isSubscribed && <CreditCard size={20} />}
                     </button>
+
+                    {/* Retry Link for Native if Store is Unavailable (Helps if network was flakey during review) */}
+                    {isNative && packages.length === 0 && !loading && (
+                         <div style={{ textAlign: 'center', marginTop: '0.75rem' }}>
+                            <button
+                                onClick={() => window.location.reload()}
+                                style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.85rem', cursor: 'pointer', textDecoration: 'underline' }}
+                            >
+                                Retry loading products
+                            </button>
+                        </div>
+                    )}
 
                     {/* Native Restore Button (Required by Apple) */}
                     {isNative && !isSubscribed && (
