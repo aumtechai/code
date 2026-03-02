@@ -1,10 +1,20 @@
 {
     "name": "project-root",
     "private": true,
+    "engines": {
+        "node": ">=20.0.0"
+    },
     "workspaces": [
         "frontend"
     ],
     "scripts": {
-        "build": "npm run build -w frontend"
+        "build": "npm run build -w frontend -- --logLevel info"
+    },
+    "devDependencies": {
+        "vite": "^7.2.4"
+    },
+    "overrides": {
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0"
     }
 }

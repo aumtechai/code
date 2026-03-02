@@ -460,9 +460,7 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchUser();
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchHolds();
 
         const query = new URLSearchParams(window.location.search);
