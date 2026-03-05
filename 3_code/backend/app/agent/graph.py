@@ -67,7 +67,8 @@ async def tutor_agent(state: AgentState):
     if api_key:
         try:
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # Try the latest available model
+            model = genai.GenerativeModel('gemini-2.0-flash')
             
             prompt = f"""
             You are an expert academic tutor and advisor at a university.
@@ -88,16 +89,16 @@ async def tutor_agent(state: AgentState):
             response = model.generate_content(prompt)
             message = response.text
         except Exception as e:
-            print(f"Agent AI Gen Failed: {e}")
-            if grades:
-                message = f"{context_prefix}Based on your question about '{last_msg}', here is what I know: {rag_info}. Let's make a study plan!"
-            else:
-                message = f"{context_prefix}Great question! Here's what I know: {rag_info}. Feel free to ask me anything about your courses, deadlines, or wellness!"
+            error_msg = str(e)
+            print(f"Agent AI Gen Failed: {error_msg}")
+            # Temporarily show the error so we can debug it
+            message = f"[DEBUG - Gemini Error]: {error_msg}"
     else:
         if grades:
             message = f"{context_prefix}Based on your question about '{last_msg}', here is what I know: {rag_info}. Let's make a study plan!"
         else:
             message = f"{context_prefix}Great question! Here's what I know: {rag_info}. Feel free to ask me anything about your courses, deadlines, or wellness!"
+
 
     
     return {
