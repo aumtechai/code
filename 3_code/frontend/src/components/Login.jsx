@@ -219,7 +219,12 @@ Error: ${detail}`);
                             width="100%"
                         />
                     </div>
+                    {/* DEBUG BANNER - remove after fixing */}
+                    <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '0.5rem', wordBreak: 'break-all', background: 'rgba(255,100,0,0.1)', padding: '6px', borderRadius: '6px' }}>
+                        🔍 DEBUG - Client ID in use: <strong>{import.meta.env.VITE_GOOGLE_CLIENT_ID || 'NOT SET ⚠️'}</strong>
+                    </div>
                 </form>
+
                 <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--glass-border)' }}>
                     <p style={{ color: '#94a3b8', fontSize: '0.9rem', cursor: 'pointer', transition: 'color 0.2s' }} onClick={() => setIsRegistering(!isRegistering)}>
                         {isRegistering ? (
