@@ -1,0 +1,239 @@
+/* =============================================
+   AumTech.ai Marketing Pages – Shared Styles
+   Light Mode
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary:   #4361EE;
+  --accent:    #7B2FBE;
+  --success:   #2DC653;
+  --warning:   #F4A100;
+  --danger:    #E63946;
+  --bg:        #F7F8FC;
+  --surface:   #FFFFFF;
+  --border:    #E4E6F0;
+  --text:      #1A1D2E;
+  --muted:     #6B7280;
+  --radius:    10px;
+  --shadow:    0 2px 12px rgba(67,97,238,.08);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ---- NAV ---- */
+nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .85rem;
+  font-weight: 500;
+  transition: color .2s;
+}
+nav a:hover { color: var(--primary); }
+nav .brand {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-right: auto;
+}
+nav .sep { color: var(--border); }
+
+/* ---- HERO HEADER ---- */
+.page-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: #fff;
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+}
+
+.page-header .icon {
+  font-size: 2.6rem;
+  margin-bottom: .5rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -.5px;
+}
+
+.page-header p {
+  opacity: .85;
+  margin-top: .4rem;
+  font-size: .95rem;
+}
+
+/* ---- MAIN CONTENT ---- */
+main {
+  max-width: 820px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem 4rem;
+}
+
+/* ---- CARD ---- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.6rem 1.8rem;
+  margin-bottom: 1.4rem;
+  box-shadow: var(--shadow);
+  transition: transform .2s, box-shadow .2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(67,97,238,.12);
+}
+
+.card h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.card ul li {
+  padding: .45rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .93rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+}
+.card ul li:last-child { border-bottom: none; }
+
+.card ul li::before {
+  content: '→';
+  color: var(--primary);
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+/* sub-list */
+.card ul ul {
+  margin-top: .4rem;
+  margin-left: 1.2rem;
+}
+.card ul ul li::before { content: '·'; color: var(--muted); }
+
+/* ---- NOTE / CALLOUT ---- */
+.note {
+  background: #EEF2FF;
+  border-left: 4px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: .85rem 1.1rem;
+  font-size: .9rem;
+  color: #3A3F6E;
+  margin-bottom: 1.4rem;
+}
+
+.note.warning {
+  background: #FFF7E6;
+  border-color: var(--warning);
+  color: #7A4F00;
+}
+
+.note.danger {
+  background: #FDECEA;
+  border-color: var(--danger);
+  color: #7E1D20;
+}
+
+/* ---- TAG PILLS ---- */
+.tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; }
+
+.tag {
+  padding: .25rem .75rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+
+.tag-blue   { background: #EEF2FF; color: var(--primary); }
+.tag-purple { background: #F3E8FF; color: var(--accent); }
+.tag-green  { background: #E6F9EE; color: #1A7F3C; }
+.tag-amber  { background: #FFF4DA; color: #9A6000; }
+.tag-red    { background: #FDECEA; color: var(--danger); }
+
+/* ---- GPA STATUS INDICATORS ---- */
+.gpa-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: .8rem;
+}
+.gpa-card {
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+}
+.gpa-card h3 { font-size: .85rem; font-weight: 600; margin-bottom: .25rem; }
+.gpa-card p  { font-size: .8rem; }
+
+.gpa-green  { background: #E6F9EE; color: #1A7F3C; border: 1px solid #A3E9BE; }
+.gpa-amber  { background: #FFF4DA; color: #9A6000; border: 1px solid #FACF5A; }
+.gpa-red    { background: #FDECEA; color: var(--danger); border: 1px solid #F8BCBD; }
+
+/* ---- BACK LINK ---- */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  text-decoration: none;
+  color: var(--primary);
+  font-size: .88rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+.back-link:hover { text-decoration: underline; }
+
+/* ---- FOOTER ---- */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: .8rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 600px) {
+  .page-header h1 { font-size: 1.5rem; }
+  .gpa-grid { grid-template-columns: 1fr; }
+}

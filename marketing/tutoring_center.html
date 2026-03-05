@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutoring Center | AumTech.ai</title>
+    <meta name="description"
+        content="Feature notes for the Tutoring Center – grades, GPA status indicators (Red/Amber/Green), and ADD/DROP prioritization." />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <nav>
+        <span class="brand">AumTech.ai</span>
+        <a href="index.html">Home</a>
+        <span class="sep">|</span>
+        <a href="tutoring_center.html">Tutoring Center</a>
+    </nav>
+
+    <div class="page-header">
+        <div class="icon">🎓</div>
+        <h1>Tutoring Center</h1>
+        <p>Feature requirements &amp; notes – recorded 3/5/26</p>
+    </div>
+
+    <main>
+        <a class="back-link" href="index.html">← Back to All Pages</a>
+
+        <div class="card">
+            <h2>📊 Course-Related Grades</h2>
+            <ul>
+                <li>Provide the current course-related grades (cumulative across all tests, quizzes, etc.).</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🚦 GPA Status Indicator</h2>
+            <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem;">Provide a Red / Amber / Green status to
+                indicate the level of successful progress.</p>
+            <div class="gpa-grid">
+                <div class="gpa-card gpa-green">
+                    <h3>🟢 Green</h3>
+                    <p>Grade A &amp; Above – On track</p>
+                </div>
+                <div class="gpa-card gpa-amber">
+                    <h3>🟡 Amber</h3>
+                    <p>Grade B–C – Needs attention</p>
+                </div>
+                <div class="gpa-card gpa-red">
+                    <h3>🔴 Red</h3>
+                    <p>Grade D &amp; Below – At risk</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Status-Based List</h2>
+            <ul>
+                <li>Also list courses <strong>sorted by status indicator</strong> (Red listed first).</li>
+                <li>This will help the student <strong>prioritize and decide</strong> ADD/DROP actions.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>➕➖ ADD/DROP Course</h2>
+            <ul>
+                <li>Form appears on the Dashboard (denoted as &lt;CHG&gt;).</li>
+                <li>List courses based on <strong>GPA Status Indicator</strong> to help determine what to DROP.</li>
+                <li>List alternate courses available in a <strong>future semester</strong> if Red in a course.</li>
+            </ul>
+        </div>
+
+        <div class="tags">
+            <span class="tag tag-blue">Tutoring</span>
+            <span class="tag tag-green">GPA</span>
+            <span class="tag tag-red">ADD/DROP</span>
+            <span class="tag tag-amber">Status Indicators</span>
+        </div>
+    </main>
+
+    <footer>AumTech.ai Marketing Notes &copy; 2026</footer>
+</body>
+
+</html>

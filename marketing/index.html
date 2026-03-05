@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketing Notes | AumTech.ai</title>
+    <meta name="description"
+        content="AumTech.ai product feature notes and marketing pages — handwritten notes transcribed 3/5/26." />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .page-link-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.4rem;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: var(--shadow);
+            transition: transform .2s, box-shadow .2s, border-color .2s;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+        .page-link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(67, 97, 238, .15);
+            border-color: var(--primary);
+        }
+
+        .page-link-card .icon {
+            font-size: 2rem;
+        }
+
+        .page-link-card h2 {
+            font-size: .97rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .page-link-card p {
+            font-size: .82rem;
+            color: var(--muted);
+        }
+
+        .section-label {
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 2rem;
+            margin-bottom: .75rem;
+            padding-bottom: .4rem;
+            border-bottom: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <span class="brand">AumTech.ai</span>
+        <a href="index.html">Home</a>
+    </nav>
+
+    <div class="page-header">
+        <div class="icon">📋</div>
+        <h1>Marketing Feature Notes</h1>
+        <p>Handwritten notes transcribed — Session: 3/5/26</p>
+    </div>
+
+    <main>
+        <p class="section-label">Student Tools</p>
+        <div class="page-grid">
+            <a class="page-link-card" href="voice_note.html">
+                <span class="icon">🎙️</span>
+                <h2>Voice Note</h2>
+                <p>Consent checks and lecture recording requirements</p>
+            </a>
+            <a class="page-link-card" href="study_timer.html">
+                <span class="icon">⏰</span>
+                <h2>Study Timer</h2>
+                <p>Alarms, study sessions, buddy system &amp; chat</p>
+            </a>
+            <a class="page-link-card" href="book_advisor.html">
+                <span class="icon">📖</span>
+                <h2>Book Advisor</h2>
+                <p>Course-based book suggestions in table or dropdown</p>
+            </a>
+            <a class="page-link-card" href="tutoring_center.html">
+                <span class="icon">🎓</span>
+                <h2>Tutoring Center</h2>
+                <p>Grades, GPA status indicators &amp; ADD/DROP flow</p>
+            </a>
+        </div>
+
+        <p class="section-label">Academic &amp; Registration</p>
+        <div class="page-grid">
+            <a class="page-link-card" href="course_management.html">
+                <span class="icon">📚</span>
+                <h2>Course Management</h2>
+                <p>Catalog descriptions, ADD/DROP deadlines</p>
+            </a>
+            <a class="page-link-card" href="hold_and_financial_aid.html">
+                <span class="icon">🏦</span>
+                <h2>Hold &amp; Financial Aid</h2>
+                <p>Chatbot, resolve hold simulation &amp; integration</p>
+            </a>
+        </div>
+
+        <p class="section-label">Career &amp; AI</p>
+        <div class="page-grid">
+            <a class="page-link-card" href="career_success.html">
+                <span class="icon">🚀</span>
+                <h2>Career Success</h2>
+                <p>Employer directory, career fairs &amp; chatbot</p>
+            </a>
+            <a class="page-link-card" href="ai_navigator.html">
+                <span class="icon">🧭</span>
+                <h2>AI Navigator</h2>
+                <p>SIS integration, mental health &amp; future trends</p>
+            </a>
+        </div>
+    </main>
+
+    <footer>AumTech.ai Marketing Notes &copy; 2026</footer>
+</body>
+
+</html>
