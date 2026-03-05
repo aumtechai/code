@@ -445,60 +445,61 @@ async def generate_flashcards(
     # print(f"DEBUG FLASHCARDS: API Key present? {bool(api_key)}")
     
     if api_key:
-        print(f"DEBUG FLASHCARDS: Attempting Gemini generation for topic_request={is_topic_request}")
+        print(f"DEBUG FLASHCARDS: Attempting Gemini REST generation for topic_request={is_topic_request}")
         try:
-            import google.generativeai as genai
-            import json
-            
-            genai.configure(api_key=api_key)
-            # Switch to 'gemini-1.5-flash' to avoid 404 on 'gemini-pro'
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            
+            import httpx, json
+
             if is_topic_request:
-                prompt = f"Generate exactly 20 flashcards for the topic: '{topic_query}'. Return valid JSON array of objects with 'front' and 'back' keys."
+                prompt = f"Generate exactly 20 flashcards for the topic: '{topic_query}'. Return a valid JSON array of objects with 'front' and 'back' keys only. No extra text."
             else:
-                prompt = f"Extract exactly 20 flashcards from the following notes. Return valid JSON array of objects with 'front' and 'back' keys.\n\nNotes:\n{request.note_content[:2000]}"
+                prompt = f"Extract exactly 20 flashcards from the following notes. Return a valid JSON array of objects with 'front' and 'back' keys only. No extra text.\n\nNotes:\n{request.note_content[:2000]}"
 
-            print(f"DEBUG FLASHCARDS: Sending prompt to Gemini...")
-            response = model.generate_content(
-                prompt,
-                generation_config={"response_mime_type": "application/json"}
-            )
-            
-            # print(f"DEBUG FLASHCARDS: Got response from Gemini, parsing...")
-            data = json.loads(response.text)
-            
-            if isinstance(data, list):
-                cards_data = data
-            elif isinstance(data, dict):
-                cards_data = data.get("flashcards", data.get("cards", []))
-            else:
-                cards_data = []
+            models_to_try = ['gemini-1.5-flash-8b', 'gemini-1.5-flash', 'gemini-1.5-pro']
+            response_text = None
 
-            # Format response
-            cards = [{"id": f"card-{i}", "front": c["front"], "back": c["back"]} for i, c in enumerate(cards_data)]
-            print(f"DEBUG FLASHCARDS: Successfully generated {len(cards)} cards")
-            return {"flashcards": cards}
-            
+            for model_name in models_to_try:
+                try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                    payload = {
+                        "contents": [{"parts": [{"text": prompt}]}],
+                        "generationConfig": {
+                            "responseMimeType": "application/json",
+                            "maxOutputTokens": 2048,
+                            "temperature": 0.4
+                        }
+                    }
+                    async with httpx.AsyncClient(timeout=30.0) as client:
+                        resp = await client.post(url, json=payload)
+                        resp.raise_for_status()
+                        data = resp.json()
+                        response_text = data["candidates"][0]["content"]["parts"][0]["text"]
+                        print(f"DEBUG FLASHCARDS: Gemini REST success with {model_name}")
+                        break
+                except Exception as model_err:
+                    print(f"DEBUG FLASHCARDS: {model_name} failed: {str(model_err)[:100]}")
+                    continue
+
+            if response_text:
+                parsed = json.loads(response_text)
+                if isinstance(parsed, list):
+                    cards_data = parsed
+                elif isinstance(parsed, dict):
+                    cards_data = parsed.get("flashcards", parsed.get("cards", []))
+                else:
+                    cards_data = []
+
+                cards = [{"id": f"card-{i}", "front": c["front"], "back": c["back"]} for i, c in enumerate(cards_data)]
+                print(f"DEBUG FLASHCARDS: Successfully generated {len(cards)} cards")
+                return {"flashcards": cards}
+
         except Exception as e:
-            import traceback
-            error_str = str(e)
-            if "SERVICE_DISABLED" in error_str:
-                debug_info = "Google API Service is Disabled."
-            elif "API_KEY_INVALID" in error_str or "403" in error_str:
-                debug_info = "Invalid or Blocked API Key."
-            elif "404" in error_str:
-                 debug_info = "Model not found (404). Check model name."
-            else:
-                debug_info = f"Error: {error_str[:100]}..."
-                
-            print(f"DEBUG: Gemini Flashcard Gen Failed. Error: {e}")
-            # print(f"DEBUG: Traceback: {traceback.format_exc()}")
-            # Fallthrough to Rule-based
-            
+            debug_info = f"Gemini REST Error: {str(e)[:100]}"
+            print(f"DEBUG: Gemini Flashcard Gen Failed: {e}")
+            # Fallthrough to rule-based
     else:
         print("DEBUG FLASHCARDS: No API key found, using fallback")
         debug_info = "GOOGLE_API_KEY not found"
+
             
     # 2. Rule-Based Generation (Fallback)
     if is_topic_request:
