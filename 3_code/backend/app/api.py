@@ -28,6 +28,25 @@ router = APIRouter()
 # Stripe Configuration
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
+@router.get("/debug/env")
+async def debug_env():
+    """Temporary debug endpoint to check which env vars are set (values hidden)."""
+    keys_to_check = [
+        "GOOGLE_API_KEY",
+        "GOOGLE_CLIENT_ID", 
+        "VITE_GOOGLE_CLIENT_ID",
+        "DATABASE_URL",
+        "CANVAS_API_TOKEN",
+        "SECRET_KEY",
+        "STRIPE_SECRET_KEY",
+    ]
+    return {
+        key: ("✅ SET" if os.getenv(key) else "❌ NOT SET")
+        for key in keys_to_check
+    }
+
+
+
 class CheckoutRequest(BaseModel):
     price_id: str
 
