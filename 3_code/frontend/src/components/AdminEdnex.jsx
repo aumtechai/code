@@ -19,6 +19,7 @@ const AdminEdnex = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [userData, setUserData] = useState(null);
     const [lookupError, setLookupError] = useState('');
+    const [selectedStudent, setSelectedStudent] = useState(null);
 
     useEffect(() => {
         if (activeTab === 'config') checkConfig();
@@ -67,9 +68,13 @@ const AdminEdnex = () => {
         setLoading(true);
         setLookupError('');
         setUserData(null);
+        setSelectedStudent(null);
         try {
             const res = await api.get(`/api/ednex/user/search/${encodeURIComponent(searchQuery)}`);
             setUserData(res.data);
+            if (res.data && res.data.results && res.data.results.length === 1) {
+                setSelectedStudent(res.data.results[0]);
+            }
         } catch (e) {
             setLookupError(e.response?.data?.detail || "No matching students found or error occurred.");
         } finally {
@@ -224,49 +229,120 @@ const AdminEdnex = () => {
                         {lookupError && <p style={{ color: '#dc2626', marginTop: '1rem' }}>{lookupError}</p>}
                     </div>
 
-                    {userData && userData.results && userData.results.map((student, index) => (
-                        <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
-                            <div style={{ paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0' }}>
-                                <h3 style={{ margin: 0, color: '#334155' }}>
-                                    {student.name} <span style={{ fontWeight: 'normal', color: '#64748b', fontSize: '1rem' }}>({student.email})</span>
-                                </h3>
-                                <p style={{ margin: '5px 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>EdNex Student ID: {student.ednex_student_id}</p>
+                    {userData && userData.results && !selectedStudent && (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+                            <h4 style={{ gridColumn: '1 / -1', marginBottom: 0 }}>Found {userData.results.length} student(s) matching '{searchQuery}'</h4>
+                            {userData.results.map((student, index) => (
+                                <div
+                                    key={index}
+                                    onClick={() => setSelectedStudent(student)}
+                                    style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
+                                    onMouseOver={(e) => e.currentTarget.style.borderColor = '#4f46e5'}
+                                    onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                                        <div style={{ background: '#e0e7ff', color: '#4338ca', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                                            {student.name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <h4 style={{ margin: 0, color: '#1e293b' }}>{student.name}</h4>
+                                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem' }}>{student.email}</p>
+                                        </div>
+                                    </div>
+                                    <p style={{ margin: '10px 0 0 0', color: '#94a3b8', fontSize: '0.8rem' }}>ID: {student.ednex_student_id.substring(0, 8)}...</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {selectedStudent && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
+                            <div style={{ paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <h2 style={{ margin: 0, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <div style={{ background: '#e0e7ff', color: '#4338ca', width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                                            {selectedStudent.name.charAt(0)}
+                                        </div>
+                                        {selectedStudent.name}
+                                    </h2>
+                                    <p style={{ margin: '5px 0 0 58px', color: '#64748b', fontSize: '1rem' }}>{selectedStudent.email} • ID: {selectedStudent.ednex_student_id}</p>
+                                </div>
+                                <button onClick={() => setSelectedStudent(null)} style={{ background: 'white', border: '1px solid #cbd5e1', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', color: '#475569' }}>
+                                    ← Back to Results
+                                </button>
                             </div>
 
-                            <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                <h4>Identity & Core</h4>
-                                <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                    {JSON.stringify(student.modules.mod00_users, null, 2)}
-                                </pre>
-                            </div>
-                            <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                <h4>SIS Profile (Mod 01)</h4>
-                                <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                    {JSON.stringify(student.modules.mod01_student_profiles, null, 2)}
-                                </pre>
-                            </div>
-                            <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                <h4>Financial Account (Mod 02)</h4>
-                                <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                    {JSON.stringify(student.modules.mod02_student_accounts, null, 2)}
-                                </pre>
-                            </div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                                {/* Identity Box */}
                                 <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                    <h4>Appointments (Mod 03)</h4>
-                                    <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                        {JSON.stringify(student.modules.mod03_advising_appointments, null, 2)}
-                                    </pre>
+                                    <h4 style={{ margin: '0 0 1rem 0', color: '#334155', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>Core Identity</h4>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '10px', fontSize: '0.9rem' }}>
+                                        <div style={{ color: '#64748b' }}>Role:</div><div>{selectedStudent.modules.mod00_users?.role}</div>
+                                        <div style={{ color: '#64748b' }}>Status:</div>
+                                        <div>
+                                            <span style={{ background: selectedStudent.modules.mod00_users?.is_active ? '#dcfce7' : '#fee2e2', color: selectedStudent.modules.mod00_users?.is_active ? '#16a34a' : '#dc2626', padding: '2px 8px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                                                {selectedStudent.modules.mod00_users?.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </div>
+                                        <div style={{ color: '#64748b' }}>Created:</div><div>{new Date(selectedStudent.modules.mod00_users?.created_at).toLocaleDateString()}</div>
+                                    </div>
                                 </div>
+
+                                {/* SIS Profile Box */}
                                 <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                    <h4>Enrollments (Mod 04)</h4>
-                                    <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem', maxHeight: '300px' }}>
-                                        {JSON.stringify(student.modules.mod04_enrollments, null, 2)}
-                                    </pre>
+                                    <h4 style={{ margin: '0 0 1rem 0', color: '#334155', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>SIS Academic Profile</h4>
+                                    {selectedStudent.modules.mod01_student_profiles ? (
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '10px', fontSize: '0.9rem' }}>
+                                            <div style={{ color: '#64748b' }}>External ID:</div><div>{selectedStudent.modules.mod01_student_profiles.external_student_id}</div>
+                                            <div style={{ color: '#64748b' }}>Status:</div><div>{selectedStudent.modules.mod01_student_profiles.enrollment_status}</div>
+                                            <div style={{ color: '#64748b' }}>Cum. GPA:</div><div style={{ fontWeight: 'bold', color: '#0f172a' }}>{selectedStudent.modules.mod01_student_profiles.cumulative_gpa}</div>
+                                            <div style={{ color: '#64748b' }}>Credits:</div><div>{selectedStudent.modules.mod01_student_profiles.credits_earned}</div>
+                                            <div style={{ color: '#64748b' }}>Standing:</div><div>{selectedStudent.modules.mod01_student_profiles.academic_standing}</div>
+                                        </div>
+                                    ) : (
+                                        <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontStyle: 'italic' }}>No SIS profile found.</p>
+                                    )}
+                                </div>
+
+                                {/* Financial Box */}
+                                <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                    <h4 style={{ margin: '0 0 1rem 0', color: '#334155', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>Financial Account</h4>
+                                    {selectedStudent.modules.mod02_student_accounts ? (
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '10px', fontSize: '0.9rem' }}>
+                                            <div style={{ color: '#64748b' }}>Tuition Bal:</div><div style={{ color: '#dc2626', fontWeight: 'bold' }}>${selectedStudent.modules.mod02_student_accounts.tuition_balance}</div>
+                                            <div style={{ color: '#64748b' }}>Fees Bal:</div><div>${selectedStudent.modules.mod02_student_accounts.fees_balance}</div>
+                                            <div style={{ color: '#64748b' }}>Fin Aid:</div><div style={{ color: '#16a34a' }}>${selectedStudent.modules.mod02_student_accounts.financial_aid_award}</div>
+                                            <div style={{ color: '#64748b' }}>Hold:</div>
+                                            <div>
+                                                {selectedStudent.modules.mod02_student_accounts.has_financial_hold ? (
+                                                    <span style={{ background: '#fee2e2', color: '#dc2626', padding: '2px 8px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>Active Hold</span>
+                                                ) : "Clear"}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontStyle: 'italic' }}>No financial account found.</p>
+                                    )}
+                                </div>
+
+                                {/* Enrollment Box */}
+                                <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                    <h4 style={{ margin: '0 0 1rem 0', color: '#334155', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>Current Enrollments</h4>
+                                    {selectedStudent.modules.mod04_enrollments && selectedStudent.modules.mod04_enrollments.length > 0 ? (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            {selectedStudent.modules.mod04_enrollments.map((e, i) => (
+                                                <div key={i} style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', fontSize: '0.85rem', display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span>Section: {e.section_id.substring(0, 8)}</span>
+                                                    <span>Grade: <strong style={{ color: '#4f46e5' }}>{e.final_grade || e.midterm_grade || 'N/A'}</strong></span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontStyle: 'italic' }}>Not enrolled in any sections.</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    )}
                 </motion.div>
             )}
         </div>
