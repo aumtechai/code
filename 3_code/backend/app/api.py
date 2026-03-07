@@ -598,6 +598,7 @@ async def register(user: User, session: Session = Depends(get_session)):
         user.subscription_status = "trialing"
         
         user.password_hash = get_password_hash(user.password_hash)
+        user.is_active = True
         session.add(user)
         session.commit()
         session.refresh(user)
