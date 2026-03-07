@@ -4,7 +4,7 @@ import api from '../api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminPanel = () => {
-    const [activeSection, setActiveSection] = useState('campaigns'); // 'campaigns', 'advisors', 'tutors', 'analytics', 'health'
+    const [activeSection, setActiveSection] = useState('campaigns'); // 'campaigns', 'advisors', 'tutors', 'analytics', 'health', 'ednex_health'
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -96,6 +96,23 @@ const AdminPanel = () => {
                 >
                     <Activity size={18} /> System Health
                 </button>
+                <button
+                    onClick={() => setActiveSection('ednex_health')}
+                    style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: activeSection === 'ednex_health' ? '#4f46e5' : 'white',
+                        color: activeSection === 'ednex_health' ? 'white' : '#64748b',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        boxShadow: activeSection === 'ednex_health' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    <Activity size={18} /> EdNex Module Status
+                </button>
             </div>
 
             <div className="card-white" style={{ minHeight: '400px' }}>
@@ -107,6 +124,8 @@ const AdminPanel = () => {
                     <AdvisorsManager />
                 ) : activeSection === 'health' ? (
                     <SystemHealth />
+                ) : activeSection === 'ednex_health' ? (
+                    <EdNexHealthDashboard />
                 ) : (
                     <TutorsManager />
                 )}
@@ -695,6 +714,82 @@ const SystemHealth = () => {
                         <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.5rem' }}>Total Rows</div>
                     </div>
                 ))}
+            </div>
+        </div>
+    );
+};
+
+const EdNexHealthDashboard = () => {
+    const [ednexData, setEdnexData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchHealth = async () => {
+            try {
+                const res = await api.get('/api/ednex/health');
+                setEdnexData(res.data);
+            } catch (error) {
+                console.error("Failed to fetch EdNex health");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchHealth();
+    }, []);
+
+    if (loading) return <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Establishing connection to Enterprise EdNex Modules...</div>;
+    if (!ednexData) return <div style={{ padding: '2rem', textAlign: 'center' }}>Failed to contact EdNex Enterprise.</div>;
+
+    const modules = ednexData.modules || {};
+    const errorCount = Object.values(modules).filter(m => m.status.includes('Anomaly') || m.status.includes('Error')).length;
+
+    return (
+        <div style={{ padding: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
+                <div>
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: '#1e293b' }}>EdNex Enterprise Diagnostic</h2>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#64748b' }}>Module-level connectivity validation & integrity checks.</p>
+                </div>
+                {errorCount === 0 ? (
+                    <div style={{ background: '#ecfdf5', padding: '8px 16px', borderRadius: '20px', color: '#10b981', fontWeight: '600', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <CheckCircle size={16} /> DataStreams Unified
+                    </div>
+                ) : (
+                    <div style={{ background: '#fef2f2', padding: '8px 16px', borderRadius: '20px', color: '#ef4444', fontWeight: '600', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <AlertTriangle size={16} /> {errorCount} Module Anomalies Detected
+                    </div>
+                )}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                {Object.entries(modules).map(([moduleName, info]) => {
+                    const isError = info.status.includes('Anomaly') || info.status.includes('Error');
+                    return (
+                        <div key={moduleName} style={{
+                            padding: '1.5rem',
+                            borderRadius: '12px',
+                            border: `1px solid ${isError ? '#ef4444' : '#e2e8f0'}`,
+                            background: isError ? '#fef2f2' : 'white',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                        }}>
+                            <div style={{ color: isError ? '#b91c1c' : '#64748b', fontSize: '0.85rem', fontWeight: '700', marginBottom: '1rem', textTransform: 'uppercase' }}>
+                                {moduleName}
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '0.5rem' }}>
+                                <span style={{ fontSize: '2.5rem', fontWeight: '800', color: isError ? '#ef4444' : '#4f46e5' }}>
+                                    {info.count}
+                                </span>
+                                <span style={{ color: '#64748b', fontSize: '0.85rem' }}>Rows</span>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '600', color: isError ? '#b91c1c' : '#10b981' }}>
+                                {isError ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
+                                {info.status}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

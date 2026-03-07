@@ -161,3 +161,46 @@ async def semantic_search(
     except Exception as e:
         print(f"EdNex Search Error: {e}")
         return {"status": "error", "message": str(e)}
+
+@ednex_router.get('/health')
+async def get_ednex_health(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail='Not an admin')
+    
+    supabase = get_supabase_client()
+    modules = {
+        'Mod-00: Identity (Institutions)': 'mod00_institutions',
+        'Mod-00: Identity (Users)': 'mod00_users',
+        'Mod-01: SIS (Programs)': 'mod01_programs',
+        'Mod-01: SIS (Profiles)': 'mod01_student_profiles',
+        'Mod-02: Finance (Accounts)': 'mod02_student_accounts',
+        'Mod-02: Finance (Transactions)': 'mod02_transactions',
+        'Mod-03: Advisors': 'mod03_advisors',
+        'Mod-03: Appointments': 'mod03_advising_appointments',
+        'Mod-03: Interventions': 'mod03_intervention_flags',
+        'Mod-04: Catalog (Courses)': 'mod04_courses',
+        'Mod-04: Catalog (Sections)': 'mod04_sections',
+        'Mod-04: Catalog (Enrollments)': 'mod04_enrollments',
+        'Mod-05: Career (Companies)': 'mod05_companies',
+        'Mod-05: Career (Jobs)': 'mod05_jobs',
+        'Mod-05: Career (Applications)': 'mod05_applications'
+    }
+
+    health_data = {}
+    if not supabase:
+        base_counts = [2, 115, 5, 100, 100, 250, 5, 20, 15, 50, 150, 300, 10, 40, 60]
+        for idx, key in enumerate(modules.keys()):
+            health_data[key] = {'count': base_counts[idx], 'status': 'Operational (Mock)'}
+        return {'status': 'success', 'modules': health_data}
+
+    try:
+        for title, table in modules.items():
+            try:
+                resp = supabase.table(table).select('id', count='exact').limit(1).execute()
+                health_data[title] = {'count': resp.count if resp.count is not None else len(resp.data), 'status': 'Operational'}
+            except Exception as e:
+                health_data[title] = {'count': 0, 'status': f'Anomaly: {str(e)[:50]}'}
+        return {'status': 'success', 'modules': health_data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
