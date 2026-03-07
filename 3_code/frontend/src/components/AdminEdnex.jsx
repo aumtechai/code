@@ -167,29 +167,37 @@ const AdminEdnex = () => {
                     {loading && !healthData ? <p>Loading system health...</p> : null}
 
                     {healthData && (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
-                            {Object.entries(healthData).map(([moduleName, info]) => (
-                                <div key={moduleName} style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                    <h4 style={{ margin: '0 0 1rem 0', color: '#1e293b' }}>{moduleName}</h4>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                                        <span style={{ color: '#64748b' }}>Records:</span>
-                                        <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{info.count}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: '#64748b' }}>Status:</span>
-                                        <span style={{
-                                            color: info.status.includes('Operational') ? '#16a34a' : '#dc2626',
-                                            fontWeight: 'bold',
-                                            fontSize: '0.9rem',
-                                            padding: '2px 8px',
-                                            borderRadius: '12px',
-                                            background: info.status.includes('Operational') ? '#dcfce7' : '#fee2e2'
-                                        }}>
-                                            {info.status}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
+                        <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                                <thead style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                                    <tr>
+                                        <th style={{ padding: '15px 20px', color: '#475569', fontWeight: 'bold' }}>Module Name</th>
+                                        <th style={{ padding: '15px 20px', color: '#475569', fontWeight: 'bold', textAlign: 'right' }}>Total Records</th>
+                                        <th style={{ padding: '15px 20px', color: '#475569', fontWeight: 'bold', textAlign: 'center' }}>Health Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Object.entries(healthData).map(([moduleName, info], idx) => (
+                                        <tr key={moduleName} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? 'white' : '#fafafa' }}>
+                                            <td style={{ padding: '15px 20px', fontWeight: '500', color: '#1e293b' }}>{moduleName}</td>
+                                            <td style={{ padding: '15px 20px', fontWeight: 'bold', textAlign: 'right', color: '#334155' }}>{info.count.toLocaleString()}</td>
+                                            <td style={{ padding: '15px 20px', textAlign: 'center' }}>
+                                                <span style={{
+                                                    color: info.status.includes('Operational') ? '#16a34a' : '#dc2626',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.85rem',
+                                                    padding: '4px 12px',
+                                                    borderRadius: '20px',
+                                                    background: info.status.includes('Operational') ? '#dcfce7' : '#fee2e2',
+                                                    display: 'inline-block'
+                                                }}>
+                                                    {info.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </motion.div>
