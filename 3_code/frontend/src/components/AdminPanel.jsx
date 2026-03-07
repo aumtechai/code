@@ -9,8 +9,7 @@ const AdminPanel = () => {
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
             <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>Admin Panel</h1>
-
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', overflowX: 'auto', paddingBottom: '4px' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', paddingBottom: '4px' }}>
                 <button
                     onClick={() => setActiveSection('campaigns')}
                     style={{
