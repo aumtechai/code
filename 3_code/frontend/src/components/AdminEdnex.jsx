@@ -16,7 +16,7 @@ const AdminEdnex = () => {
     const [healthData, setHealthData] = useState(null);
 
     // Lookup state
-    const [searchEmail, setSearchEmail] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const [userData, setUserData] = useState(null);
     const [lookupError, setLookupError] = useState('');
 
@@ -68,10 +68,10 @@ const AdminEdnex = () => {
         setLookupError('');
         setUserData(null);
         try {
-            const res = await api.get(`/api/ednex/user/${encodeURIComponent(searchEmail)}`);
+            const res = await api.get(`/api/ednex/user/search/${encodeURIComponent(searchQuery)}`);
             setUserData(res.data);
         } catch (e) {
-            setLookupError(e.response?.data?.detail || "User not found or error occurred.");
+            setLookupError(e.response?.data?.detail || "No matching students found or error occurred.");
         } finally {
             setLoading(false);
         }
@@ -202,10 +202,10 @@ const AdminEdnex = () => {
                         <h3 style={{ marginBottom: '1rem' }}>Cross-Module Student Lookup</h3>
                         <form onSubmit={handleLookup} style={{ display: 'flex', gap: '1rem' }}>
                             <input
-                                type="email"
-                                value={searchEmail}
-                                onChange={(e) => setSearchEmail(e.target.value)}
-                                placeholder="Student Email Address"
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search by name, email, or department..."
                                 style={{ flex: 1, padding: '10px 15px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                                 required
                             />
@@ -216,42 +216,49 @@ const AdminEdnex = () => {
                         {lookupError && <p style={{ color: '#dc2626', marginTop: '1rem' }}>{lookupError}</p>}
                     </div>
 
-                    {userData && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {userData && userData.results && userData.results.map((student, index) => (
+                        <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
+                            <div style={{ paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0' }}>
+                                <h3 style={{ margin: 0, color: '#334155' }}>
+                                    {student.name} <span style={{ fontWeight: 'normal', color: '#64748b', fontSize: '1rem' }}>({student.email})</span>
+                                </h3>
+                                <p style={{ margin: '5px 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>EdNex Student ID: {student.ednex_student_id}</p>
+                            </div>
+
                             <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                 <h4>Identity & Core</h4>
                                 <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                    {JSON.stringify(userData.modules.mod00_users, null, 2)}
+                                    {JSON.stringify(student.modules.mod00_users, null, 2)}
                                 </pre>
                             </div>
                             <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                 <h4>SIS Profile (Mod 01)</h4>
                                 <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                    {JSON.stringify(userData.modules.mod01_student_profiles, null, 2)}
+                                    {JSON.stringify(student.modules.mod01_student_profiles, null, 2)}
                                 </pre>
                             </div>
                             <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                 <h4>Financial Account (Mod 02)</h4>
                                 <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                    {JSON.stringify(userData.modules.mod02_student_accounts, null, 2)}
+                                    {JSON.stringify(student.modules.mod02_student_accounts, null, 2)}
                                 </pre>
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                 <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <h4>Appointments (Mod 03)</h4>
                                     <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                                        {JSON.stringify(userData.modules.mod03_advising_appointments, null, 2)}
+                                        {JSON.stringify(student.modules.mod03_advising_appointments, null, 2)}
                                     </pre>
                                 </div>
                                 <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <h4>Enrollments (Mod 04)</h4>
                                     <pre style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', overflowX: 'auto', fontSize: '0.85rem', maxHeight: '300px' }}>
-                                        {JSON.stringify(userData.modules.mod04_enrollments, null, 2)}
+                                        {JSON.stringify(student.modules.mod04_enrollments, null, 2)}
                                     </pre>
                                 </div>
                             </div>
                         </div>
-                    )}
+                    ))}
                 </motion.div>
             )}
         </div>

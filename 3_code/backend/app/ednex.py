@@ -200,21 +200,22 @@ async def get_ednex_health(current_user: User = Depends(get_current_user)):
     try:
         for title, table in modules.items():
             try:
-                resp = supabase.table(table).select('id', count='exact').limit(1).execute()
-                health_data[title] = {'count': resp.count if resp.count is not None else len(resp.data), 'status': 'Operational'}
+                resp = supabase.table(table).select('*', count='exact').limit(1).execute()
+                c = resp.count if resp.count is not None else 0
+                health_data[title] = {'count': c, 'status': 'Operational'}
             except Exception as e:
                 health_data[title] = {'count': 0, 'status': f'Anomaly: {str(e)[:50]}'}
         return {'status': 'success', 'modules': health_data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@ednex_router.get("/user/{email}")
-async def get_ednex_user(
-    email: str,
+@ednex_router.get("/user/search/{query_term}")
+async def search_ednex_users(
+    query_term: str,
     current_user: User = Depends(get_current_user)
 ):
     """
-    Look up all specific user info across modules in EdNex.
+    Look up all specific user info across modules in EdNex, fuzzy matching name, email, or department.
     """
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail='Not an admin')
@@ -224,51 +225,74 @@ async def get_ednex_user(
         raise HTTPException(status_code=500, detail="EdNex not configured")
         
     try:
-        student_resp = supabase.table("mod00_users").select("*").eq("email", email).execute()
-        student_data = student_resp.data[0] if student_resp.data else None
+        # 1. Search by name or email
+        student_resp = supabase.table("mod00_users").select("*").or_(f"email.ilike.%{query_term}%,first_name.ilike.%{query_term}%,last_name.ilike.%{query_term}%").limit(10).execute()
+        users_found = student_resp.data if student_resp.data else []
+        
+        # 2. Search by department or major
+        dept_resp = supabase.table("mod01_student_profiles").select("user_id").or_(f"major.ilike.%{query_term}%,department.ilike.%{query_term}%").limit(10).execute()
+        dept_user_ids = [row["user_id"] for row in (dept_resp.data or [])]
+        
+        existing_ids = {u["id"] for u in users_found}
+        missing_ids = [uid for uid in dept_user_ids if uid not in existing_ids]
+        
+        if missing_ids:
+            missing_resp = supabase.table("mod00_users").select("*").in_("id", missing_ids).execute()
+            if missing_resp.data:
+                users_found.extend(missing_resp.data)
+                
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error accessing mod00_users: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error accessing EdNex datasets: {str(e)}")
         
-    if not student_data:
-        raise HTTPException(status_code=404, detail="User not found in EdNex")
+    if not users_found:
+        raise HTTPException(status_code=404, detail="No matching users found in EdNex")
         
-    student_id = student_data["id"]
+    all_results = []
     
-    modules_data = {
-        'mod00_users': student_data,
-        'mod01_student_profiles': None,
-        'mod02_student_accounts': None,
-        'mod03_advising_appointments': [],
-        'mod04_enrollments': []
-    }
-    
-    # Check Mod01
-    try:
-        p_resp = supabase.table("mod01_student_profiles").select("*").eq("user_id", student_id).execute()
-        modules_data['mod01_student_profiles'] = p_resp.data[0] if p_resp.data else None
-    except Exception as e: modules_data['mod01_student_profiles'] = {"error": str(e)}
-    
-    # Check Mod02
-    try:
-        f_resp = supabase.table("mod02_student_accounts").select("*").eq("student_id", student_id).execute()
-        modules_data['mod02_student_accounts'] = f_resp.data[0] if f_resp.data else None
-    except Exception as e: modules_data['mod02_student_accounts'] = {"error": str(e)}
+    for student_data in users_found:
+        student_id = student_data["id"]
+        
+        modules_data = {
+            'mod00_users': student_data,
+            'mod01_student_profiles': None,
+            'mod02_student_accounts': None,
+            'mod03_advising_appointments': [],
+            'mod04_enrollments': []
+        }
+        
+        # Check Mod01
+        try:
+            p_resp = supabase.table("mod01_student_profiles").select("*").eq("user_id", student_id).execute()
+            modules_data['mod01_student_profiles'] = p_resp.data[0] if p_resp.data else None
+        except Exception as e: modules_data['mod01_student_profiles'] = {"error": str(e)}
+        
+        # Check Mod02
+        try:
+            f_resp = supabase.table("mod02_student_accounts").select("*").eq("student_id", student_id).execute()
+            modules_data['mod02_student_accounts'] = f_resp.data[0] if f_resp.data else None
+        except Exception as e: modules_data['mod02_student_accounts'] = {"error": str(e)}
 
-    # Check Mod03
-    try:
-        a_resp = supabase.table("mod03_advising_appointments").select("*").eq("student_id", student_id).execute()
-        modules_data['mod03_advising_appointments'] = a_resp.data if a_resp.data else []
-    except Exception as e: modules_data['mod03_advising_appointments'] = {"error": str(e)}
+        # Check Mod03
+        try:
+            a_resp = supabase.table("mod03_advising_appointments").select("*").eq("student_id", student_id).execute()
+            modules_data['mod03_advising_appointments'] = a_resp.data if a_resp.data else []
+        except Exception as e: modules_data['mod03_advising_appointments'] = {"error": str(e)}
 
-    # Check Mod04
-    try:
-        e_resp = supabase.table("mod04_enrollments").select("*").eq("student_id", student_id).execute()
-        modules_data['mod04_enrollments'] = e_resp.data if e_resp.data else []
-    except Exception as e: modules_data['mod04_enrollments'] = {"error": str(e)}
+        # Check Mod04
+        try:
+            e_resp = supabase.table("mod04_enrollments").select("*").eq("student_id", student_id).execute()
+            modules_data['mod04_enrollments'] = e_resp.data if e_resp.data else []
+        except Exception as e: modules_data['mod04_enrollments'] = {"error": str(e)}
+        
+        all_results.append({
+            "ednex_student_id": student_id,
+            "email": student_data.get('email', 'N/A'),
+            "name": f"{student_data.get('first_name', '')} {student_data.get('last_name', '')}".strip(),
+            "modules": modules_data
+        })
     
     return {
         "status": "success",
-        "email": email,
-        "ednex_student_id": student_id,
-        "modules": modules_data
+        "query": query_term,
+        "results": all_results
     }
