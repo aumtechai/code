@@ -1,3 +1,4 @@
+# aumtech.ai Navigator API - v1.4.1 (GPA fix: 2026-03-07)
 from fastapi import APIRouter, Depends, HTTPException, status, Request, File, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
