@@ -24,88 +24,93 @@ async def get_ednex_context(
 ):
     """
     Fetches the hybrid Student Context from EdNex (Option A Architecture).
-    It pulls structured data (SIS, Finance) from Supabase.
+    Tries Supabase first; if not configured or data is missing, returns smart mock data.
     """
     supabase = get_supabase_client()
-    if not supabase:
-        raise HTTPException(status_code=500, detail="EdNex Database not configured")
-        
-    try:
-        # In this demo, since frontend uses local SQLite for Auth, we'll try to match by email.
-        # If not found, we just grab the very first TXU student from the seed data to demonstrate.
-        student_resp = supabase.table("mod00_users").select("*").eq("email", current_user.email).execute()
-        student_data = student_resp.data[0] if student_resp.data else None
-        
-        if not student_data:
-            # Fallback to the first student in the new enterprise schema
-            first_student_resp = supabase.table("mod00_users").select("*").eq("role", "student").limit(1).execute()
-            if first_student_resp.data:
-                student_data = first_student_resp.data[0]
-            else:
-                raise HTTPException(status_code=404, detail="No enterprise student records found")
-            
-        student_id = student_data["id"]
-        
-        # 1. Fetch SIS Stream Data (mod01)
-        sis_resp = supabase.table("mod01_student_profiles").select("*").eq("user_id", student_id).execute()
-        sis_data = sis_resp.data[0] if sis_resp.data else {}
-        
-        # 2. Fetch Finance Stream Data (mod02)
-        finance_resp = supabase.table("mod02_student_accounts").select("*").eq("student_id", student_id).execute()
-        finance_data = finance_resp.data[0] if finance_resp.data else {}
-        
-        # Assemble Context Object
-        context = {
-            "student_profile": {
-                "name": f"{student_data.get('first_name', '')} {student_data.get('last_name', '')}",
-                "email": student_data.get("email"),
-                "institution_id": student_data.get("institution_id")
-            },
-            "sis_stream": sis_data,
-            "finance_stream": finance_data
-        }
-        
-        return {
-            "status": "success",
-            "source": "EdNex Central Staging",
-            "context": context
-        }
-        
-    except Exception as e:
-        print(f"EdNex Context Error (Falling back to Mock Data): {e}")
-        # --- MOCK DATA FALLBACK FOR DEMOS ---
-        # If the user's Supabase db is unconfigured or missing tables, return impressive mock data!
-        mock_gpa = 3.65
-        mock_balance = 2450.00
-        mock_hold = False
-        
-        # Make the mock dynamic based on email just for fun
-        if "joshua" in current_user.email.lower():
-            mock_gpa = 2.4
-            mock_balance = 0.00
-        elif "danielle" in current_user.email.lower():
-            mock_gpa = 3.85
-            mock_balance = 120.00
-            
-        return {
-            "status": "success",
-            "source": "Mock EdNex Fallback",
-            "context": {
-                "student_profile": {
-                    "name": current_user.full_name or "Demo Student",
-                    "email": current_user.email,
-                    "institution_id": "demo-12345"
-                },
-                "sis_stream": {
-                    "cumulative_gpa": mock_gpa,
-                    "credits_earned": 90
-                },
-                "finance_stream": {
-                    "tuition_balance": mock_balance,
-                    "has_financial_hold": mock_hold
+
+    if supabase:
+        try:
+            # Try to match by email first
+            student_resp = supabase.table("mod00_users").select("*").eq("email", current_user.email).execute()
+            student_data = student_resp.data[0] if student_resp.data else None
+
+            if not student_data:
+                # Fallback to the first student in the enterprise schema
+                first_resp = supabase.table("mod00_users").select("*").eq("role", "student").limit(1).execute()
+                student_data = first_resp.data[0] if first_resp.data else None
+
+            if student_data:
+                student_id = student_data["id"]
+
+                # 1. Fetch SIS Stream Data (mod01)
+                sis_resp = supabase.table("mod01_student_profiles").select("*").eq("user_id", student_id).execute()
+                sis_data = sis_resp.data[0] if sis_resp.data else {}
+
+                # 2. Fetch Finance Stream Data (mod02)
+                finance_resp = supabase.table("mod02_student_accounts").select("*").eq("student_id", student_id).execute()
+                finance_data = finance_resp.data[0] if finance_resp.data else {}
+
+                context = {
+                    "student_profile": {
+                        "name": f"{student_data.get('first_name', '')} {student_data.get('last_name', '')}",
+                        "email": student_data.get("email"),
+                        "institution_id": student_data.get("institution_id")
+                    },
+                    "sis_stream": sis_data,
+                    "finance_stream": finance_data
                 }
+
+                return {
+                    "status": "success",
+                    "source": "EdNex Central Staging",
+                    "context": context
+                }
+        except Exception as e:
+            print(f"EdNex Supabase error, falling back to mock: {e}")
+
+    # --- MOCK DATA FALLBACK ---
+    # Triggered when Supabase is not configured OR tables/rows are missing
+    print(f"EdNex using mock data for: {current_user.email}")
+    mock_gpa = 3.65
+    mock_balance = 2450.00
+    mock_hold = False
+
+    email_lower = current_user.email.lower()
+    if "joshua" in email_lower:
+        mock_gpa = 2.4
+        mock_balance = 0.00
+    elif "danielle" in email_lower:
+        mock_gpa = 3.85
+        mock_balance = 120.00
+    elif "michael" in email_lower:
+        mock_gpa = 3.2
+        mock_balance = 500.00
+    elif "sarah" in email_lower or "emily" in email_lower:
+        mock_gpa = 2.9
+        mock_balance = 1200.00
+        mock_hold = True
+
+    return {
+        "status": "success",
+        "source": "Mock EdNex Fallback",
+        "context": {
+            "student_profile": {
+                "name": current_user.full_name or current_user.email.split("@")[0].title(),
+                "email": current_user.email,
+                "institution_id": "demo-12345"
+            },
+            "sis_stream": {
+                "cumulative_gpa": mock_gpa,
+                "credits_earned": 90
+            },
+            "finance_stream": {
+                "tuition_balance": mock_balance,
+                "has_financial_hold": mock_hold
             }
         }
+    }
+
+
 
 class SemanticQuery(BaseModel):
     query: str
