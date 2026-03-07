@@ -229,9 +229,14 @@ async def search_ednex_users(
         student_resp = supabase.table("mod00_users").select("*").or_(f"email.ilike.%{query_term}%,first_name.ilike.%{query_term}%,last_name.ilike.%{query_term}%").limit(10).execute()
         users_found = student_resp.data if student_resp.data else []
         
-        # 2. Search by department or major
-        dept_resp = supabase.table("mod01_student_profiles").select("user_id").or_(f"major.ilike.%{query_term}%,department.ilike.%{query_term}%").limit(10).execute()
-        dept_user_ids = [row["user_id"] for row in (dept_resp.data or [])]
+        # 2. Search by department or major (program name)
+        prog_resp = supabase.table("mod01_programs").select("id").ilike("name", f"%{query_term}%").execute()
+        prog_ids = [row["id"] for row in (prog_resp.data or [])]
+        
+        dept_user_ids = []
+        if prog_ids:
+            prof_resp = supabase.table("mod01_student_profiles").select("user_id").in_("program_id", prog_ids).limit(10).execute()
+            dept_user_ids = [row["user_id"] for row in (prof_resp.data or [])]
         
         existing_ids = {u["id"] for u in users_found}
         missing_ids = [uid for uid in dept_user_ids if uid not in existing_ids]
