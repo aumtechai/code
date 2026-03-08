@@ -31,8 +31,8 @@ const getBaseUrl = () => {
         return 'http://localhost:8000';
     }
 
-    // Fallback for Standard Web App (Relative path)
-    return '';
+    // Fallback for Standard Web App
+    return 'https://www.aumtech.ai';
 };
 
 const api = axios.create({
