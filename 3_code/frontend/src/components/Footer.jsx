@@ -9,7 +9,7 @@ const Footer = ({ onNavigate }) => {
                 {/* Brand */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <img src={logoAsset} alt="Logo" style={{ width: '28px', height: '28px', borderRadius: '6px' }} />
-                    <span style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e293b' }}>Student Success Navigator</span>
+                    <span style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e293b' }}>Aura</span>
                 </div>
 
                 {/* Centralized Links */}
@@ -54,7 +54,7 @@ const Footer = ({ onNavigate }) => {
 
                 {/* Copyright */}
                 <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                    © 2026 Student Success Navigator | www.aumtech.ai. All rights reserved.
+                    © 2026 Aura | Academic Intelligence. All rights reserved.
                 </div>
             </div>
             <style>{`

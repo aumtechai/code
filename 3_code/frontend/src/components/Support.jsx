@@ -78,7 +78,7 @@ const Support = ({ onBack }) => {
                             <MessageCircle size={24} color="#10b981" />
                         </div>
                         <h3 style={{ fontWeight: '700', marginBottom: '0.5rem' }}>Chat with AI</h3>
-                        <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Instant answers from the Navigator.</p>
+                        <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Instant answers from Aura.</p>
                         <button onClick={() => onBack && onBack('chat')} style={{ border: 'none', background: 'none', color: '#10b981', fontWeight: '600', cursor: 'pointer' }}>Open Get Aura</button>
                     </div>
 
@@ -98,8 +98,8 @@ const Support = ({ onBack }) => {
                         <HelpCircle color="#4f46e5" /> Frequently Asked Questions
                     </h3>
                     <FAQItem
-                        question="How does the Get Aura help me?"
-                        answer="The Get Aura uses Student Success AI to analyze your academic profile, syllabi, and goals. It can suggest study plans, explain complex concepts, and guide you through administrative processes."
+                        question="How does Aura help me?"
+                        answer="Aura uses Academic Intelligence to analyze your academic profile, syllabi, and goals. It can suggest study plans, explain complex concepts, and guide you through administrative processes."
                     />
                     <FAQItem
                         question="Is my academic data secure?"
@@ -162,7 +162,7 @@ const Support = ({ onBack }) => {
 
                 {/* Footer Disclaimer */}
                 <div style={{ textAlign: 'center', marginTop: '4rem', color: '#94a3b8', fontSize: '0.9rem' }}>
-                    <p>© 2026 Student Success Navigator | www.aumtech.ai. All rights reserved.</p>
+                    <p>© 2026 Aura | Academic Intelligence. All rights reserved.</p>
                 </div>
             </div>
         </div>

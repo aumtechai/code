@@ -3,6 +3,58 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AI
 from langgraph.graph import StateGraph, END
 from app.agent.tools import lms_tool, calendar_tool, rag_tool
 import json
+import re
+
+# --- Privacy & Compliance Layer ---
+
+class PrivacyGateway:
+    """
+    Handles PII (Personally Identifiable Information) scrubbing and restoration.
+    Ensures that sensitive data is tokenized before leaving the university perimeter.
+    """
+    def __init__(self, student_context: dict):
+        self.student_context = student_context
+        self.mapping = {}
+        self.reverse_mapping = {}
+
+    def tokenize(self, text: str) -> str:
+        """Replace sensitive terms with durable tokens."""
+        scrubbed_text = text
+        
+        # 1. Scrub Student Name
+        name = self.student_context.get('name')
+        if name:
+            token = "[[STUDENT_NAME]]"
+            self.mapping[name] = token
+            self.reverse_mapping[token] = name
+            # Case insensitive replacement for common nicknames or variations
+            scrubbed_text = re.sub(re.escape(name), token, scrubbed_text, flags=re.IGNORECASE)
+            
+            # Also scrub individual parts of the name (e.g. just first name)
+            parts = name.split()
+            if len(parts) > 1:
+                first_name = parts[0]
+                self.mapping[first_name] = "[[STUDENT_FIRST_NAME]]"
+                self.reverse_mapping["[[STUDENT_FIRST_NAME]]"] = first_name
+                scrubbed_text = re.sub(re.escape(first_name), "[[STUDENT_FIRST_NAME]]", scrubbed_text, flags=re.IGNORECASE)
+
+        # 2. Scrub Emails 
+        email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+        emails = re.findall(email_pattern, scrubbed_text)
+        for email in emails:
+            token = f"[[EMAIL_{hash(email) % 1000}]]"
+            self.mapping[email] = token
+            self.reverse_mapping[token] = email
+            scrubbed_text = scrubbed_text.replace(email, token)
+
+        return scrubbed_text
+
+    def detokenize(self, text: str) -> str:
+        """Restore PII from tokens in the LLM response."""
+        restored_text = text
+        for token, original in self.reverse_mapping.items():
+            restored_text = restored_text.replace(token, original)
+        return restored_text
 
 # Define the State
 class AgentState(TypedDict):
@@ -61,6 +113,11 @@ async def tutor_agent(state: AgentState):
 
     student_context = state.get("student_context", {})
     context_str = f"Student Profile: Name: {student_context.get('name')}, Major: {student_context.get('major')}, GPA: {student_context.get('gpa')}, Background: {student_context.get('background')}, Interests: {student_context.get('interests')}"
+    
+    # Add previous context from EdNex if available
+    previous_insight = student_context.get("previous_insight")
+    if previous_insight:
+        context_str += f"\nPrevious Discussion Summary: {previous_insight}"
 
     # Build grade context string — skip gracefully if no grades
     if grades:
@@ -70,22 +127,48 @@ async def tutor_agent(state: AgentState):
         
     grade_context = f"{context_str}\n{grade_context}"
 
-    if api_key:
-        # Call Gemini REST API directly — bypasses library version issues
+    # Plan Configuration
+    # Plan Options: "prism" (Cloud + Privacy Gateway) or "vault" (Private In-house LLM)
+    aura_plan = os.environ.get("AURA_PLAN", "prism").lower()
+    
+    # Initialize Privacy Gateway
+    gateway = PrivacyGateway(student_context)
+    
+    if aura_plan == "vault":
+        # PLAN: Aura Vault (Private In-house LLM)
+        # In production, this would hit a local Oobabooga, vLLM, or Ollama endpoint
+        # inside the University VPC.
+        message = f"[[LOCAL_INFERENCE_VAULT]]: Hello {student_context.get('name')}, I am running on your University's private infrastructure. {rag_info} — I have analyzed your grades for {state['student_id']} and I'm ready to help locally."
+        print(f"Aura Vault engaged for student: {state['student_id']}")
+    
+    elif api_key:
+        # PLAN: Aura Prism (Cloud + Privacy Gateway)
+        # Data is scrubbed BEFORE leaving the perimeter.
+        
+        # 1. Scrub the prompt
+        tokenized_context = gateway.tokenize(grade_context)
+        tokenized_query = gateway.tokenize(last_msg)
+        tokenized_rag = gateway.tokenize(rag_info)
+        
         # Use fastest models first to stay within Vercel's 10s serverless timeout
         models_to_try = ['gemini-1.5-flash-8b', 'gemini-1.5-flash', 'gemini-1.5-pro']
         message = None
         
-        prompt_text = f"""You are a concise, friendly academic advisor bot.
+        prompt_text = f"""You are a concise, friendly academic advisor bot named Aura.
+        
+IMPORTANT: You are receiving tokenized data. Do not attempt to guess the real names.
+Always use the tokens like [[STUDENT_NAME]] in your response if you need to address the student.
 
 Context:
-- {grade_context}
-- Knowledge: {rag_info}
+- {tokenized_context}
+- Knowledge: {tokenized_rag}
 
-Student asks: "{last_msg}"
+Student asks: "{tokenized_query}"
 
-Respond in 2-3 SHORT sentences maximum. Be direct and complete — do not trail off or stop mid-sentence. If you need to list things, use at most 3 bullet points."""
+Respond in 2-3 SHORT sentences maximum. Be direct and complete."""
 
+        print(f"Aura Prism: Sending scrubbed data to Gemini...")
+        
         for model_name in models_to_try:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
@@ -97,8 +180,12 @@ Respond in 2-3 SHORT sentences maximum. Be direct and complete — do not trail 
                     resp = await client.post(url, json=payload)
                     resp.raise_for_status()
                     data = resp.json()
-                    message = data["candidates"][0]["content"]["parts"][0]["text"]
-                    print(f"Gemini REST success with model: {model_name}")
+                    raw_response = data["candidates"][0]["content"]["parts"][0]["text"]
+                    
+                    # 2. Detokenize the response before it reaches the user
+                    message = gateway.detokenize(raw_response)
+                    
+                    print(f"Gemini REST success with model: {model_name} (Aura Prism)")
                     break
             except Exception as e:
                 print(f"Gemini REST {model_name} failed: {str(e)[:150]}")

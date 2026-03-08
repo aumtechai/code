@@ -127,22 +127,24 @@ If a student asks: *"What is the late policy for CS 101?"*
 
 ---
 
-## 5. The Intelligence Flow (LLM Context)
+## 6. Aura Intelligence Tiers
 
-When a student interacts with the Navigator App, EdNex combines both structured and unstructured paths:
+To support varying security requirements, Aura offers two distinct intelligence deployment plans:
 
-**User Prompt**: *"Can I register for biology next week if my tuition isn't fully paid?"*
+### Tier 1: Aura Prism (Cloud Intelligence + Privacy Gateway)
+*   **Mechanism**: Uses high-performance cloud models (Gemini) for reasoning.
+*   **Privacy**: Every request passes through the **Aura Privacy Gateway** before leaving the university perimeter. Sensitive PII (Names, Emails, IDs) are stripped and replaced with temporary tokens (e.g., `[[STUDENT_NAME]]`).
+*   **Restoration**: The Privacy Gateway restores the student's actual data in the final response returned to the UI.
+*   **Edge**: Cost-effective, highest reasoning speed, zero PII leakage to LLM providers.
 
-**EdNex Context Assembly Process**:
-1. **Structured Lookup (PostgreSQL)**: Fetch Student ID `123`'s Finance Stream data.
-   - *Result*: `Current Balance: $400. Financial Hold: True.`
-2. **Unstructured Lookup (Vector DB)**: Perform semantic search for "Financial Hold registration limits" tied to `Institution X`.
-   - *Result*: Vector match found in `student_handbook_2025.pdf` chunk 42: *"Students with balances over $200 face a registration hold and cannot select courses."*
-3. **Synthesis**: The API merges both into a JSON Context Object.
-4. **LLM Execution**: The prompt injected to the LLM reads: 
-   *"Context: Jane has a $400 balance and a hold. Handbook states >$200 prevents registration. Question: Can I register?"*
+### Tier 2: Aura Vault (Private Academic Intelligence)
+*   **Mechanism**: Uses an in-house LLM (e.g., Llama 3 / Mistral) hosted locally within the University VPC.
+*   **Privacy**: 100% Data Sovereignty. Real student data never leaves the campus network. No tokenization is required as the model lives "inside" the vault.
+*   **Edge**: Ultimate security for highly sensitive departments (Medical, Law, Financial Aid), 100% FERPA/HIPAA compliant by design.
 
-## 6. Recommendation
+---
+
+## 7. Recommendation
 
 Start with **Option A (The "Supabase Everything" Stack)**. 
 

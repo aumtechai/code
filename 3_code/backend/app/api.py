@@ -865,7 +865,8 @@ async def query_agent(
                 "major": current_user.major,
                 "gpa": current_user.gpa,
                 "background": current_user.background,
-                "interests": current_user.interests
+                "interests": current_user.interests,
+                "previous_insight": current_user.ai_insight
             }
         }
         

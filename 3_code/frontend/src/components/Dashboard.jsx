@@ -30,6 +30,8 @@ import FacultyDashboard from './FacultyDashboard';
 import DegreeRoadmap from './DegreeRoadmap';
 import Support from './Support';
 import Subscription from './Subscription';
+import QuoteGenerator from './QuoteGenerator';
+
 
 
 import {
@@ -79,8 +81,8 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                     </div>
 
                     <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                        <h2 style={{ fontSize: '1.4rem', fontWeight: '800', margin: 0, lineHeight: 1.1 }}>aumtech.ai</h2>
-                        <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Student Navigator</span>
+                        <h2 style={{ fontSize: '1.4rem', fontWeight: '800', margin: 0, lineHeight: 1.1 }}>Aura</h2>
+                        <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Intelligent Academic Platform</span>
                     </div>
 
                     {/* Mobile Close Button */}
@@ -137,6 +139,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                             <div className="section-title">Admin</div>
                             <div className={`nav-item ${activeTab === 'adminPanel' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminPanel')}><Shield size={20} /> Admin Panel</div>
                             <div className={`nav-item ${activeTab === 'adminEdnex' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminEdnex')}><Database size={20} /> EdNex Config</div>
+                            <div className={`nav-item ${activeTab === 'quoteGen' ? 'active' : ''}`} onClick={() => handleProtectedTab('quoteGen')}><Calculator size={20} /> Quote Generator</div>
                         </>
                     )}
 
@@ -162,13 +165,13 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                                 <div style={{ fontWeight: '600', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {userData?.full_name || 'Student'}
                                 </div>
-                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Student Navigator</div>
+                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Aura</div>
                             </div>
                         </div>
 
                         {/* Legal Footer */}
                         <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
-                            <div style={{ marginBottom: '0.25rem' }}>© 2026 aumtech.ai | Navigator</div>
+                            <div style={{ marginBottom: '0.25rem' }}>© 2026 Aura | Academic Intelligence</div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                                 <span onClick={() => handleProtectedTab('privacy')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>Privacy</span>
                                 <span onClick={() => handleProtectedTab('msa')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>MSA</span>
@@ -201,13 +204,13 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                 )}
                 <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', opacity: 0.9 }}>
-                        <Brain size={18} /> aumtech.ai Get Aura
+                        <Brain size={18} /> Aura Intelligence Engine
                     </div>
                     <h1 style={{ fontSize: '2.5rem', margin: '0.5rem 0 1rem 0', fontWeight: '700' }}>
                         Good afternoon, {userData?.full_name ? userData.full_name.split(' ')[0] : 'Student'}!
                     </h1>
                     <p style={{ maxWidth: '500px', fontSize: '1.1rem', opacity: 0.9, marginBottom: '2rem', lineHeight: '1.6' }}>
-                        {userData?.ai_insight || "Welcome to your Academic Success Navigator. I'm here to help you stay on track with your courses and goals."}
+                        {userData?.ai_insight || "Welcome to Aura. Your personal academic intelligence platform designed to help you succeed."}
                     </p>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <button onClick={() => onNavigate('chat')} style={{ border: 'none', background: 'white', color: '#4f46e5', padding: '12px 24px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Chat with AI</button>
@@ -561,7 +564,7 @@ const Dashboard = () => {
                         <img src={logoAsset} alt="Logo" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
                     </div>
 
-                    <span style={{ fontWeight: '700', fontSize: '1.2rem', color: '#0f172a' }}>aumtech.ai Get Aura</span>
+                    <span style={{ fontWeight: '700', fontSize: '1.5rem', color: '#0f172a' }}>Aura</span>
                 </div>
                 <button onClick={() => setIsMobileMenuOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1e293b' }}>
                     <Menu size={24} />
@@ -727,6 +730,7 @@ const Dashboard = () => {
                     {activeTab === 'subscription' && <Subscription userData={userData} onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'adminPanel' && userData?.is_admin && <AdminPanel />}
                     {activeTab === 'adminEdnex' && userData?.is_admin && <AdminEdnex />}
+                    {activeTab === 'quoteGen' && userData?.is_admin && <QuoteGenerator />}
 
                     {activeTab !== 'chat' && <Footer onNavigate={(tab) => setActiveTab(tab)} />}
                 </main>

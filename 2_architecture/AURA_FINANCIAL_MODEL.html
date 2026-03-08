@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Intelligence: Institutional Financial Model</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --prism: #6366f1;
+            --vault: #10b981;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --bg: #f9fafb;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .summary {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--bg);
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .tier-prism {
+            color: var(--prism);
+            font-weight: 700;
+        }
+
+        .tier-vault {
+            color: var(--vault);
+            font-weight: 700;
+        }
+
+        .highlight {
+            background-color: #fefce8;
+            font-weight: 700;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .card-prism {
+            border-left: 6px solid var(--prism);
+            background: #f5f3ff;
+        }
+
+        .card-vault {
+            border-left: 6px solid var(--vault);
+            background: #f0fdf4;
+        }
+
+        .metric {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 5px 0;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Aura Financial Model</h1>
+            <p class="summary">Strategic Cost & Profitability Analysis for Institutional Deployment</p>
+        </div>
+
+        <h2>Tiered Cost Comparison (Base: 5,000 Students)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th class="tier-prism">Aura Prism</th>
+                    <th class="tier-vault">Aura Vault</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AI Engine Source</td>
+                    <td>Gemini 1.5 Flash (API)</td>
+                    <td>Llama 3 / Mistral (Local)</td>
+                </tr>
+                <tr>
+                    <td>Variable Cost (Per Student)</td>
+                    <td>~$0.15 (Tokens)</td>
+                    <td>$0.00 (Flat)</td>
+                </tr>
+                <tr>
+                    <td>Storage & Database</td>
+                    <td>$0.10 (Supabase/Vector)</td>
+                    <td>$0.05 (VPC Local)</td>
+                </tr>
+                <tr>
+                    <td>Compute Infrastructure</td>
+                    <td>Serverless Proxy</td>
+                    <td>~$1,500/mo (GPU Instances)</td>
+                </tr>
+                <tr>
+                    <td>Maintenance & Support</td>
+                    <td>$1,000/mo</td>
+                    <td>$2,500/mo</td>
+                </tr>
+                <tr class="highlight">
+                    <td>Total Monthly COGS</td>
+                    <td>$2,250 ($0.45/student)</td>
+                    <td>$4,550 ($0.91/student)</td>
+                </tr>
+                <tr>
+                    <td>Target Gross Margin (60%)</td>
+                    <td>$3,375</td>
+                    <td>$6,825</td>
+                </tr>
+                <tr class="highlight">
+                    <td>Recommended Retail Price</td>
+                    <td>$1.25 / Student / Mo</td>
+                    <td>$2.50 / Student / Mo</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Scaling Strategy</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Institution Size</th>
+                    <th>Aura Prism (Revenue)</th>
+                    <th>Aura Vault (Revenue)</th>
+                    <th>Aumtech Profit Margin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1,000 Students</td>
+                    <td>$1,500/mo</td>
+                    <td>$4,500/mo</td>
+                    <td>High (Prism) / Low (Vault)</td>
+                </tr>
+                <tr>
+                    <td>5,000 Students</td>
+                    <td>$6,250/mo</td>
+                    <td>$12,500/mo</td>
+                    <td>Target Operating Zone</td>
+                </tr>
+                <tr>
+                    <td>20,000 Students</td>
+                    <td>$20,000/mo</td>
+                    <td>$35,000/mo</td>
+                    <td>Maximum Profit Scaling</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="comparison-grid">
+            <div class="card card-prism">
+                <div class="metric">Prism Advantage</div>
+                <div class="value">High Margin</div>
+                <p>Scaling via low-cost global API. Zero infrastructure maintenance for Aumtech. Security via real-time
+                    scrubbing.</p>
+            </div>
+            <div class="card card-vault">
+                <div class="metric">Vault Advantage</div>
+                <div class="value">Sovereign Locked</div>
+                <p>High recurring revenue. Strategic lock-in with large state universities. Higher setup fees ($30k+).
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 AURA Intelligence Systems | Proprietary Financial Modeling &bull; Business Confidential
+        </div>
+    </div>
+</body>
+
+</html>
