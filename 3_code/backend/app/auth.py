@@ -142,14 +142,38 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
             resp = supabase.table("mod00_users").select("*").eq("email", email).limit(1).execute()
             if resp.data:
                 u = resp.data[0]
+                
+                # Fetch deeper academic context from EdNex
+                gpa = 0.0
+                major = ""
+                ai_insight = ""
+                try:
+                    prof_resp = supabase.table("mod01_student_profiles").select("cumulative_gpa, ai_insight").eq("user_id", u["id"]).limit(1).execute()
+                    if prof_resp.data:
+                        gpa = prof_resp.data[0].get("cumulative_gpa", 0.0)
+                        ai_insight = prof_resp.data[0].get("ai_insight", "")
+                except Exception as e:
+                    print(f"EdNex Profile fetch error: {e}")
+                    
+                # NOTE: using a negative temporary ID to indicate this is a stateless proxy user
+                import hashlib
+                virtual_id = -int(hashlib.md5(email.encode()).hexdigest()[:8], 16)
+                
                 return User(
-                    id=0, # Virtual ID
+                    id=virtual_id, 
                     email=email,
                     full_name=f"{u.get('first_name', '')} {u.get('last_name', '')}",
                     is_active=u.get('is_active', True),
                     is_admin=False,
                     is_faculty=(u.get('role') == 'faculty'),
-                    subscription_status='active'
+                    gpa=gpa,
+                    major=major,
+                    ai_insight=ai_insight,
+                    subscription_status='active',
+                    # required missing fields
+                    background="",
+                    interests="",
+                    on_track_score=100
                 )
         raise credentials_exception
     else:

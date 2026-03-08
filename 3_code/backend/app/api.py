@@ -695,10 +695,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Sessi
         user = session.exec(statement).first()
         
         if user and verify_password(form_data.password, user.password_hash):
-            if not user.is_active:
-                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account inactive.")
-            access_token = create_access_token(data={"sub": user.email})
-            return {"access_token": access_token, "token_type": "bearer"}
+            # Only allow Admin / Faculty to use the local bypass, per stateless proxy logic
+            if getattr(user, 'is_admin', False) or getattr(user, 'is_faculty', False):
+                if not user.is_active:
+                     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account inactive.")
+                access_token = create_access_token(data={"sub": user.email})
+                return {"access_token": access_token, "token_type": "bearer"}
+            else:
+                # User is a student. We should force them to use EdNex for authentication.
+                print(f"Bypassing Native Core for student {form_data.username}, forcing EdNex check.")
             
         # 2. Check EdNex Warehouse Proxy (Students/Faculty in Supabase)
         try:
@@ -982,9 +987,12 @@ async def read_users_me(
             insight += "I noticed your GPA has room for improvement. Let's set up a tutoring session to get you back on track."
             
         current_user.ai_insight = insight
-        session.add(current_user)
-        session.commit()
-        session.refresh(current_user)
+        # Only save to local cache if they are a Native Core user (id > 0)
+        # EdNex users are stateless; their insights are pushed to mod01 when AI generates paths.
+        if current_user.id and current_user.id > 0:
+            session.add(current_user)
+            session.commit()
+            session.refresh(current_user)
         
     # Check if trial has expired
     is_trial_active = False
