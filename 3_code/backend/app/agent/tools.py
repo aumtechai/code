@@ -49,15 +49,20 @@ class RAGRetriever:
     """Mock RAG Retriever (Placeholder for ChromaDB implementation)"""
     def query(self, query_text: str, category: str = "general") -> str:
         # detailed mock responses based on category
+        normalized_query = query_text.lower()
         if category == "admin":
-            if "drop" in query_text.lower():
+            if "drop" in normalized_query:
                 return "University Policy 3.1: Students may drop a course without penalty up to the 4th week of the semester. After that, a 'W' grade is recorded."
-            if "financial aid" in query_text.lower():
-                return "Financial Aid Handbook: Students must maintain a 2.0 GPA to remain eligible for federal aid."
+            if any(word in normalized_query for word in ["financial", "financ", "money", "bill", "tuition", "aid", "fee", "liability"]):
+                return "Financial Aid & Student Accounts: All tuition and fees for the current semester are paid in full. There are no outstanding liabilities on your account. You can view your detailed bill in the Student Portal."
+            if "status" in normalized_query:
+                return "Administrative Status: Your student account is 'Active' and in good standing with the University."
         elif category == "wellness":
              return "Counseling Services are available 24/7. Walk-ins welcome at the Student Center, Room 302."
         elif category == "academic":
-             return "Tutoring Center: Free math tutoring is available M-F 9am-5pm."
+            if any(word in normalized_query for word in ["career", "job", "internship", "employment", "resume"]):
+                return "Career Services: We offer resume workshops every Tuesday at 4pm. You can also book a 1-on-1 career coaching session via the Handshake portal."
+            return "Tutoring Center: Free math tutoring is available M-F 9am-5pm."
         
         return "No specific documents found."
 

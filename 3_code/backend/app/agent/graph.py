@@ -79,8 +79,10 @@ def router_node(state: AgentState):
         
     if any(word in last_msg for word in ["fail", "grade", "assignment", "study", "calculus", "chemistry"]):
         return {"next_step": "tutor"}
-    elif any(word in last_msg for word in ["drop", "register", "financial aid", "deadline", "transcript"]):
+    elif any(word in last_msg for word in ["drop", "register", "financial", "financ", "bill", "tuition", "status", "deadline", "transcript", "fee", "liability"]):
         return {"next_step": "admin"}
+    elif any(word in last_msg for word in ["career", "job", "internship", "employment", "resume"]):
+        return {"next_step": "tutor"} # Route career to tutor for now, or could be admin
     elif any(word in last_msg for word in ["sad", "anxious", "depressed", "stress", "lonely", "overwhelmed"]):
         return {"next_step": "wellness"}
     else:
