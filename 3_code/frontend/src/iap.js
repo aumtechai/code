@@ -54,22 +54,7 @@ const API_KEY = "appl_uhitnXmAVGjaBgGgeolgvaTNffP";
 let isConfigured = false;
 
 const loadRevenueCat = async () => {
-    // Check if we are Native
-    const isNative = Capacitor.isNativePlatform();
-
-    if (isNative) {
-        if (Purchases) return Purchases;
-        try {
-            const module = await import('@revenuecat/purchases-capacitor');
-            Purchases = module.Purchases;
-            return Purchases;
-        } catch (e) {
-            console.error("Error loading RevenueCat SDK", e);
-            return null;
-        }
-    }
-
-    // Return "Mock" object for Web
+    // IAP functionality disabled. Always return mock object.
     return {
         isMock: true
     };
