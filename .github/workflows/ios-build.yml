@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: 3_code/frontend/package-lock.json
+          cache-dependency-path: 3_code/package-lock.json
 
       - name: Install Frontend Dependencies
         working-directory: 3_code/frontend
