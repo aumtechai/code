@@ -13,6 +13,7 @@
     "mobile:open:ios": "npx cap open ios",
     "mobile:open:android": "npx cap open android",
     "cap:update": "npx cap update ios",
+    "assets:generate": "npx @capacitor/assets generate",
     "eas-build-pre-install": "node -e \"console.log('Pre-install hook')\"",
     "eas-build-post-install": "npm run build && npx cap sync ios"
   },
