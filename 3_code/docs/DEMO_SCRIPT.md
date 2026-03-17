@@ -186,7 +186,36 @@
 
 ---
 
-### Part 7: Wrap-Up & Q&A (2 minutes)
+---
+
+### Part 7: Proactive AI & Mobile Excellence (2 minutes)
+
+**TALKING POINTS:**
+- "Aura isn't just reactive. Our background intelligence agent monitors student health every 4-6 hours."
+- "If a student's GPA dips or a financial hold is detected, Aura pushes a proactive nudge directly to their dashboard or phone."
+
+**DEMO ACTION:**
+1. Show the **"Holds & Alerts"** red banner at the top of the dashboard.
+2. Click on the banner to show the AI-generated nudge: *"I noticed your GPA dipped slightly after the Calculus midterm. Let's get you booked for a tutoring session."*
+
+**TALKING POINTS:**
+- "This ensures we reach the student *before* a small issue becomes a crisis."
+- "Finally, let's look at the premium mobile experience."
+
+**[Show the app on an iPhone or use browser mobile simulation]**
+
+**SHOW:**
+- The **IPHONE_ONLY_LOGO.jpg** in the header.
+- The **Glassmorphism** styling and smooth **Inertial Scrolling**.
+- The responsive Chat Interface with native-app feel.
+
+**TALKING POINTS:**
+- "We've optimized every pixel for the iPhone. Notice the high-end glassmorphism and the native-feeling scrolling."
+- "This isn't just a mobile website; it's a top-tier student success companion."
+
+---
+
+### Part 8: Wrap-Up & Q&A (2 minutes)
 
 **TALKING POINTS:**
 - "We also have features for Career Pathfinding, Social Campus connections, Wellness check-ins, and more."

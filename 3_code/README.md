@@ -53,7 +53,10 @@ npm run dev
 
 ## Features
 - **Multi-Agent Routing**: Intelligently routes queries to Tutor, Admin, or Wellness agents.
-- **RAG Integration**: Uses a mock RAG retriever (ChromaDB ready) for policy/academic context.
+- **Proactive Intelligence**: Automated batch engine that connects to EdNex to generate preventative interventions.
+- **RAG Integration**: Uses institutional knowledge (policies, forms) for accurate AI advisor responses.
+- **Privacy Gateway**: Tokenizes PII (identities, emails) before processing by LLMs to ensure HIPAA/FERPA safety.
+- **Premium Mobile UI**: Dedicated iPhone-only styling with glassmorphism and native inertial scrolling.
 - **Crisis Protocol**: Detects distress signals and provides immediate emergency resources.
 - **Secure Auth**: JWT-based authentication with password hashing.
 

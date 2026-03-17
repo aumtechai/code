@@ -47,10 +47,13 @@ The **Get Aura** is a persistent, intelligent assistant powered by Google Gemini
 - **The Admin**: Focuses on university procedures, deadlines, and administrative paperwork.
 - **The Coach**: Offers support for mental health, stress management, and campus social integration.
 - **FAFSA Expert**: A specialized mode within the Financial Nexus assisting with FAFSA applications and financial aid questions.
+- **Proactive Intelligence Agent**: An automated background agent that monitors student health scores and generates preventative "Nudges" via SMS and Dashboard alerts.
 
 ### Capabilities:
-- **Context Awareness**: The AI is aware of the student's profile, major, and current academic standing.
+- **Context Awareness**: The AI is aware of the student's profile, major, and current academic standing, pulled directly from the EdNex Data Warehouse.
+- **Institutional Knowledge**: Aura uses a RAG (Retrieval-Augmented Generation) layer to provide answers backed by official university policy documents.
 - **History**: Use the "My History" feature to review past conversations.
+- **Privacy Shield**: All student data is anonymized via a Privacy Gateway before being processed by AI models.
 
 ---
 
@@ -155,6 +158,17 @@ Features to foster community and student well-being.
 - **Student Signals**: System for faculty to raise early warning signals (attendance, grades, behavior) for at-risk students.
 - **Communication Drafts**: AI assistance to draft supportive emails to students.
 - **Class Roster**: View lists of students in taught courses.
+
+---
+
+## Mobile UI Excellence
+The platform is optimized for premium mobile devices with a specific focus on iOS.
+
+### Features:
+- **iPhone-Only Branding**: A dedicated high-resolution logo and aesthetic for the mobile experience.
+- **Glassmorphism UI**: Uses depth, blur (20px), and saturation to create a premium, modern feel.
+- **Inertial Scrolling**: Native-feel scrolling with momentum and "rubber-banding" on iOS.
+- **Safe Area Integration**: Respects the iPhone "Notch" and home bars for a full-screen, native-app experience.
 
 ---
 

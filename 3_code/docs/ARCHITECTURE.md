@@ -82,6 +82,17 @@
 │                              │    │  DATABASE_URL            │   │                    │
 └──────────────────────────────┘    └──────────────────────────┘   └────────────────────┘
 
+┌────────────────────────────────────┐
+│   EDNEX DATA WAREHOUSE             │
+│   (Enterprise Proxy)               │
+│                                    │
+│  - SIS Streams (Grades/Standing)   │
+│  - Finance Streams (Bursar)        │
+│  - Degree Audit (Advisement)       │
+│                                    │
+│  Integration: PROXY_API_URL        │
+└────────────────────────────────────┘
+
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              USER ACCESS LAYER                               │
@@ -198,6 +209,9 @@
 - **Framework:** FastAPI
 - **Language:** Python 3.11
 - **ORM:** SQLModel
+- **Agent Framework:** LangGraph
+- **Proactive Engine:** AI Intelligence Batch
+- **Privacy Security:** Tokenized Privacy Gateway
 - **Authentication:** JWT (python-jose)
 - **Password Hashing:** bcrypt
 - **AI Integration:** google-generativeai
@@ -216,7 +230,8 @@
   - Flashcard generation
   - Audio transcription
   - Text summarization
-  - Conversational AI
+  - Conversational AI (Aura)
+  - Proactive Student Success Intervention
 
 ### External Integrations
 - **Canvas LMS:** Course and assignment data (optional)
@@ -311,6 +326,11 @@ Developer
 │     - SSL/TLS required                                   │
 │     - Connection pooling                                 │
 │     - Prepared statements (SQL injection prevention)     │
+│                                                          │
+│  7. AI Privacy Gateway                                   │
+│     - PII Tokenization                                   │
+│     - FERPA/HIPAA Compliance logic                       │
+│     - Local University Boundary Enforcement               │
 │                                                          │
 └──────────────────────────────────────────────────────────┘
 ```
