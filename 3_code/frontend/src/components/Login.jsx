@@ -174,7 +174,7 @@ Error: ${detail}`);
                             id="email"
                             name="username"
                             type="email"
-                            placeholder="student@university.edu"
+                            placeholder=""
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -188,7 +188,7 @@ Error: ${detail}`);
                             id="password"
                             name="password"
                             type="password"
-                            placeholder="••••••••"
+                            placeholder=""
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required

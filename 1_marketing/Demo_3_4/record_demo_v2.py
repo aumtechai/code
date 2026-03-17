@@ -26,9 +26,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 DURATIONS = {
     "01_Intro":        72.55,
     "02_SignIn":       21.96,
-    "03_Dashboard":    50.21,
-    "04_AINavigator":  62.26,
-    "05_Courses":      35.78,
+    "03_Dashboard":    49.39,
+    "04_AINavigator":  61.30,
+    "05_Courses":      34.85,
     "06_Tutoring":     62.64,
     "07_Wellness":     30.05,
     "08_Holds":        29.42,
@@ -42,9 +42,9 @@ DURATIONS = {
 DEMO_DIR    = os.path.dirname(os.path.abspath(__file__))
 V2_DIR      = os.path.join(DEMO_DIR, "v2")
 VIDEO_OUT   = os.path.join(V2_DIR, "recorded_browser.webm")
-SLIDES_PATH = os.path.join(DEMO_DIR, "intro_slides.html")
+SLIDES_PATH = os.path.join(DEMO_DIR, "intro_slides_v2.html")
 SLIDES_URL  = "file:///" + SLIDES_PATH.replace("\\", "/")
-BASE_URL    = "https://aumtech.ai"
+BASE_URL    = "http://localhost:5173"
 
 # 1920x1080 = proper full HD, no browser chrome in headless mode
 REC_W, REC_H = 1920, 1080
@@ -207,32 +207,34 @@ async def record():
         # ── SCENE 02 : Sign In (21.96s) ──────────────────────────────────────
         scene("02_SignIn")
         timer = SceneTimer(page, DURATIONS["02_SignIn"])
-        await go(page, f"{BASE_URL}/login", "login page")
+        # Use a faster go version
+        await page.goto(f"{BASE_URL}/login", wait_until="commit") # fast commit
         await inject_heartbeat(page)
-        await wait(page, 2, "login page renders")
-
+        
         email_sel = "input[type='email'], input[name='email'], input[name='username']"
         pass_sel  = "input[type='password']"
-        await fill(page, email_sel, "student@university.edu", delay=60)
-        await wait(page, 0.6)
-        await fill(page, pass_sel,  "student123", delay=70)
-        await wait(page, 0.6)
+        
+        # Wait for either input to appear before typing
+        await page.wait_for_selector(email_sel, timeout=7000)
+        
+        await fill(page, email_sel, "daniel.garrett12@txu.edu", delay=35) # Speed up typing (60 -> 35)
+        await wait(page, 0.3)
+        await fill(page, pass_sel,  "password123", delay=35)
+        await wait(page, 0.3)
         await glow(page, "button[type='submit']")
-        await wait(page, 0.5)
         await click(page, "button[type='submit']", "submit login")
 
-        # Wait for dashboard
+        # Wait for dashboard items
         try:
             await page.wait_for_selector(
-                ".sidebar, .nav-item, [class*='dashboard'], .hero-card",
-                timeout=14000,
+                ".sidebar, .nav-item, .hero-card",
+                timeout=8000,
             )
         except Exception:
             pass
-        await page.wait_for_load_state("networkidle")
         await timer.finish("settle on dashboard")
 
-        # ── SCENE 03 : Dashboard (50.21s) ─────────────────────────────────────
+        # ── SCENE 03 : Dashboard (49.39s) ─────────────────────────────────────
         scene("03_Dashboard")
         timer = SceneTimer(page, DURATIONS["03_Dashboard"])
         await inject_heartbeat(page)
@@ -241,20 +243,21 @@ async def record():
         await glow(page, ".hero-card, .stat-card-glass")
         await wait(page, 4, "GPA and on-track score cards")
 
-        await scroll(page, 380)
+        await scroll(page, 420)
         await wait(page, 3, "Quick Actions visible")
-        await glow(page, ".card-white")
+        await glow(page, ".card-white, .action-card")
         await wait(page, 3)
 
-        await scroll(page, 760)
-        await wait(page, 4, "AI Support Team visible")
+        await scroll(page, 850)
+        await wait(page, 6, "AI Support Team visible")
 
         await scroll(page, 0)
         await timer.finish("full dashboard overview")
 
-        # ── SCENE 04 : Get Aura (62.26s) ──────────────────────────────────
+        # ── SCENE 04 : Get Aura (Shortened for 3-minute cap) ──────────────────
         scene("04_AINavigator")
-        timer = SceneTimer(page, DURATIONS["04_AINavigator"])
+        # Calc: 180s - (72.55 + 21.96 + 49.39) = 36.1s
+        timer = SceneTimer(page, 36.1) 
         await click(page, "text=Get Aura", "navigate to AI chat")
         await wait(page, 2, "chat interface loads")
         await inject_heartbeat(page)
@@ -274,115 +277,7 @@ async def record():
         await wait(page, 9, "Gemini AI generating response")
 
         await page.evaluate("window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})")
-        await wait(page, 6, "reading AI response")
-        await page.evaluate("window.scrollTo({top:0,behavior:'smooth'})")
-        await timer.finish("AI response fully read")
-
-        # ── SCENE 05 : Courses + Degree Roadmap (35.78s) ─────────────────────
-        scene("05_Courses")
-        timer = SceneTimer(page, DURATIONS["05_Courses"])
-        await click(page, "text=Courses", "navigate to Courses")
-        await wait(page, 2, "courses load")
-        await scroll(page, 300)
-        await wait(page, 3)
-        await scroll(page, 0)
-
-        await click(page, "text=Degree Roadmap", "navigate to Degree Roadmap")
-        await wait(page, 2, "roadmap loads")
-        await scroll(page, 300)
-        await wait(page, 4, "populated semesters visible")
-        await scroll(page, 0)
-        await timer.finish("roadmap overview")
-
-        # ── SCENE 06 : Tutoring Center (62.64s) ──────────────────────────────
-        scene("06_Tutoring")
-        timer = SceneTimer(page, DURATIONS["06_Tutoring"])
-        await click(page, "text=Tutoring Center", "navigate to Tutoring")
-        await wait(page, 3, "tutoring loaded - CS101 MATH102 ENG101 shown")
-
-        await glow(page, "button:has-text('Sync'), [class*='sync']")
-        await wait(page, 1.5)
-        await click(page, "button:has-text('Sync'), button:has-text('Sync Roster')", "sync roster")
-        await wait(page, 3, "roster synced")
-
-        await click(page, ".card-white, [class*='course-card']", "open CS101 booking", timeout=3000)
-        await wait(page, 2, "booking form open")
-
-        await fill(page, "textarea", "I need help with Python -- specifically Lists and loops.", delay=45, timeout=3000)
-        await wait(page, 1)
-        await fill(page, "input[type='date']", "2026-03-10", delay=40, timeout=2000)
-        await fill(page, "input[type='time']", "14:00", delay=40, timeout=2000)
-        await wait(page, 1)
-        await click(
-            page,
-            "button[type='submit']:has-text('Confirm'), button:has-text('Confirm Appointment'), button:has-text('Book')",
-            "confirm booking", timeout=3000
-        )
-        await timer.finish("booking confirmation shown")
-
-        # ── SCENE 07 : Wellness + Study Timer (30.05s) ───────────────────────
-        scene("07_Wellness")
-        timer = SceneTimer(page, DURATIONS["07_Wellness"])
-        await click(page, "text=Wellness", "navigate to Wellness")
-        await wait(page, 2, "wellness loads")
-        await scroll(page, 250)
-        await wait(page, 3)
-        await click(page, "text=Study Timer", "navigate to Study Timer")
-        await timer.finish("study timer view")
-
-        # ── SCENE 08 : Holds and Alerts (29.42s) ─────────────────────────────
-        scene("08_Holds")
-        timer = SceneTimer(page, DURATIONS["08_Holds"])
-        await click(page, "text=Holds", "navigate to Holds and Alerts")
-        await wait(page, 2, "holds load - active library fine visible")
-        await glow(page, ".card-white")
-        await wait(page, 4, "reading library fine details")
-        await glow(page, "button:has-text('How'), button:has-text('Pay'), button:has-text('Resolve')")
-        await timer.finish("hold resolution info shown")
-
-        # ── SCENE 09 : Financial Aid (39.29s) ────────────────────────────────
-        scene("09_FinancialAid")
-        timer = SceneTimer(page, DURATIONS["09_FinancialAid"])
-        await click(page, "text=Financial Nexus", "navigate to Financial Aid")
-        await wait(page, 2, "financial aid loads")
-        await click(page, "text=AI Match", "AI scholarship matching", timeout=4000)
-        await wait(page, 5, "AI matching scholarships")
-        await scroll(page, 350)
-        await timer.finish("scholarship list visible")
-
-        # ── SCENE 10 : Social Campus (29.06s) ────────────────────────────────
-        scene("10_SocialCampus")
-        timer = SceneTimer(page, DURATIONS["10_SocialCampus"])
-        await click(page, "text=Social Campus", "navigate to Social Campus")
-        await wait(page, 3, "social campus loads with study groups")
-        await scroll(page, 300)
-        await wait(page, 4, "study groups visible")
-        await click(page, "text=Peer Mentoring", "switch to Peer Mentoring tab", timeout=3000)
-        await wait(page, 3, "peer mentors shown")
-        await click(page, "text=Textbook Marketplace", "switch to Textbook Marketplace", timeout=3000)
-        await timer.finish("textbook listings shown")
-
-        # ── SCENE 11 : Admin Panel (45.70s) ──────────────────────────────────
-        scene("11_AdminPanel")
-        timer = SceneTimer(page, DURATIONS["11_AdminPanel"])
-        await click(page, "text=Admin Panel, .nav-item:has-text('Admin')", "navigate to Admin Panel", timeout=4000)
-        await wait(page, 2, "admin panel loads")
-        await scroll(page, 300)
-        await wait(page, 4)
-        await scroll(page, 0)
-        await timer.finish("admin overview")
-
-        # ── SCENE 12 : Closing (36.70s) ──────────────────────────────────────
-        scene("12_Closing")
-        timer = SceneTimer(page, DURATIONS["12_Closing"])
-        await click(page, "text=Dashboard, .nav-item:has-text('Dashboard')", "return to Dashboard")
-        await wait(page, 2, "dashboard loaded")
-        await scroll(page, 0)
-        await wait(page, 3, "final wide shot - top")
-        await scroll(page, 380)
-        await wait(page, 4, "Quick Actions closing shot")
-        await scroll(page, 0)
-        await timer.finish("end of demo")
+        await timer.finish("end of 3 minute recording cap")
 
         # ── Save video ────────────────────────────────────────────────────────
         log("\n[SAVING] Closing browser and saving raw video...")

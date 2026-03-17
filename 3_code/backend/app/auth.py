@@ -156,8 +156,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
                     print(f"EdNex Profile fetch error: {e}")
                     
                 # NOTE: using a negative temporary ID to indicate this is a stateless proxy user
+                # Using 7 hex chars to ensure it fits in a 32-bit signed integer range
                 import hashlib
-                virtual_id = -int(hashlib.md5(email.encode()).hexdigest()[:8], 16)
+                virtual_id = -int(hashlib.md5(email.encode()).hexdigest()[:7], 16)
                 
                 return User(
                     id=virtual_id, 

@@ -44,14 +44,14 @@ def mix():
     print(f"  Audio : {audio_dur:.2f}s  ({audio_dur/60:.1f} min)")
     print(f"  Video : {video_dur:.2f}s  ({video_dur/60:.1f} min)")
 
-    final_dur  = min(audio_dur, video_dur)
-    print(f"  Final : {final_dur:.2f}s  ({final_dur/60:.1f} min)\n")
+    final_dur  = min(audio_dur, video_dur, 180.0)
+    print(f"  Final : {final_dur:.2f}s  (3.0 min)\n")
 
     video      = video.subclip(0, final_dur)
     full_audio = full_audio.subclip(0, final_dur)
     final      = video.set_audio(full_audio)
 
-    print(f"[RENDERING] → {VIDEO_OUT}")
+    print(f"[RENDERING] -> {VIDEO_OUT}")
     final.write_videofile(
         VIDEO_OUT,
         codec="libx264",

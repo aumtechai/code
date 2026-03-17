@@ -214,6 +214,19 @@
             margin-bottom: 0;
         }
 
+        .click-marker {
+            display: inline-block;
+            background: #ef4444;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            margin-right: 8px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
         .pause-note {
             display: inline-block;
             background: rgba(245, 158, 11, 0.15);
@@ -411,7 +424,7 @@
         <!-- Timing Summary Bar -->
         <div class="timing-bar">
             <h2>⏱ Scene Timing at a Glance</h2>
-            <div class="time-chip"><span class="label">01 Intro</span><span class="val">45s</span></div>
+            <div class="time-chip"><span class="label">01 Intro</span><span class="val">60s</span></div>
             <div class="time-chip"><span class="label">01B Architecture</span><span class="val">45s</span></div>
             <div class="time-chip"><span class="label">02 Sign In</span><span class="val">30s</span></div>
             <div class="time-chip"><span class="label">03 Dashboard</span><span class="val">60s</span></div>
@@ -436,20 +449,20 @@
                     <h3>Introduction — Hook</h3>
                     <div class="screen-note">🖥 Screen: Login page — aumtech.ai logo, deep blue background</div>
                 </div>
-                <div class="scene-duration">45 sec</div>
+                <div class="scene-duration">60 sec</div>
             </div>
             <div class="scene-body">
                 <div class="narration">
-                    <p>"For decades, higher education has been the last frontier untouched by the AI revolution.</p>
-                    <p>Healthcare got diagnostic AI. Finance got algorithmic intelligence. Legal got contract
+                    <p><span class="click-marker">@ 0:00 (SLIDE 1)</span>"For decades, higher education has been the last frontier untouched by the AI revolution.</p>
+                    <p><span class="click-marker">@ 0:15 (CLICK NEXT)</span>Healthcare got diagnostic AI. Finance got algorithmic intelligence. Legal got contract
                         automation. But the place where human potential is shaped the most — the university — has been
                         left behind, running on spreadsheets, siloed portals, and overburdened advisors who simply
                         cannot give every student the attention they deserve.</p>
                     <p>Until now.</p>
-                    <p>Meet <strong>aumtech.ai</strong> — the world's first <em>Agentic Student Success Platform</em>.
+                    <p><span class="click-marker">@ 0:30 (CLICK NEXT)</span>Meet <strong>aumtech.ai</strong> — the world's first <em>Agentic Student Success Platform</em>.
                         Not a chatbot. Not a dashboard. An intelligent academic operating system that thinks alongside
                         every student, every day — from enrollment to graduation.</p>
-                    <p>We are not adding AI to education. We are <em>rebuilding the student experience from the ground
+                    <p><span class="click-marker">@ 0:45 (CLICK NEXT)</span>We are not adding AI to education. We are <em>rebuilding the student experience from the ground
                             up with AI at its core.</em></p>
                     <p>What you are about to see is a live, fully deployed system — handling real academic advising,
                         intelligent tutoring triage, financial aid matching, and institutional analytics — all powered
@@ -470,10 +483,11 @@
             </div>
             <div class="scene-body">
                 <div class="narration">
-                    <p>"Before we step into the platform, we need to look at the engine making this possible.</p>
+                    <p><span class="click-marker">@ 1:00 (CLICK NEXT)</span>"Before we step into the platform, we need to look at the engine making this possible.</p>
                     <p>At the center is <strong>EdNex</strong> — our sophisticated Integration and Staging Layer. EdNex functions as a 'DataStream' conduit, securely normalizing fragmented data from legacy SIS, LMS, and financial systems into a unified, multi-tenant cloud staging hub.</p>
                     <p>On top of this sits <strong>Aura</strong>, the Intelligence Layer. Aura isn't just a generic LLM; it's a context-aware engine that bridges raw institutional data with the reasoning power of Google Gemini.</p>
                     <p>And for our university partners, security is paramount. Every request passes through our <strong>Aura Privacy Gateway</strong>, where sensitive student PII is automatically stripped and tokenized before it ever touches a cloud model. This is how we deliver enterprise AI that is both incredibly powerful and 100% secure."</p>
+                    <p><span class="click-marker">@ 1:45 (CLICK NEXT)</span><i>[Show Logo Slide for 10s]</i></p>
                 </div>
             </div>
         </div>
@@ -492,11 +506,12 @@
         </div>
         <div class="scene-body">
             <div class="narration">
-                <p>"The sign-in experience is clean and professional. Students log in with their university
+                <p><span class="click-marker">@ 1:55 (SWITCH TO LIVE APP)</span>"The sign-in experience is clean and professional. Students log in with their university
                     credentials.</p>
                 <p>What happens next is immediate — our AI backend instantly loads their personalized profile:
                     courses, GPA trends, outstanding holds, and a dynamically generated AI insight — all before the
                     page even finishes rendering."</p>
+                <p><span class="click-marker">@ 2:25 (CLICK SIGN IN)</span></p>
             </div>
         </div>
     </div>
@@ -514,7 +529,7 @@
         </div>
         <div class="scene-body">
             <div class="narration">
-                <p>"Welcome to the Student Dashboard. The very first thing a student sees is a warm, personalized
+                <p><span class="click-marker">@ 2:25 (DASHBOARD LOADS)</span>"Welcome to the Student Dashboard. The very first thing a student sees is a warm, personalized
                     greeting from the Get Aura — noticing the time of day, their academic progress, and
                     surfacing the most important action items right away.</p>
                 <p>In the center, we have the On-Track Score — a real-time metric reflecting GPA, assignment
@@ -524,6 +539,7 @@
                 <p>On the left sidebar, the navigation panel organizes everything across five categories: Home,
                     Academics, Resources, Campus Life, and Administrative. No hunting around. Everything is exactly
                     where you expect it."</p>
+                <p><span class="click-marker">@ 3:25 (CLICK GET AURA)</span></p>
             </div>
         </div>
     </div>
