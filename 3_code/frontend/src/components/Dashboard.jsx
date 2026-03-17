@@ -42,6 +42,7 @@ import {
 
 import { motion } from 'framer-motion';
 import logoAsset from '../assets/logo.png';
+import iphoneLogo from '../assets/iphone_logo.jpg';
 
 
 
@@ -651,30 +652,53 @@ const Dashboard = () => {
     return (
         <div style={{ display: 'flex', height: '100dvh', background: '#f8fafc', flexDirection: 'column' }}>
             {/* Mobile Header - Fixed App Bar */}
-            <div className="mobile-only" style={{
+            <div className="mobile-only mobile-header" style={{
                 position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
-                padding: 'calc(2rem + env(safe-area-inset-top)) 1rem 0.5rem 1rem',
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
+                padding: 'calc(1.25rem + env(safe-area-inset-top)) 1.25rem 1rem 1.25rem',
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(20px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(20px) saturate(180%)',
                 borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                zIndex: 50,
-                height: 'auto'
+                zIndex: 60,
+                height: 'auto',
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.03)'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ padding: '4px', borderRadius: '8px', marginRight: '8px' }}>
-                        <img src={logoAsset} alt="Logo" style={{ width: '28px', height: '28px', borderRadius: '4px' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ 
+                        padding: '2px', 
+                        borderRadius: '12px', 
+                        marginRight: '4px',
+                        background: 'white',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        border: '1px solid rgba(0,0,0,0.05)'
+                    }}>
+                        <img src={iphoneLogo} alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '10px', objectFit: 'cover' }} />
                     </div>
 
-                    <span style={{ fontWeight: '700', fontSize: '1.5rem', color: '#0f172a' }}>Aura</span>
+                    <span style={{ fontWeight: '800', fontSize: '1.6rem', color: '#0f172a', letterSpacing: '-0.02em' }}>Aura</span>
                 </div>
-                <button onClick={() => setIsMobileMenuOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1e293b' }}>
-                    <Menu size={28} strokeWidth={2.75} />
+                <button 
+                    onClick={() => setIsMobileMenuOpen(true)} 
+                    style={{ 
+                        background: '#f8fafc', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '12px',
+                        width: '44px',
+                        height: '44px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer', 
+                        color: '#1e293b',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                    }}
+                >
+                    <Menu size={24} strokeWidth={2.5} />
                 </button>
             </div>
 
@@ -715,8 +739,11 @@ const Dashboard = () => {
 
                         @media (max-width: 768px) {
                             .main-content {
-                            padding: ${activeTab === 'chat' ? 0 : '1rem'} !important;
-                        padding-top: calc(8.5rem + env(safe-area-inset-top)) !important;
+                                padding: ${activeTab === 'chat' ? 0 : '1.25rem'} !important;
+                                padding-top: calc(7.5rem + env(safe-area-inset-top)) !important;
+                                padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
+                                overflow-y: auto !important;
+                                -webkit-overflow-scrolling: touch !important;
                             }
 
                         /* Force Stats Grid Side-by-Side */

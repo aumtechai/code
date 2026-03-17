@@ -124,8 +124,15 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
     const intro = getIntro();
 
     return (
-        <div className="chat-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', borderRadius: 0, boxShadow: 'none' }}>
-            <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="chat-container glass" style={{ display: 'flex', flexDirection: 'column', height: '100%', borderRadius: 0, boxShadow: 'none', border: 'none' }}>
+            <div style={{ 
+                flex: 1, 
+                padding: window.innerWidth <= 768 ? '1rem' : '2rem', 
+                overflowY: 'auto', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '1.25rem' 
+            }}>
                 {messages.length === 0 && intro && (
                     <div style={{ textAlign: 'center', marginTop: 'auto', marginBottom: 'auto', opacity: 0.5 }}>
                         <h3>{intro.title}</h3>
@@ -141,13 +148,14 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
                         style={{ alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}
                     >
                         <div style={{
-                            background: msg.sender === 'user' ? '#4f46e5' : '#f1f5f9',
+                            background: msg.sender === 'user' ? 'var(--hero-gradient)' : 'white',
                             color: msg.sender === 'user' ? '#ffffff' : '#1e293b',
-                            padding: '1rem',
-                            borderRadius: '16px',
-                            borderTopRightRadius: msg.sender === 'user' ? '4px' : '16px',
-                            borderTopLeftRadius: msg.sender === 'ai' ? '4px' : '16px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                            padding: '1rem 1.25rem',
+                            borderRadius: '20px',
+                            borderTopRightRadius: msg.sender === 'user' ? '4px' : '20px',
+                            borderTopLeftRadius: msg.sender === 'ai' ? '4px' : '20px',
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                            border: msg.sender === 'ai' ? '1px solid #f1f5f9' : 'none'
                         }}>
                             {msg.sender === 'user' ? <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div> : (
                                 <div>
@@ -189,7 +197,13 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
                 <div ref={messagesEndRef} />
             </div>
 
-            <div style={{ padding: '1.5rem', borderTop: '1px solid #f1f5f9', background: 'white' }}>
+            <div style={{ 
+                padding: window.innerWidth <= 768 ? '1rem' : '1.5rem', 
+                paddingBottom: window.innerWidth <= 768 ? 'calc(1rem + env(safe-area-inset-bottom))' : '1.5rem',
+                borderTop: '1px solid #f1f5f9', 
+                background: 'rgba(255,255,255,0.8)',
+                backdropFilter: 'blur(10px)'
+            }}>
                 {attachment && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', fontSize: '0.85rem', background: '#e0e7ff', padding: '4px 8px', borderRadius: '4px', width: 'fit-content' }}>
                         <Paperclip size={14} /> {attachment.name}
