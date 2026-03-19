@@ -1,5 +1,8 @@
 # Implementing Apple In-App Purchases (IAP) for iOS
 
+> [!WARNING]
+> **DEPRECATED**: As of March 2026, Student Success Navigator is repositioned as a **100% Free** application for all students. The instructions below are preserved for historical reference only. Do NOT implement these for the current submission to avoid rejection for unnecessary IAP complexity.
+
 This guide outlines the step-by-step process to implement native iOS In-App Purchases using the RevenueCat SDK (recommended for Capacitor apps). This is required to satisfy Apple App Store Guideline 3.1.1.
 
 ## Phase 1: Apple Administrative Work

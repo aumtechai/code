@@ -40,6 +40,7 @@ Student Success Navigator is your all-in-one companion for academic excellence. 
 
 INTELLIGENT GET AURA
 • Chat with your personal AI academic advisor 24/7
+• Aura Proactive Intelligence: Monitoring student health 4-6 hours a day and generating preventative 'Nudges'
 • Get instant answers to academic, financial, and campus questions
 • Receive personalized course recommendations
 • Smart scheduling assistance and deadline reminders
@@ -86,13 +87,14 @@ COMPREHENSIVE SUCCESS FEATURES
 • On-track indicators for graduation progress
 • Course audit and degree requirement tracking
 • Integration with academic records
-• Secure data encryption
+• Secure data encryption and Privacy Gateway for PII protection
+• Premium iPhone UI with glassmorphism and native inertial scrolling
 • Professional, intuitive interface
 
 WHY STUDENT SUCCESS NAVIGATOR?
 
-✓ Save Time: AI automates routine tasks and planning
-✓ Stay Organized: All academic tools in one place
+✓ Save Time: AI-automated routine tasks and planning
+✓ Proactive Support: Aura alerts you to academic issues *before* they become crises
 ✓ Get Support: 24/7 AI advisor plus peer connections
 ✓ Track Progress: Visual roadmaps and analytics
 ✓ Plan Financially: Scholarship finder and FAFSA help
@@ -178,6 +180,7 @@ NEW FEATURES:
 
 🤖 GET AURA
 • Personal AI academic advisor available 24/7
+• Proactive Nudge System: AI monitors student health and pushes preventative alerts
 • Intelligent course recommendations
 • Instant answers to academic questions
 • Context-aware guidance and support
@@ -211,7 +214,8 @@ NEW FEATURES:
 • Interactive performance dashboard
 • Faculty communication portal
 • Holds and alerts center
-• Secure data encryption
+• Secure Privacy Gateway for AI interactions
+• Premium iPhone-Specific UI & Logo
 • Beautiful, intuitive interface
 
 Thank you for joining us on this journey! We're committed to your success.
@@ -327,22 +331,19 @@ KEY FEATURES TO TEST:
    - View study buddy matches
    - Browse peer mentoring options
 
+6. Proactive Intelligence (Dashboard Alerts)
+   - View the internal 'Aura Intelligence Insights' in the Holds/Alerts section
+   - Note: These are generated automatically by our background batch processor
+
+7. Premium Mobile Experience
+   - Note the 'iPhone-only' logo treatment and glassmorphic header design
+   - Native-feel scroll performance on iOS
+
 BACKEND REQUIREMENTS:
 - App requires internet connection
 - Backend API hosted at: [your-backend-url.vercel.app]
 - All demo accounts are pre-populated with sample data
-
-MICROPHONE/CAMERA PERMISSIONS:
-- Microphone: Used for lecture audio recording (optional feature)
-- Camera: Used for document scanning (optional feature)
-- Photo Library: Used for uploading documents (optional feature)
-
-The app provides educational value by helping students:
-• Track academic progress
-• Plan course schedules
-• Discover financial aid
-• Connect with peers
-• Organize study materials
+- Privacy Shield: All student data is anonymized via a Gateway before processing
 
 Thank you for reviewing our app!
 ```
