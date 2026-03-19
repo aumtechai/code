@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PrepAI | Testing Strategy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --aum-indigo: #4f46e5;
+            --aum-violet: #7c3aed;
+            --aum-dark: #020617;
+            --aum-card: rgba(15, 23, 42, 0.75);
+            --aum-border: rgba(255, 255, 255, 0.06);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --aura-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--aum-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        aside {
+            width: 280px; background-color: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(20px); border-right: 1px solid var(--aum-border);
+            padding: 30px 24px; display: flex; flex-direction: column; gap: 40px;
+        }
+
+        .logo { font-family: 'Outfit'; font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .logo-box { width: 32px; height: 32px; background: var(--aura-gradient); border-radius: 8px; display:flex; align-items:center; justify-content:center; }
+
+        nav { display: flex; flex-direction: column; gap: 8px; }
+        .nav-item { padding: 12px 16px; border-radius: 12px; color: var(--text-dim); text-decoration: none; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 0.95rem; }
+        .nav-item:hover, .nav-item.active { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
+        .nav-item.active { border: 1px solid var(--aum-border); }
+
+        main { flex: 1; padding: 40px; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        h1 { font-family: 'Outfit'; font-size: 2.2rem; }
+
+        .glass-card { background: var(--aum-card); backdrop-filter: blur(12px); border: 1px solid var(--aum-border); border-radius: 24px; padding: 28px; margin-bottom: 24px; }
+        .card-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 700; margin-bottom: 15px; display: block; }
+
+        .test-timeline { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 20px; }
+        .test-box { min-width: 150px; background: rgba(255,255,255,0.02); border: 1px solid var(--aum-border); border-radius: 16px; padding: 15px; text-align: center; }
+        .test-box.completed { border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.06); }
+        .test-box.active { border-color: var(--aum-indigo); background: rgba(79, 70, 229, 0.1); }
+
+        .gap-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .gap-bar { flex: 1; height: 10px; background: rgba(255,255,255,0.05); border-radius: 50px; overflow: hidden; }
+        .gap-fill { height: 100%; background: var(--aura-gradient); }
+
+        .aura-nudge { background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%); border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 20px; padding: 25px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <aside>
+        <div class="logo"><div class="logo-box"><i data-lucide="sparkle" style="color:white; width:16px;"></i></div> PrepAI</div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i data-lucide="layout-grid" style="width:18px;"></i> Master Dashboard</a>
+            <a href="/academic" class="nav-item"><i data-lucide="book-open" style="width:18px;"></i> Academic Engine</a>
+            <a href="/profile" class="nav-item"><i data-lucide="git-branch" style="width:18px;"></i> Profile Builder</a>
+            <a href="/testing" class="nav-item active"><i data-lucide="timer" style="width:18px;"></i> Testing strategy</a>
+            <a href="/coaching" class="nav-item"><i data-lucide="users-2" style="width:18px;"></i> Coaching Hub</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div>
+                <h1>Testing Strategy</h1>
+                <p style="color:var(--text-dim);">Score Forecast: 1540–1560 (SAT)</p>
+            </div>
+            <div style="background: var(--aum-card); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--aum-border);">
+                <span style="font-size: 0.85rem; font-weight: 600; color: #818cf8;">98th Percentile Forecast</span>
+            </div>
+        </header>
+
+        <div class="glass-card">
+            <span class="card-label">7-Year Testing Timeline</span>
+            <div class="test-timeline">
+                <div class="test-box completed"><p style="font-size:0.8rem; font-weight:700;">SAT 8/9</p><p style="font-size:0.7rem; color:var(--text-dim); margin:4px 0 10px;">8th Fall</p><p style="font-size:1.1rem; font-weight:800; color:#10b981;">1080</p></div>
+                <div class="test-box active"><p style="font-size:0.8rem; font-weight:700;">PSAT 10</p><p style="font-size:0.7rem; color:var(--text-dim); margin:4px 0 10px;">9th Fall</p><p style="font-size:0.9rem; font-weight:800; color:#818cf8;">ACTIVE</p></div>
+                <div class="test-box"><p style="font-size:0.8rem; font-weight:700; opacity:0.4;">PSAT/NMSQT</p><p style="font-size:0.7rem; color:var(--text-dim); margin:4px 0 10px;">10th Fall</p><i data-lucide="lock" style="width:14px; opacity:0.2;"></i></div>
+                <div class="test-box"><p style="font-size:0.8rem; font-weight:700; opacity:0.4;">SAT trial 1</p><p style="font-size:0.7rem; color:var(--text-dim); margin:4px 0 10px;">11th Fall</p><i data-lucide="lock" style="width:14px; opacity:0.2;"></i></div>
+                <div class="test-box"><p style="font-size:0.8rem; font-weight:700; opacity:0.4;">SAT (Final)</p><p style="font-size:0.7rem; color:var(--text-dim); margin:4px 0 10px;">11th Spring</p><i data-lucide="lock" style="width:14px; opacity:0.2;"></i></div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px;">
+            <div class="glass-card">
+                <span class="card-label">Score Gap Analysis (Elite Tier)</span>
+                <div class="gap-item"><span style="width:100px; font-size:0.85rem;">Math</span> <div class="gap-bar"><div class="gap-fill" style="width:94%;"></div></div> <span style="font-weight:700; font-size:0.85rem;">94%</span></div>
+                <div class="gap-item"><span style="width:100px; font-size:0.85rem;">Evidence-Based Reading</span> <div class="gap-bar"><div class="gap-fill" style="width:82%;"></div></div> <span style="font-weight:700; font-size:0.85rem;">82%</span></div>
+                <div class="aura-nudge">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;"><i data-lucide="zap" style="color:var(--text-main); fill:var(--aum-violet);"></i> <p style="font-weight:700; color:white;">Aura Growth Alert</p></div>
+                    <p style="font-size:0.85rem; color:white; line-height:1.5;">To bridge the <b>1550+ Tier</b>, Aura has detected a pattern of error in **Evidence-Based Writing (Transitions)**. I have updated your 9th Grade Roadmap to include 4 specialized clinics this semester.</p>
+                </div>
+            </div>
+            
+            <div class="glass-card" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
+                <p style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Forecast Strength</p>
+                <h3 style="font-family:'Outfit'; font-size:2.8rem; margin:10px 0; color:#818cf8;">1560</h3>
+                <p style="font-size:0.8rem; color:#10b981; font-weight:700;">+240pts growth (Est)</p>
+            </div>
+        </div>
+    </main>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

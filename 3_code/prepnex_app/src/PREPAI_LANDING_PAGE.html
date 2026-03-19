@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PrepAI | Powered by Aura Intelligence</title>
+    <!-- SEO -->
+    <meta name="description" content="The elite 6th-12th grade college pathfinder powered by Aura Intelligence. Align your academic and extracurricular profile with elite higher education.">
+    
+    <!-- Aumtech Font Stack -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            /* Official aumtech.ai Elite Palette (Light Edition) */
+            --aum-indigo: #4f46e5;
+            --aum-violet: #7c3aed;
+            --aum-cyan: #0ea5e9;
+            --aum-bg: #f8fafc;
+            --aum-card: #ffffff;
+            --aum-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-dim: #64748b;
+            --hero-gradient: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #0ea5e9 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--aum-bg);
+            color: var(--text-main);
+            overflow: hidden;
+            line-height: 1.6;
+            height: 100vh;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--aum-border);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+            color: var(--text-main); text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 28px; height: 28px; background: var(--hero-gradient);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: color 0.2s; }
+        .nav-link:hover { color: var(--aum-indigo); }
+
+        .btn-premium {
+            background: var(--hero-gradient);
+            color: white; padding: 10px 24px; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 700; text-decoration: none;
+            transition: all 0.3s ease; border: none; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-premium:hover { transform: scale(1.05); }
+
+        /* --- Hero Section --- */
+        .hero { 
+            padding: 120px 5% 40px; text-align: center; position: relative; 
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+        }
+        .hero h1 { font-family: 'Outfit', sans-serif; font-size: clamp(2rem, 6vw, 3.8rem); font-weight: 700; line-height: 1.1; margin-bottom: 20px; color: var(--text-main); letter-spacing: -2px; }
+        .hero p { font-size: 1.1rem; color: var(--text-dim); max-width: 700px; margin: 0 auto 35px; }
+
+        /* --- Glass Cards --- */
+        .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; width: 100%; max-width: 1200px; margin: 60px auto; }
+        .f-card { background: white; border: 1px solid var(--aum-border); border-radius: 32px; padding: 40px; transition: all 0.4s; text-align: left; }
+        .f-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px rgba(0,0,0,0.06); border-color: var(--aum-indigo); }
+        .icon-box { width: 48px; height: 48px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--aum-indigo); margin-bottom: 25px; }
+
+        @media (max-width: 768px) { .hero h1 { font-size: 3rem; } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon"><i data-lucide="sparkle" style="color:white; width:16px;"></i></div>
+            Aumtech PrepAI
+        </a>
+        <div class="nav-actions">
+            <a href="/login" class="nav-link">Log in</a>
+            <a href="/login" class="btn-premium">Start Pathfinding</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div style="display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background:#eef2ff; color:var(--aum-indigo); border-radius:50px; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:25px;">
+                <i data-lucide="zap" style="width:14px; fill:currentColor;"></i> Powered by Vesta Intelligence
+            </div>
+            <h1>Elite Higher Education<br><span class="accent">Starts in 6th Grade</span></h1>
+            <p>From math olympiads to SAT strategy, PrepAI builds a holistic roadmap specifically designed for elite university admissions.</p>
+            
+            <div class="pillars-grid">
+                <div class="f-card">
+                    <div class="icon-box"><i data-lucide="book-open"></i></div>
+                    <h3>Academic Engine</h3>
+                    <p>Automated course planning aligned with Stanford, MIT, and Ivy League requirements.</p>
+                </div>
+
+                <div class="f-card">
+                    <div class="icon-box"><i data-lucide="git-branch"></i></div>
+                    <h3>Profile Builder</h3>
+                    <p>AI-suggested co-curriculars that move the needle for elite admissions officers.</p>
+                </div>
+
+                <div class="f-card">
+                    <div class="icon-box"><i data-lucide="timer"></i></div>
+                    <h3>Testing Strategy</h3>
+                    <p>Dynamic SAT/ACT timelines that adapt to your progress and target goals.</p>
+                </div>
+            </div>
+
+            <div style="margin-top:40px;">
+                <a href="/login" class="btn-premium" style="padding: 16px 50px; font-size: 1.1rem;">Explore the Whole Student Approach</a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PrepAI | Academic Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* Definitive Aumtech Radiant Tokens */
+            --aum-indigo: #4f46e5;
+            --aum-violet: #7c3aed;
+            --aum-dark: #020617;
+            --aum-bg: #030712;
+            --aum-card: rgba(15, 23, 42, 0.4);
+            --aum-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --aura-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --glass-blur: blur(24px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--aum-bg);
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(79, 70, 229, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(124, 58, 237, 0.05) 0%, transparent 40%);
+            color: var(--text-main);
+            display: flex; height: 100vh; overflow: hidden;
+        }
+
+        aside {
+            width: 280px; background-color: rgba(2, 6, 23, 0.85);
+            backdrop-filter: var(--glass-blur); border-right: 1px solid var(--aum-border);
+            padding: 40px 24px; display: flex; flex-direction: column; gap: 45px;
+        }
+
+        .logo { font-family: 'Outfit'; font-size: 1.7rem; font-weight: 700; display: flex; align-items: center; gap: 14px; }
+        .logo-box { width: 34px; height: 34px; background: var(--aura-gradient); border-radius: 10px; display:flex; align-items:center; justify-content:center; box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); }
+
+        nav { display: flex; flex-direction: column; gap: 10px; }
+        .nav-item { padding: 14px 18px; border-radius: 14px; color: var(--text-dim); text-decoration: none; display: flex; align-items: center; gap: 14px; font-weight: 500; font-size: 0.95rem; transition: all 0.3s ease; }
+        .nav-item:hover, .nav-item.active { background: rgba(255, 255, 255, 0.05); color: var(--text-main); transform: translateX(4px); }
+        .nav-item.active { border: 1px solid var(--aum-border); background: linear-gradient(90deg, rgba(255,255,255,0.06), transparent); }
+
+        main { flex: 1; padding: 60px; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
+        h1 { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 700; background: linear-gradient(to right, #fff, var(--text-dim)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .glass-card { background: var(--aum-card); backdrop-filter: var(--glass-blur); border: 1px solid var(--aum-border); border-radius: 30px; padding: 35px; margin-bottom: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+        .card-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); font-weight: 800; margin-bottom: 20px; display: block; }
+
+        .roadmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+        .year-slot { text-align: center; }
+        .slot-box { height: 120px; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px dashed var(--aum-border); padding: 12px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .slot-box.active { border: 1px solid var(--aum-indigo); background: rgba(79, 70, 229, 0.1); }
+        .slot-box.completed { border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); }
+
+        .course-name { font-size: 0.8rem; font-weight: 600; }
+        .course-grade { font-size: 0.7rem; color: #10b981; font-weight: 800; }
+
+        .aura-nudge { background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 20px; padding: 25px; margin-top: 30px; display: flex; gap: 20px; }
+    </style>
+</head>
+<body>
+    <aside>
+        <div class="logo"><div class="logo-box"><i data-lucide="sparkle" style="color:white; width:16px;"></i></div> PrepAI</div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i data-lucide="layout-grid" style="width:18px;"></i> Master Dashboard</a>
+            <a href="/academic" class="nav-item active"><i data-lucide="book-open" style="width:18px;"></i> Academic Engine</a>
+            <a href="/profile" class="nav-item"><i data-lucide="git-branch" style="width:18px;"></i> Profile Builder</a>
+            <a href="/testing" class="nav-item"><i data-lucide="timer" style="width:18px;"></i> Testing strategy</a>
+            <a href="/coaching" class="nav-item"><i data-lucide="users-2" style="width:18px;"></i> Coaching Hub</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div>
+                <h1>Academic Engine</h1>
+                <p style="color:var(--text-dim);">6th – 12th Grade Pathfinder</p>
+            </div>
+            <div style="background: var(--aum-card); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--aum-border);">
+                <span style="font-size: 0.85rem; font-weight: 600; color: #818cf8;">Math Track: Accelerated II</span>
+            </div>
+        </header>
+
+        <div class="glass-card">
+            <span class="card-label">7-Year Academic Roadmap</span>
+            <div class="roadmap-grid">
+                <div class="year-slot"><p style="font-size:0.7rem; margin-bottom:8px; color:var(--text-dim);">6th Grade</p><div class="slot-box completed"><span class="course-name">Pre-Algebra</span><span class="course-grade">A+</span></div></div>
+                <div class="year-slot"><p style="font-size:0.7rem; margin-bottom:8px; color:var(--text-dim);">7th Grade</p><div class="slot-box completed"><span class="course-name">Algebra I</span><span class="course-grade">A</span></div></div>
+                <div class="year-slot"><p style="font-size:0.7rem; margin-bottom:8px; color:var(--text-dim);">8th Grade</p><div class="slot-box completed"><span class="course-name">Geometry</span><span class="course-grade">A+</span></div></div>
+                <div class="year-slot"><p style="font-size:0.7rem; margin-bottom:8px; color:var(--text-main); font-weight:700;">9th Grade</p><div class="slot-box active"><span class="course-name">Algebra II / Trig</span><span style="font-size:0.65rem; color:var(--aum-indigo); font-weight:800;">CURRENT</span></div></div>
+                <div class="year-slot"><p style="font-size:0.7rem; margin-bottom:8px; color:var(--text-dim);">10th Grade</p><div class="slot-box"><span class="course-name" style="opacity:0.4;">Pre-Calculus</span><i data-lucide="lock" style="width:12px; opacity:0.2;"></i></div></div>
+                <div class="year-slot"><p style="font-size:0.7rem; margin-bottom:8px; color:var(--text-dim);">11th Grade</p><div class="slot-box"><span class="course-name" style="opacity:0.4;">AP Calculus BC</span><i data-lucide="lock" style="width:12px; opacity:0.2;"></i></div></div>
+                <div class="year-slot"><p style="font-size:0.7rem; margin-bottom:8px; color:var(--text-dim);">12th Grade</p><div class="slot-box"><span class="course-name" style="opacity:0.4;">Multivar. Calc</span><i data-lucide="lock" style="width:12px; opacity:0.2;"></i></div></div>
+            </div>
+        </div>
+
+        <div class="aura-nudge" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(124, 58, 237, 0.1)); border: 1px solid rgba(124, 58, 237, 0.4);">
+            <div style="width:40px; height:40px; background:rgba(124, 58, 237, 0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--aum-violet);">
+                <i data-lucide="zap"></i>
+            </div>
+            <div>
+                <p style="font-weight:600; margin-bottom:5px;">Vesta Strategic Alignment Update</p>
+                <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.5;">Since you are maintaining an A+ in Algebra II, Aura recommends taking the <b>AMC 10 Math Competition</b> this November. This aligns perfectly with your target for MIT Admissions.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

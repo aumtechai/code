@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepNex | Student Login</title>
+    <!-- Aumtech Font Stack -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* Official aumtech.ai Elite Palette (Light Edition) */
+            --aum-indigo: #4f46e5;
+            --aum-violet: #7c3aed;
+            --aum-cyan: #0ea5e9;
+            --aum-bg: #f8fafc;
+            --aum-sidebar: #ffffff;
+            --aum-card: #ffffff;
+            --aum-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-dim: #64748b;
+            --hero-gradient: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #0ea5e9 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--aum-bg);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center; height: 100vh;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(124, 58, 237, 0.03) 0%, transparent 50%);
+        }
+
+        .login-card {
+            width: 100%; max-width: 440px; background: white; padding: 60px;
+            border-radius: 36px; border: 1px solid var(--aum-border);
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+
+        .logo-box {
+            width: 48px; height: 48px; background: var(--hero-gradient);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 30px; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        h2 { font-family: 'Outfit'; font-size: 2rem; margin-bottom: 12px; font-weight: 700; color: #1e293b; }
+        p { color: var(--text-dim); font-size: 1rem; margin-bottom: 40px; }
+
+        .form-group { text-align: left; margin-bottom: 25px; }
+        label { display: block; font-size: 0.8rem; font-weight: 800; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+        
+        input {
+            width: 100%; padding: 16px 20px; border-radius: 14px;
+            border: 1.5px solid var(--aum-border); background: #fdfdfd;
+            font-size: 1rem; outline: none; transition: all 0.2s ease;
+            color: var(--text-main);
+        }
+        input:focus { border-color: var(--aum-indigo); background: white; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08); }
+
+        .btn-login {
+            width: 100%; padding: 18px; background: var(--hero-gradient);
+            color: white; border: none; border-radius: 50px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            margin-top: 20px; box-shadow: 0 12px 25px rgba(79, 70, 229, 0.25);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4); }
+        .btn-login:disabled { opacity: 0.7; transform: none; cursor: default; }
+
+        #auth-error { display:none; color:#ef4444; background:#fff1f2; padding: 15px; border-radius: 14px; font-size: 0.9rem; margin-bottom: 25px; border: 1px solid rgba(239, 68, 68, 0.1); font-weight: 600; }
+
+        .footer { margin-top: 45px; font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
+
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-box"><i data-lucide="sparkle" style="color:white; width:24px;"></i></div>
+        <h2>Welcome Back</h2>
+        <p>Log in as an elite PrepNex student.</p>
+
+        <div id="auth-error">Email or password incorrect.</div>
+
+        <div class="form-group">
+            <label>Educational Email</label>
+            <input type="email" id="email" placeholder="alex.davis@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label>Pathfinder Password</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <button class="btn-login" id="login-btn">Log in to Pathfinder</button>
+        
+        <div class="footer">
+            Powered by <b>Vesta Intelligence</b><br>
+            Democratizing Elite Admissions Strategy
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="/src/PREPNEX_AUTH_LOGIC.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
