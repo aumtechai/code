@@ -178,7 +178,7 @@ Error: ${detail}`);
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            autoComplete="username"
+                            autoComplete="off"
                             className="login-input"
                         />
                     </div>
@@ -192,7 +192,7 @@ Error: ${detail}`);
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            autoComplete={isRegistering ? "new-password" : "current-password"}
+                            autoComplete="off"
                             className="login-input"
                         />
                     </div>
