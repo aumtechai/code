@@ -18,12 +18,12 @@ node_modules/
 dist/
 build/
 
-# Media and Assets
-*.mp4
-*.webm
-*.pptx
-*.webp
-*.mov
+# Media and Assets (Allowing for marketing deliverables)
+# *.mp4
+# *.webm
+# *.pptx
+# *.webp
+# *.mov
 
 # Databases
 *.db
