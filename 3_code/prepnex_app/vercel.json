@@ -3,14 +3,13 @@
   "cleanUrls": true,
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
-    { "source": "/login", "destination": "/Login.html" },
-    { "source": "/dashboard", "destination": "/Dashboard.html" },
-    { "source": "/academic", "destination": "/Roadmap.html" },
-    { "source": "/vesta", "destination": "/Vesta.html" },
-    { "source": "/profile", "destination": "/Profile.html" },
-    { "source": "/testing", "destination": "/Testing.html" },
-    { "source": "/coaching", "destination": "/Coaching.html" },
-    { "source": "/strategy", "destination": "/Strategy.html" },
-    { "source": "/billing", "destination": "/Billing.html" }
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/academic", "destination": "/roadmap.html" },
+    { "source": "/vesta", "destination": "/vesta.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/testing", "destination": "/testing.html" },
+    { "source": "/coaching", "destination": "/coaching.html" },
+    { "source": "/strategy", "destination": "/strategy.html" }
   ]
 }
