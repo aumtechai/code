@@ -4,7 +4,21 @@ import api from '../api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminPanel = () => {
-    const [activeSection, setActiveSection] = useState('campaigns'); // 'campaigns', 'advisors', 'tutors', 'analytics', 'health', 'ednex_health'
+    const [activeSection, setActiveSection] = useState(() => {
+        const query = new URLSearchParams(window.location.search);
+        return query.get('adminSection') || 'campaigns';
+    });
+
+    useEffect(() => {
+        window.__setAdminSection = (s) => setActiveSection(s);
+        return () => { delete window.__setAdminSection; };
+    }, []);
+
+    useEffect(() => {
+        const query = new URLSearchParams(window.location.search);
+        const section = query.get('adminSection');
+        if (section) setActiveSection(section);
+    }, []);
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -366,9 +380,24 @@ const CampaignsManager = () => {
                             <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No students match these filters.</div>
                         ) : (
                             filteredStudentsList.map(s => (
-                                <div key={s.id} style={{ padding: '1rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between' }}>
-                                    <span>{s.name}</span>
-                                    <span style={{ color: '#64748b', fontSize: '0.9rem' }}>GPA: {s.gpa} • {s.risk} Risk</span>
+                                 <div key={s.id} style={{ padding: '1rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: s.risk === 'High' ? '#ef4444' : s.risk === 'Medium' ? '#f59e0b' : '#10b981' }}></div>
+                                        <span style={{ fontWeight: '600', color: '#1e293b' }}>{s.name}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                        <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>GPA: {s.gpa}</span>
+                                        <span style={{ 
+                                            padding: '4px 10px', 
+                                            borderRadius: '20px', 
+                                            fontSize: '0.75rem', 
+                                            fontWeight: '700',
+                                            background: s.risk === 'High' ? '#fee2e2' : s.risk === 'Medium' ? '#fef3c7' : '#dcfce7',
+                                            color: s.risk === 'High' ? '#b91c1c' : s.risk === 'Medium' ? '#92400e' : '#166534'
+                                        }}>
+                                            {s.risk} Risk
+                                        </span>
+                                    </div>
                                 </div>
                             ))
                         )}

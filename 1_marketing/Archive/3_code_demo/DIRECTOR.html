@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aumtech.ai — Live Director Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0B0E27;
+            --surface: #131630;
+            --surface2: #1b1f42;
+            --accent: #7c6dfa;
+            --accent2: #a78bfa;
+            --gold: #f59e0b;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; padding-bottom: 100px; }
+
+        header {
+            background: rgba(11, 14, 39, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+        .scene-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scene-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(124, 109, 250, 0.15);
+            background: var(--surface2);
+        }
+
+        .scene-header {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .scene-num {
+            width: 32px; height: 32px;
+            background: var(--surface2);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: var(--accent2);
+        }
+
+        .scene-title { flex: 1; font-weight: 700; }
+
+        .play-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.1s;
+        }
+
+        .play-btn:active { transform: scale(0.95); }
+        .play-btn.playing { background: var(--gold); }
+
+        .scene-content { padding: 1.5rem; }
+        .narration { font-size: 1.1rem; color: #cbd5e1; border-left: 4px solid var(--accent); padding-left: 1rem; }
+        .narration em { color: var(--accent2); font-style: normal; font-weight: 600; }
+        .narration strong { color: white; }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0; left: 0;
+            height: 4px;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .footer-controls {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--surface2);
+            border-top: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 2000;
+        }
+
+        .master-btn {
+            background: #10b981;
+            color: white; border: none;
+            padding: 12px 24px; border-radius: 12px;
+            font-weight: 800; cursor: pointer;
+        }
+
+        #status { font-size: 0.9rem; color: var(--muted); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1 style="font-size: 1.2rem;">aumtech.ai — Live Director</h1>
+        <p style="font-size: 0.8rem; color: var(--muted);">Synced Voiceover Assistant</p>
+    </div>
+    <div id="status">Ready to record</div>
+</header>
+
+<div class="container" id="scenes-container">
+    <!-- Scenes will be injected here -->
+</div>
+
+<div class="footer-controls">
+    <button class="master-btn" onclick="playSession()">START FULL SESSION</button>
+    <button class="master-btn" style="background:#ef4444" onclick="stopAll()">STOP</button>
+</div>
+
+<script>
+    const SCRIPT_DATA = [
+        { id: "01_Intro", title: "Introduction", text: "For decades, higher education has been the last frontier untouched by the AI revolution..." },
+        { id: "02_SignIn", title: "Sign In", text: "The sign-in experience is clean and professional. Students log in with their university credentials..." },
+        { id: "03_Dashboard", title: "Dashboard Overview", text: "Welcome to the Student Dashboard. The very first thing a student sees is a warm, personalized greeting..." },
+        { id: "04_AINavigator", title: "Get Aura Chat", text: "At the heart of aumtech dot ai is the Get Aura — a conversational academic agent powered by Google Gemini..." },
+        { id: "05_Courses", title: "Courses & Roadmap", text: "Under Academics, students get a crystal-clear view of every course they are taking..." },
+        { id: "06_Tutoring", title: "Tutoring Center", text: "One of aumtech dot ai's most powerful features is the intelligent Tutoring System, built on what we call Roster Truth..." },
+        { id: "07_Wellness", title: "Wellness & Timer", text: "aumtech dot ai doesn't just track grades — it cares about the whole student..." },
+        { id: "08_Holds", title: "Holds Center", text: "One of the biggest sources of student frustration is the mystery hold — a financial or administrative block..." },
+        { id: "09_FinancialAid", title: "Financial Aid", text: "Financial stress is one of the top reasons students drop out. aumtech dot ai tackles this head-on..." },
+        { id: "10_SocialCampus", title: "Social Campus", text: "College is not just academics — it is community. The Social Campus module connects students..." },
+        { id: "11_AdminPanel", title: "Admin Panel", text: "Now let's flip to the administrator view — what university leadership and advising staff see..." },
+        { id: "12_Closing", title: "Closing", text: "aumtech dot ai is more than software — it is a mission. We are live at aumtech dot ai." }
+    ];
+
+    const container = document.getElementById('scenes-container');
+    let currentAudio = null;
+
+    function renderScenes() {
+        SCRIPT_DATA.forEach((s, idx) => {
+            const card = document.createElement('div');
+            card.className = 'scene-card';
+            card.id = `card-${s.id}`;
+            card.innerHTML = `
+                <div class="scene-header" onclick="playScene('${s.id}')">
+                    <div class="scene-num">${idx + 1}</div>
+                    <div class="scene-title">${s.title}</div>
+                    <button class="play-btn" id="btn-${s.id}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        Play Audio
+                    </button>
+                </div>
+                <div class="scene-content">
+                    <div class="narration">${s.text}</div>
+                </div>
+                <div class="progress-bar" id="progress-${s.id}"></div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function playScene(id) {
+        stopAll();
+        const card = document.getElementById(`card-${id}`);
+        const btn = document.getElementById(`btn-${id}`);
+        const progress = document.getElementById(`progress-${id}`);
+        card.classList.add('active');
+        btn.classList.add('playing');
+        btn.innerHTML = 'Playing...';
+
+        const audio = new Audio(`voiceovers/${id}.mp3`);
+        currentAudio = audio;
+
+        audio.ontimeupdate = () => {
+            const perc = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = perc + '%';
+        };
+
+        audio.onended = () => {
+            card.classList.remove('active');
+            btn.classList.remove('playing');
+            btn.innerHTML = 'Play Audio';
+            progress.style.width = '0%';
+        };
+
+        audio.play().catch(e => {
+            console.error("Audio failed", e);
+            document.getElementById('status').innerText = "Error: voiceovers/" + id + ".mp3 not found.";
+        });
+
+        // Scroll into view
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function stopAll() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio = null;
+        }
+        document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.play-btn').forEach(b => {
+            b.classList.remove('playing');
+            b.innerHTML = 'Play Audio';
+        });
+        document.querySelectorAll('.progress-bar').forEach(p => p.style.width = '0%');
+    }
+
+    async function playSession() {
+        for (const s of SCRIPT_DATA) {
+            playScene(s.id);
+            await new Promise(resolve => {
+                currentAudio.onended = resolve;
+            });
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 2s pause between scenes
+        }
+    }
+
+    renderScenes();
+</script>
+</body>
+</html>

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aura Intelligence — B2B Demo Script (EdNex & Aura Tiers)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0B0E27;
+            --surface: #131630;
+            --surface2: #1b1f42;
+            --accent: #7c6dfa;
+            --accent2: #a78bfa;
+            --gold: #f59e0b;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --scene-colors: #6366f1, #8b5cf6, #0ea5e9, #10b981, #f59e0b, #ef4444, #ec4899, #3b82f6, #14b8a6, #f97316;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0B0E27, #261644);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 3rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        header .logo-pill {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 14px;
+            padding: 10px 18px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        .timing-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .timing-bar h2 {
+            grid-column: 1 / -1;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .time-chip {
+            background: var(--surface2);
+            border-radius: 10px;
+            padding: 0.65rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .time-chip .label {
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .time-chip .val {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent2);
+        }
+
+        .time-chip.total {
+            background: linear-gradient(135deg, rgba(124, 109, 250, 0.2), rgba(167, 139, 250, 0.15));
+            border: 1px solid rgba(124, 109, 250, 0.3);
+        }
+
+        .time-chip.total .val {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        .scene {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .scene:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .scene-header {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .scene-number {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .scene-title {
+            flex: 1;
+        }
+
+        .scene-title h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .scene-title .screen-note {
+            font-size: 0.78rem;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .scene-duration {
+            background: var(--surface2);
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .scene-body {
+            padding: 1.75rem;
+        }
+
+        .narration {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .narration p {
+            margin-bottom: 0.75rem;
+            font-size: 0.97rem;
+            line-height: 1.75;
+        }
+
+        .narration p:last-child {
+            margin-bottom: 0;
+        }
+
+        .pause-note {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 6px;
+            padding: 0.15rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 0.25rem 0;
+        }
+
+        .summary-section {
+            margin-top: 3rem;
+        }
+
+        .summary-section h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent2);
+            margin-bottom: 1.25rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--surface2);
+            padding: 0.85rem 1.25rem;
+            text-align: left;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.85rem 1.25rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            background: rgba(124, 109, 250, 0.1);
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .notes-box {
+            margin-top: 2rem;
+            background: var(--surface);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 16px;
+            padding: 1.75rem;
+        }
+
+        .notes-box h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+
+        .notes-box ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .notes-box li {
+            font-size: 0.9rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: baseline;
+        }
+
+        .notes-box li::before {
+            content: '→';
+            color: #10b981;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        code {
+            background: var(--surface2);
+            padding: 0.1rem 0.45rem;
+            border-radius: 5px;
+            font-size: 0.85em;
+            color: var(--accent2);
+            font-family: 'Courier New', monospace;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            header {
+                background: white;
+                border-bottom: 2px solid #333;
+            }
+
+            .scene {
+                border: 1px solid #ccc;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo-pill">Aura</div>
+        <div>
+            <h1>Demo Script — Aura & EdNex Institutional B2B Pitch</h1>
+            <p>Full walkthrough including Architecture, Institutional Dashboard, AI Assistant & TCO Model</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Timing Summary Bar -->
+        <div class="timing-bar">
+            <h2>⏱ Scene Timing at a Glance</h2>
+            <div class="time-chip"><span class="label">01 Hook & EdNex</span><span class="val">60s</span></div>
+            <div class="time-chip"><span class="label">02 Aura Tiers</span><span class="val">45s</span></div>
+            <div class="time-chip"><span class="label">03 Student App First Look</span><span class="val">30s</span>
+            </div>
+            <div class="time-chip"><span class="label">04 Smart Dashboard</span><span class="val">60s</span></div>
+            <div class="time-chip"><span class="label">05 Get Aura Chat</span><span class="val">90s</span></div>
+            <div class="time-chip"><span class="label">06 Admin & Interventions</span><span class="val">60s</span></div>
+            <div class="time-chip"><span class="label">07 Quote Generator (TCO)</span><span class="val">90s</span></div>
+            <div class="time-chip"><span class="label">08 Closing</span><span class="val">30s</span></div>
+            <div class="time-chip total"><span class="label">⏱ Total Runtime</span><span class="val">~7m 45s</span>
+            </div>
+        </div>
+
+        <!-- SCENE 01 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#6366f1,#818cf8);">01</div>
+                <div class="scene-title">
+                    <h3>The Hook & EdNex Foundation</h3>
+                    <div class="screen-note">🖥 Screen: DATA_ARCHITECTURE.html / EdNex Logical Diagram</div>
+                </div>
+                <div class="scene-duration">60 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"Higher education technology is mostly unreliable to make data informed decision support due to
+                        the lack of data quality, governance and it is perceived by stakeholders as broken. Universities
+                        have decades of legacy infrastructure—student records in a mainframe, grades in Canvas, billing
+                        in WorkDay Finance. So, to introduce AI into this ecosystem without a unified data layer is
+                        impossible.</p>
+                    <p>That is why before we ever show you the student app, we need to show you <strong>EdNex</strong>.
+                        EdNex is our hybrid staging platform—a tool-agnostic data hub. It ingests your unstructured and
+                        structured data daily, normalizes it, vectorizes it, and safely provisions it for our
+                        Intelligence layers."</p>
+                    <p>"Through nightly Airbyte syncs or daily secure SFTP drops, EdNex seamlessly merges your core IT
+                        systems without you having to rebuild your infrastructure. This is what enables real-time,
+                        proactive AI—we call it 'Roster Truth.'"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 02 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa);">02</div>
+                <div class="scene-title">
+                    <h3>Aura Tiers: Prism vs Vault</h3>
+                    <div class="screen-note">🖥 Screen: AURA_TIERS.html Architecture Diagram</div>
+                </div>
+                <div class="scene-duration">45 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"Once the data is inside EdNex, how do we process it securely? Meet the Aura Intelligence Tiers.
+                    </p>
+                    <p>For most institutions, we deploy <strong>Aura Prism</strong>. This acts as a Privacy Gateway—a
+                        stateless API proxy that scrubs all PII and any classified and compliance sensitive data before
+                        reasoning through high-performance cloud models like Google Gemini, then restores the data
+                        before the student ever sees the answer. Full intelligence, zero leakage.</p>
+                    <p>But for state institutions requiring absolute sovereignty, we offer <strong>Aura Vault</strong>.
+                        This deploys an air-gapped, sovereign LLM entirely within your university's VPC. No data ever
+                        leaves your walled garden or used to train the vendor’s LLM."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 03 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);">03</div>
+                <div class="scene-title">
+                    <h3>Student Success Application — First Look</h3>
+                    <div class="screen-note">🖥 Screen: Student Login Page → Sign In</div>
+                </div>
+                <div class="scene-duration">30 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"So what does this architecture actually look like for the student? Let's log in.</p>
+                    <span class="pause-note">⏸ Click Sign In</span>
+                    <p>Instantly, the system queries the EdNex data warehouse. It pulls the student's current LMS
+                        grades, financial holds, and advising history—loading a fully personalized academic profile
+                        before the page even finishes rendering."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 04 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#10b981,#34d399);">04</div>
+                <div class="scene-title">
+                    <h3>The Smart Dashboard</h3>
+                    <div class="screen-note">🖥 Screen: Main Dashboard showing On-Track Score, EdNex Verified Badge
+                    </div>
+                </div>
+                <div class="scene-duration">60 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"Welcome to the Aura dashboard. At the center is the On-Track Score, a dynamic metric that
+                        continuously evaluates a student’s progress by factoring in grades, outstanding holds, and
+                        wellness check-ins. You’ll also notice the ‘EdNex Verified’ badge. This tells students that the
+                        information they’re seeing is not an AI guess or hallucination, it is verified directly against
+                        the university’s official source of truth.</p>
+                    <p>Instead of logging into three different systems to understand why they can’t register, Aura
+                        provides proactive guidance. For example, it might say: ‘You currently have a Bursar hold for
+                        $140. Click here to resolve it.’ That’s the power of unified, trusted data, turning complexity
+                        into clarity for students."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 05 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);">05</div>
+                <div class="scene-title">
+                    <h3>Get Aura AI Assistant</h3>
+                    <div class="screen-note">🖥 Screen: Click 'Get Aura' (Chat) → Ask a question</div>
+                </div>
+                <div class="scene-duration">90 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"Now, let's talk to the brain of the platform. We call it <strong>Get Aura</strong>. This is not
+                        a generic FAQ bot. It is a contextual academic agent.</p>
+                    <p>Watch. I'll ask it: 'I failed my Calculus midterm and I think I'm losing my scholarship.'</p>
+                    <span class="pause-note">⏸ Type question & wait for response</span>
+                    <p>Look at how the AI responds. It didn't just point to a counseling center. It checked EdNex. It
+                        knows this student's exact GPA, it knows the scholarship requirements, and it sees that taking a
+                        drop will actually save the scholarship.</p>
+                    <p>It then instantly offers to book an appointment with their assigned advisor. This is a game
+                        changer for student retention."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 06 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#ef4444,#f87171);">06</div>
+                <div class="scene-title">
+                    <h3>Admin & Interventions Analytics</h3>
+                    <div class="screen-note">🖥 Screen: Admin/Dean Panel showing risk tracking & Tutoring workload</div>
+                </div>
+                <div class="scene-duration">60 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"Flip over to the administrative side. As a Dean or Head of Advising, you have a completely
+                        transparent view of student risk across the campus.</p>
+                    <p>Because Aura is tracking every interaction, wellness check, and LMS grade drop in real-time,
+                        admins can flag at-risk cohorts immediately. You can generate an automated outreach campaign to
+                        all first-generation engineering students whose GPA dropped below a 2.5—in just three clicks.
+                    </p>
+                    <p>You can also track tutor capacity using our intelligent triage system, ensuring resources are
+                        deployed where they are needed most."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 07 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#ec4899,#f472b6);">07</div>
+                <div class="scene-title">
+                    <h3>TCO & Quote Generator</h3>
+                    <div class="screen-note">🖥 Screen: Navigation to the QuoteGenerator.jsx component / TCO Screen
+                    </div>
+                </div>
+                <div class="scene-duration">90 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"Finally, the business case. We've built an Institutional Quote Generator to prove our ROI
+                        against legacy systems like EAB Navigate.</p>
+                    <span class="pause-note">⏸ Adjust the student slider to 10,000, select 'Vault' or 'Prism'</span>
+                    <p>When we plug in the numbers for your 10,000 students running on the <strong>Aura Prism</strong>
+                        tier, with a standard API integration—you instantly see the financial breakdown.</p>
+                    <p>Look at the competitive context chart. A legacy platform like EAB can cost you upwards of
+                        $260,000 in your first year just for software licensing and integration that takes 18 months.
+                    </p>
+                    <p>Aura deploys faster through EdNex, provides infinitely superior AI via Prism/Vault, and provides
+                        a drastically lower TCO. Our 3-Year Institutional ROI metric proves that migrating to Aura
+                        essentially pays for itself."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 08 -->
+        <div class="scene">
+            <div class="scene-header">
+                <div class="scene-number" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);">08</div>
+                <div class="scene-title">
+                    <h3>Closing</h3>
+                    <div class="screen-note">🖥 Screen: Return to Student Dashboard wide view</div>
+                </div>
+                <div class="scene-duration">30 sec</div>
+            </div>
+            <div class="scene-body">
+                <div class="narration">
+                    <p>"Higher education cannot afford to patch over legacy systems anymore.</p>
+                    <p>Aura, powered by the EdNex hub, offers an entirely new path: a scalable, utterly secure, and
+                        fully proactive intelligence layer for the modern university.</p>
+                    <p>Thank you. Let's start the integration."</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

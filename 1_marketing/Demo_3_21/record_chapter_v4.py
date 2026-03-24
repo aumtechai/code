@@ -1,113 +1,85 @@
-"""
-record_chapter_v4.py — Chapter-by-Chapter Demo Recorder
-=======================================================
-Records a SINGLE chapter of the demo perfectly synced with its audio.
-Uses saved session state (v4_auth.json) to jump straight to the correct
-pages without re-recording the login sequence for every video.
-
-Usage:
-  python record_chapter_v4.py 02_SignIn      (Do this first to auth!)
-  python record_chapter_v4.py 03_Dashboard
-  python record_chapter_v4.py all            (Records everything sequentially)
-
-Output:
-  v4/[scene_name].mp4  (Ready for individual review)
-"""
-import asyncio
 import os
 import sys
-import shutil
-import tempfile
+import time
+import asyncio
+import json
 import subprocess
 from playwright.async_api import async_playwright
-from moviepy.editor import AudioFileClip
-from moviepy.config import get_setting
 
-sys.stdout.reconfigure(encoding="utf-8")
-
-# ── Config ──────────────────────────────────────────────────────────────────
-DEMO_DIR    = os.path.dirname(os.path.abspath(__file__))
-V4_DIR      = os.path.join(DEMO_DIR, "v4")
-VO_DIR      = os.path.join(DEMO_DIR, "voiceovers")
-SLIDES_PATH = os.path.join(DEMO_DIR, "intro_slides_v2.html")
-SLIDES_URL  = "file:///" + SLIDES_PATH.replace("\\", "/")
-BASE_URL    = "https://aumtech.ai"
-AUTH_FILE   = os.path.join(V4_DIR, "v4_auth.json")
-FFMPEG      = get_setting("FFMPEG_BINARY")
+# ── CONFIGURATION ───────────────────────────────────────────────────────────
+BASE_URL = "https://www.aumtech.ai"
+# Use absolute paths for stability on Windows background tasks
+VO_DIR = r"C:\Projects\AA\at\1_marketing\Demo_3_21\voiceovers"
+V4_DIR = r"C:\Projects\AA\at\1_marketing\Demo_3_21\v4"
+AUTH_FILE = r"C:\Projects\AA\at\1_marketing\Demo_3_21\v4\v4_auth.json"
+MOCK_FILE = r"C:\Projects\AA\at\1_marketing\Demo_3_21\auth_v4.json" # Fallback if local exists
+SLIDES_URL = "file:///" + os.path.abspath(r"1_marketing\Demo_3_21\intro_slides_v2.html").replace("\\", "/")
 
 os.makedirs(V4_DIR, exist_ok=True)
-REC_W, REC_H = 1920, 1080
+from moviepy.editor import VideoFileClip, AudioFileClip
 
-SCENES = [
-    "01_Intro", "01B_Architecture", "02_SignIn", "03_Dashboard",
-    "04_AINavigator", "05_Courses", "06_Tutoring", "07_Wellness",
-    "08_Holds", "09_FinancialAid", "10_SocialCampus", "11_AdminPanel",
-    "12_Closing"
-]
-
-SCENE_SIDEBAR = {
-    "04_AINavigator":  "Get Aura",
-    "05_Courses":      "Courses",
-    "06_Tutoring":     "Tutoring Center",
-    "07_Wellness":     "Wellness",
-    "08_Holds":        "Holds & Alerts",
-    "09_FinancialAid": "Financial Nexus",
-    "10_SocialCampus": "Social Campus",
-    "11_AdminPanel":   "Admin Panel",
+# Audio durations (extracted manually or via script) - for sync
+DURS = {
+    "01_Intro": 72.5, "01B_Architecture": 56.4, "02_SignIn": 22.0,
+    "03_Dashboard": 49.4, "04_AINavigator": 61.3, "05_Courses": 34.9,
+    "06_Tutoring": 62.6, "07_Wellness": 30.1, "08_Holds": 29.4,
+    "09_FinancialAid": 39.3, "10_SocialCampus": 29.1, "11_AdminPanel": 45.7,
+    "12_Closing": 36.7
 }
 
-def get_dur(scene):
-    f = os.path.join(VO_DIR, f"{scene}.mp3")
-    if os.path.exists(f):
-        c = AudioFileClip(f); d = c.duration; c.close(); return d
-    return 10.0
+def log(msg):
+    print(f"[V4_REC] {msg}", flush=True)
 
-def run_ffmpeg(cmd, label=""):
-    print(f"  [ffmpeg] {label}")
-    r = subprocess.run(cmd, capture_output=True, text=True)
-    if r.returncode != 0:
-        print(f"  [STDERR] {r.stderr[-800:]}")
-    return r.returncode
+def get_dur(name): return DURS.get(name, 10.0)
 
-def log(msg): print(msg, flush=True)
-
-# ── Playwright Actions ──────────────────────────────────────────────────────
-async def wait(page, secs, label=""):
-    if label: log(f"  -> {label} ({secs:.1f}s)")
-    remaining = float(secs)
-    while remaining > 0:
-        chunk = min(4.9, remaining)
-        await page.wait_for_timeout(int(chunk * 1000))
-        remaining -= chunk
-
-async def scroll(page, y, smooth=True):
-    behavior = "'smooth'" if smooth else "'instant'"
-    await page.evaluate(f"window.scrollTo({{top:{y}, behavior:{behavior}}})")
-    await page.wait_for_timeout(700)
-
-async def glow(page, selector, timeout=3000):
+def run_mux(raw_vid, vo_audio, out_path, dur):
     try:
-        await page.wait_for_selector(selector, timeout=timeout)
-        await page.evaluate("""(sel) => {
-            const el = document.querySelector(sel);
-            if (!el) return;
-            el.style.transition = 'box-shadow 0.3s';
-            el.style.boxShadow = '0 0 0 4px rgba(99,102,241,0.75), 0 0 30px rgba(99,102,241,0.4)';
-            setTimeout(() => { el.style.boxShadow = ''; }, 2500);
-        }""", selector)
-    except Exception:
-        pass
-
-async def fill(page, selector, text, delay=55, timeout=5000):
-    try:
-        await page.wait_for_selector(selector, timeout=timeout)
-        await page.click(selector)
-        await page.fill(selector, "")
-        await page.type(selector, text, delay=delay)
+        log(f"  [MUXING] {out_path} ({dur}s)")
+        video = VideoFileClip(raw_vid)
+        audio = AudioFileClip(vo_audio)
+        
+        final_dur = min(video.duration, dur)
+        video = video.subclip(0, final_dur)
+        audio = audio.subclip(0, min(audio.duration, final_dur))
+        
+        final = video.set_audio(audio)
+        final.write_videofile(out_path, codec="libx264", audio_codec="aac", fps=24)
+        video.close()
+        audio.close()
         return True
-    except Exception:
-        log(f"  [skip fill] {selector}")
+    except Exception as e:
+        log(f"[MUX ERROR] {str(e)}")
         return False
+
+# ── Playwright Helpers ──────────────────────────────────────────────────────
+async def wait(page, seconds, label=""):
+    if label: log(f"  -> {label} ({seconds}s)")
+    await asyncio.sleep(seconds)
+
+async def scroll(page, distance, steps=20):
+    for i in range(steps):
+        await page.evaluate(f"window.scrollBy(0, {distance/steps})")
+        await asyncio.sleep(0.05)
+
+async def glow(page, selector):
+    await page.evaluate(f"""(sel) => {{
+        document.querySelectorAll(sel).forEach(el => {{
+            el.style.transition = 'all 0.8s ease';
+            el.style.boxShadow = '0 0 30px rgba(79, 70, 229, 0.8)';
+            el.style.transform = 'scale(1.02)';
+            setTimeout(() => {{
+                el.style.boxShadow = '';
+                el.style.transform = '';
+            }}, 2500);
+        }});
+    }}""")
+
+async def fill(page, selector, text, delay=50):
+    await page.wait_for_selector(selector)
+    await page.click(selector)
+    for char in text:
+        await page.keyboard.press(char)
+        await asyncio.sleep(delay/1000)
 
 async def try_click(page, selector, label="", timeout=4000):
     try:
@@ -117,20 +89,29 @@ async def try_click(page, selector, label="", timeout=4000):
             log(f"  -> click: {label}")
         except Exception:
             # Fallback to JS text search click
-            # Since CSS :has-text isn't real JS, we find by text content
-            text_match = ""
-            if "has-text('" in selector:
-                text_match = selector.split("has-text('")[1].split("')")[0]
-            elif "text='" in selector:
-                text_match = selector.split("text='")[1].split("'")[0]
+            if "has-text(" in selector:
+                text_match = selector.split("has-text(")[1].rstrip(")").strip("'\"")
+            elif "text=" in selector:
+                text_match = selector.split("text=")[1].strip("'\"")
+            else:
+                text_match = ""
             
             if text_match:
-                await page.evaluate("""(txt) => {
-                    const el = Array.from(document.querySelectorAll('*')).find(e => 
-                        e.textContent.trim() === txt || e.innerText?.includes(txt)
-                    );
-                    if (el) el.click();
+                found = await page.evaluate("""(txt) => {
+                    const all = Array.from(document.querySelectorAll('button, a, div, span, label, li'));
+                    const target = txt.toLowerCase();
+                    const el = all.find(e => {
+                        const content = e.textContent?.toLowerCase() || "";
+                        return (content.trim() === target) || (content.includes(target) && e.children.length > 0);
+                    });
+                    if (el) {
+                        el.scrollIntoView();
+                        el.click();
+                        return true;
+                    }
+                    return false;
                 }""", text_match)
+                if not found: raise Exception("No element found by text")
             else:
                 clean_sel = selector.replace('"', '\\"')
                 await page.evaluate(f'const el = document.querySelector("{clean_sel}"); if(el) el.click();')
@@ -161,29 +142,53 @@ async def record_scene(name):
     log(f"[RECORDING CHAPTER] {name}  (Audio: {audio_dur:.1f}s)")
     log("="*60)
 
-    needs_auth = name not in ["01_Intro", "01B_Architecture", "12_Closing", "02_SignIn"]
+    needs_auth = (name not in [
+        "01_Intro", "01B_Architecture", "12_Closing", "02_SignIn", "11_AdminPanel", 
+        "03_Dashboard", "06_Tutoring", "04_AINavigator", "05_Courses", 
+        "07_Wellness", "08_Holds", "09_FinancialAid", "10_SocialCampus"
+    ])
     if needs_auth and not os.path.exists(AUTH_FILE):
         log(f"[ERROR] {AUTH_FILE} not found. Please run 'python record_chapter_v4.py 02_SignIn' first!")
         sys.exit(1)
 
     async with async_playwright() as pw:
+        target_url = BASE_URL
+        if name in ["01_Intro", "01B_Architecture", "12_Closing"]:
+            target_url = SLIDES_URL
+        elif name == "11_AdminPanel":
+            target_url += "/?admin=true&tab=adminPanel#/dashboard"
+        elif name == "03_Dashboard":
+            target_url += "/?stats=true#/dashboard"
+        elif name == "04_AINavigator":
+            target_url += "/?stats=true&tab=chat#/dashboard"
+        elif name == "05_Courses":
+            # Using degree-roadmap as the primary view for this chapter
+            target_url += "/?stats=true&tab=degree-roadmap#/dashboard"
+        elif name == "06_Tutoring":
+            target_url += "/?stats=true&tab=tutoring#/dashboard"
+        elif name == "07_Wellness":
+            target_url += "/?stats=true&tab=wellness#/dashboard"
+        elif name == "08_Holds":
+            target_url += "/?stats=true&tab=holds#/dashboard"
+        elif name == "09_FinancialAid":
+            target_url += "/?stats=true&tab=financial#/dashboard"
+        elif name == "10_SocialCampus":
+            target_url += "/?stats=true&tab=social#/dashboard"
+
         browser = await pw.chromium.launch(
             headless=False,
             args=[
                 "--no-sandbox", "--disable-setuid-sandbox", "--hide-scrollbars",
                 "--force-device-scale-factor=1",
                 "--disable-web-security",
-                "--disable-save-password-bubble", "--password-store=basic",
-                "--window-size=1920,1080"
+                "--disable-save-password-bubble", "--password-store=basic"
             ]
         )
         
         ctx_args = {
-            "record_video_dir": V4_DIR,
-            "record_video_size": {"width": REC_W, "height": REC_H},
-            "viewport": {"width": REC_W, "height": REC_H},
+            "viewport": {"width": 1920, "height": 1080},
             "device_scale_factor": 1,
-            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/121.0.0.0 Safari/537.36"
+            "record_video_dir": "/tmp/playwright_vids"
         }
         if needs_auth:
             ctx_args["storage_state"] = AUTH_FILE
@@ -191,238 +196,171 @@ async def record_scene(name):
         ctx = await browser.new_context(**ctx_args)
         page = await ctx.new_page()
 
-        # ── BRUTE FORCE DANIEL GARRETT DATA VIA INIT SCRIPT ─────────────
-        await page.add_init_script("""
-            const mockData = {
-                "id": 10452, "email": "daniel.garrett12@txu.edu", "full_name": "Daniel Garrett",
-                "gpa": 3.5, "on_track_score": 87, "is_ednex_verified": true, "major": "Computer Science",
-                "is_admin": true, "is_faculty": true
-            };
-            const mockContext = {
-                "status": "success",
-                "context": {
-                    "student_profile": {"name": "Daniel Garrett"},
-                    "sis_stream": {"cumulative_gpa": 3.5},
-                    "finance_stream": {"tuition_balance": 0.0, "has_financial_hold": false}
-                }
-            };
-            
-            // Hook Fetch
-            const originalFetch = window.fetch;
-            window.fetch = async (...args) => {
-                const url = args[0].toString();
-                if (url.includes('users/me')) return new Response(JSON.stringify(mockData), { status: 200, headers: { 'Content-Type': 'application/json' } });
-                if (url.includes('ednex/context')) return new Response(JSON.stringify(mockContext), { status: 200, headers: { 'Content-Type': 'application/json' } });
-                return originalFetch(...args);
-            };
+        # ── BRUTE FORCE MOCKS REMOVED - USING LIVE SITE DATA ─────────────
 
-            // Hook XHR
-            const XHR = XMLHttpRequest.prototype;
-            const open = XHR.open;
-            const send = XHR.send;
-            XHR.open = function(method, url) { this._url = url; return open.apply(this, arguments); };
-            XHR.send = function() {
-                if (this._url && this._url.includes('users/me')) {
-                    Object.defineProperty(this, 'readyState', { value: 4 });
-                    Object.defineProperty(this, 'status', { value: 200 });
-                    Object.defineProperty(this, 'responseText', { value: JSON.stringify(mockData) });
-                    this.dispatchEvent(new Event('load'));
-                    this.dispatchEvent(new Event('readystatechange'));
-                    return;
-                }
-                return send.apply(this, arguments);
-            };
-            
-            // DOM Patch Safety: If React fails, we force the text
-            setInterval(() => {
-                document.querySelectorAll('h1').forEach(h1 => {
-                    if (h1.innerText.includes('Good afternoon, Student')) {
-                        h1.innerText = h1.innerText.replace('Student', 'Daniel');
-                    }
-                });
-            }, 1000);
-        """)
+        # API MOCKS REMOVED - USING LIVE SITE API
+        pass
 
-        async def handle_route(route):
-            url = route.request.url
-            if "/api/users/me" in url:
-                await route.fulfill(status=200, content_type="application/json", json={
-                    "id": 10452, "email": "daniel.garrett12@txu.edu", "full_name": "Daniel Garrett",
-                    "gpa": 3.5, "on_track_score": 87, "is_ednex_verified": True, "major": "Computer Science",
-                    "is_admin": True, "is_faculty": True
-                })
-            elif "/api/ednex/context" in url:
-                await route.fulfill(status=200, content_type="application/json", json={
-                    "status": "success",
-                    "context": {
-                        "student_profile": {"name": "Daniel Garrett"},
-                        "sis_stream": {"cumulative_gpa": 3.5},
-                        "finance_stream": {"tuition_balance": 0.0, "has_financial_hold": False}
-                    }
-                })
-            else:
-                try: await route.continue_()
-                except: pass
-
-        await page.route(lambda url: "/api/" in url, handle_route)
-        await page.route("**/api/analytics**", lambda r: r.fulfill(status=200, json={"status":"success"}))
-
-        # PRE-WARM AND NAVIGATE
-        if name in ["01_Intro", "01B_Architecture"]:
-            await page.goto(SLIDES_URL, wait_until="domcontentloaded")
-            await page.wait_for_timeout(2000)
-            await inject_heartbeat(page)
-            if name == "01B_Architecture":
-                await page.evaluate("window.jumpToSlide(4)")
-                await page.wait_for_timeout(1000)
-
-        elif name == "12_Closing":
-            await page.goto(SLIDES_URL, wait_until="domcontentloaded")
-            await page.evaluate("window.jumpToSlide(5)")
-            await page.wait_for_timeout(2000)
-            await inject_heartbeat(page)
-
-        elif name == "02_SignIn":
-            await page.goto(f"{BASE_URL}/login", wait_until="domcontentloaded")
-            await page.wait_for_timeout(2000)
-            await inject_heartbeat(page)
-
-        else:
-            # Authorized chapters
-            await page.goto(f"{BASE_URL}/#/dashboard", wait_until="networkidle")
-            await inject_heartbeat(page)
-            
-            # Click the correct sidebar nav item if not Dashboard
-            if name in SCENE_SIDEBAR:
-                sidebar_label = SCENE_SIDEBAR[name]
-                # Wait for person name to appear to ensure mock is live
-                try:
-                    await page.wait_for_selector("text='Daniel Garrett'", timeout=5000)
-                except: pass
-                
-                await try_click(page, f".sidebar .nav-item:has-text('{sidebar_label}')", f"Navigating to {sidebar_label}", 8000)
-                await page.wait_for_timeout(2000)
-
-        # ── SCENE ANIMATIONS ────────────────────────────────────────────────
-        if name == "01_Intro":
-            # Slide 0: The modern university experience...
-            await wait(page, 15, "slide 0: fragmented maze")
-            
-            # Slide 1: High cost of inefficiency
-            await page.evaluate("window.jumpToSlide(1)")
-            await wait(page, 14, "slide 1: high cost 40%/73%")
-            
-            # Slide 2: Meet Aura...
-            await page.evaluate("window.jumpToSlide(2)")
-            await wait(page, 22, "slide 2: meet aura")
-            
-            # Slide 3: Unified Intelligence
-            await page.evaluate("window.jumpToSlide(3)")
-            await wait(page, audio_dur - 51, "slide 3: unified intelligence")
-            
-        elif name == "01B_Architecture":
-            await wait(page, audio_dur, "architecture diagram")
-            
-        elif name == "02_SignIn":
-            sel_email = "input[type='email'], input[name='email'], input[name='username']"
-            sel_pass = "input[type='password']"
-            await fill(page, sel_email, "daniel.garrett12@txu.edu", delay=55)
-            await wait(page, 0.5)
-            await fill(page, sel_pass, "password123", delay=65)
-            await wait(page, 0.5)
-            await glow(page, "button[type='submit']")
-            await wait(page, 0.4)
-            await try_click(page, "button[type='submit']", "submit login")
+        # ── NAVIGATION ──────────────────────────────────────────────────────
+        await inject_heartbeat(page)
+        
+        # Determine if we need to load storage state
+        use_auth = name not in ["01_Intro", "01B_Architecture", "12_Closing", "02_SignIn"]
+        
+        # Load page - use domcontentloaded for production to avoid tracker hangs
+        await page.goto(target_url, wait_until="domcontentloaded", timeout=60000)
+        await wait(page, 10, "initial load")
+        
+        # Verification & Auto-Login Fallback
+        if use_auth:
             try:
-                await page.wait_for_selector(".hero-card, [class*='dashboard'], h1", timeout=15000)
-            except Exception: pass
-            await wait(page, audio_dur - 10, "settle on dashboard")
+                # Check for dashboard markers
+                await page.wait_for_selector("text=3.5", timeout=12000)
+                log("  -> [OK] Session active (found GPA 3.5)")
+            except:
+                log("  -> [RE-LOGIN] Session invalid or expired. Performing emergency login.")
+                await page.goto(f"{BASE_URL}/#/login")
+                await fill(page, "input[type='email']", "daniel.garrett12@txu.edu")
+                await fill(page, "input[type='password']", "password123")
+                await page.click("button:has-text('Sign In')")
+                await page.wait_for_url("**/dashboard**", timeout=40000)
+                await page.goto(target_url) # Return to desired tab
+                await wait(page, 5, "tab re-loaded")
+
+        # ── SCENE LOGIC ─────────────────────────────────────────────────────
+        if name == "01_Intro":
+            await wait(page, 20, "slide 0: fragmented maze")
+            await page.evaluate("window.jumpToSlide(1)")
+            await wait(page, 16, "slide 1: high cost")
+            await page.evaluate("window.jumpToSlide(2)")
+            await wait(page, 20, "slide 2: meet aura")
+            await page.evaluate("window.jumpToSlide(3)")
+            await wait(page, max(0, audio_dur - 56))
+
+        elif name == "01B_Architecture":
+            await page.evaluate("window.jumpToSlide(4)")
+            await wait(page, audio_dur)
+        elif name == "02_SignIn":
+            await fill(page, "input[type='email']", "daniel.garrett12@txu.edu")
+            await wait(page, 0.5)
+            await fill(page, "input[type='password']", "password123")
+            await wait(page, 1, "credentials entered")
+            await page.click("button:has-text('Sign In')")
+            await page.wait_for_url("**/dashboard**", timeout=40000)
+            await wait(page, 5, "dashboard loaded")
+            # Log verification but don't fail as it breaks the sequence
+            try:
+                await page.wait_for_selector(".hero-card", timeout=15000)
+                await page.wait_for_selector("text=3.5", timeout=10000)
+                log("  -> [OK] Verified dashboard and GPA")
+            except:
+                log("  -> [WARN] Could not verify dashboard elements in time")
+            
             await ctx.storage_state(path=AUTH_FILE)
             log(f"  -> Saved Auth State to {AUTH_FILE}")
+            await wait(page, max(0, audio_dur - 15))
 
         elif name == "03_Dashboard":
-            await wait(page, 2, "reading greeting")
-            await glow(page, ".hero-card, .stat-card-glass")
-            await wait(page, 4, "GPA and score")
-            await scroll(page, 380)
-            await wait(page, 3, "Quick Actions")
-            await glow(page, ".card-white, [class*='quick-action']")
-            await wait(page, 3)
-            await scroll(page, 760)
-            await wait(page, 4, "AI Support Team")
+            await wait(page, 5, "viewing dashboard")
+            await scroll(page, 500)
+            await wait(page, 5)
             await scroll(page, 0)
-            await wait(page, audio_dur - 18, "overview complete")
-
-        elif name == "04_AINavigator":
-            chat_input = "[contenteditable='true'], textarea, input[placeholder*='message'], input[class*='chat']"
-            await fill(page, chat_input, "I failed my Calculus midterm — what should I do to recover my grade?", delay=46)
-            await wait(page, 0.8)
-            await page.keyboard.press("Enter")
-            await wait(page, 9, "AI regenerating response...")
-            await page.evaluate("window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})")
-            await wait(page, 6, "reading full AI response")
-            await page.evaluate("window.scrollTo({top:0,behavior:'smooth'})")
-            await wait(page, audio_dur - 21, "AI scene complete")
+            await wait(page, audio_dur - 13)
 
         elif name == "05_Courses":
-            await scroll(page, 300)
-            await wait(page, 3, "courses list")
+            await wait(page, 5, "viewing roadmap")
+            await scroll(page, 500)
+            await wait(page, 5, "viewing semesters")
             await scroll(page, 0)
+            await wait(page, max(0, audio_dur - 13))
+
+        elif name == "04_AINavigator":
+            await wait(page, 3, "viewing dashboard")
+            # Explicitly click the tab in case URL param fails
+            try:
+                await page.click(".nav-item:has-text('Get Aura')", timeout=8000)
+            except:
+                log("  -> [WARN] Could not click sidebar, trying direct tab selection")
             
-            await try_click(page, ".sidebar .nav-item:has-text('Degree Roadmap')", "Navigating to Degree Roadmap", 8000)
-            await wait(page, 2, "roadmap loaded")
-            await scroll(page, 300)
-            await wait(page, 4, "semester blocks")
-            await scroll(page, 0)
-            await wait(page, audio_dur - 13, "roadmap overview")
+            chat_input = "[placeholder*='message']"
+            await wait(page, 3, "verifying chat load")
+            await page.wait_for_selector(chat_input, timeout=15000)
+            await fill(page, chat_input, "I failed my Calculus midterm - what should I do?", delay=30)
+            await page.keyboard.press("Enter")
+            await wait(page, max(0, audio_dur - 8))
 
         elif name == "06_Tutoring":
-            await try_click(page, "button:has-text('Sync Roster'), button:has-text('Sync')", "Sync Roster")
-            await wait(page, 2)
-            await try_click(page, ".card-white:first-of-type, button:has-text('Book')", "open booking")
-            await wait(page, 2)
-            await fill(page, "textarea", "I need help with Python — specifically Lists and loops.", delay=42)
-            await page.evaluate("const d = document.querySelector(\"input[type='date']\"); if(d){ d.value='2026-04-15'; d.dispatchEvent(new Event('input')); }")
-            await wait(page, 1)
-            await try_click(page, "button[type='submit']:has-text('Confirm'), button:has-text('Confirm Appointment')", "Confirm Appointment")
-            await wait(page, audio_dur - 12, "booking confirmed")
+            await wait(page, 3, "viewing tutoring")
+            # Open booking for first course card
+            await try_click(
+                page,
+                ".card-white:first-of-type, button:has-text('Book'), button:has-text('Get Help')",
+                "open booking",
+                timeout=4000
+            )
+            await wait(page, 2, "booking form open")
+            await fill(page, "textarea", "I need help with Python - specifically Lists and loops.", delay=42)
+            await wait(page, 0.8)
+            # Fix date to avoid tooltip error
+            try:
+                await page.evaluate("""() => {
+                    const d = document.querySelector("input[type='date']");
+                    const t = document.querySelector("input[type='time']");
+                    if (d) { d.value = '2026-04-15'; d.dispatchEvent(new Event('input')); d.dispatchEvent(new Event('change')); }
+                    if (t) { t.value = '14:00'; t.dispatchEvent(new Event('input')); t.dispatchEvent(new Event('change')); }
+                }""")
+            except: pass
+            
+            await wait(page, 1, "date and time fixed")
+            await try_click(page, "button:has-text('Confirm')", "submit booking")
+            await wait(page, max(0, audio_dur - 18))
 
         elif name == "07_Wellness":
-            await scroll(page, 300)
-            await wait(page, 3)
+            await wait(page, 5, "viewing wellness")
+            await scroll(page, 500)
+            await wait(page, 5, "viewing check-ins")
             await scroll(page, 0)
-            await wait(page, audio_dur - 6)
+            await wait(page, max(0, audio_dur - 13))
 
         elif name == "08_Holds":
-            await glow(page, "[class*='hold'], .card-white")
-            await wait(page, 4, "reading hold")
-            await glow(page, "button:has-text('Resolve'), button:has-text('How to fix')")
-            await wait(page, audio_dur - 7)
+            await wait(page, 5, "viewing holds")
+            await wait(page, audio_dur - 5)
 
         elif name == "09_FinancialAid":
-            await try_click(page, "text=Scholarship Matcher", "Scholarship Matcher tab")
-            await wait(page, 2)
-            await try_click(page, "button:has-text('Force AI Re-scan')", "Force AI Re-scan")
-            await wait(page, 5, "matching...")
-            await scroll(page, 350)
-            await wait(page, audio_dur - 10)
+            await wait(page, 5, "viewing financial nexus")
+            await scroll(page, 400)
+            await wait(page, 5, "viewing scholarships")
+            await scroll(page, 0)
+            await wait(page, audio_dur - 13)
 
         elif name == "10_SocialCampus":
-            await scroll(page, 300)
-            await wait(page, 4)
-            await try_click(page, "text=Peer Mentoring", "Peer Mentoring tab")
-            await wait(page, 3)
-            await try_click(page, "text=Textbook Marketplace", "Textbook Marketplace tab")
-            await wait(page, audio_dur - 12)
+            await wait(page, 5, "viewing social campus")
+            await scroll(page, 400)
+            await wait(page, 5, "viewing groups")
+            await scroll(page, 0)
+            await wait(page, audio_dur - 13)
 
         elif name == "11_AdminPanel":
-            await scroll(page, 300)
-            await wait(page, 4)
+            # Direct deep-link navigation
+            await wait(page, 5, "viewing smart outreach")
+            await page.evaluate("() => window.__setAdminSection && window.__setAdminSection('analytics')")
+            await wait(page, 10, "Deans analytics")
+            await scroll(page, 400)
+            await wait(page, 6, "Tutoring Intelligence")
             await scroll(page, 0)
-            await wait(page, audio_dur - 6)
+            log("  -> (bridge) switching back to campaigns")
+            await page.evaluate("() => window.__setAdminSection && window.__setAdminSection('campaigns')")
+            await wait(page, 5)
+            await scroll(page, 450)
+            await wait(page, audio_dur - 41)
 
         elif name == "12_Closing":
-            await wait(page, audio_dur, "closing slide")
+            await page.evaluate("window.jumpToSlide(5)") 
+            await wait(page, audio_dur)
+
+        else:
+            log(f"  -> [WARN] No logic for {name}, just sitting for {audio_dur}s")
+            await wait(page, audio_dur)
 
         # ── TEARDOWN & MUX ──────────────────────────────────────────────────
         log("\n[SAVING] Closing browser...")
@@ -431,39 +369,17 @@ async def record_scene(name):
         await browser.close()
         
         log(f"\n[MUX] Mixing {name}.mp4 with voiceover...")
-        if os.path.exists(final_out):
-            os.remove(final_out)
+        if os.path.exists(final_out): os.remove(final_out)
         
-        # Mux and strictly trim video to the exact audio duration to maintain perfect sync
-        run_ffmpeg([
-            FFMPEG, "-y",
-            "-i", raw_vid_path,
-            "-i", vo_path,
-            "-t", str(audio_dur),
-            "-c:v", "libx264", "-preset", "fast", "-crf", "20",
-            "-c:a", "aac",
-            "-vf", "scale=1920:1080",
-            final_out
-        ], "mux video+audio")
+        run_mux(raw_vid_path, vo_path, final_out, audio_dur)
 
-        os.remove(raw_vid_path)  # clean up raw webm
-        size_mb = os.path.getsize(final_out) / 1024 / 1024
-        log(f"\n[DONE] Produced {final_out} ({size_mb:.1f} MB)\n")
+        os.remove(raw_vid_path)
+        log(f"  -> [OK] Processed {name}.mp4 ({os.path.getsize(final_out)/1e6:.1f}MB)")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python record_chapter_v4.py <scene_name|all>")
-        sys.exit(1)
-        
-    target = sys.argv[1]
+    target = sys.argv[1] if len(sys.argv) > 1 else "all"
     if target == "all":
-        # Always do SignIn first for auth, then the rest
-        asyncio.run(record_scene("02_SignIn"))
-        for s in SCENES:
-            if s != "02_SignIn":
-                asyncio.run(record_scene(s))
+        for scene in DURS.keys():
+            asyncio.run(record_scene(scene))
     else:
-        if target not in SCENES:
-            print(f"Unknown scene: {target}\nValid scenes: {SCENES}")
-            sys.exit(1)
         asyncio.run(record_scene(target))

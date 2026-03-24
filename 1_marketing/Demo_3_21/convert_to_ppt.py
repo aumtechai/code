@@ -1,129 +1,205 @@
-import asyncio
 import os
-from playwright.async_api import async_playwright
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from pptx.enum.text import PP_ALIGN
+from pptx.dml.color import RGBColor
 
-async def convert_full_demo():
-    base_dir = r"c:\Projects\AA\at\1_marketing\Demo_3_4"
-    intro_url = "file:///" + os.path.join(base_dir, "intro_slides_v2.html").replace("\\", "/")
-    app_url = "https://aumtech.ai"
-    
-    out_dir = os.path.join(base_dir, "v2", "ppt_assets")
-    os.makedirs(out_dir, exist_ok=True)
-    
-    # Define scenes with (Title, Subtitle, Notes)
-    # Notes are taken from DEMO_SCRIPT.md
-    scenes = [
-        # Intro Slides (Index 0-5)
-        ("The Challenge", "Fragmented Academic Data", """Today, universities face an enormous challenge. Thousands of students — each with a unique academic journey... aumtech.ai changes that."""),
-        ("The Cost of Inefficiency", "Administrative Overload", """Healthcare got diagnostic AI. Legal got contract automation. But the university has been left behind... until now."""),
-        ("Meet Aura", "Agentic Student Success", """Meet aumtech.ai — the world's first Agentic Student Success Platform. An intelligent academic operating system that thinks alongside every student."""),
-        ("Architecture", "EdNex & Aura", """Project EdNex functions as a DataStream conduit, securely normalizing legacy data into a unified cloud hub for Aura's intelligence layer."""),
-        ("Privacy & Security", "Enterprise Grade AI", """Every request passes through our Aura Privacy Gateway, where sensitive student PII is automatically stripped and tokenized."""),
-        ("Login Page", "Your AI Navigator Starts Here", """The sign-in experience is clean and professional. Students log in with their university credentials."""),
-        
-        # App Screens
-        ("Personalized Dashboard", "Live Success Metrics", """Welcome to the Student Dashboard. The first thing a student sees is a warm, personalized greeting from Aura. The On-Track Score reflects real-time progress."""),
-        ("Get Aura (AI Chat)", "Conversational Guidance", """At the heart of aumtech.ai is Aura — a conversational academic agent powered by Google Gemini. It knows your courses, grades, and calendar."""),
-        ("Academic Roadmap", "Courses & Progression", """Under Academics, students get a clear view of every course. The Degree Roadmap shows the entire journey visually. No more mysterious holds."""),
-        ("Tutoring Center", "Intelligent Triage", """Syncs directly with Canvas/Blackboard. Our AI analyzes triage notes, generates TA briefs, and load-balances sessions in seconds."""),
-        ("Wellness & Productivity", "The Whole Student", """Wellness Check-ins personalize recommendations. The Study Timer provides focus tools integrated into your success metrics."""),
-        ("Holds Center", "Transparent Resolution", """Shows every active hold in plain language: what it is, why it exists, and how much is owed. One click to resolve."""),
-        ("Financial Aid Nexus", "Scholarship Matching", """Gemini analyzes your GPA, major, and interests against available scholarships. Draft personal statements in seconds."""),
-        ("Institutional Analytics", "Dean's Dashboard", """Admins see a live risk dashboard. Launch outreach campaigns in a click. See tutoring demand and TA impact in real-time."""),
-    ]
-
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page(viewport={"width": 1920, "height": 1080})
-        
-        # --- PHASE 1: Intro Slides ---
-        print("Capturing Intro Slides...")
-        await page.goto(intro_url)
-        await page.evaluate("if(typeof autoAdvance !== 'undefined') autoAdvance = false;")
-        for i in range(6):
-            await page.evaluate(f"jumpToSlide({i})")
-            await asyncio.sleep(1.5)
-            path = os.path.join(out_dir, f"slide_{i}.png")
-            await page.screenshot(path=path)
-            scenes[i] = scenes[i] + (path,)
-
-        # --- PHASE 2: App Screens ---
-        print("Logging in...")
-        await page.goto(f"{app_url}/login")
-        await page.fill("input[name='username']", "daniel.garrett12@txu.edu")
-        await page.fill("input[name='password']", "password123")
-        await page.click("button[type='submit']")
-        await page.wait_for_selector(".sidebar, .nav-item, .hero-card")
-        await asyncio.sleep(2)
-
-        # Dashboard
-        scenes[6] = scenes[6] + (os.path.join(out_dir, "app_0.png"),)
-        await page.screenshot(path=scenes[6][3])
-
-        # Chat
-        await page.click("text=Get Aura")
-        await page.wait_for_selector("input[placeholder*='Type']", timeout=10000)
-        await asyncio.sleep(1)
-        scenes[7] = scenes[7] + (os.path.join(out_dir, "app_1.png"),)
-        await page.screenshot(path=scenes[7][3])
-
-        # Roadmap
-        await page.click("text=Degree Roadmap")
-        await asyncio.sleep(2)
-        scenes[8] = scenes[8] + (os.path.join(out_dir, "app_2.png"),)
-        await page.screenshot(path=scenes[8][3])
-
-        # Tutoring
-        await page.click("text=Tutoring Center")
-        await asyncio.sleep(2)
-        scenes[9] = scenes[9] + (os.path.join(out_dir, "app_3.png"),)
-        await page.screenshot(path=scenes[9][3])
-
-        # Wellness
-        await page.click("text=Wellness")
-        await asyncio.sleep(1.5)
-        scenes[10] = scenes[10] + (os.path.join(out_dir, "app_4.png"),)
-        await page.screenshot(path=scenes[10][3])
-
-        # Holds
-        await page.click("text=Holds") # Likely Holds & Alerts
-        await asyncio.sleep(1.5)
-        scenes[11] = scenes[11] + (os.path.join(out_dir, "app_5.png"),)
-        await page.screenshot(path=scenes[11][3])
-
-        # Financial Aid
-        await page.click("text=Financial Nexus")
-        await asyncio.sleep(2)
-        scenes[12] = scenes[12] + (os.path.join(out_dir, "app_6.png"),)
-        await page.screenshot(path=scenes[12][3])
-
-        # Admin Panel
-        await page.goto(f"{app_url}/admin")
-        await asyncio.sleep(2)
-        scenes[13] = scenes[13] + (os.path.join(out_dir, "app_7.png"),)
-        await page.screenshot(path=scenes[13][3])
-
-        await browser.close()
-
-    # --- PHASE 3: Create PPT ---
-    print("Creating Presentation...")
+def create_executive_deck():
     prs = Presentation()
-    prs.slide_width = Inches(13.333)
-    prs.slide_height = Inches(7.5)
+    
+    # ── THEME COLORS (Modern Academic Blue & Gold) ───────────────────────
+    PRIMARY_BLUE = RGBColor(30, 41, 59) # Slate 800 (0x1e, 0x29, 0x3b)
+    ACCENT_INDIGO = RGBColor(79, 70, 229) # Indigo 600 (0x4f, 0x46, 0xe5)
+    TEXT_GRAY = RGBColor(71, 85, 105) # Slate 600 (0x47, 0x55, 0x69)
+    WHITE = RGBColor(255, 255, 255)
+    
+    def set_slide_background(slide, color):
+        background = slide.background
+        fill = background.fill
+        fill.solid()
+        fill.foreground_color.rgb = color
 
-    for title, subtitle, notes, img_path in scenes:
-        slide = prs.slides.add_slide(prs.slide_layouts[6])
-        slide.shapes.add_picture(img_path, 0, 0, width=prs.slide_width, height=prs.slide_height)
+    def add_title_to_slide(slide, text, subtitle=None):
+        title_shape = slide.shapes.title
+        title_shape.text = text
+        title_text_frame = title_shape.text_frame
+        title_text_frame.paragraphs[0].font.size = Pt(36)
+        title_text_frame.paragraphs[0].font.bold = True
+        title_text_frame.paragraphs[0].font.color.rgb = PRIMARY_BLUE
         
-        # Notes
-        n_slide = slide.notes_slide
-        n_slide.notes_text_frame.text = f"{title.upper()}\n{subtitle}\n\n{notes}"
+        if subtitle:
+            subtitle_shape = slide.placeholders[1]
+            subtitle_shape.text = subtitle
+            subtitle_text_frame = subtitle_shape.text_frame
+            subtitle_text_frame.paragraphs[0].font.size = Pt(20)
+            subtitle_text_frame.paragraphs[0].font.color.rgb = TEXT_GRAY
 
-    final_ppt = os.path.join(base_dir, "v2", "Aumtech_Pitch_Deck_Full.pptx")
-    prs.save(final_ppt)
-    print(f"DONE: {final_ppt}")
+    # ── SLIDE 1: TITLE ──────────────────────────────────────────────────
+    slide_layout = prs.slide_layouts[0]
+    slide = prs.slides.add_slide(slide_layout)
+    title = slide.shapes.title
+    subtitle = slide.placeholders[1]
+    title.text = "Aura Intelligence"
+    subtitle.text = "Elevating Student Success & Institutional Excellence\nPersonalized Academic Navigation at Scale"
+    
+    # ── SLIDE 2: THE CHALLENGE ──────────────────────────────────────────
+    slide_layout = prs.slide_layouts[1]
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "The Modern Student Success Crisis")
+    tf = slide.placeholders[1].text_frame
+    tf.text = "Institutions face unprecedented pressure to improve retention and graduation rates:"
+    p = tf.add_paragraph()
+    p.text = "• Retention Gaps: Identifying at-risk students before they disengage."
+    p = tf.add_paragraph()
+    p.text = "• Resource Overload: Faculty and advisors are stretched thin."
+    p = tf.add_paragraph()
+    p.text = "• Wellness & Mental Health: Holistic student support is no longer optional."
+    p = tf.add_paragraph()
+    p.text = "• Fragmented Systems: SIS, LMS, and Student Life data living in silos."
+
+    # ── SLIDE 3: OUR MISSION ────────────────────────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "The Aura Mission")
+    tf = slide.placeholders[1].text_frame
+    tf.text = "Personalizing the Student Journey through Proactive AI Intelligence"
+    p = tf.add_paragraph()
+    p.text = "Aura is not just a chatbot; it's a unified academic ecosystem that connects institutional data with the student's daily experience."
+
+    # ── SLIDE 4: EXECUTIVE SUMMARY ──────────────────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "A Unified Solution for Campus Leadership")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "• Proactive: Detects drops in engagement and GPA automatically."
+    p = tf.add_paragraph()
+    p.text = "• Integrative: Seamlessly verified middleware (EdNex) for SIS/LMS."
+    p = tf.add_paragraph()
+    p.text = "• Scalable: 24/7 support for 10,000+ students without increasing headcount."
+
+    # ── SLIDE 5: PILLAR 1 - PROACTIVE GUIDANCE ──────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Pillar 1: Proactive Academic Guidance")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "Aura monitors the 'On-Track' score of every student."
+    p = tf.add_paragraph()
+    p.text = "• Early Warning System: Alerts advisors to critical GPA drops."
+    p = tf.add_paragraph()
+    p.text = "• SMART Course Load: Recommends schedules based on historic success paths."
+
+    # ── SLIDE 6: PILLAR 2 - 24/7 AI NAVIGATOR ───────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Pillar 2: The 24/7 AI Navigator")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "Immediate, accurate answers for the student's entire academic life."
+    p = tf.add_paragraph()
+    p.text = "• Dynamic holds resolution."
+    p = tf.add_paragraph()
+    p.text = "• Financial aid status and scholarship matching."
+    p = tf.add_paragraph()
+    p.text = "• Course prerequisites and degree roadmap visualization."
+
+    # ── SLIDE 7: PILLAR 3 - SPECIALIZED LEARNING ────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Pillar 3: Specialized Learning Support")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "Closing the loop between identifying a struggle and mastering the material."
+    p = tf.add_paragraph()
+    p.text = "• Instant Tutor Matching: Connecting students with peer and AI tutors."
+    p = tf.add_paragraph()
+    p.text = "• Syllabus Scanner: Breaking down complex course requirements."
+
+    # ── SLIDE 8: PILLAR 4 - HOLISTIC WELLNESS ──────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Pillar 4: Holistic Student Wellness")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "University Deans recognize that student success depends on wellness."
+    p = tf.add_paragraph()
+    p.text = "• Non-academic intervention (Financial, Social, Emotional)."
+    p = tf.add_paragraph()
+    p.text = "• Connection to Campus Resources: Directly booking wellness checks."
+
+    # ── SLIDE 9: INSTITUTIONAL INSIGHTS ─────────────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Institutional Intelligence for Leadership")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "Data-driven decision making for the Dean's office."
+    p = tf.add_paragraph()
+    p.text = "• Aggregated Student Cohort Analytics."
+    p = tf.add_paragraph()
+    p.text = "• Departmental Performance heatmaps."
+    p = tf.add_paragraph()
+    p.text = "• Real-time demand forecasting for campus support services."
+
+    # ── SLIDE 10: THE ADMINISTRATOR EXPERIENCE ──────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "The Administrator Control Center")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "Empowering faculty to focus on teaching, not administrative routing."
+    p = tf.add_paragraph()
+    p.text = "• Bulk intervention triggers."
+    p = tf.add_paragraph()
+    p.text = "• Automated follow-up on critical student alerts."
+
+    # ── SLIDE 11: SECURITY & INTEGRATION ────────────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Architected for Institutional Security")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "• EdNex Verified: Enterprise-grade SIS and LMS integration."
+    p = tf.add_paragraph()
+    p.text = "• FERPA compliant data handling."
+    p = tf.add_paragraph()
+    p.text = "• Cloud-Native Scalability with zero on-prem footprint."
+
+    # ── SLIDE 12: RESULTS & ROI ─────────────────────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Measurable Institutional ROI")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "• 15% increase in retention for targeted high-risk cohorts."
+    p = tf.add_paragraph()
+    p.text = "• 4x reduction in administrative 'bounce-around' for student queries."
+    p = tf.add_paragraph()
+    p.text = "• Faster time-to-graduation through optimized course pathway navigation."
+
+    # ── SLIDE 13: VIDEO SHOWCASE (PLACEHOLDER) ──────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "9.5 Minute Master Platform Demo")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "[Insert Demo Video Here]"
+    p = tf.add_paragraph()
+    p.text = "A full walkthrough of the student experience on the live Aumtech platform."
+
+    # ── SLIDE 14: IMPLEMENTATION ROADMAP ────────────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "The Roadmap to Adoption")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "1. Pilot Phase: Selected Department Focus (4 Weeks)."
+    p = tf.add_paragraph()
+    p.text = "2. SIS Integration: Secure data bridging."
+    p = tf.add_paragraph()
+    p.text = "3. Campus-Wide Launch & Adoption Monitoring."
+
+    # ── SLIDE 15: CONCLUSION ────────────────────────────────────────────
+    slide = prs.slides.add_slide(slide_layout)
+    add_title_to_slide(slide, "Transforming Student Success Together")
+    tf = slide.placeholders[1].text_frame
+    p = tf.add_paragraph()
+    p.text = "Let's innovate the future of the student experience."
+    p = tf.add_paragraph()
+    p.text = "Next Steps: Strategic Alignment & Pilot Scoping."
+
+    output_path = r"C:\Projects\AA\at\1_marketing\Aura_Dean_Executive_Proposal.pptx"
+    prs.save(output_path)
+    print(f"Executive Deck created: {output_path}")
 
 if __name__ == "__main__":
-    asyncio.run(convert_full_demo())
+    create_executive_deck()
