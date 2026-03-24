@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Intelligence | Executive Proposal for University Adoption</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --accent: #0ea5e9;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-heading: #f8fafc;
+            --text-body: #94a3b8;
+            --gold: #fbbf24;
+            --green: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-body);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-heading);
+            font-weight: 800;
+        }
+
+        /* ── SECTION SCROLL (SLIDE SNAP) ─────────────────────────── */
+        section {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            position: relative;
+            scroll-snap-align: start;
+            border-bottom: 2px solid rgba(255,255,255,0.05);
+        }
+
+        /* ── BACKGROUND GLOWS ──────────────────────────────────── */
+        .glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0.5;
+        }
+
+        /* ── CARD STYLES ────────────────────────────────────────── */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 1100px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        /* ── HERO ──────────────────────────────────────────────── */
+        .hero-title {
+            font-size: 5rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* ── ARCHITECTURE SVG ──────────────────────────────────── */
+        .arch-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .node {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .connector {
+            height: 2px;
+            flex-grow: 1;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            position: relative;
+        }
+
+        .connector::after {
+            content: "EdNex Integration";
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* ── GRID LAYOUT ───────────────────────────────────────── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .feature-img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        /* ── METRIC STATS ──────────────────────────────────────── */
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--green);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-body);
+            font-size: 1.1rem;
+        }
+
+        /* ── ANIMATIONS ────────────────────────────────────────── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s forwards ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: HERO -->
+    <section>
+        <div class="glow" style="top: 10%; right: 10%;"></div>
+        <div class="fade-up">
+            <h1 class="hero-title">Aura Intelligence</h1>
+            <p class="hero-subtitle">Institutional Excellence through Personalization</p>
+            <div style="text-align: center; margin-top: 3rem; opacity: 0.7;">
+                Adoption Proposal for University Leadership
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE CRISIS & SOLUTION -->
+    <section>
+        <div class="glass-card">
+            <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">The Student Success Gap</h2>
+            <div class="feature-grid">
+                <div>
+                    <h3 style="color: var(--gold); margin-bottom: 1rem;">The Challenge: Fragmented Support</h3>
+                    <p>Current student support is reactive and siloed. Retention drops when students "bounce around" between financial aid, advising, and wellness without a unified navigator.</p>
+                    <ul style="margin-top: 1rem; color: #fff; list-style: none;">
+                        <li>⚠️ Identifying at-risk students too late.</li>
+                        <li>⚠️ Manual reporting silos (SIS/LMS).</li>
+                        <li>⚠️ High administrative overhead.</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); border-radius: 16px; padding: 2rem; border-left: 4px solid var(--primary);">
+                    <h3 style="color: var(--green);">The Aura Solution: Proactive</h3>
+                    <p style="margin-top: 1rem;">Aura connects your existing institutional data to provide a unified, 24/7 personalized academic companion for every student.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: ARCHITECTURE (THE BRAIN) -->
+    <section>
+        <div class="glass-card" style="max-width: 1200px;">
+            <h2 style="text-align: center; margin-bottom: 1rem;">Architected for Adoption</h2>
+            <p style="text-align: center; opacity: 0.8;">Seamless, secure, and zero-footprint integration with your campus ecosystem.</p>
+            
+            <div class="arch-diagram">
+                <div class="node">
+                    <h3 style="font-size: 1.2rem;">SIS & LMS</h3>
+                    <p style="font-size: 0.8rem; opacity: 0.6;">Banner / Canvas / Moodle</p>
+                </div>
+                <div class="connector"></div>
+                <div class="node" style="border-width: 3px; border-color: var(--accent);">
+                    <h3 style="font-size: 1.2rem;">AURA CLOUD</h3>
+                    <p style="font-size: 0.8rem; opacity: 0.6;">LLM + Institutional Logic</p>
+                </div>
+                <div class="connector"></div>
+                <div class="node">
+                    <h3 style="font-size: 1.2rem;">STUDENT APP</h3>
+                    <p style="font-size: 0.8rem; opacity: 0.6;">Web / Mobile Interface</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; text-align: center;">
+                <div>
+                    <strong style="color: var(--accent);">FERPA Compliant</strong>
+                    <p style="font-size: 0.9rem;">Enterprise-grade security</p>
+                </div>
+                <div>
+                    <strong style="color: var(--accent);">Real-Time Sync</strong>
+                    <p style="font-size: 0.9rem;">Immediate GPA & Hold Alerts</p>
+                </div>
+                <div>
+                    <strong style="color: var(--accent);">EdNex Verified</strong>
+                    <p style="font-size: 0.9rem;">Validated Middleware</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: PRODUCT SHOWCASE - DASHBOARD -->
+    <section>
+        <div class="glass-card">
+            <div class="feature-grid">
+                <div>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">The Proactive Engine</h2>
+                    <p>Instead of students searching for support, support finds them. Aura monitors the "On-Track" score and GPA thresholds to trigger immediate interventions.</p>
+                    <div style="margin-top: 2rem; padding: 1rem; border-radius: 12px; background: rgba(0,0,0,0.3);">
+                        <span style="color: var(--green); font-weight: bold;">✔ Retention Impact:</span>
+                        Early warning system for dropouts.
+                    </div>
+                </div>
+                <div>
+                    <img src="https://www.aumtech.ai/marketing/dashboard_mockup.jpg" onerror="this.src='https://placehold.co/800x600/0f172a/4f46e5?text=Dashboard+UI+Highlight'" class="feature-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: AI NAVIGATOR -->
+    <section>
+        <div class="glass-card">
+            <div class="feature-grid">
+                <div>
+                    <img src="https://www.aumtech.ai/marketing/aura_chat_mockup.jpg" onerror="this.src='https://placehold.co/800x600/0f172a/0ea5e9?text=Aura+AI+Interaction'" class="feature-img">
+                </div>
+                <div>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">The 24/7 AI Navigator</h2>
+                    <p>Students often fail due to administrative friction. Aura resolves holds, maps degree pathways, and scans syllabi instantly.</p>
+                    <ul style="margin-top: 1rem; color: #fff; list-style: none;">
+                        <li>💬 "Why do I have a hold on my registration?"</li>
+                        <li>💬 "What courses do I need for a 3.5 GPA?"</li>
+                        <li>💬 "Help me scan my calculus syllabus."</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: INSTITUTIONAL ROI -->
+    <section>
+        <div class="glass-card">
+            <h2 style="text-align: center; font-size: 3rem; margin-bottom: 1rem;">Institutional ROI</h2>
+            <p style="text-align: center; margin-bottom: 3rem;">Driving results across the entire campus portfolio.</p>
+            
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-value">15%</span>
+                    <span class="stat-label">Retention Increase</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">4.2x</span>
+                    <span class="stat-label">Advising Efficiency</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">92%</span>
+                    <span class="stat-label">Student Satisfaction</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem; padding: 2rem; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1);">
+                <h3 style="text-align: center; color: var(--accent);">Ready for Pilot Adoption</h3>
+                <p style="text-align: center; margin-top: 1rem;">Pilot programs starting Summer 2026. Includes 4-week SIS integration & full support.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: CALL TO ACTION -->
+    <section style="background: linear-gradient(135deg, var(--bg-dark) 0%, #1e1b4b 100%);">
+        <h1 style="font-size: 4rem; margin-bottom: 1.5rem;">The Future is Aura.</h1>
+        <p style="font-size: 1.5rem; max-width: 800px; text-align: center; opacity: 0.8;">Transforming the student journey from fragmented navigation to a seamless road to graduation.</p>
+        
+        <div style="margin-top: 4rem; display: flex; gap: 2rem;">
+            <div style="padding: 1.5rem 3rem; background: var(--primary); color: white; border-radius: 50px; font-weight: 800; cursor: pointer;">
+                GET STARTED
+            </div>
+            <div style="padding: 1.5rem 3rem; border: 2px solid white; color: white; border-radius: 50px; font-weight: 800; cursor: pointer;">
+                VIEW FULL DEMO
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
