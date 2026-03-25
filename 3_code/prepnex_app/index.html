@@ -40,9 +40,8 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-base);
             color: var(--text-main);
-            overflow-x: hidden;
-            /* Allow vertical scrolling only if content exceeds viewport, preventing unwanted double scrollbars */
-            min-height: 100vh;
+            overflow: hidden; /* ELIMINATE SCROLLBAR */
+            height: 100vh;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -257,32 +256,43 @@
     <div class="ambient-glow-2"></div>
 
     <nav>
-        <a href="/" class="logo" style="display:flex; align-items:center;">
-            <img src="https://www.aumtech.ai/assets/logo-CRMbVOkl.png" alt="Aumtech.ai Logo" style="height:56px; border-radius:12px;">
-            <div style="margin-left: 12px; font-family:'Outfit'; font-size:1.8rem; font-weight:800; color:var(--text-main); letter-spacing:-0.5px;">prep.aumtech.ai</div>
+        <a href="/" class="logo" style="margin-left:-20px;">
+            <img src="https://www.aumtech.ai/assets/logo-CRMbVOkl.png" alt="Aumtech Logo" style="height:72px; border-radius:16px;">
+            <div style="font-family:'Outfit'; font-size:2.2rem; font-weight:800; color:var(--text-main); letter-spacing:-1.5px;">prep.aumtech.ai</div>
         </a>
         <div class="nav-actions">
             <a href="/login" class="nav-link">Log in</a>
-            <a href="/login" class="btn-premium">
+            <button class="btn-premium" onclick="window.location.href='/login'">
                 Start Pathfinding
                 <i data-lucide="arrow-right" style="width:16px; height:16px; margin-left:6px;"></i>
-            </a>
+            </button>
         </div>
     </nav>
 
     <main class="hero">
         <div class="badge">
             <i data-lucide="zap" style="width:14px; height:14px; fill:currentColor;"></i> 
-            Powered by Vesta Intelligence
+            Vesta Intelligence v2.5.0 Deployment Active
         </div>
         
-        <h1>Elite Higher Education<br><span class="accent">Starts in 6th Grade</span></h1>
+        <h1 style="font-size: clamp(3rem, 6vw, 5.5rem);">Elite Higher Education<br><span class="accent">The Strategic 7-Year Trajectory</span></h1>
         
-        <div style="font-size: 0.75rem; font-weight: 800; color: var(--brand-primary); opacity: 0.6; margin-top: -10px; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase;">
-            Vesta Intelligence Core: v2.4.3_Brand_Sync
+        <p style="font-size: 1.25rem; max-width: 800px; margin-bottom: 60px;">Continuous trajectory analysis from math olympiads to SAT strategy, PrepAI builds a holistic 7-year roadmap specifically designed for elite university admissions.</p>
+        
+        <div class="specs-grid" style="margin-bottom: 60px;">
+            <div style="background: white; border: 1px solid var(--brand-slate-100); padding: 24px 40px; border-radius: 20px; text-align: left; box-shadow: var(--shadow-md);">
+                <div style="font-family:'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--brand-primary);">94.8%</div>
+                <div style="font-size: 0.65rem; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase;">Holistic Align Score</div>
+            </div>
+            <div style="background: white; border: 1px solid var(--brand-slate-100); padding: 24px 40px; border-radius: 20px; text-align: left; box-shadow: var(--shadow-md);">
+                <div style="font-family:'Outfit'; font-size: 1.8rem; font-weight: 800; color: #8b5cf6;">A+ Audit</div>
+                <div style="font-size: 0.65rem; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase;">Vesta Narrative Integrty</div>
+            </div>
+            <div style="background: white; border: 1px solid var(--brand-slate-100); padding: 24px 40px; border-radius: 20px; text-align: left; box-shadow: var(--shadow-md);">
+                <div style="font-family:'Outfit'; font-size: 1.8rem; font-weight: 800; color: #10b981;">Stanford+</div>
+                <div style="font-size: 0.65rem; font-weight: 800; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase;">Predictive Fit Match</div>
+            </div>
         </div>
-        
-        <p>From math olympiads to SAT strategy, PrepAI builds a holistic roadmap specifically designed for elite university admissions, continuously adapting to your personal journey.</p>
         
         <div class="pillars-grid">
             <div class="f-card">
