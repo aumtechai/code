@@ -9,7 +9,13 @@ import MajorPage from './components/MajorPage';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  const params = new URLSearchParams(window.location.search);
+  const getParams = () => {
+    // Correctly handle search params in both standard and hash-based routing
+    const pathSearch = window.location.search;
+    const hashSearch = window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '';
+    return new URLSearchParams(pathSearch || hashSearch);
+  };
+  const params = getParams();
   const isBypass = params.get('admin') === 'true' || params.get('stats') === 'true';
   return (token || isBypass) ? children : <Navigate to="/login" />;
 };

@@ -561,7 +561,12 @@ const Dashboard = () => {
     const [prefilledData, setPrefilledData] = useState(null);
     const navigate = useNavigate();
     const fetchUser = async () => {
-        const query = new URLSearchParams(window.location.search);
+        const getParams = () => {
+            const pathSearch = window.location.search;
+            const hashSearch = window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '';
+            return new URLSearchParams(pathSearch || hashSearch);
+        };
+        const query = getParams();
         const isAdminBypass = query.get('admin') === 'true' || localStorage.getItem('adminMode') === 'true';
         const isStatsBypass = query.get('stats') === 'true';
         const token = localStorage.getItem('token');
