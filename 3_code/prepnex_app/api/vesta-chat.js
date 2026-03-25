@@ -37,9 +37,15 @@ module.exports = async (req, res) => {
 
         User Inquiry: ${message}`;
 
+        console.log("Vesta Prompt:", prompt);
+
         const result = await model.generateContent(prompt);
         const response = await result.response;
-        res.status(200).json({ text: response.text() });
+        const text = response.text();
+        
+        console.log("Vesta Gemini Response:", text);
+
+        res.status(200).json({ text });
     } catch (err) {
         console.error("Vesta Gemini Backend Error:", err);
         res.status(500).json({ text: "Quantum link interrupted. Vesta is offline." });
