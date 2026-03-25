@@ -15,16 +15,15 @@
 
     <style>
         :root {
-            /* Vesta Premium Color Palette */
-            --vesta-indigo: #4f46e5;
-            --vesta-violet: #7c3aed;
-            --vesta-cyan: #0ea5e9;
+            /* Aumtech.ai Brand Palette (Light Mode) */
+            --brand-primary: #1a73e8;
+            --brand-slate-900: #0f172a;
+            --brand-slate-600: #475569;
+            --brand-slate-100: #f1f5f9;
             --bg-base: #f8fafc;
             --text-main: #0f172a;
-            --text-dim: #475569;
-            --hero-gradient: linear-gradient(135deg, var(--vesta-violet) 0%, var(--vesta-indigo) 50%, var(--vesta-cyan) 100%);
-            --card-bg: rgba(255, 255, 255, 0.75);
-            --card-border: rgba(255, 255, 255, 0.6);
+            --text-dim: #64748b;
+            --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
             --glass-blur: blur(24px);
         }
 
@@ -73,17 +72,15 @@
         }
 
         .logo {
-            font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800;
-            display: flex; align-items: center; gap: 12px;
+            font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800;
+            display: flex; align-items: center; gap: 10px;
             color: var(--text-main); text-decoration: none;
             letter-spacing: -0.5px;
         }
 
-        .logo-icon {
-            width: 34px; height: 34px; background: var(--hero-gradient);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            color: white;
+        .logo img {
+            height: 32px;
+            border-radius: 8px;
         }
 
         .nav-actions { display: flex; align-items: center; gap: 28px; }
@@ -95,11 +92,11 @@
         .nav-link:hover { color: var(--vesta-indigo); }
 
         .btn-premium {
-            background: var(--hero-gradient);
-            color: white; padding: 12px 28px; border-radius: 50px;
+            background: var(--text-main);
+            color: white; padding: 12px 28px; border-radius: 12px;
             font-size: 0.95rem; font-weight: 700; text-decoration: none;
             border: none; cursor: pointer;
-            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             position: relative; overflow: hidden;
             display: inline-flex; align-items: center; justify-content: center;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
@@ -261,8 +258,8 @@
 
     <nav>
         <a href="/" class="logo">
-            <div class="logo-icon"><i data-lucide="sparkles" style="width:20px; height:20px;"></i></div>
-            Aumtech PrepAI
+            <img src="https://www.aumtech.ai/assets/logo-CRMbVOkl.png" alt="Aumtech.ai Logo">
+            aumtech.ai <span style="font-weight: 400; opacity: 0.6; margin-left: -5px;">prep</span>
         </a>
         <div class="nav-actions">
             <a href="/login" class="nav-link">Log in</a>
@@ -281,8 +278,8 @@
         
         <h1>Elite Higher Education<br><span class="accent">Starts in 6th Grade</span></h1>
         
-        <div style="font-size: 0.75rem; font-weight: 800; color: var(--vesta-indigo); opacity: 0.6; margin-top: -10px; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase;">
-            Vesta Intelligence Core: v2.4.2_Adoption_Ready
+        <div style="font-size: 0.75rem; font-weight: 800; color: var(--brand-primary); opacity: 0.6; margin-top: -10px; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase;">
+            Vesta Intelligence Core: v2.4.3_Brand_Sync
         </div>
         
         <p>From math olympiads to SAT strategy, PrepAI builds a holistic roadmap specifically designed for elite university admissions, continuously adapting to your personal journey.</p>

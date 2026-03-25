@@ -11,18 +11,20 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --accent: #7c3aed;
-            --bg-body: #f1f5f9;
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --brand-slate-900: #0f172a;
+            --brand-slate-600: #475569;
+            --brand-slate-100: #f1f5f9;
+            --bg-body: #f8fafc;
             --sidebar-bg: #ffffff;
             --text-main: #0f172a;
             --text-dim: #64748b;
             --border: #e2e8f0;
-            --hero-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --hero-gradient: linear-gradient(135deg, #1a73e8 0%, #4f46e5 100%);
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
@@ -43,9 +45,10 @@
             z-index: 100;
         }
 
-        .logo-section { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-        .logo-icon { width: 34px; height: 34px; background: var(--hero-gradient); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
-        .logo-text { font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        .logo-section { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .logo-section img { height: 32px; border-radius: 8px; }
+        .logo-text { font-family: 'Outfit'; font-size: 1.4rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        .logo-text span { font-weight: 400; opacity: 0.6; margin-left: -5px; }
 
         .nav-group { display: flex; flex-direction: column; gap: 6px; }
         .nav-label { font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin: 12px 0 8px 12px; }
@@ -56,7 +59,7 @@
             font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;
         }
         .nav-item:hover { background: #f8fafc; color: var(--primary); }
-        .nav-item.active { background: rgba(79, 70, 229, 0.08); color: var(--primary); }
+        .nav-item.active { background: #f1f5f9; color: var(--primary); border: 1px solid #e2e8f0; }
 
         /* MAIN AREA */
         main { flex: 1; padding: 40px; overflow-y: auto; }
@@ -114,8 +117,8 @@
 
     <aside>
         <div class="logo-section">
-            <div class="logo-icon"><i data-lucide="sparkle" style="width:20px;"></i></div>
-            <div class="logo-text">PrepNex</div>
+            <img src="https://www.aumtech.ai/assets/logo-CRMbVOkl.png" alt="Aumtech Logo">
+            <div class="logo-text">aumtech.ai<span>prep</span></div>
         </div>
 
         <div class="nav-group">
