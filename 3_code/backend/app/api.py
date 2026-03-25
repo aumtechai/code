@@ -1232,6 +1232,111 @@ async def get_campaigns(
     statement = select(Campaign).order_by(Campaign.created_at.desc())
     return session.exec(statement).all()
 
+@router.get("/admin/forms")
+async def get_admin_forms(
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """List all form requests (Admin Only)"""
+    statement = select(FormRequest).order_by(FormRequest.created_at.desc())
+    results = session.exec(statement).all()
+    
+    # Enrich with user info
+    enriched = []
+    for f in results:
+        user = session.get(User, f.user_id)
+        f_dict = f.dict()
+        f_dict["student_name"] = user.full_name if user else "Unknown"
+        f_dict["student_email"] = user.email if user else "Unknown"
+        enriched.append(f_dict)
+    return enriched
+
+@router.put("/admin/forms/{form_id}")
+async def update_form_status(
+    form_id: int,
+    status_update: Dict,
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """Approve or reject a form request"""
+    form = session.get(FormRequest, form_id)
+    if not form:
+        raise HTTPException(status_code=404, detail="Form not found")
+    
+    new_status = status_update.get("status")
+    if new_status not in ["approved", "rejected", "pending"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    form.status = new_status
+    session.add(form)
+    session.commit()
+    session.refresh(form)
+    return form
+
+@router.get("/admin/health")
+async def get_system_health(
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """Get record counts for all major tables"""
+    from sqlmodel import func
+    return {
+        "users": session.exec(select(func.count(User.id))).one(),
+        "courses": session.exec(select(func.count(Course.id))).one(),
+        "campaigns": session.exec(select(func.count(Campaign.id))).one(),
+        "forms": session.exec(select(func.count(FormRequest.id))).one(),
+        "holds": session.exec(select(func.count(StudentHold.id))).one(),
+        "lecture_notes": session.exec(select(func.count(LectureNote.id))).one()
+    }
+
+# --- Faculty Endpoints ---
+
+@router.get("/faculty/my-students")
+async def get_faculty_students(
+    faculty: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Mock endpoint for faculty to see their students and risk levels"""
+    # In production, filter by courses where this user is the instructor
+    statement = select(User).where(User.is_admin == False, User.is_faculty == False).limit(10)
+    students = session.exec(statement).all()
+    
+    result = []
+    for s in students:
+        risk = "Low"
+        if s.gpa < 2.5: risk = "High"
+        elif s.gpa < 3.0: risk = "Medium"
+        
+        result.append({
+            "id": s.id,
+            "name": s.full_name or s.email,
+            "gpa": s.gpa,
+            "risk": risk,
+            "attendance": "92%", # Mock
+            "factors": ["Good participation"] if risk == "Low" else ["Frequent absences"]
+        })
+    return result
+
+@router.get("/faculty/sync-classes")
+async def sync_faculty_classes(
+    faculty: User = Depends(get_current_user)
+):
+    """Mock LTI Sync for faculty courses"""
+    import asyncio
+    await asyncio.sleep(1)
+    return {"message": "Successfully synchronized 3 courses from Canvas LMS."}
+
+@router.get("/faculty/announcements")
+async def get_faculty_announcements():
+    return [
+        {"id": 1, "title": "Midterm Prep", "content": "The midterm will cover chapters 1-5.", "date": "2026-03-20"},
+        {"id": 2, "title": "Guest Speaker", "content": "Next Tuesday we will have a guest from Google.", "date": "2026-03-18"}
+    ]
+
+@router.post("/faculty/announcements")
+async def post_announcement(data: Dict):
+    return {"status": "success", "message": "Announcement posted to all students."}
+
 # --- Form Endpoints ---
 
 from app.models import FormRequest

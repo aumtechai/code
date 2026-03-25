@@ -296,28 +296,29 @@ async def get_dean_analytics(
     Returns aggregated demand data.
     """
     # 1. Demand by Course
-    # SQLModel doesn't support complex group_by easily without SQLAlchemy core
-    # We'll do a simple raw query or list comprehension for MVP
-    
     appointments = session.exec(select(TutoringAppointment)).all()
     
     course_demand = {}
     for app in appointments:
-        # Naive N+1 but acceptable for MVP Scale (<100 records)
         section = session.get(TutoringSection, app.section_id)
         if section:
             course = session.get(TutoringCourse, section.course_id)
-            name = course.name if course else "Unknown"
-            course_demand[name] = course_demand.get(name, 0) + 1
+            if course:
+                name = course.name
+                course_demand[name] = course_demand.get(name, 0) + 1
             
     # 2. Recent Issues (AI Summaries)
-    recent_issues = [
-        {"course": session.get(TutoringCourse, session.get(TutoringSection, a.section_id).course_id).code, "issue": a.ai_summary}
-        for a in appointments[-5:] if a.ai_summary
-    ]
+    recent_issues = []
+    for a in appointments:
+        if not a.ai_summary: continue
+        section = session.get(TutoringSection, a.section_id)
+        if section:
+            course = session.get(TutoringCourse, section.course_id)
+            if course:
+                recent_issues.append({"course": course.code, "issue": a.ai_summary})
     
     return {
         "total_sessions": len(appointments),
         "demand_by_course": course_demand,
-        "recent_intelligence": recent_issues
+        "recent_intelligence": recent_issues[-5:] # Latest 5
     }
