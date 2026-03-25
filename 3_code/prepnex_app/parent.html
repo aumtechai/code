@@ -58,6 +58,12 @@
         .action-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
         .action-item { background: #f8fafc; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 16px; }
         .action-icon { width: 48px; height: 48px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--border); }
+
+        .insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px; }
+        .insight-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 8px; }
+        .insight-card h3 { font-family: 'Outfit'; font-size: 0.9rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .insight-card .score-value { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
+        .insight-card p { font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -83,6 +89,24 @@
             <div class="student-snapshot">
                 <div class="metric-mini"><span id="metric-gpa">4.2</span><small>GPA</small></div>
                 <div class="metric-mini"><span id="metric-alignment">94%</span><small>Ivy Alignment</small></div>
+            </div>
+        </div>
+
+        <div class="insight-grid">
+            <div class="insight-card">
+                <h3><i data-lucide="trending-up"></i> Strategic Alignment</h3>
+                <div class="score-value">94%</div>
+                <p>Curriculum rigor and high-stakes activities are perfectly aligned with Ivy League expectations.</p>
+            </div>
+            <div class="insight-card">
+                <h3><i data-lucide="pen-tool"></i> Writing Audit</h3>
+                <div class="score-value" style="color:#7c3aed;">A+</div>
+                <p>Personal narrative is strategically consistent with 7-year activity history. High integrity score.</p>
+            </div>
+            <div class="insight-card">
+                <h3><i data-lucide="building"></i> Target Probability</h3>
+                <div class="score-value" style="color:#10b981;">88%</div>
+                <p>Vesta predicts a high-fit outcome for Stanford and MIT based on current trajectory.</p>
             </div>
         </div>
 
