@@ -72,6 +72,17 @@ export async function getProfileImpact(studentId) {
     return data;
 }
 
+export async function addAcademicCourse(studentId, courseData) {
+    const { data, error } = await supabase
+        .from('academic_roadmaps')
+        .insert({
+            student_id: studentId,
+            ...courseData
+        });
+    if (error) throw error;
+    return data;
+}
+
 /**
  * 4. PATHWAY SYNC (AUDIT ENGINE)
  * Simulates a Vesta Audit by updating the alignment score.
@@ -89,20 +100,47 @@ export async function performPathwaySync(studentId) {
     return newScore;
 }
 
+export async function addProfileActivity(studentId, activityData) {
+    const { data, error } = await supabase
+        .from('profile_activities')
+        .insert({
+            student_id: studentId,
+            ...activityData
+        });
+    if (error) throw error;
+    return data;
+}
+
 /**
  * 5. AI CHAT HANDLER (VESTA PERSONA)
  */
 export async function vestaChat(studentId, message) {
     const context = await getVestaContext(studentId);
     
-    // Simulating Vesta Persona Intelligence
-    const replyText = `Vesta here. I see your top target is ${context.target_universities[0]}. Based on your ${context.academic_roadmaps[0] ? context.academic_roadmaps[0].course_name : 'Algebra II'} performance, I've updated your roadmap.`;
-    
-    const response = {
-        reply: replyText,
-        suggestedAction: "Strategic Alignment: SECURED"
-    };
+    try {
+        const response = await fetch('/api/vesta-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, context })
+        });
 
-    await persistVestaNudge(studentId, response.reply);
-    return response;
+        if (!response.ok) throw new Error("Vesta Intelligence Sync Failed");
+
+        const data = await response.json();
+        const replyText = data.text;
+        
+        const vestaRes = {
+            reply: replyText,
+            suggestedAction: "Strategic Alignment: SECURED"
+        };
+
+        await persistVestaNudge(studentId, vestaRes.reply);
+        return vestaRes;
+    } catch (err) {
+        console.error("Vesta Gemini Sync Error:", err);
+        return {
+            reply: "Vesta is currently undergoing a quantum recalibration. Please try again shortly.",
+            suggestedAction: "Offline Mode Active"
+        };
+    }
 }

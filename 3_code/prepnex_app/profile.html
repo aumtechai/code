@@ -95,7 +95,7 @@
         </div>
         <div class="nav-group">
             <div class="nav-label">Admissions Track</div>
-            <a href="/academic" class="nav-item"><i data-lucide="map"></i> Strategic Roadmap</a>
+            <a href="/roadmap" class="nav-item"><i data-lucide="map"></i> Strategic Roadmap</a>
             <a href="/testing" class="nav-item"><i data-lucide="target"></i> Testing Strategy</a>
             <a href="/profile" class="nav-item active"><i data-lucide="award"></i> Profile Impact</a>
             <a href="/coaching" class="nav-item"><i data-lucide="users"></i> Aura Coaching</a>
@@ -104,15 +104,55 @@
     </aside>
 
     <main>
-        <header>
-            <h1>Profile Impact</h1>
-            <p style="color:var(--text-dim); font-size:0.95rem;">Extracurricular Differentiation Engine</p>
+        <header style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h1>Profile Impact</h1>
+                <p style="color:var(--text-dim); font-size:0.95rem;">Extracurricular Differentiation Engine</p>
+            </div>
+            <button class="btn-primary" id="add-activity-btn" style="background: var(--hero-gradient); border: none; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="plus" style="width: 18px;"></i> Add Specialty
+            </button>
         </header>
 
         <div class="impact-grid">
             <div class="impact-list" id="impact-list">
                 <!-- Dynamic Content -->
             </div>
+
+            <div class="calendar-box">
+                <!-- ... -->
+            </div>
+        </div>
+
+        <!-- Add Activity Modal -->
+        <div id="activity-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); backdrop-filter:blur(4px); z-index:1000; display:none; align-items:center; justify-content:center;">
+            <div style="background:white; padding:40px; border-radius:28px; width:450px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+                <h3 style="font-family:'Outfit'; font-size:1.5rem; margin-bottom:24px;">New Specialty Track</h3>
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div>
+                        <label style="font-size:0.75rem; font-weight:800; color:var(--text-dim); text-transform:uppercase; display:block; margin-bottom:8px;">Activity Name</label>
+                        <input type="text" id="modal-activity-name" placeholder="e.g. Stanford Medical Internship" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:12px; font-family:inherit;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; font-weight:800; color:var(--text-dim); text-transform:uppercase; display:block; margin-bottom:8px;">Category</label>
+                        <select id="modal-type" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:12px; font-family:inherit;">
+                            <option value="STEM">STEM / Research</option>
+                            <option value="Leadership">Leadership / Impact</option>
+                            <option value="Athletics">Athletics / Resilience</option>
+                            <option value="Arts">Arts / Creativity</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; font-weight:800; color:var(--text-dim); text-transform:uppercase; display:block; margin-bottom:8px;">Evidence Link (Portfolio/Cert)</label>
+                        <input type="url" id="modal-url" placeholder="https://..." style="width:100%; padding:12px; border:1px solid var(--border); border-radius:12px; font-family:inherit;">
+                    </div>
+                    <div style="display:flex; gap:12px; margin-top:12px;">
+                        <button id="modal-cancel" style="flex:1; padding:12px; border-radius:12px; border:1px solid var(--border); background:white; cursor:pointer; font-weight:700;">Cancel</button>
+                        <button id="modal-save" style="flex:1; padding:12px; border-radius:12px; border:none; background:var(--hero-gradient); color:white; cursor:pointer; font-weight:800;">Initiate Track</button>
+                    </div>
+                </div>
+            </div>
+        </div>
             
             <div class="calendar-box">
                 <span class="calendar-label">Elite Window Tracking</span>
@@ -134,7 +174,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="module">
-        import { getProfileImpact } from '/src/PREPNEX_VESTA_LOGIC.js';
+        import { getProfileImpact, addProfileActivity } from '/src/PREPNEX_VESTA_LOGIC.js';
+
+        let activeStudentId = null;
+        const modal = document.getElementById('activity-modal');
 
         function persistStudentIdInNav(studentId) {
             document.querySelectorAll('.nav-item').forEach(link => {
@@ -149,16 +192,20 @@
 
         async function hydrateProfile() {
             const urlParams = new URLSearchParams(window.location.search);
-            const studentId = urlParams.get('id');
-            if (studentId) {
-                persistStudentIdInNav(studentId);
+            activeStudentId = urlParams.get('id');
+            if (activeStudentId) {
+                persistStudentIdInNav(activeStudentId);
                 try {
-                    const items = await getProfileImpact(studentId);
+                    const items = await getProfileImpact(activeStudentId);
                     const list = document.getElementById('impact-list');
                     list.innerHTML = '';
                     
                     items.forEach(item => {
-                        const icon = item.activity_type === 'STEM' ? 'cpu' : (item.activity_type === 'Leadership' ? 'award' : 'layers');
+                        let icon = 'layers';
+                        if(item.activity_type === 'STEM') icon = 'cpu';
+                        if(item.activity_type === 'Leadership') icon = 'award';
+                        if(item.activity_type === 'Athletics') icon = 'activity';
+
                         const card = document.createElement('div');
                         card.className = 'impact-card';
                         card.innerHTML = `
@@ -166,14 +213,46 @@
                                 <div style="width:48px; height:48px; background:rgba(79, 70, 229, 0.05); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--primary);"><i data-lucide="${icon}"></i></div>
                                 <div><p style="font-weight:800; font-size:1rem;">${item.activity_name}</p><p style="font-size:0.8rem; color:var(--text-dim); font-weight:700;">OUTCOME: ${item.status || 'Verified'}</p></div>
                             </div>
-                            <div class="his-badge">${item.his_score}</div>
+                            <div class="his-badge">${item.his_score || '3.5'}</div>
                         `;
                         list.appendChild(card);
                     });
-                } catch (e) { }
+                } catch (e) { console.error(e); }
             }
             lucide.createIcons();
         }
+
+        document.getElementById('add-activity-btn').addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        document.getElementById('modal-cancel').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        document.getElementById('modal-save').addEventListener('click', async () => {
+            const name = document.getElementById('modal-activity-name').value;
+            const type = document.getElementById('modal-type').value;
+            const url = document.getElementById('modal-url').value;
+
+            if(!name) return alert("Please enter an activity name");
+
+            try {
+                // Simulate a high HIS score for elite activities
+                const baseHis = Math.floor(Math.random() * (4 - 3 + 1) + 3) + (Math.random());
+                await addProfileActivity(activeStudentId, {
+                    activity_name: name,
+                    activity_type: type,
+                    status: 'Initiated',
+                    his_score: baseHis.toFixed(1)
+                });
+                modal.style.display = 'none';
+                hydrateProfile();
+            } catch (e) {
+                alert("Failed to initiate track.");
+            }
+        });
+
         hydrateProfile();
     </script>
 </body>
