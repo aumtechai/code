@@ -82,16 +82,24 @@
 │                              │    │  DATABASE_URL            │   │                    │
 └──────────────────────────────┘    └──────────────────────────┘   └────────────────────┘
 
-┌────────────────────────────────────┐
-│   EDNEX DATA WAREHOUSE             │
-│   (Enterprise Proxy)               │
-│                                    │
-│  - SIS Streams (Grades/Standing)   │
-│  - Finance Streams (Bursar)        │
-│  - Degree Audit (Advisement)       │
-│                                    │
-│  Integration: PROXY_API_URL        │
-└────────────────────────────────────┘
+┌───────────────────────────────────────────────────┐
+│   EDNEX DATA WAREHOUSE (Flexible Deployment)      │
+├───────────────────────────────────────────────────┤
+│                                                   │
+│  Option A: Local Campus Installation              │
+│  - Installed on any Campus/University DB          │
+│  - (On-premise or local cloud instance)           │
+│                                                   │
+│  Option B: Aumtech Managed Hosting                │
+│  - Hosted on Aumtech's Cloud (Supabase)           │
+│                                                   │
+│  Core Streams:                                    │
+│  - SIS Streams (Grades/Standing)                  │
+│  - Finance Streams (Bursar)                       │
+│  - Degree Audit (Advisement)                      │
+│                                                   │
+│  Integration: PROXY_API_URL                       │
+└───────────────────────────────────────────────────┘
 
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -223,9 +231,13 @@
 - **Connection:** psycopg2-binary
 - **SSL:** Required
 
-### AI Services (Google)
-- **Provider:** Google Gemini
-- **Model:** gemini-flash-latest
+### AI & Intelligence Layer (Pluggable "Main Brain")
+- **Default Provider:** Google Gemini (gemini-flash-latest)
+- **Pluggable Architecture:** The "Main Brain" can be swapped for any model the campus already utilizes:
+  - OpenAI (GPT-4o)
+  - Anthropic (Claude 3.5 Sonnet)
+  - Meta (Llama 3 via local or cloud hosting)
+  - Custom Fine-tuned Campus Models
 - **Use Cases:**
   - Flashcard generation
   - Audio transcription

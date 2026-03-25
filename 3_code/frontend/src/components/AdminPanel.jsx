@@ -126,6 +126,23 @@ const AdminPanel = () => {
                 >
                     <Activity size={18} /> EdNex Module Status
                 </button>
+                <button
+                    onClick={() => setActiveSection('forms')}
+                    style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: activeSection === 'forms' ? '#4f46e5' : 'white',
+                        color: activeSection === 'forms' ? 'white' : '#64748b',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        boxShadow: activeSection === 'forms' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    <FileText size={18} /> Form Requests
+                </button>
             </div>
 
             <div className="card-white" style={{ minHeight: '400px' }}>
@@ -139,6 +156,8 @@ const AdminPanel = () => {
                     <SystemHealth />
                 ) : activeSection === 'ednex_health' ? (
                     <EdNexHealthDashboard />
+                ) : activeSection === 'forms' ? (
+                    <FormsManager />
                 ) : (
                     <TutorsManager />
                 )}
@@ -819,6 +838,133 @@ const EdNexHealthDashboard = () => {
                     );
                 })}
             </div>
+        </div>
+    );
+};
+
+const FormsManager = () => {
+    const [forms, setForms] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchForms = async () => {
+        try {
+            const res = await api.get('/api/admin/forms');
+            setForms(res.data);
+        } catch (error) {
+            console.error("Failed to fetch forms", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchForms();
+    }, []);
+
+    const handleUpdateStatus = async (id, status) => {
+        try {
+            await api.put(`/api/admin/forms/${id}`, { status });
+            fetchForms();
+        } catch (error) {
+            alert("Failed to update status");
+        }
+    };
+
+    if (loading) return <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Loading Requests...</div>;
+
+    return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', padding: '0 1rem' }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800' }}>Registrar Worklist</h3>
+                <div style={{ fontSize: '0.85rem', color: '#64748b', background: '#f1f5f9', padding: '4px 12px', borderRadius: '20px' }}>
+                    {forms.filter(f => f.status === 'pending').length} Pending
+                </div>
+            </div>
+
+            {forms.length === 0 ? (
+                <div style={{ padding: '3rem', textAlign: 'center', background: '#f8fafc', borderRadius: '12px', border: '1px dashed #e2e8f0', color: '#94a3b8' }}>
+                    No form requests found.
+                </div>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {forms.map(form => (
+                        <div key={form.id} style={{ 
+                            padding: '1.5rem', 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '16px', 
+                            display: 'grid', 
+                            gridTemplateColumns: '1fr auto', 
+                            gap: '1.5rem',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+                        }}>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <div style={{ 
+                                    width: '48px', 
+                                    height: '48px', 
+                                    borderRadius: '12px', 
+                                    background: form.request_type === 'add' ? '#dcfce7' : '#fee2e2', 
+                                    color: form.request_type === 'add' ? '#10b981' : '#ef4444', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center' 
+                                }}>
+                                    {form.request_type === 'add' ? <Plus size={24} /> : <X size={24} />}
+                                </div>
+                                <div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                        <span style={{ fontWeight: '800', fontSize: '1.1rem', color: '#1e293b' }}>{form.request_type.toUpperCase()}: {form.course_code}</span>
+                                        <span style={{ 
+                                            padding: '2px 8px', 
+                                            borderRadius: '4px', 
+                                            fontSize: '0.7rem', 
+                                            fontWeight: '700', 
+                                            textTransform: 'uppercase',
+                                            background: form.status === 'approved' ? '#dcfce7' : form.status === 'rejected' ? '#fee2e2' : '#fef3c7',
+                                            color: form.status === 'approved' ? '#166534' : form.status === 'rejected' ? '#b91c1c' : '#92400e'
+                                        }}>
+                                            {form.status}
+                                        </span>
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', color: '#475569', fontWeight: '500', marginBottom: '8px' }}>
+                                        {form.student_name} ({form.student_email})
+                                    </div>
+                                    <div style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.5' }}>
+                                        <strong>Reason:</strong> {form.reason}<br />
+                                        {form.explanation && <><strong style={{ color: '#475569' }}>Note:</strong> {form.explanation}</>}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{ borderLeft: '1px solid #f1f5f9', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '8px' }}>
+                                {form.status === 'pending' ? (
+                                    <>
+                                        <button 
+                                            onClick={() => handleUpdateStatus(form.id, 'approved')}
+                                            style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem' }}
+                                        >
+                                            Approve
+                                        </button>
+                                        <button 
+                                            onClick={() => handleUpdateStatus(form.id, 'rejected')}
+                                            style={{ padding: '8px 16px', background: 'white', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem' }}
+                                        >
+                                            Reject
+                                        </button>
+                                    </>
+                                ) : (
+                                    <button 
+                                        onClick={() => handleUpdateStatus(form.id, 'pending')}
+                                        style={{ padding: '8px 16px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem' }}
+                                    >
+                                        Revert to Pending
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

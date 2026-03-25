@@ -11,9 +11,9 @@ const gradePoints = {
     'D+': 1.3, 'D': 1.0, 'F': 0.0
 };
 
-const Courses = () => {
+const Courses = ({ userData: externalUserData }) => {
     const [courses, setCourses] = useState([]);
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState(externalUserData || null);
     const [isAdding, setIsAdding] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncStatus, setSyncStatus] = useState(null);
@@ -133,7 +133,7 @@ const Courses = () => {
                         <div style={{ background: 'rgba(255,255,255,0.2)', padding: '8px', borderRadius: '8px' }}><Award size={20} /></div>
                         <span style={{ fontSize: '0.9rem', opacity: 0.9 }}>Cumulative GPA</span>
                     </div>
-                    <div style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>{calculateGPA()}</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>{userData?.gpa ? userData.gpa.toFixed(2) : calculateGPA()}</div>
                 </motion.div>
 
                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="card-white">

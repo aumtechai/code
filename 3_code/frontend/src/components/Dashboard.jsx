@@ -31,6 +31,7 @@ import DegreeRoadmap from './DegreeRoadmap';
 import Support from './Support';
 import Subscription from './Subscription';
 import QuoteGenerator from './QuoteGenerator';
+import WeeklySchedule from './WeeklySchedule';
 
 
 
@@ -50,7 +51,11 @@ import iphoneLogo from '../assets/iphone_logo.jpg';
 const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
     const navigate = useNavigate();
     const isLoggedIn = !!localStorage.getItem('token');
-    const handleLogout = () => { localStorage.removeItem('token'); navigate('/login'); };
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('adminMode');
+        navigate('/login');
+    };
     const handleLogin = () => { navigate('/login'); };
 
     const handleProtectedTab = (tab) => {
@@ -249,7 +254,8 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
                 {[
                     { icon: ShieldAlert, color: '#ef4444', label: 'Holds & Alerts', sub: 'Action required', action: 'holds' },
-                    { icon: Calendar, color: '#6366f1', label: 'Book Advisor', sub: 'Schedule a meeting', action: 'schedule' },
+                    { icon: Calendar, color: '#6366f1', label: 'My Schedule', sub: 'Weekly grid', action: 'schedule' },
+                    { icon: Users, color: '#6366f1', label: 'Book Advisor', sub: 'Schedule a meeting', action: 'book-advisor' },
                     { icon: BookOpen, color: '#10b981', label: 'Tutoring Center', sub: 'Get study help', action: 'tutoring' },
                     { icon: FileText, color: '#f59e0b', label: 'Drop/Add Forms', sub: 'Deadline: Oct 15', action: 'forms' },
                     { icon: Clock, color: '#eab308', label: 'Study Timer', sub: 'Stay focused', action: 'timer' },
@@ -555,15 +561,19 @@ const Dashboard = () => {
     const [prefilledData, setPrefilledData] = useState(null);
     const navigate = useNavigate();
 
-    const fetchUser = async () => {
-        const query = new URLSearchParams(window.location.search);
-        const isAdminBypass = query.get('admin') === 'true';
+        const isAdminBypass = query.get('admin') === 'true' || localStorage.getItem('adminMode') === 'true';
         const isStatsBypass = query.get('stats') === 'true';
         const token = localStorage.getItem('token');
         
+        if (isAdminBypass) {
+            localStorage.setItem('adminMode', 'true');
+        }
+
         if (!token && !isAdminBypass && !isStatsBypass) return;
 
-        if ((isAdminBypass || isStatsBypass) && !token) {
+        if (isAdminBypass || isStatsBypass) {
+            // Enhanced bypass logic: if we are in admin mode, keep the current token user
+            // but augment them with global admin staff permissions/persona.
             setUserData({
                 id: 10452, 
                 full_name: isAdminBypass ? "Dean Garrett" : "Daniel Garrett", 
@@ -837,10 +847,9 @@ const Dashboard = () => {
                     {activeTab === 'cip' && <CIPExplorer />}
 
                     {activeTab === 'history' && <History onSelectSession={(id) => handleFeatureNavigate('chat', null, id)} />}
-
-                    {activeTab === 'schedule' && <BookAdvisor onBack={() => setActiveTab('dashboard')} />}
-
-                    {activeTab === 'courses' && <Courses />}
+                    {activeTab === 'schedule' && <WeeklySchedule onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'book-advisor' && <BookAdvisor onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'courses' && <Courses userData={userData} />}
 
                     {activeTab === 'tutoring' && <TutoringCenter />}
 

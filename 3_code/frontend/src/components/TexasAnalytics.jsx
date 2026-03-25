@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, TrendingUp, BookOpen, AlertCircle, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-
-// Using local API URL or relative path
-const API_BASE = "/api";
+import api from '../api';
 
 const TexasAnalytics = () => {
     const [colleges, setColleges] = useState([]);
@@ -20,10 +18,9 @@ const TexasAnalytics = () => {
 
     const fetchColleges = async () => {
         try {
-            const res = await fetch(`${API_BASE}/texas/colleges`);
-            const data = await res.json();
-            if (Array.isArray(data)) {
-                setColleges(data);
+            const res = await api.get(`/api/texas/colleges`);
+            if (Array.isArray(res.data)) {
+                setColleges(res.data);
             }
         } catch (e) {
             console.error("Failed to fetch colleges", e);
@@ -37,18 +34,13 @@ const TexasAnalytics = () => {
         setAnalysisData(null);
 
         try {
-            const res = await fetch(`${API_BASE}/texas/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    instId: college.id,
-                    sector: college.sector,
-                    typeId: college.type_id,
-                    name: college.name
-                })
+            const res = await api.post(`/api/texas/analyze`, {
+                instId: college.id,
+                sector: college.sector,
+                typeId: college.type_id,
+                name: college.name
             });
-            const data = await res.json();
-            setAnalysisData(data);
+            setAnalysisData(res.data);
         } catch (e) {
             console.error(e);
         } finally {

@@ -1,10 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, RefreshCw, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-// API Base URL
-const API_BASE = '/api';
+import api from '../api';
 
 const CIPExplorer = () => {
     const [cipCodes, setCipCodes] = useState([]);
@@ -29,13 +26,10 @@ const CIPExplorer = () => {
         setLoading(true);
         try {
             const url = query
-                ? `${API_BASE}/cip?search=${encodeURIComponent(query)}`
-                : `${API_BASE}/cip`;
-            const res = await fetch(url);
-            if (res.ok) {
-                const data = await res.json();
-                setCipCodes(data);
-            }
+                ? `/api/cip?search=${encodeURIComponent(query)}`
+                : `/api/cip`;
+            const res = await api.get(url);
+            setCipCodes(res.data);
         } catch (e) {
             console.error("Fetch failed", e);
         } finally {
@@ -47,8 +41,8 @@ const CIPExplorer = () => {
         if (!confirm("This will scrape the Texas Higher Ed website and populate the database. It may take a few seconds. Continue?")) return;
         setSeeding(true);
         try {
-            const res = await fetch(`${API_BASE}/cip/refresh`, { method: 'POST' });
-            const result = await res.json();
+            const res = await api.post(`/api/cip/refresh`);
+            const result = res.data;
             alert(`Database Updated!\nAdded: ${result.added}\nTotal: ${result.total}`);
             fetchCodes(search);
         } catch (e) {
