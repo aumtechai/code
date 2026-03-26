@@ -89,14 +89,33 @@ const BookAdvisor = ({ onBack }) => {
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 0' }}>
-            <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', marginBottom: '1rem' }}>
-                <ChevronLeft size={20} /> Back to Dashboard
-            </button>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                    onClick={onBack} 
+                    style={{ 
+                        background: 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '50%', 
+                        width: '40px', 
+                        height: '40px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        cursor: 'pointer', 
+                        color: '#64748b',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        flexShrink: 0
+                    }}
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <div>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>Advisor Booking</h2>
+                    <p style={{ color: '#64748b', margin: 0 }}>Schedule a session with your academic advisor.</p>
+                </div>
+            </div>
 
             <div className="card-white">
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Calendar className="text-primary" /> Book an Advisor
-                </h2>
 
                 <form onSubmit={handleSubmit}>
                     <div style={{ display: 'grid', gap: '1.5rem' }}>

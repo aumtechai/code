@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Book, CheckCircle, Circle, AlertCircle, Calendar, ChevronRight, Wand2, Download, Trash2, Plus } from 'lucide-react';
+import { Book, CheckCircle, Circle, AlertCircle, Calendar, ChevronRight, Wand2, Download, Trash2, Plus, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const DegreeRoadmap = () => {
+const DegreeRoadmap = ({ onBack }) => {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [audit, setAudit] = useState([
         { id: 'cs101', code: 'CS 101', name: 'Intro to Programming', credits: 4, type: 'Major', status: 'completed' },
@@ -67,9 +67,32 @@ const DegreeRoadmap = () => {
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <h1 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.5rem' }}>Degree Roadmap</h1>
-                    <p style={{ color: '#64748b' }}>Visualize your path to graduation. Drag and drop courses to plan your semesters.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                flexShrink: 0
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <div>
+                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.25rem', margin: 0 }}>Degree Roadmap</h1>
+                        <p style={{ color: '#64748b', margin: 0 }}>Visualize your path to graduation. Drag and drop courses to plan your semesters.</p>
+                    </div>
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button

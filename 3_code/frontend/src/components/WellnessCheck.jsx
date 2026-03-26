@@ -4,10 +4,10 @@ import {
     Heart, Smile, Frown, Meh, Sun, Moon,
     Coffee, Users, Brain, Info,
     ChevronRight, CheckCircle, Wind,
-    ShieldAlert, Sparkles
+    ShieldAlert, Sparkles, ChevronLeft
 } from 'lucide-react';
 
-const WellnessCheck = () => {
+const WellnessCheck = ({ onBack }) => {
     const [step, setStep] = useState('mood'); // 'mood', 'survey', 'result'
     const [mood, setMood] = useState(null);
     const [surveyData, setSurveyData] = useState({
@@ -58,9 +58,31 @@ const WellnessCheck = () => {
 
     return (
         <div style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '3rem' }}>
-            <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: '700', margin: 0 }}>Wellness Check</h2>
-                <p style={{ color: '#64748b', marginTop: '0.5rem' }}>Your well-being is the foundation of your success.</p>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '700', margin: 0 }}>Wellness Check</h2>
+                    <p style={{ color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>Your well-being is the foundation of your success.</p>
+                </div>
             </div>
 
             <AnimatePresence mode="wait">

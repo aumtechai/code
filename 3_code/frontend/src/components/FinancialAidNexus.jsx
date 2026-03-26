@@ -12,11 +12,12 @@ import {
     FileText,
     Landmark,
     FileQuestion,
-    ExternalLink
+    ExternalLink,
+    ChevronLeft
 } from 'lucide-react';
 import ScholarshipMatcher from './ScholarshipMatcher';
 
-const FinancialAidNexus = ({ onNavigate }) => {
+const FinancialAidNexus = ({ onNavigate, onBack }) => {
     const [activeTab, setActiveTab] = useState('overview');
 
     const tabs = [
@@ -250,9 +251,32 @@ const FinancialAidNexus = ({ onNavigate }) => {
     return (
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
             {/* Header */}
-            <div style={{ marginBottom: '2rem' }}>
-                <h1 className="title-gradient" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Financial Nexus</h1>
-                <p style={{ color: '#64748b', fontSize: '1.1rem' }}>Manage your tuition, scholarships, and financial health in one place.</p>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h1 className="title-gradient" style={{ fontSize: '2.5rem', marginBottom: '0.25rem' }}>Financial Nexus</h1>
+                    <p style={{ color: '#64748b', fontSize: '1.1rem', margin: 0 }}>Manage your tuition, scholarships, and financial health in one place.</p>
+                </div>
             </div>
 
             {/* Navigation Tabs */}

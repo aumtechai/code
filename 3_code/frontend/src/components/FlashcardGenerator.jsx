@@ -4,7 +4,7 @@ import { RotateCcw, Brain, Sparkles, ChevronLeft, ChevronRight, FileText, BookOp
 import api from '../api';
 import './FlashcardGenerator.css';
 
-const FlashcardGenerator = ({ prefilledData }) => {
+const FlashcardGenerator = ({ prefilledData, onBack }) => {
     const [mode, setMode] = useState('notes'); // 'notes' or 'canvas'
     const [notes, setNotes] = useState(prefilledData?.notes || '');
 
@@ -93,12 +93,35 @@ const FlashcardGenerator = ({ prefilledData }) => {
     return (
         <div className="flashcard-container">
             {/* Header */}
-            <div className="flashcard-header">
-                <h2 className="flashcard-title">
-                    <Brain className="text-primary" size={32} color="#4f46e5" />
-                    Smart Study: AI Flashcards
-                </h2>
-                <p className="flashcard-subtitle">Generate active recall cards from your own notes or directly from your LMS course materials.</p>
+            <div className="flashcard-header" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h2 className="flashcard-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Brain className="text-primary" size={32} color="#4f46e5" />
+                        Smart Study: AI Flashcards
+                    </h2>
+                    <p className="flashcard-subtitle" style={{ margin: '0.25rem 0 0 0' }}>Generate active recall cards from your own notes or directly from your LMS course materials.</p>
+                </div>
             </div>
 
             {flashcards.length === 0 ? (

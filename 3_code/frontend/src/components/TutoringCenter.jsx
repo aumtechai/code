@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { BookOpen, Calendar, Clock, Upload, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { BookOpen, Calendar, Clock, Upload, CheckCircle, AlertCircle, RefreshCw, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Demo fallback so the UI never shows empty/stuck in recording
@@ -10,7 +10,7 @@ const DEMO_COURSES = [
     { enrollment_id: 3, course_code: 'ENG 101', course_name: 'Academic Writing', section_id: 1003, term: 'Fall 2024' },
 ];
 
-const TutoringCenter = () => {
+const TutoringCenter = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState('courses'); // 'courses' or 'history'
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -121,11 +121,33 @@ const TutoringCenter = () => {
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '3rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: '700', margin: 0 }}>Tutoring Center</h2>
-                    <p style={{ color: '#64748b', marginTop: '0.5rem' }}>
-                        Closed-Loop Support System • <span style={{ color: rosterVerified ? '#16a34a' : '#f59e0b', fontWeight: '600' }}>{rosterVerified ? 'Roster Verified' : 'Syncing...'}</span>
-                    </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <div>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: '700', margin: 0 }}>Tutoring Center</h2>
+                        <p style={{ color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>
+                            Closed-Loop Support System • <span style={{ color: rosterVerified ? '#16a34a' : '#f59e0b', fontWeight: '600' }}>{rosterVerified ? 'Roster Verified' : 'Syncing...'}</span>
+                        </p>
+                    </div>
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button

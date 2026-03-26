@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-const CareerMapper = () => {
+import { ChevronLeft } from 'lucide-react';
+
+const CareerMapper = ({ onBack }) => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -78,11 +80,34 @@ const CareerMapper = () => {
 
     return (
         <div className="p-8 bg-slate-900 min-h-screen text-slate-100">
-            <header className="mb-12 text-center">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent mb-4">
-                    Project 4_ednex
-                </h1>
-                <p className="text-slate-400 text-lg">Mapping Course Excellence to Market Demand</p>
+            <header style={{ marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'rgba(255,255,255,0.05)', 
+                            border: '1px solid rgba(255,255,255,0.1)', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#94a3b8',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div style={{ textAlign: 'left' }}>
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent mb-1">
+                        Career Mapper
+                    </h1>
+                    <p className="text-slate-400 text-lg">Mapping Course Excellence to Market Demand</p>
+                </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

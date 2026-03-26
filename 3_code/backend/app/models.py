@@ -15,8 +15,11 @@ class User(SQLModel, table=True):
     ai_insight: Optional[str] = Field(default=None)
     is_admin: bool = Field(default=False)
     is_faculty: bool = Field(default=False)
+    is_advisor: bool = Field(default=False)
+    is_dean: bool = Field(default=False)
+    is_exec: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    is_active: bool = Field(default=False)
+    is_active: bool = Field(default=True)
     
     # Subscription fields
     trial_ends_at: Optional[datetime] = Field(default=None)

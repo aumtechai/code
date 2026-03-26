@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Search, RefreshCw, Database } from 'lucide-react';
+import { Search, RefreshCw, Database, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api';
 
-const CIPExplorer = () => {
+const CIPExplorer = ({ onBack }) => {
     const [cipCodes, setCipCodes] = useState([]);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
@@ -55,11 +55,34 @@ const CIPExplorer = () => {
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '0.5rem' }}>
-                        CIP Codes
-                    </h1>
-                    <p style={{ color: '#64748b' }}>Classification of Instructional Programs (Texas 2020)</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                flexShrink: 0
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <div>
+                        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '0.25rem', margin: 0 }}>
+                            CIP Codes
+                        </h1>
+                        <p style={{ color: '#64748b', margin: 0 }}>Classification of Instructional Programs (Texas 2020)</p>
+                    </div>
                 </div>
                 <button
                     onClick={handleSeed}

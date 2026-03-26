@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, Mail, Phone, HelpCircle, ChevronDown, ChevronUp, ArrowLeft, GraduationCap } from 'lucide-react';
+import { MessageCircle, Mail, Phone, HelpCircle, ChevronDown, ChevronUp, ChevronLeft, GraduationCap } from 'lucide-react';
 import logoAsset from '../assets/logo.png';
 
 const FAQItem = ({ question, answer }) => {
@@ -39,19 +39,32 @@ const Support = ({ onBack }) => {
         <div style={{ minHeight: '100vh', background: '#f8fafc', padding: '2rem' }}>
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '3rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                flexShrink: 0
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <img src={logoAsset} alt="Logo" style={{ width: '40px', height: '40px', borderRadius: '8px' }} />
                         <h1 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0 }}>Support Center</h1>
                     </div>
-                    {onBack && (
-                        <button
-                            onClick={onBack}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'white', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', color: '#64748b' }}
-                        >
-                            <ArrowLeft size={18} /> Back
-                        </button>
-                    )}
                 </div>
 
                 {/* Hero */}

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { motion } from 'framer-motion';
-import { TrendingUp, Award, AlertCircle, CheckCircle } from 'lucide-react';
+import { TrendingUp, Award, AlertCircle, CheckCircle, ChevronLeft } from 'lucide-react';
 
 
-const Progress = () => {
+const Progress = ({ onBack }) => {
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -63,7 +63,33 @@ const Progress = () => {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '1.5rem', color: '#1e293b' }}>Academic Progress</h2>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0, color: '#1e293b' }}>Academic Progress</h2>
+                    <p style={{ color: '#64748b', margin: 0 }}>Review your grades, GPA, and graduation status.</p>
+                </div>
+            </div>
 
             {/* Top Stats Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>

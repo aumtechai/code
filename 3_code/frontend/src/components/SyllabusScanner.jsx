@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Calendar, Check, X, Loader2, ScanLine } from 'lucide-react';
+import { Upload, Calendar, Check, X, Loader2, ScanLine, ChevronLeft } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 
-const SyllabusScanner = () => {
+const SyllabusScanner = ({ onBack }) => {
     const [file, setFile] = useState(null);
     const [events, setEvents] = useState([]);
     const [scanning, setScanning] = useState(false);
@@ -95,14 +95,37 @@ const SyllabusScanner = () => {
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
             {/* Header */}
-            <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                    <ScanLine className="text-primary" size={32} color="#4f46e5" />
-                    Smart Syllabus Scanner
-                </h2>
-                <p style={{ color: '#64748b', maxWidth: '500px', margin: '0.5rem auto' }}>
-                    Upload your course syllabus (PDF or Image). Our AI will extract all important dates and add them to your schedule automatically.
-                </p>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+                        <ScanLine className="text-primary" size={32} color="#4f46e5" />
+                        Smart Syllabus Scanner
+                    </h2>
+                    <p style={{ color: '#64748b', margin: '0.25rem 0 0 0' }}>
+                        Upload your course syllabus (PDF or Image). Our AI will extract all important dates and add them to your schedule automatically.
+                    </p>
+                </div>
             </div>
 
             <AnimatePresence mode="wait">

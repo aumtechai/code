@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2 } from 'lucide-react';
+import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2, ChevronLeft } from 'lucide-react';
 import api from '../api';
 
-const CareerPathfinder = () => {
+const CareerPathfinder = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState('jobs'); // 'resume', 'jobs', 'skills'
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -91,13 +91,36 @@ const CareerPathfinder = () => {
     return (
         <div style={{ padding: '0 1rem 2rem 1rem', maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header */}
-            <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(to right, #6366f1, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
-                    Career Pathfinder
-                </h1>
-                <p style={{ color: '#94a3b8', fontSize: '1.1rem', marginTop: '0.5rem' }}>
-                    Bridge the gap between your degree and your dream career.
-                </p>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(to right, #6366f1, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
+                        Career Pathfinder
+                    </h1>
+                    <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: 0 }}>
+                        Bridge the gap between your degree and your dream career.
+                    </p>
+                </div>
             </div>
 
             {/* Tabs */}

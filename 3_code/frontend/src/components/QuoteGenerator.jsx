@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calculator, Zap, Shield, TrendingUp, DollarSign, Users, FileText, AlertTriangle, ChevronRight, CheckCircle, Download } from 'lucide-react';
+import { Calculator, Zap, Shield, TrendingUp, DollarSign, Users, FileText, AlertTriangle, ChevronRight, CheckCircle, Download, ChevronLeft } from 'lucide-react';
 
-const QuoteGenerator = () => {
+const QuoteGenerator = ({ onBack }) => {
     const [students, setStudents] = useState(5000);
     const [tier, setTier] = useState('prism');
     const [integration, setIntegration] = useState('standard'); // 'standard' or 'enterprise'
@@ -147,13 +147,36 @@ const QuoteGenerator = () => {
             `}</style>
 
             <div className="no-print" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ background: '#4f46e5', width: '60px', height: '60px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.35)' }}>
-                        <Calculator size={32} color="white" />
-                    </div>
-                    <div>
-                        <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0, color: '#0f172a' }}>Institutional Proposal Builder</h2>
-                        <p style={{ margin: 0, color: '#64748b', fontWeight: '500' }}>Configure and export professional TCO assessments for Aura deployment.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                flexShrink: 0
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ background: '#4f46e5', width: '60px', height: '60px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.35)' }}>
+                            <Calculator size={32} color="white" />
+                        </div>
+                        <div>
+                            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0, color: '#0f172a' }}>Institutional Proposal Builder</h2>
+                            <p style={{ margin: 0, color: '#64748b', fontWeight: '500' }}>Configure and export professional TCO assessments for Aura deployment.</p>
+                        </div>
                     </div>
                 </div>
                 <button

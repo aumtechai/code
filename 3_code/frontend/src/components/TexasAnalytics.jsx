@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, TrendingUp, BookOpen, AlertCircle, RefreshCw } from 'lucide-react';
+import { Search, TrendingUp, BookOpen, AlertCircle, RefreshCw, ChevronLeft } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import api from '../api';
 
-const TexasAnalytics = () => {
+const TexasAnalytics = ({ onBack }) => {
     const [colleges, setColleges] = useState([]);
     const [selectedCollege, setSelectedCollege] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -57,11 +57,34 @@ const TexasAnalytics = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header */}
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 'bold', background: 'linear-gradient(to right, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
-                        Institutional Research
-                    </h1>
-                    <p style={{ color: '#64748b' }}>Texas Higher Education Accountability Intelligence</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                flexShrink: 0
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <div>
+                        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', background: 'linear-gradient(to right, #2563eb, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
+                            Institutional Research
+                        </h1>
+                        <p style={{ color: '#64748b', margin: 0 }}>Texas Higher Education Accountability Intelligence</p>
+                    </div>
                 </div>
                 <div style={{ padding: '0.5rem 1rem', background: '#e0f2fe', color: '#0369a1', borderRadius: '20px', fontSize: '0.875rem' }}>
                     State Data Source

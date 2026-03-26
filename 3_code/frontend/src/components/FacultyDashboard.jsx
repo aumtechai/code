@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Calendar, AlertTriangle, TrendingUp, Search, Clock, CheckCircle, X, ChevronRight, MoreVertical, Flag, Wand2, Send, MessageSquare } from 'lucide-react';
+import { Users, Calendar, AlertTriangle, TrendingUp, Search, Clock, CheckCircle, X, ChevronRight, MoreVertical, Flag, Wand2, Send, MessageSquare, ChevronLeft } from 'lucide-react';
 import api from '../api';
 
-const FacultyDashboard = () => {
+const FacultyDashboard = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState('risk'); // 'risk', 'appointments'
 
     // Student Signals State
@@ -14,21 +14,35 @@ const FacultyDashboard = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [signalSuccess, setSignalSuccess] = useState(false);
 
-    // Mock Risk Data
-    const students = [
-        { id: 101, name: 'Alex Johnson', risk: 'High', gpa: 2.1, attendance: '65%', factors: ['Missed Midterm', 'Low LMS Login'], img: 'https://i.pravatar.cc/150?u=101' },
-        { id: 102, name: 'Sarah Williams', risk: 'Medium', gpa: 2.8, attendance: '82%', factors: ['declining quiz scores'], img: 'https://i.pravatar.cc/150?u=102' },
-        { id: 103, name: 'Michael Chen', risk: 'Low', gpa: 3.5, attendance: '95%', factors: [], img: 'https://i.pravatar.cc/150?u=103' },
-        { id: 104, name: 'Emily Davis', risk: 'High', gpa: 1.9, attendance: '50%', factors: ['Consecutive Absences', 'Assignment Overdue'], img: 'https://i.pravatar.cc/150?u=104' },
-        { id: 105, name: 'David Wilson', risk: 'Medium', gpa: 2.6, attendance: '78%', factors: ['Late Submissions'], img: 'https://i.pravatar.cc/150?u=105' },
-    ];
+    // Real-time Student & Appointment data
+    const [students, setStudents] = useState([]);
+    const [appointments, setAppointments] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Mock Appointments
-    const appointments = [
-        { id: 1, student: 'Sarah Williams', time: '10:00 AM', date: 'Today', topic: 'Academic Probation', type: 'In-Person' },
-        { id: 2, student: 'Alex Johnson', time: '2:00 PM', date: 'Today', topic: 'Course Withdrawl', type: 'Virtual' },
-        { id: 3, student: 'Jessica Lee', time: '11:30 AM', date: 'Tomorrow', topic: 'Career Guidance', type: 'In-Person' },
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [studentsRes, appointmentsRes] = await Promise.all([
+                    api.get('/api/faculty/my-students'),
+                    api.get('/api/faculty/appointments')
+                ]);
+                
+                // For student images, we can add a simple default since it might not be in the backend model
+                const studentsWithImg = studentsRes.data.map(s => ({
+                    ...s,
+                    img: `https://i.pravatar.cc/150?u=${s.id}`
+                }));
+                
+                setStudents(studentsWithImg);
+                setAppointments(appointmentsRes.data);
+            } catch (error) {
+                console.error("Error fetching faculty data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const openSignalModal = (student) => {
         setSelectedStudent(student);
@@ -81,11 +95,33 @@ const FacultyDashboard = () => {
         <div style={{ padding: '0 1rem 2rem 1rem', maxWidth: '1400px', margin: '0 auto' }}>
             {/* Header */}
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.5rem' }}>
-                        Faculty Portal
-                    </h1>
-                    <p style={{ color: '#64748b' }}>Monitor student success metrics and manage advising schedule.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <div>
+                        <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.5rem', lineHeight: 1 }}>
+                            Faculty Portal
+                        </h1>
+                        <p style={{ color: '#64748b', margin: 0 }}>Monitor student success metrics and manage advising schedule.</p>
+                    </div>
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button

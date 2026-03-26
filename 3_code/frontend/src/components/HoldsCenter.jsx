@@ -9,7 +9,8 @@ import {
     AlertTriangle,
     Info,
     ArrowUpRight,
-    HelpCircle
+    HelpCircle,
+    ChevronLeft
 } from 'lucide-react';
 
 import api from '../api';
@@ -29,7 +30,7 @@ const DEMO_HOLDS = [
     },
 ];
 
-const HoldsCenter = () => {
+const HoldsCenter = ({ onBack }) => {
     const [holds, setHolds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -90,9 +91,32 @@ const HoldsCenter = () => {
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '3rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem' }}>
-                <div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>Holds & Financial Alerts</h2>
-                    <p style={{ color: '#64748b', marginTop: '0.5rem' }}>View critical administrative actions and financial aid requirements.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                flexShrink: 0
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <div>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>Holds & Financial Alerts</h2>
+                        <p style={{ color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>View critical administrative actions and financial aid requirements.</p>
+                    </div>
                 </div>
                 <div style={{ padding: '8px 16px', background: activeHolds.length > 0 ? '#fee2e2' : '#dcfce7', borderRadius: '30px', color: activeHolds.length > 0 ? '#ef4444' : '#10b981', fontWeight: '600', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     {activeHolds.length > 0 ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { BookOpen, Plus, Trash2, TrendingUp, Award, RefreshCw, Settings, Calendar } from 'lucide-react';
+import { BookOpen, Plus, Trash2, TrendingUp, Award, RefreshCw, Settings, Calendar, ChevronLeft } from 'lucide-react';
 
 import { motion } from 'framer-motion';
 
@@ -11,7 +11,7 @@ const gradePoints = {
     'D+': 1.3, 'D': 1.0, 'F': 0.0
 };
 
-const Courses = ({ userData: externalUserData }) => {
+const Courses = ({ userData: externalUserData, onBack }) => {
     const [courses, setCourses] = useState([]);
     const [userData, setUserData] = useState(externalUserData || null);
     const [isAdding, setIsAdding] = useState(false);
@@ -97,6 +97,29 @@ const Courses = ({ userData: externalUserData }) => {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <h1 style={{ fontSize: '2rem', fontWeight: '800', margin: 0 }}>Courses</h1>
+            </div>
 
             {/* AI Insight Banner */}
             {userData?.ai_insight && (

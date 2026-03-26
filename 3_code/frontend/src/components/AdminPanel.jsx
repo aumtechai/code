@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Users, Briefcase, Zap, Search, Send, MessageSquare, CheckCircle, Bot, BarChart2, Activity, AlertTriangle } from 'lucide-react';
+import { Plus, X, Users, Briefcase, Zap, Search, Send, MessageSquare, CheckCircle, Bot, BarChart2, Activity, AlertTriangle, ChevronLeft } from 'lucide-react';
 import api from '../api';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const AdminPanel = () => {
+const AdminPanel = ({ onBack }) => {
     const [activeSection, setActiveSection] = useState(() => {
         const query = new URLSearchParams(window.location.search);
         return query.get('adminSection') || 'campaigns';
@@ -22,7 +22,30 @@ const AdminPanel = () => {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>Admin Panel</h1>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0 }}>Admin Panel</h1>
+            </div>
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', paddingBottom: '4px' }}>
                 <button
                     onClick={() => setActiveSection('campaigns')}

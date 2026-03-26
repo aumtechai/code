@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { MessageSquare, Trash2, Calendar, ChevronRight } from 'lucide-react';
+import { MessageSquare, Trash2, Calendar, ChevronRight, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const History = ({ onSelectSession }) => {
+const History = ({ onSelectSession, onBack }) => {
     const [sessions, setSessions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -44,7 +44,30 @@ const History = ({ onSelectSession }) => {
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 className="section-title" style={{ margin: 0 }}>Conversation History</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {onBack && (
+                        <button 
+                            onClick={onBack} 
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #e2e8f0', 
+                                borderRadius: '50%', 
+                                width: '40px', 
+                                height: '40px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                cursor: 'pointer', 
+                                color: '#64748b',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                flexShrink: 0
+                            }}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                    )}
+                    <h2 className="section-title" style={{ margin: 0 }}>Conversation History</h2>
+                </div>
                 <div style={{ position: 'relative' }}>
                     <input
                         type="text"

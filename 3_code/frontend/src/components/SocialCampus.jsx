@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, GraduationCap, ShoppingBag, Plus, BookOpen, MapPin, Calendar, Search } from 'lucide-react';
+import { Users, GraduationCap, ShoppingBag, Plus, BookOpen, MapPin, Calendar, Search, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api';
 
@@ -22,7 +22,7 @@ const DEMO_MARKET_ITEMS = [
     { id: 3, title: 'The Bedford Handbook (10th Ed)', price: 20, condition: 'Fair', seller_name: 'Taylor R.', image_url: '' },
 ];
 
-const SocialCampus = () => {
+const SocialCampus = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState('study'); // study, mentors, marketplace
     const [loading, setLoading] = useState(false);
 
@@ -106,9 +106,32 @@ const SocialCampus = () => {
 
     return (
         <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-            <header style={{ marginBottom: '2rem' }}>
-                <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e293b' }}>Social Campus</h1>
-                <p style={{ color: '#64748b' }}>Connect, learn, and trade with your university community.</p>
+            <header style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e293b', margin: 0 }}>Social Campus</h1>
+                    <p style={{ color: '#64748b', margin: 0 }}>Connect, learn, and trade with your university community.</p>
+                </div>
             </header>
 
             {/* Tabs */}

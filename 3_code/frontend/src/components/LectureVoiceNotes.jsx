@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, FileAudio, FileText, Check, Loader2, Bookmark, BookmarkCheck, Trash2, Clock, Book, User } from 'lucide-react';
+import { Mic, Square, FileAudio, FileText, Check, Loader2, Bookmark, BookmarkCheck, Trash2, Clock, Book, User, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 
-const LectureVoiceNotes = ({ onNavigate }) => {
+const LectureVoiceNotes = ({ onNavigate, onBack }) => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
     const [audioBlob, setAudioBlob] = useState(null);
@@ -306,12 +306,34 @@ const LectureVoiceNotes = ({ onNavigate }) => {
             {/* Main Content */}
             <div style={{ flex: 1 }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                        <h2 style={{ fontSize: '1.8rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <Mic className="text-primary" size={32} color="#4f46e5" />
-                            Lecture Voice Notes
-                        </h2>
-                        <p style={{ color: '#64748b' }}>Record your lectures and let AI transcribe and summarize them for you.</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        {onBack && (
+                            <button 
+                                onClick={onBack} 
+                                style={{ 
+                                    background: 'white', 
+                                    border: '1px solid #e2e8f0', 
+                                    borderRadius: '50%', 
+                                    width: '40px', 
+                                    height: '40px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    cursor: 'pointer', 
+                                    color: '#64748b',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                }}
+                            >
+                                <ChevronLeft size={20} />
+                            </button>
+                        )}
+                        <div style={{ textAlign: 'left' }}>
+                            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+                                <Mic className="text-primary" size={32} color="#4f46e5" />
+                                Lecture Voice Notes
+                            </h2>
+                            <p style={{ color: '#64748b', margin: '0.25rem 0 0 0' }}>Record your lectures and let AI transcribe and summarize them for you.</p>
+                        </div>
                     </div>
                     <button
                         onClick={() => setShowHistory(!showHistory)}

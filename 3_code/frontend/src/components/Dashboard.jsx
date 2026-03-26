@@ -32,6 +32,8 @@ import Support from './Support';
 import Subscription from './Subscription';
 import QuoteGenerator from './QuoteGenerator';
 import WeeklySchedule from './WeeklySchedule';
+import AdvisorDashboard from './AdvisorDashboard';
+import DeanDashboard from './DeanDashboard';
 
 
 
@@ -48,7 +50,7 @@ import iphoneLogo from '../assets/iphone_logo.jpg';
 
 
 
-const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
+const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRole, onRoleChange }) => {
     const navigate = useNavigate();
     const isLoggedIn = !!localStorage.getItem('token');
     const handleLogout = () => {
@@ -104,14 +106,14 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                     <div className="section-title">Home</div>
                     <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => handleProtectedTab('dashboard')}><LayoutDashboard size={20} strokeWidth={2.75} /> Dashboard</div>
                     <div className={`nav-item ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => handleProtectedTab('chat')}><MessageSquare size={20} strokeWidth={2.75} /> Get Aura</div>
-                    <div className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => handleProtectedTab('analytics')}><TrendingUp size={20} strokeWidth={2.75} /> Institutional Research</div>
+                    {/* <div className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => handleProtectedTab('analytics')}><TrendingUp size={20} strokeWidth={2.75} /> Institutional Research</div> */}
 
                     <div className="section-title">Academics</div>
                     <div className={`nav-item ${activeTab === 'degree-roadmap' ? 'active' : ''}`} onClick={() => handleProtectedTab('degree-roadmap')}><Map size={20} strokeWidth={2.75} /> Degree Roadmap</div>
                     <div className={`nav-item ${activeTab === 'courses' ? 'active' : ''}`} onClick={() => handleProtectedTab('courses')}><BookOpen size={20} strokeWidth={2.75} /> Courses</div>
                     <div className={`nav-item ${activeTab === 'schedule' ? 'active' : ''}`} onClick={() => handleProtectedTab('schedule')}><Calendar size={20} strokeWidth={2.75} /> Schedule</div>
                     <div className={`nav-item ${activeTab === 'syllabus' ? 'active' : ''}`} onClick={() => handleProtectedTab('syllabus')}><ScanLine size={20} strokeWidth={2.75} /> Syllabus Scanner</div>
-                    <div className={`nav-item ${activeTab === 'cip' ? 'active' : ''}`} onClick={() => handleProtectedTab('cip')}><BookOpen size={20} strokeWidth={2.75} /> CIP Codes</div>
+                    {/* <div className={`nav-item ${activeTab === 'cip' ? 'active' : ''}`} onClick={() => handleProtectedTab('cip')}><BookOpen size={20} strokeWidth={2.75} /> CIP Codes</div> */}
                     <div className={`nav-item ${activeTab === 'voice-notes' ? 'active' : ''}`} onClick={() => handleProtectedTab('voice-notes')}><Mic size={20} strokeWidth={2.75} /> Lecture Notes</div>
 
                     <div className="section-title">My Records</div>
@@ -133,10 +135,24 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                     <div className={`nav-item ${activeTab === 'social' ? 'active' : ''}`} onClick={() => handleProtectedTab('social')}><Users size={20} strokeWidth={2.75} /> Social Campus</div>
                     <div className={`nav-item ${activeTab === 'wellness' ? 'active' : ''}`} onClick={() => handleProtectedTab('wellness')}><Heart size={20} strokeWidth={2.75} /> Wellness</div>
 
-                    {(userData?.is_faculty || userData?.is_admin) && (
+                    {(userData?.is_faculty || userData?.is_admin || currentRole === 'faculty') && (
                         <>
                             <div className="section-title">Faculty & Staff</div>
                             <div className={`nav-item ${activeTab === 'faculty' ? 'active' : ''}`} onClick={() => handleProtectedTab('faculty')}><Users size={20} strokeWidth={2.75} /> Faculty Portal</div>
+                        </>
+                    )}
+
+                    {(userData?.is_advisor || userData?.is_admin || currentRole === 'advisor') && (
+                        <>
+                            <div className="section-title">Advising</div>
+                            <div className={`nav-item ${activeTab === 'advisor' ? 'active' : ''}`} onClick={() => handleProtectedTab('advisor')}><Calendar size={20} strokeWidth={2.75} /> Advisor Case Center</div>
+                        </>
+                    )}
+
+                    {(userData?.is_dean || userData?.is_exec || userData?.is_admin || currentRole === 'dean' || currentRole === 'exec') && (
+                        <>
+                            <div className="section-title">Executive</div>
+                            <div className={`nav-item ${activeTab === 'dean' ? 'active' : ''}`} onClick={() => handleProtectedTab('dean')}><TrendingUp size={20} strokeWidth={2.75} /> Dean's Dashboard</div>
                         </>
                     )}
 
@@ -171,9 +187,26 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose }) => {
                                 <div style={{ fontWeight: '600', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {userData?.full_name || 'Student'}
                                 </div>
-                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Aura</div>
+                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}</div>
                             </div>
                         </div>
+
+                        {/* Role Switcher (Admin Only) */}
+                        {userData?.is_admin && (
+                            <div style={{ marginTop: '1rem', padding: '8px', background: '#eef2ff', borderRadius: '12px', border: '1px solid #e0e7ff' }}>
+                                <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#4f46e5', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Perspective</div>
+                                <select 
+                                    value={currentRole} 
+                                    onChange={(e) => onRoleChange(e.target.value)}
+                                    style={{ width: '100%', padding: '6px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', fontWeight: '600', color: '#1e293b', cursor: 'pointer' }}
+                                >
+                                    <option value="student">Student View</option>
+                                    <option value="faculty">Faculty View</option>
+                                    <option value="advisor">Advisor View</option>
+                                    <option value="dean">Dean / Exec View</option>
+                                </select>
+                            </div>
+                        )}
 
                         {/* Legal Footer */}
                         <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
@@ -550,7 +583,7 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
 
 
 const Dashboard = () => {
-
+    const [currentRole, setCurrentRole] = useState(localStorage.getItem('viewRole') || 'student');
     const [activeTab, setActiveTab] = useState('dashboard');
     const [chatMode, setChatMode] = useState(null); // 'tutor', 'admin', 'coach', or null
     const [chatSessionId, setChatSessionId] = useState(null);
@@ -587,6 +620,9 @@ const Dashboard = () => {
                 on_track_score: 87, 
                 is_admin: isAdminBypass, 
                 is_faculty: isAdminBypass, 
+                is_advisor: isAdminBypass,
+                is_dean: isAdminBypass,
+                is_exec: isAdminBypass,
                 is_ednex_verified: true,
                 ai_insight: isAdminBypass ? "Admin access enabled. Reviewing university performance analytics." : "Welcome to Aura. Your personal academic intelligence platform designed to help you succeed."
             });
@@ -685,6 +721,12 @@ const Dashboard = () => {
     }, []);
 
 
+    const handleRoleChange = (role) => {
+        setCurrentRole(role);
+        localStorage.setItem('viewRole', role);
+        setActiveTab('dashboard');
+    };
+
     return (
         <div style={{ display: 'flex', height: '100dvh', background: '#f8fafc', flexDirection: 'column' }}>
             {/* Mobile Header - Fixed App Bar */}
@@ -702,7 +744,8 @@ const Dashboard = () => {
                 justifyContent: 'space-between',
                 zIndex: 60,
                 height: 'auto',
-                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.03)'
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.03)',
+                display: 'flex'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ 
@@ -739,12 +782,14 @@ const Dashboard = () => {
             </div>
 
             <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-                <Sidebar
-                    activeTab={activeTab}
-                    onTabChange={(t) => handleFeatureNavigate(t, null)}
-                    userData={userData}
-                    isOpen={isMobileMenuOpen}
-                    onClose={() => setIsMobileMenuOpen(false)}
+                <Sidebar 
+                    activeTab={activeTab} 
+                    onTabChange={setActiveTab} 
+                    userData={userData} 
+                    isOpen={isMobileMenuOpen} 
+                    onClose={() => setIsMobileMenuOpen(false)} 
+                    currentRole={currentRole}
+                    onRoleChange={handleRoleChange}
                 />
 
                 <main
@@ -752,14 +797,13 @@ const Dashboard = () => {
                         flex: 1,
                         padding: activeTab === 'chat' ? 0 : '2rem 3rem',
                         overflowY: activeTab === 'chat' ? 'hidden' : 'auto',
-                        overflowX: 'hidden', // Force kill horizontal scroll
+                        overflowX: 'hidden',
                         position: 'relative',
                         display: 'flex',
                         flexDirection: 'column'
                     }}
                     className="main-content"
                 >
-                    {/* Responsive Padding adjustment & Neon Effects */}
                     <style>{`
                         @keyframes neon-glow {
                             0% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.4), 0 0 10px rgba(16, 185, 129, 0.2); text-shadow: 0 0 2px rgba(255,255,255,0.5); border-color: rgba(16, 185, 129, 0.5); }
@@ -779,31 +823,19 @@ const Dashboard = () => {
                                 padding-top: calc(7.5rem + env(safe-area-inset-top)) !important;
                                 padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
                                 overflow-y: auto !important;
-                                -webkit-overflow-scrolling: touch !important;
                             }
-
-                        /* Force Stats Grid Side-by-Side */
-                        .stats-container {
-                            display: grid !important;
-                        grid-template-columns: 1fr 1fr !important;
-                        width: 100% !important;
-                        gap: 1rem !important;
-                            }
-                        .edit-btn-wrapper {
-                            grid-column: 1 / -1 !important;
-                        justify-content: center !important;
-                        margin-bottom: 0.5rem !important;
-                            }
-                        .stat-card-glass {
-                            margin-bottom: 0 !important;
-                        width: 100% !important;
+                            .stats-container {
+                                display: grid !important;
+                                grid-template-columns: 1fr 1fr !important;
+                                gap: 1rem !important;
+                                width: 100% !important;
                             }
                         }
                     `}</style>
 
                     {activeTab === 'dashboard' && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            {holds.some(h => h.status === 'active') && (
+                            {holds.some(h => h.status === 'active') && currentRole === 'student' && (
                                 <motion.div
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -822,84 +854,65 @@ const Dashboard = () => {
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                         <AlertTriangle color="#ef4444" size={20} strokeWidth={2.75} />
                                         <span style={{ color: '#991b1b', fontWeight: '700' }}>
-                                            You have {holds.filter(h => h.status === 'active').length} active hold(s) or alert(s) that require your attention.
+                                            You have {holds.filter(h => h.status === 'active').length} active hold(s).
                                         </span>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontWeight: '700', fontSize: '0.9rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontWeight: '700' }}>
                                         View Details <ChevronRight size={16} strokeWidth={3} />
                                     </div>
                                 </motion.div>
                             )}
-                            <DashboardHome onNavigate={handleFeatureNavigate} userData={userData} onEditStats={() => handleFeatureNavigate('edit-profile')} />
+                            
+                            {currentRole === 'faculty' ? (
+                                <FacultyDashboard onBack={null} />
+                            ) : currentRole === 'advisor' ? (
+                                <AdvisorDashboard onBack={null} />
+                            ) : currentRole === 'dean' ? (
+                                <DeanDashboard onBack={null} />
+                            ) : (
+                                <DashboardHome onNavigate={handleFeatureNavigate} userData={userData} onEditStats={() => handleFeatureNavigate('edit-profile')} />
+                            )}
                         </div>
                     )}
 
                     {activeTab === 'chat' && (
                         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1.5rem' }}>
-                            <h2 style={{ marginBottom: '1rem', flexShrink: 0 }}>
-                                {chatMode === 'tutor' ? 'The Tutor' :
-                                    chatMode === 'admin' ? 'The Admin' :
-                                        chatMode === 'coach' ? 'The Coach' :
-                                            chatMode === 'fafsa' ? 'AI FAFSA Expert' : 'Get Aura'}
-                            </h2>
-                            <div style={{ flex: 1, background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden', minHeight: 0 }}>
+                            <h2 style={{ marginBottom: '1rem' }}>Get Aura AI</h2>
+                            <div style={{ flex: 1, background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden' }}>
                                 <ChatInterface mode={chatMode} initialSessionId={chatSessionId} prefilledData={prefilledData} />
                             </div>
                         </div>
                     )}
 
-                    {activeTab === 'analytics' && <TexasAnalytics />}
-
-                    {activeTab === 'cip' && <CIPExplorer />}
-
-                    {activeTab === 'history' && <History onSelectSession={(id) => handleFeatureNavigate('chat', null, id)} />}
+                    {activeTab === 'history' && <History onBack={() => setActiveTab('dashboard')} onSelectSession={(id) => handleFeatureNavigate('chat', null, id)} />}
                     {activeTab === 'schedule' && <WeeklySchedule onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'book-advisor' && <BookAdvisor onBack={() => setActiveTab('dashboard')} />}
-                    {activeTab === 'courses' && <Courses userData={userData} />}
-
-                    {activeTab === 'tutoring' && <TutoringCenter />}
-
-                    {activeTab === 'wellness' && <WellnessCheck />}
-
+                    {activeTab === 'courses' && <Courses onBack={() => setActiveTab('dashboard')} userData={userData} />}
+                    {activeTab === 'tutoring' && <TutoringCenter onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'wellness' && <WellnessCheck onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'timer' && <StudyTimer onBack={() => setActiveTab('dashboard')} />}
-
-                    {activeTab === 'smart-study' && <FlashcardGenerator prefilledData={prefilledData} />}
-
-                    {activeTab === 'voice-notes' && <LectureVoiceNotes onNavigate={handleFeatureNavigate} />}
-
-                    {activeTab === 'syllabus' && <SyllabusScanner />}
-
-                    {activeTab === 'holds' && <HoldsCenter />}
-
-                    {activeTab === 'financial' && <FinancialAidNexus onNavigate={handleFeatureNavigate} />}
-
-                    {activeTab === 'career' && <CareerPathfinder />}
-                    {activeTab === 'ednex' && <CareerMapper />}
-
+                    {activeTab === 'smart-study' && <FlashcardGenerator onBack={() => setActiveTab('dashboard')} prefilledData={prefilledData} />}
+                    {activeTab === 'voice-notes' && <LectureVoiceNotes onBack={() => setActiveTab('dashboard')} onNavigate={handleFeatureNavigate} />}
+                    {activeTab === 'syllabus' && <SyllabusScanner onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'holds' && <HoldsCenter onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'financial' && <FinancialAidNexus onBack={() => setActiveTab('dashboard')} onNavigate={handleFeatureNavigate} />}
+                    {activeTab === 'career' && <CareerPathfinder onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'ednex' && <CareerMapper onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'forms' && <DropAddForms onBack={() => setActiveTab('dashboard')} />}
-
-
-                    {activeTab === 'progress' && <Progress />}
-
-                    {/* Legal Pages */}
+                    {activeTab === 'progress' && <Progress onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'privacy' && <PrivacyPolicy onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'msa' && <MSA onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'sla' && <SLA onBack={() => setActiveTab('dashboard')} />}
-
-                    {/* Social Campus */}
-                    {activeTab === 'social' && <SocialCampus />}
-
-                    {/* Faculty */}
-                    {activeTab === 'faculty' && <FacultyDashboard />}
-
-                    {/* Admin */}
-                    {/* Main Features */}
-                    {activeTab === 'degree-roadmap' && <DegreeRoadmap />}
+                    {activeTab === 'social' && <SocialCampus onBack={() => setActiveTab('dashboard')} />}
+                    {(activeTab === 'faculty' || (currentRole === 'faculty' && activeTab === 'dashboard')) && <FacultyDashboard onBack={() => setActiveTab('dashboard')} />}
+                    {(activeTab === 'advisor' || (currentRole === 'advisor' && activeTab === 'dashboard')) && <AdvisorDashboard onBack={() => setActiveTab('dashboard')} />}
+                    {(activeTab === 'dean' || (currentRole === 'dean' && activeTab === 'dashboard')) && <DeanDashboard onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'degree-roadmap' && <DegreeRoadmap onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'support' && <Support onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'subscription' && <Subscription userData={userData} onBack={() => setActiveTab('dashboard')} />}
-                    {activeTab === 'adminPanel' && (userData?.is_admin || new URLSearchParams(window.location.search).get('admin') === 'true') && <AdminPanel />}
-                    {activeTab === 'adminEdnex' && (userData?.is_admin || new URLSearchParams(window.location.search).get('admin') === 'true') && <AdminEdnex />}
-                    {activeTab === 'quoteGen' && (userData?.is_admin || new URLSearchParams(window.location.search).get('admin') === 'true') && <QuoteGenerator />}
+                    {activeTab === 'adminPanel' && <AdminPanel onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'adminEdnex' && <AdminEdnex onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'quoteGen' && <QuoteGenerator onBack={() => setActiveTab('dashboard')} />}
 
                     {activeTab !== 'chat' && <Footer onNavigate={(tab) => setActiveTab(tab)} />}
                 </main>
@@ -916,33 +929,12 @@ const Dashboard = () => {
                 />
             )}
 
-            {/* Feature 1: The Panic Button (Instant Hand Raise) */}
             {activeTab !== 'chat' && (
                 <motion.button
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleFeatureNavigate('chat', 'coach', null, { message: 'I need help immediately.' })}
-                    style={{
-                        position: 'fixed',
-                        bottom: '2rem',
-                        right: '2rem',
-                        background: '#ef4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '50px',
-                        padding: '1rem 1.5rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        boxShadow: '0 10px 25px -5px rgba(239, 68, 68, 0.5), 0 8px 10px -6px rgba(239, 68, 68, 0.5)',
-                        cursor: 'pointer',
-                        fontWeight: '800',
-                        fontSize: '1rem',
-                        zIndex: 1000
-                    }}
+                    style={{ position: 'fixed', bottom: '2rem', right: '2rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '50px', padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 10px 25px rgba(239, 68, 68, 0.4)', cursor: 'pointer', fontWeight: '800', zIndex: 1000 }}
                 >
                     <AlertTriangle size={20} strokeWidth={3} />
                     I Need Help Now
@@ -951,5 +943,6 @@ const Dashboard = () => {
         </div>
     );
 };
+
 
 export default Dashboard;

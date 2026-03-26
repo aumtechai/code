@@ -99,22 +99,34 @@ const DropAddForms = ({ onBack }) => {
 
     return (
         <div style={{ maxWidth: '900px', margin: '0 auto', padding: '1rem 0' }}>
-            <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', marginBottom: '1.5rem', padding: 0 }}>
-                <ChevronLeft size={20} /> Back to Dashboard
-            </button>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                    onClick={onBack} 
+                    style={{ 
+                        background: 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '50%', 
+                        width: '40px', 
+                        height: '40px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        cursor: 'pointer', 
+                        color: '#64748b',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        flexShrink: 0
+                    }}
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <div>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>Course Requests</h2>
+                    <p style={{ color: '#64748b', margin: 0 }}>Official registrar request portal</p>
+                </div>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '2rem' }}>
                 <div className="card-white" style={{ padding: '2.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2rem' }}>
-                        <div style={{ background: '#4f46e5', padding: '10px', borderRadius: '12px' }}>
-                            <FileText color="white" size={24} />
-                        </div>
-                        <div>
-                            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Drop/Add Course</h2>
-                            <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0 }}>Official registrar request form</p>
-                        </div>
-                    </div>
-
                     <div style={{ display: 'flex', gap: '1rem', marginBottom: '2.5rem', background: '#f8fafc', padding: '4px', borderRadius: '12px' }}>
                         <button
                             onClick={() => { setRequestType('add'); setFormData({ course_name: '', course_code: '', reason: '', explanation: '' }); }}

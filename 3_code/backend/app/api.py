@@ -11,7 +11,7 @@ import stripe
 from pydantic import BaseModel
 
 from app.auth import get_session, create_access_token, get_password_hash, verify_password, get_current_user, get_admin_user
-from app.models import ChatSession, ChatMessage, Tutor, User, StudentHold
+from app.models import ChatSession, ChatMessage, Tutor, User, StudentHold, TutoringSection, TutoringEnrollment, FormRequest, TutoringAppointment
 from datetime import datetime, timedelta
 
 # Optional imports for Get Aura (may not be available on Vercel due to size constraints)
@@ -1297,9 +1297,18 @@ async def get_faculty_students(
     session: Session = Depends(get_session)
 ):
     """Mock endpoint for faculty to see their students and risk levels"""
-    # In production, filter by courses where this user is the instructor
-    statement = select(User).where(User.is_admin == False, User.is_faculty == False).limit(10)
-    students = session.exec(statement).all()
+    # 1. Get all sections for this faculty
+    sections_stmt = select(TutoringSection.id).where(TutoringSection.instructor_id == faculty.id)
+    section_ids = session.exec(sections_stmt).all()
+    
+    if not section_ids:
+        # Fallback to random if no sections found for this faculty (for demo)
+        statement = select(User).where(User.is_admin == False, User.is_faculty == False).limit(10)
+        students = session.exec(statement).all()
+    else:
+        # 2. Get all students enrolled in these sections
+        enrollments_stmt = select(User).join(TutoringEnrollment).where(TutoringEnrollment.section_id.in_(section_ids))
+        students = session.exec(enrollments_stmt).all()
     
     result = []
     for s in students:
@@ -1312,7 +1321,7 @@ async def get_faculty_students(
             "name": s.full_name or s.email,
             "gpa": s.gpa,
             "risk": risk,
-            "attendance": "92%", # Mock
+            "attendance": "92%", # Mock attribute not in DB
             "factors": ["Good participation"] if risk == "Low" else ["Frequent absences"]
         })
     return result
@@ -1326,12 +1335,41 @@ async def sync_faculty_classes(
     await asyncio.sleep(1)
     return {"message": "Successfully synchronized 3 courses from Canvas LMS."}
 
-@router.get("/faculty/announcements")
-async def get_faculty_announcements():
-    return [
-        {"id": 1, "title": "Midterm Prep", "content": "The midterm will cover chapters 1-5.", "date": "2026-03-20"},
-        {"id": 2, "title": "Guest Speaker", "content": "Next Tuesday we will have a guest from Google.", "date": "2026-03-18"}
-    ]
+@router.get("/faculty/appointments")
+async def get_faculty_appointments(
+    faculty: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Get upcoming appointments for this faculty member"""
+    # 1. Get sections where this faculty is instructor
+    sections_stmt = select(TutoringSection.id).where(TutoringSection.instructor_id == faculty.id)
+    section_ids = session.exec(sections_stmt).all()
+    
+    if not section_ids:
+        # Mock data for demo if no sections found
+        return [
+            { "id": 1, "student": 'Sarah Williams', "time": '10:00 AM', "date": 'Today', "topic": 'Academic Probation', "type": 'In-Person' },
+            { "id": 2, "student": 'Alex Johnson', "time": '2:00 PM', "date": 'Today', "topic": 'Course Withdrawl', "type": 'Virtual' }
+        ]
+    
+    # 2. Get appointments for these sections
+    # Note: In TutoringAppointment model, tutor_id might be the faculty or a TA.
+    # For simplicity, we'll fetch all appointments in their sections.
+    appointments_stmt = select(TutoringAppointment).where(TutoringAppointment.section_id.in_(section_ids))
+    appointments = session.exec(appointments_stmt).all()
+    
+    result = []
+    for apt in appointments:
+        student = session.get(User, apt.student_id)
+        result.append({
+            "id": apt.id,
+            "student": student.full_name if student else "Unknown Student",
+            "time": apt.start_time.strftime("%I:%M %p"),
+            "date": apt.start_time.strftime("%Y-%m-%d"),
+            "topic": apt.triage_note or "Tutoring Session",
+            "type": "Virtual" # Mocked
+        })
+    return result
 
 @router.post("/faculty/announcements")
 async def post_announcement(data: Dict):
@@ -1923,6 +1961,61 @@ async def trigger_nudges(background_tasks: BackgroundTasks, session: Session = D
         "status": "success", 
         "message": "Proactive Intelligence Batch started in background. Syncing with EdNex..."
     }
+
+# --- Executive & Advisor View Support Endpoints ---
+
+@router.get("/dean/stats")
+async def get_dean_stats(current_user: User = Depends(get_current_user)):
+    """Institutional-wide health stats for Dean/Exec view."""
+    if not (current_user.is_admin or current_user.is_dean or current_user.is_exec):
+        raise HTTPException(status_code=403, detail="Executive access only")
+        
+    return {
+        "status": "success",
+        "institutional_stats": {
+            "total_students": 12450,
+            "at_risk_count": 842,
+            "graduation_rate": 85.4,
+            "employment_rate": 92.1,
+            "retention_rate": 91.2
+        },
+        "college_breakdown": [
+            { "name": 'Engineering', "students": 3200, "gpa": 3.42, "risk": '4.2%', "trend": "up" },
+            { "name": 'Business', "students": 2850, "gpa": 3.28, "risk": '5.8%', "trend": "stable" },
+            { "name": 'Arts/Sci', "students": 4100, "gpa": 3.35, "risk": '6.1%', "trend": "down" },
+            { "name": 'Nursing', "students": 1200, "gpa": 3.55, "risk": '2.5%', "trend": "up" },
+        ],
+        "strategic_insights": [
+             { "title": 'Retention Risk (2nd Year)', "impact": "Possible 3% decline in STEM", "status": "critical" },
+             { "title": 'Career Placement Growth', "impact": "CS grads placing 2wks faster vs LY", "status": "success" }
+        ]
+    }
+
+@router.get("/advisor/students")
+async def get_advisor_caseload(current_user: User = Depends(get_current_user)):
+    """Student caseload for Advisor view."""
+    if not (current_user.is_admin or current_user.is_advisor):
+        raise HTTPException(status_code=403, detail="Advisor access only")
+        
+    # Mock caseload for the advisor/admin
+    return [
+        { "id": 101, "name": 'Jordan Miller', "major": 'Computer Science', "gpa": 3.2, "risk": 'low', "last_met": "2w ago" },
+        { "id": 102, "name": 'Sarah Thompson', "major": 'Nursing', "gpa": 2.4, "risk": 'medium', "last_met": "Never" },
+        { "id": 103, "name": 'Alex Rivera', "major": 'Business', "gpa": 1.8, "risk": 'high', "last_met": "1mo ago" },
+        { "id": 104, "name": 'Priya Nair', "major": 'Engineering', "gpa": 3.8, "risk": 'low', "last_met": "3d ago" }
+    ]
+
+@router.get("/advisor/appointments")
+async def get_advisor_appointments(current_user: User = Depends(get_current_user)):
+    """Daily schedule for Advisor view."""
+    if not (current_user.is_admin or current_user.is_advisor):
+        raise HTTPException(status_code=403, detail="Advisor access only")
+        
+    return [
+        { "time": "10:00 AM", "student": "Jordan Miller", "type": "Planning", "status": "Ready" },
+        { "time": "11:15 AM", "student": "Alex Rivera", "type": "Academic Recovery", "status": "Critical" },
+        { "time": "01:30 PM", "student": "Sam Taylor", "type": "Financial Hold Sync", "status": "Pending" }
+    ]
 
 @router.get('/admin/intelligence/trigger')
 async def manual_intelligence_trigger(

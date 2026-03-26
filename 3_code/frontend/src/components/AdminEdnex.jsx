@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { Network, Database, UserSearch, Save, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Network, Database, UserSearch, Save, RefreshCw, AlertCircle, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const AdminEdnex = () => {
+const AdminEdnex = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState('config'); // config, status, lookup
     const [loading, setLoading] = useState(false);
 
@@ -84,10 +84,36 @@ const AdminEdnex = () => {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <h1 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Network color="#4f46e5" /> EdNex Integration Hub
-            </h1>
-            <p style={{ color: '#64748b', marginBottom: '2rem' }}>Configure and monitor the connection to the core EdNex Data Warehouse (Supabase).</p>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {onBack && (
+                    <button 
+                        onClick={onBack} 
+                        style={{ 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '50%', 
+                            width: '40px', 
+                            height: '40px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0
+                        }}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
+                <div style={{ textAlign: 'left' }}>
+                    <h1 style={{ fontSize: '2rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+                        <Network className="text-primary" size={32} color="#4f46e5" />
+                        EdNex Integration Hub
+                    </h1>
+                    <p style={{ color: '#64748b', margin: '0.25rem 0 0 0' }}>Configure and monitor the connection to the core EdNex Data Warehouse (Supabase).</p>
+                </div>
+            </div>
 
             <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #e2e8f0', marginBottom: '2rem' }}>
                 <button

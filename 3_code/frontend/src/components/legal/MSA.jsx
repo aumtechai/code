@@ -1,10 +1,31 @@
-
-import React from 'react';
+import { ChevronLeft } from 'lucide-react';
 
 const MSA = ({ onBack }) => (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
-        <button onClick={onBack} style={{ marginBottom: '1rem', background: 'none', border: 'none', cursor: 'pointer', color: '#6366f1' }}>← Back</button>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Master Services Agreement (MSA)</h1>
+        <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {onBack && (
+                <button 
+                    onClick={onBack} 
+                    style={{ 
+                        background: 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '50%', 
+                        width: '40px', 
+                        height: '40px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        cursor: 'pointer', 
+                        color: '#64748b',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        flexShrink: 0
+                    }}
+                >
+                    <ChevronLeft size={20} />
+                </button>
+            )}
+            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0 }}>Master Services Agreement (MSA)</h1>
+        </div>
         <div className="card-white" style={{ lineHeight: '1.6', color: '#334155' }}>
             <p><strong>Last Updated:</strong> January 1, 2026</p>
             <p>This Master Services Agreement ("Agreement") governs your use of the Get Aura platform.</p>
