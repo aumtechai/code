@@ -19,6 +19,8 @@ const LectureVoiceNotes = ({ onNavigate, onBack }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSyncingToDrive, setIsSyncingToDrive] = useState(false);
     const [driveSynced, setDriveSynced] = useState(false);
+    const [selectedNote, setSelectedNote] = useState(null);
+    const [showHistory, setShowHistory] = useState(false);
 
     const languages = [
         "English", "Spanish", "Mandarin Chinese", "Hindi", "French",

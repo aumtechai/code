@@ -1046,9 +1046,15 @@ async def update_user_me(
     if user_update.interests is not None:
         current_user.interests = user_update.interests
     
-    session.add(current_user)
-    session.commit()
-    session.refresh(current_user)
+    if current_user.id and current_user.id > 0:
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+    else:
+        # For stateless EdNex users, we could sync back to Supabase here if needed
+        # but for now we just reflect the changes in the returned object
+        pass
+        
     return current_user
 
 class BookingRequest(BaseModel):

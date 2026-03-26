@@ -61,8 +61,10 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
     const handleLogin = () => { navigate('/login'); };
 
     const handleProtectedTab = (tab) => {
+        const query = new URLSearchParams(window.location.search);
+        const isAdminMode = query.get('admin') === 'true' || localStorage.getItem('adminMode') === 'true';
         const publicTabs = ['dashboard', 'courses', 'wellness', 'social'];
-        if (!isLoggedIn && !publicTabs.includes(tab)) {
+        if (!isLoggedIn && !publicTabs.includes(tab) && !isAdminMode) {
             // If trying to access a private tab (like 'settings' or 'chat') without login -> redirect
             navigate('/login');
         } else {
@@ -600,31 +602,31 @@ const Dashboard = () => {
             return new URLSearchParams(pathSearch || hashSearch);
         };
         const query = getParams();
-        const isAdminBypass = query.get('admin') === 'true' || localStorage.getItem('adminMode') === 'true';
-        const isStatsBypass = query.get('stats') === 'true';
+        const isAdminMode = query.get('admin') === 'true' || localStorage.getItem('adminMode') === 'true';
+        const isStatsMode = query.get('stats') === 'true';
         const token = localStorage.getItem('token');
         
-        if (isAdminBypass) {
+        if (isAdminMode) {
             localStorage.setItem('adminMode', 'true');
         }
 
-        if (!token && !isAdminBypass && !isStatsBypass) return;
+        if (!token && !isAdminMode && !isStatsMode) return;
 
-        if (isAdminBypass || isStatsBypass) {
+        if (isAdminMode || isStatsMode) {
             // Enhanced bypass logic: if we are in admin mode, keep the current token user
             // but augment them with global admin staff permissions/persona.
             setUserData({
                 id: 10452, 
-                full_name: isAdminBypass ? "Dean Garrett" : "Daniel Garrett", 
+                full_name: isAdminMode ? "Dean Garrett" : "Daniel Garrett", 
                 gpa: 3.5, 
                 on_track_score: 87, 
-                is_admin: isAdminBypass, 
-                is_faculty: isAdminBypass, 
-                is_advisor: isAdminBypass,
-                is_dean: isAdminBypass,
-                is_exec: isAdminBypass,
+                is_admin: isAdminMode, 
+                is_faculty: isAdminMode, 
+                is_advisor: isAdminMode,
+                is_dean: isAdminMode,
+                is_exec: isAdminMode,
                 is_ednex_verified: true,
-                ai_insight: isAdminBypass ? "Admin access enabled. Reviewing university performance analytics." : "Welcome to Aura. Your personal academic intelligence platform designed to help you succeed."
+                ai_insight: isAdminMode ? "Admin access enabled. Reviewing university performance analytics." : "Welcome to Aura. Your personal academic intelligence platform designed to help you succeed."
             });
             return;
         }
@@ -702,8 +704,11 @@ const Dashboard = () => {
     };
 
     const handleFeatureNavigate = (tab, mode = null, sessionId = null, data = null) => {
+        const query = new URLSearchParams(window.location.search);
+        const isAdminMode = query.get('admin') === 'true' || localStorage.getItem('adminMode') === 'true';
         const token = localStorage.getItem('token');
-        if (!token) {
+        
+        if (!token && !isAdminMode) {
             navigate('/login');
         } else {
             setActiveTab(tab);
