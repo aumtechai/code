@@ -16,9 +16,9 @@ const LectureVoiceNotes = ({ onNavigate, onBack }) => {
     const [courseName, setCourseName] = useState('');
     const [professorName, setProfessorName] = useState('');
     const [history, setHistory] = useState([]);
-    const [selectedNote, setSelectedNote] = useState(null);
-    const [showHistory, setShowHistory] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isSyncingToDrive, setIsSyncingToDrive] = useState(false);
+    const [driveSynced, setDriveSynced] = useState(false);
 
     const languages = [
         "English", "Spanish", "Mandarin Chinese", "Hindi", "French",
@@ -189,11 +189,22 @@ const LectureVoiceNotes = ({ onNavigate, onBack }) => {
             setCourseName('');
             setProfessorName('');
             fetchHistory(); // Refresh history
-            alert('Lecture note saved successfully!');
+            
+            // Auto-trigger sync simulation
+            handleSyncDrive();
         } catch (error) {
             console.error("Failed to save note", error);
             alert('Failed to save note');
         }
+    };
+
+    const handleSyncDrive = async () => {
+        setIsSyncingToDrive(true);
+        // Simulation of Google Drive Upload
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setIsSyncingToDrive(false);
+        setDriveSynced(true);
+        setTimeout(() => setDriveSynced(false), 5000);
     };
 
     const toggleBookmark = async (noteId) => {
@@ -354,6 +365,26 @@ const LectureVoiceNotes = ({ onNavigate, onBack }) => {
                                     style={{ padding: '0.5rem 1rem', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}
                                 >
                                     Generate Flashcards
+                                </button>
+                                <button
+                                    onClick={handleSyncDrive}
+                                    disabled={isSyncingToDrive}
+                                    style={{ 
+                                        padding: '0.5rem 1rem', 
+                                        background: driveSynced ? '#10b981' : '#4285F4', 
+                                        color: 'white', 
+                                        border: 'none', 
+                                        borderRadius: '6px', 
+                                        cursor: 'pointer', 
+                                        fontWeight: '600', 
+                                        fontSize: '0.85rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}
+                                >
+                                    {isSyncingToDrive ? <Loader2 size={14} className="spin" /> : driveSynced ? <Check size={14} /> : <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png" style={{ width: '14px' }} alt="Drive" />}
+                                    {isSyncingToDrive ? 'Syncing...' : driveSynced ? 'Synced to Drive' : 'Sync to Drive'}
                                 </button>
                                 <button onClick={() => setSelectedNote(null)} style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', textDecoration: 'underline' }}>
                                     Close

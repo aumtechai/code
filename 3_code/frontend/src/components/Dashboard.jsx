@@ -645,7 +645,10 @@ const Dashboard = () => {
 
                     if (ctx.sis_stream?.cumulative_gpa !== undefined) {
                         baseUser.gpa = parseFloat(ctx.sis_stream.cumulative_gpa);
+                    } else if (ctx.sis_stream?.gpa !== undefined) {
+                        baseUser.gpa = parseFloat(ctx.sis_stream.gpa);
                     }
+                    
                     if (ctx.finance_stream?.tuition_balance !== undefined) {
                         baseUser.tuition_balance = parseFloat(ctx.finance_stream.tuition_balance);
                         baseUser.has_financial_hold = ctx.finance_stream.has_financial_hold;
@@ -667,6 +670,15 @@ const Dashboard = () => {
             } catch (err) {
                 console.log("EdNex sync unavailable:", err);
             }
+
+            // Role Safety Check: Reset to student if user doesn't have permissions for current role
+            const hasFacultyPerms = baseUser.is_faculty || baseUser.is_admin;
+            const hasAdvisorPerms = baseUser.is_advisor || baseUser.is_admin;
+            const hasDeanPerms = baseUser.is_dean || baseUser.is_exec || baseUser.is_admin;
+
+            if (currentRole === 'faculty' && !hasFacultyPerms) setCurrentRole('student');
+            if (currentRole === 'advisor' && !hasAdvisorPerms) setCurrentRole('student');
+            if (currentRole === 'dean' && !hasDeanPerms) setCurrentRole('student');
 
             setUserData(baseUser);
         } catch (error) {
@@ -862,11 +874,11 @@ const Dashboard = () => {
                             )}
                             
                             {currentRole === 'faculty' ? (
-                                <FacultyDashboard onBack={null} />
+                                <FacultyDashboard onBack={() => handleRoleChange('student')} />
                             ) : currentRole === 'advisor' ? (
-                                <AdvisorDashboard onBack={null} />
+                                <AdvisorDashboard onBack={() => handleRoleChange('student')} />
                             ) : currentRole === 'dean' ? (
-                                <DeanDashboard onBack={null} />
+                                <DeanDashboard onBack={() => handleRoleChange('student')} />
                             ) : (
                                 <DashboardHome onNavigate={handleFeatureNavigate} userData={userData} onEditStats={() => handleFeatureNavigate('edit-profile')} />
                             )}
