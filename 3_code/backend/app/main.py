@@ -50,7 +50,10 @@ def on_startup():
                 ("trial_ends_at", "TIMESTAMP"),
                 ("subscription_status", "VARCHAR"),
                 ("stripe_customer_id", "VARCHAR"),
-                ("stripe_subscription_id", "VARCHAR")
+                ("stripe_subscription_id", "VARCHAR"),
+                ("is_advisor", "BOOLEAN"),
+                ("is_dean", "BOOLEAN"),
+                ("is_exec", "BOOLEAN")
             ]
             for col_name, col_type in columns_to_add:
                 if col_name not in existing_columns:
