@@ -727,8 +727,7 @@ const Dashboard = () => {
         setActiveTab('dashboard');
     };
 
-    return (
-        <div style={{ display: 'flex', height: '100dvh', background: '#f8fafc', flexDirection: 'column' }}>
+    return (        <div style={{ display: 'flex', height: '100dvh', background: '#f8fafc', flexDirection: 'column' }}>
             {/* Mobile Header - Fixed App Bar */}
             <div className="mobile-only mobile-header" style={{
                 position: 'fixed',
@@ -744,8 +743,7 @@ const Dashboard = () => {
                 justifyContent: 'space-between',
                 zIndex: 60,
                 height: 'auto',
-                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.03)',
-                display: 'flex'
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.03)'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ 
@@ -904,15 +902,19 @@ const Dashboard = () => {
                     {activeTab === 'msa' && <MSA onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'sla' && <SLA onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'social' && <SocialCampus onBack={() => setActiveTab('dashboard')} />}
-                    {(activeTab === 'faculty' || (currentRole === 'faculty' && activeTab === 'dashboard')) && <FacultyDashboard onBack={() => setActiveTab('dashboard')} />}
-                    {(activeTab === 'advisor' || (currentRole === 'advisor' && activeTab === 'dashboard')) && <AdvisorDashboard onBack={() => setActiveTab('dashboard')} />}
-                    {(activeTab === 'dean' || (currentRole === 'dean' && activeTab === 'dashboard')) && <DeanDashboard onBack={() => setActiveTab('dashboard')} />}
+                    
+                    {/* Role Dashboards - Direct Access */}
+                    {activeTab === 'faculty' && currentRole !== 'faculty' && <FacultyDashboard onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'advisor' && currentRole !== 'advisor' && <AdvisorDashboard onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'dean' && currentRole !== 'dean' && <DeanDashboard onBack={() => setActiveTab('dashboard')} />}
+
                     {activeTab === 'degree-roadmap' && <DegreeRoadmap onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'support' && <Support onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'subscription' && <Subscription userData={userData} onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'adminPanel' && <AdminPanel onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'adminEdnex' && <AdminEdnex onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'quoteGen' && <QuoteGenerator onBack={() => setActiveTab('dashboard')} />}
+
 
                     {activeTab !== 'chat' && <Footer onNavigate={(tab) => setActiveTab(tab)} />}
                 </main>
