@@ -55,6 +55,14 @@ def on_startup():
                 ("is_dean", "BOOLEAN"),
                 ("is_exec", "BOOLEAN")
             ]
+            
+            # Additional migration for LectureNote
+            lecture_notes_cols = [
+                ("action_items", "TEXT"),
+                ("keywords", "TEXT"),
+                ("follow_up_questions", "TEXT")
+            ]
+            
             for col_name, col_type in columns_to_add:
                 if col_name not in existing_columns:
                     try:
@@ -63,7 +71,18 @@ def on_startup():
                         print(f"Successfully added column {col_name} to user table")
                     except Exception as e:
                         print(f"Error adding column {col_name}: {e}")
-                        continue
+            
+            # Check lecturenote table
+            ln_inspector = inspect(engine)
+            ln_existing = [c["name"] for c in ln_inspector.get_columns("lecturenote")]
+            for col_name, col_type in lecture_notes_cols:
+                if col_name not in ln_existing:
+                    try:
+                        conn.execute(text(f'ALTER TABLE "lecturenote" ADD COLUMN {col_name} {col_type}'))
+                        conn.commit()
+                        print(f"Successfully added column {col_name} to lecturenote table")
+                    except Exception as e:
+                        print(f"Error adding column {col_name} to lecturenote: {e}")
         
         # Seed Users (Test Accounts)
         from app.auth import get_password_hash
