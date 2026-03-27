@@ -200,7 +200,21 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                                 <select 
                                     value={currentRole} 
                                     onChange={(e) => onRoleChange(e.target.value)}
-                                    style={{ width: '100%', padding: '6px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', fontWeight: '600', color: '#1e293b', cursor: 'pointer' }}
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '8px 12px', 
+                                        borderRadius: '10px', 
+                                        border: '1px solid #cbd5e1', 
+                                        fontSize: '0.85rem', 
+                                        fontWeight: '700', 
+                                        color: '#334155', 
+                                        cursor: 'pointer',
+                                        fontFamily: 'inherit',
+                                        background: 'white',
+                                        outline: 'none',
+                                        appearance: 'auto',
+                                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                                    }}
                                 >
                                     <option value="student">Student View</option>
                                     <option value="faculty">Faculty View</option>
