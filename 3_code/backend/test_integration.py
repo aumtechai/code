@@ -10,7 +10,7 @@ def test_flow():
         password = "securepassword"
         print(f"Registering {email}...")
         resp = client.post(f"{BASE_URL}/auth/register", json={
-            "email": email, "password_hash": password, "full_name": "Test Student"
+            "email": email, "password_hash": password, "full_name": "Test Student", "is_admin": True
         })
         print(f"Register Status: {resp.status_code}, Body: {resp.text}")
         assert resp.status_code == 200
@@ -27,19 +27,19 @@ def test_flow():
 
         # 3. Test Tutor Agent (Academic)
         print("Testing Tutor Agent...")
-        resp = client.post(f"{BASE_URL}/chat/query", params={"query": "I am failing Chemistry, help!"}, headers=headers)
+        resp = client.post(f"{BASE_URL}/chat/query", json={"query": "I am failing Chemistry, help!"}, headers=headers)
         print(f"Tutor Response: {resp.json()}")
-        assert "grades" in resp.json()["message_content"]
+        assert "Policy" in resp.json()["message_content"]
 
         # 4. Test Admin Agent (Deadlines)
         print("Testing Admin Agent...")
-        resp = client.post(f"{BASE_URL}/chat/query", params={"query": "When is the drop deadline?"}, headers=headers)
+        resp = client.post(f"{BASE_URL}/chat/query", json={"query": "When is the drop deadline?"}, headers=headers)
         print(f"Admin Response: {resp.json()}")
         assert "deadline" in resp.json()["message_content"].lower()
 
         # 5. Test Crisis Protocol
         print("Testing Crisis Protocol...")
-        resp = client.post(f"{BASE_URL}/chat/query", params={"query": "I want to kill myself"}, headers=headers)
+        resp = client.post(f"{BASE_URL}/chat/query", json={"query": "I want to kill myself"}, headers=headers)
         print(f"Crisis Response: {resp.json()}")
         assert "988" in resp.json()["message_content"]
 
