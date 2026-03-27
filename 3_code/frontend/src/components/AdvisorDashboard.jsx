@@ -31,11 +31,16 @@ const AdvisorDashboard = ({ onBack }) => {
                 const mockStuds = [
                     { id: 101, name: 'Jordan Miller', major: 'CompSci', gpa: 3.2, risk: 'low', last_met: "2w ago" },
                     { id: 102, name: 'Sarah Thompson', major: 'Nursing', gpa: 2.4, risk: 'medium', last_met: "Never" },
-                    { id: 103, name: 'Alex Rivera', major: 'Business', gpa: 1.8, risk: 'high', last_met: "1mo ago" }
+                    { id: 103, name: 'Alex Rivera', major: 'Business', gpa: 1.8, risk: 'high', last_met: "1mo ago", alert: "Low GPA" },
+                    { id: 104, name: 'Chloe Baker', major: 'Engineering', gpa: 3.9, risk: 'low', last_met: "1d ago" },
+                    { id: 105, name: 'Ethan Hunt', major: 'Pre-Law', gpa: 2.1, risk: 'medium', last_met: "3d ago", alert: "Hold Active" },
+                    { id: 106, name: 'Zoe Madison', major: 'Marketing', gpa: 3.5, risk: 'low', last_met: "1w ago" },
                 ];
                 const mockAppts = [
                     { time: "10:00 AM", student: "Jordan Miller", type: "Planning", status: "Ready" },
-                    { time: "11:15 AM", student: "Alex Rivera", type: "Academy Recovery", status: "Critical" }
+                    { time: "11:15 AM", student: "Alex Rivera", type: "Academy Recovery", status: "Critical" },
+                    { time: "1:30 PM", student: "Sarah Thompson", type: "Career Advising", status: "Waiting" },
+                    { time: "3:00 PM", student: "Ethan Hunt", type: "Degree Audit", status: "Action Req" },
                 ];
                 setStudents(mockStuds);
                 setAppointments(mockAppts);

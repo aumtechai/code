@@ -60,10 +60,13 @@ const DeanDashboard = ({ onBack }) => {
                         { name: 'Business', students: 2850, gpa: 3.28, trend: "stable" },
                         { name: 'Arts/Sci', students: 4100, gpa: 3.35, trend: "down" },
                         { name: 'Nursing', students: 1200, gpa: 3.55, trend: "up" },
+                        { name: 'Education', students: 1100, gpa: 3.61, trend: "up" },
                     ],
                     strategic_insights: [
-                         { title: 'Retention Risk (2nd Year)', impact: "Possible 3% decline in STEM", status: "critical" },
-                         { title: 'Career Placement Growth', impact: "CS grads placing 2wks faster vs LY", status: "success" }
+                         { title: 'STEM Retention Risk (2nd Year)', impact: "Possible 3% decline in STEM based on Calculus I success patterns.", status: "critical" },
+                         { title: 'Career Placement Growth', impact: "CS grads placing 2wks faster vs LY; Salary avg ↑ 8% for 2026 cohort.", status: "success" },
+                         { title: 'Research Funding Milestone', impact: "NSF Grant approvals are 12% ahead of quarterly target.", status: "success" },
+                         { title: 'Faculty Diversity Target', impact: "Hiring cycle is on track to meet 2026 inclusive excellence goals.", status: "success" }
                     ]
                 };
 

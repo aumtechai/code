@@ -59,7 +59,6 @@ const WellnessCheck = ({ onBack }) => {
     return (
         <div style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '3rem' }}>
             <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                {onBack && (
                 <button 
                     onClick={onBack} 
                     style={{ 
@@ -82,7 +81,6 @@ const WellnessCheck = ({ onBack }) => {
                 >
                     <ChevronLeft size={20} strokeWidth={3} /> Back
                 </button>
-                )}
                 <div>
                     <h2 style={{ fontSize: '1.8rem', fontWeight: '700', margin: 0 }}>Wellness Check</h2>
                     <p style={{ color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>Your well-being is the foundation of your success.</p>

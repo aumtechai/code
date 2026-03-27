@@ -43,10 +43,17 @@ const FacultyDashboard = ({ onBack }) => {
                     { id: 1, name: 'Ava Johnson', risk: 'High', gpa: 1.8, attendance: '65%', factors: ['Missing assignments', 'Low quiz scores'] },
                     { id: 2, name: 'Marcus Chen', risk: 'Medium', gpa: 2.6, attendance: '82%', factors: ['Late submissions'] },
                     { id: 3, name: 'Elena Rodriguez', risk: 'High', gpa: 1.5, attendance: '45%', factors: ['Health issues', 'Multiple absences'] },
+                    { id: 4, name: 'David Smith', risk: 'Low', gpa: 3.8, attendance: '98%', factors: ['On track'] },
+                    { id: 5, name: 'Sophie Taylor', risk: 'Medium', gpa: 2.1, attendance: '70%', factors: ['Mid-term deficiency'] },
+                    { id: 6, name: 'Julian Brown', risk: 'High', gpa: 1.2, attendance: '30%', factors: ['Withdrawal warning'] },
+                    { id: 7, name: 'Mia Wilson', risk: 'Low', gpa: 3.5, attendance: '92%', factors: ['Dean\'s list candidate'] },
+                    { id: 8, name: 'Kevin Lee', risk: 'Medium', gpa: 2.3, attendance: '85%', factors: ['Needs tutoring'] },
                 ];
                 const mockAppointments = [
                     { id: 101, date: 'MAR 27', time: '10:00 AM', student: 'Ava Johnson', topic: 'Academic Recovery', type: 'Office Hours' },
                     { id: 102, date: 'MAR 27', time: '01:30 PM', student: 'Marcus Chen', topic: 'Project Review', type: 'Advising' },
+                    { id: 103, date: 'MAR 28', time: '09:00 AM', student: 'David Smith', topic: 'Honors Thesis', type: 'Research' },
+                    { id: 104, date: 'MAR 28', time: '11:00 AM', student: 'Elena Rodriguez', topic: 'Wellness Check', type: 'Support' },
                 ];
 
                 setStudents(mockStudents.map(s => ({ ...s, img: `https://i.pravatar.cc/150?u=${s.id}` })));
@@ -304,11 +311,55 @@ const FacultyDashboard = ({ onBack }) => {
                     <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '2rem' }}>
                         {/* Calendar Sidebar */}
                         <div style={{ background: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid #e2e8f0', height: 'fit-content' }}>
-                            <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.1rem' }}>Schedule</h3>
-                            <div style={{ padding: '1rem', background: '#f8fafc', borderRadius: '8px', marginBottom: '1rem', textAlign: 'center', color: '#64748b' }}>
-                                Calendar Widget Placeholder
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '800' }}>Schedule</h3>
+                                <button style={{ border: 'none', background: 'none', color: '#4f46e5', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer' }}>MARCH 2026</button>
                             </div>
-                            <button style={{ width: '100%', padding: '0.75rem', background: '#4f46e5', color: 'white', borderRadius: '8px', border: 'none', fontWeight: '600' }}>Sync Calendar</button>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '1.5rem' }}>
+                                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
+                                    <div key={d} style={{ textAlign: 'center', fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8' }}>{d}</div>
+                                ))}
+                                {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                                    <div key={day} style={{ 
+                                        aspectRatio: '1', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center', 
+                                        fontSize: '0.85rem', 
+                                        fontWeight: '600', 
+                                        color: day === 26 ? 'white' : '#475569',
+                                        background: day === 26 ? '#4f46e5' : 'transparent',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        border: [10, 15, 20, 26, 27, 28].includes(day) ? '1px solid #e2e8f0' : 'none',
+                                        position: 'relative'
+                                    }}>
+                                        {day}
+                                        {[10, 15, 27].includes(day) && (
+                                            <div style={{ position: 'absolute', bottom: '4px', width: '4px', height: '4px', background: '#ef4444', borderRadius: '50%' }}></div>
+                                        )}
+                                        {[20, 28].includes(day) && (
+                                            <div style={{ position: 'absolute', bottom: '4px', width: '4px', height: '4px', background: '#10b981', borderRadius: '50%' }}></div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <div style={{ width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%' }}></div>
+                                    <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600' }}>Academic Deficiencies (3)</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%' }}></div>
+                                    <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600' }}>Intervention Success (2)</span>
+                                </div>
+                            </div>
+
+                            <button style={{ width: '100%', marginTop: '1.5rem', padding: '0.75rem', border: '1px solid #e2e8f0', background: 'white', color: '#1e293b', borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                <Calendar size={18} /> Sync Calendar
+                            </button>
                         </div>
 
                         {/* Appointments List */}

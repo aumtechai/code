@@ -13,7 +13,11 @@ const WeeklySchedule = ({ onBack }) => {
         { day: 'Wednesday', start: '01:00 PM', end: '02:30 PM', name: 'Business Ethics', code: 'BUS210', room: 'Business West 104', tutor: 'Prof. Mark Thompson', color: '#ec4899' },
         { day: 'Tuesday', start: '10:30 AM', end: '12:00 PM', name: 'Calculus II', code: 'MATH202', room: 'Science Annex 20', tutor: 'Dr. James Wilson', color: '#10b981' },
         { day: 'Thursday', start: '10:30 AM', end: '12:00 PM', name: 'Calculus II', code: 'MATH202', room: 'Science Annex 20', tutor: 'Dr. James Wilson', color: '#10b981' },
+        { day: 'Tuesday', start: '02:00 PM', end: '03:15 PM', name: 'Global Economics', code: 'ECON301', room: 'Smith Building 12', tutor: 'Dr. Emily Vance', color: '#ec4899' },
+        { day: 'Thursday', start: '02:00 PM', end: '03:15 PM', name: 'Global Economics', code: 'ECON301', room: 'Smith Building 12', tutor: 'Dr. Emily Vance', color: '#ec4899' },
+        { day: 'Friday', start: '09:00 AM', end: '11:00 AM', name: 'Chemistry Lab', code: 'CHEM101', room: 'Lab Hall 5', tutor: 'Dr. Robert Fox', color: '#6366f1' },
         { day: 'Friday', start: '11:00 AM', end: '12:00 PM', name: 'University Seminar', code: 'UNIV101', room: 'Student Union 205', tutor: 'Dean Garrett', color: '#f59e0b' },
+        { day: 'Tuesday', start: '04:00 PM', end: '05:00 PM', name: 'Student Org Meeting', code: 'CLUB', room: 'Union G12', tutor: 'SGA Advisor', color: '#f59e0b' },
     ];
 
     return (

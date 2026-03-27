@@ -313,6 +313,55 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                 ))}
             </div>
 
+            {/* Intelligence & Activity Section */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '1.5rem', marginBottom: '3rem' }}>
+                <div className="card-white" style={{ position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'linear-gradient(135deg, transparent 50%, #4f46e510 50%)', borderRadius: '0 0 0 100px' }}></div>
+                    <h3 style={{ margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', fontWeight: '800' }}>
+                        <Brain size={20} color="#4f46e5" /> Campus Intelligence
+                    </h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        {[
+                            { label: 'Avg Campus GPA', value: '3.38', trend: '+0.12', color: '#10b981' },
+                            { label: 'Tutoring Success', value: '94%', trend: 'High', color: '#6366f1' },
+                            { label: 'Career Outcomes', value: '$72k', trend: 'Avg Base', color: '#f59e0b' },
+                            { label: 'Active Clubs', value: '142', trend: 'Growing', color: '#ec4899' },
+                        ].map((stat, i) => (
+                            <div key={i} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>{stat.label}</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>{stat.value}</div>
+                                <div style={{ fontSize: '0.75rem', fontWeight: '700', color: stat.color }}>{stat.trend}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="card-white">
+                    <h3 style={{ margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', fontWeight: '800' }}>
+                        <Activity size={20} color="#ef4444" /> Recent Activity
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {[
+                            { title: 'New Grade: CS101 Quiz', details: 'Scored 92/100', time: '2h ago', icon: FileText, bg: '#eef2ff', color: '#4f46e5' },
+                            { title: 'Tutoring Interaction', details: 'Concepts: Calculus II Integration', time: '5h ago', icon: MessageSquare, bg: '#f0fdf4', color: '#10b981' },
+                            { title: 'EdNex Verification', details: 'System Sync Complete', time: 'Yesterday', icon: ShieldCheck, bg: '#fff7ed', color: '#f59e0b' },
+                            { title: 'Career Path Update', details: 'New Internship Matches', time: '2d ago', icon: Briefcase, bg: '#fdf2f8', color: '#ec4899' },
+                        ].map((item, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{ background: item.bg, padding: '10px', borderRadius: '10px', color: item.color }}>
+                                    <item.icon size={18} strokeWidth={2.75} />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: '700', fontSize: '0.95rem' }}>{item.title}</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{item.details}</div>
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '600' }}>{item.time}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             {/* AI Team */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2.5rem' }}>
                 <h3 className="section-title" style={{ margin: 0 }}>Your AI Support Team</h3>
