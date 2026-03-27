@@ -108,25 +108,28 @@ const SocialCampus = ({ onBack }) => {
         <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
             <header style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 {onBack && (
-                    <button 
-                        onClick={onBack} 
-                        style={{ 
-                            background: 'white', 
-                            border: '1px solid #e2e8f0', 
-                            borderRadius: '50%', 
-                            width: '40px', 
-                            height: '40px', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center', 
-                            cursor: 'pointer', 
-                            color: '#64748b',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                            flexShrink: 0
-                        }}
-                    >
-                        <ChevronLeft size={20} />
-                    </button>
+                <button 
+                    onClick={onBack} 
+                    style={{ 
+                        background: 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '12px', 
+                        padding: '8px 16px',
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        cursor: 'pointer', 
+                        color: '#475569',
+                        fontWeight: '700',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        flexShrink: 0,
+                        transition: 'all 0.2s'
+                    }}
+                    onMouseOver={e => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseOut={e => e.currentTarget.style.background = 'white'}
+                >
+                    <ChevronLeft size={20} strokeWidth={3} /> Back
+                </button>
                 )}
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e293b', margin: 0 }}>Social Campus</h1>

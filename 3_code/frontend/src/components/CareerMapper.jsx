@@ -85,21 +85,24 @@ const CareerMapper = ({ onBack }) => {
                     <button 
                         onClick={onBack} 
                         style={{ 
-                            background: 'rgba(255,255,255,0.05)', 
-                            border: '1px solid rgba(255,255,255,0.1)', 
-                            borderRadius: '50%', 
-                            width: '40px', 
-                            height: '40px', 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '12px', 
+                            padding: '8px 16px',
                             display: 'flex', 
                             alignItems: 'center', 
-                            justifyContent: 'center', 
+                            gap: '8px',
                             cursor: 'pointer', 
-                            color: '#94a3b8',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            flexShrink: 0
+                            color: '#475569',
+                            fontWeight: '700',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                            flexShrink: 0,
+                            transition: 'all 0.2s'
                         }}
+                        onMouseOver={e => e.currentTarget.style.background = '#f8fafc'}
+                        onMouseOut={e => e.currentTarget.style.background = 'white'}
                     >
-                        <ChevronLeft size={20} />
+                        <ChevronLeft size={20} strokeWidth={3} /> Back
                     </button>
                 )}
                 <div style={{ textAlign: 'left' }}>
