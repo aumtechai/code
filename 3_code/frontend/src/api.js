@@ -57,13 +57,8 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            const isAdminMode = localStorage.getItem('adminMode') === 'true';
-            if (!isAdminMode) {
-                localStorage.removeItem('token');
-                window.location.href = '/login';
-            } else {
-                console.warn("Bypassing 401 redirect due to Admin Bypass Mode");
-            }
+            localStorage.removeItem('token');
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }

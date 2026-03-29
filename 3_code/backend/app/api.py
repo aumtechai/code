@@ -29,7 +29,7 @@ router = APIRouter()
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 @router.get("/debug/env")
-async def debug_env():
+async def debug_env(admin: User = Depends(get_admin_user)):
     """Temporary debug endpoint to check which env vars are set (values hidden)."""
     keys_to_check = [
         "GOOGLE_API_KEY",

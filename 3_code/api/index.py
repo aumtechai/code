@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from app.auth import get_admin_user, get_session
+from app.models import User
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import sys
@@ -161,7 +163,7 @@ except Exception as e:
     print(f"Failed to create tables or migrate on import: {e}")
 
 @app.get("/api/fix_db_schema")
-def fix_db_schema():
+def fix_db_schema(admin_user: User = Depends(get_admin_user)):
     from app.auth import engine
     from sqlalchemy import text, inspect
     results = []
@@ -211,7 +213,7 @@ def fix_db_schema():
     return {"status": "done", "results": results}
 
 @app.get("/api/admin/reset_users")
-def reset_demo_users():
+def reset_demo_users(admin_user: User = Depends(get_admin_user)):
     """Forces deletion and recreation of Ram and Shiva users"""
     from app.auth import engine, get_password_hash
     from sqlmodel import Session, select
@@ -258,7 +260,7 @@ def reset_demo_users():
         return {"status": "error", "message": str(e), "traceback": traceback.format_exc()}
 
 @app.get("/api/debug-routes")
-def debug_routes():
+def debug_routes(admin_user: User = Depends(get_admin_user)):
     """List all registered routes to verify mounting"""
     import inspect
     routes = []
@@ -292,7 +294,7 @@ def health_check():
     return {"status": "healthy", "backend_loaded": BACKEND_LOADED}
 
 @app.get("/api/debug")
-def debug():
+def debug(admin_user: User = Depends(get_admin_user)):
     import sys
     return {
         "sys.path": sys.path,
@@ -372,7 +374,7 @@ except Exception as e:
     traceback.print_exc()
 
 @app.get("/api/migrate")
-def manual_migrate():
+def manual_migrate(admin_user: User = Depends(get_admin_user)):
     log = []
     try:
         from app.auth import engine
@@ -451,7 +453,7 @@ if not BACKEND_LOADED:
         }
 
 @app.get("/api/admin/seed_demo_g")
-def seed_demo_user_g():
+def seed_demo_user_g(admin_user: User = Depends(get_admin_user)):
     """
     Seeds a rich demo user 'g@student.org' for App Store Review / Demo purposes.
     Includes: Courses (History/Planned), Holds, Alerts, Financials, etc.

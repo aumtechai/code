@@ -55,16 +55,13 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
     const isLoggedIn = !!localStorage.getItem('token');
     const handleLogout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('adminMode');
         navigate('/login');
     };
     const handleLogin = () => { navigate('/login'); };
 
     const handleProtectedTab = (tab) => {
-        const query = new URLSearchParams(window.location.search);
-        const isAdminMode = query.get('admin') === 'true' || localStorage.getItem('adminMode') === 'true';
         const publicTabs = ['dashboard', 'courses', 'wellness', 'social'];
-        if (!isLoggedIn && !publicTabs.includes(tab) && !isAdminMode) {
+        if (!isLoggedIn && !publicTabs.includes(tab)) {
             // If trying to access a private tab (like 'settings' or 'chat') without login -> redirect
             navigate('/login');
         } else {
@@ -158,7 +155,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                         </>
                     )}
 
-                    {(userData?.is_admin || new URLSearchParams(window.location.search).get('admin') === 'true') && (
+                    {userData?.is_admin && (
                         <>
                             <div className="section-title">Admin</div>
                             <div className={`nav-item ${activeTab === 'adminPanel' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminPanel')}><Shield size= {20} strokeWidth={2.75} /> Admin Panel</div>

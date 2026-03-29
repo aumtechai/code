@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from app.auth import get_admin_user
+from app.models import User
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
@@ -249,7 +251,7 @@ async def root():
     return {"message": "Welcome to Student Success API"}
 
 @app.get("/debug/env")
-async def debug_env():
+async def debug_env(admin: User = Depends(get_admin_user)):
     """Debug endpoint to check environment variables"""
     import os
     return {
