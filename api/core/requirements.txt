@@ -1,7 +1,7 @@
 pydantic>=2.0.0
 sqlmodel>=0.0.22
 sqlalchemy
-python-jose[cryptography]
+python-jose
 passlib[bcrypt]
 python-multipart
 python-dotenv
@@ -9,3 +9,4 @@ httpx
 bcrypt
 google-auth
 supabase
+fastapi
