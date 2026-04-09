@@ -1,4 +1,4 @@
-# ULTIMATE GIT IGNORE - STOP THE 750MB GHOST
+# Surgical Ignore - Keep the UI, Stop the Bloat
 .git
 .git/**
 **/.git
@@ -13,13 +13,16 @@ tmp
 at_deploy
 git_backup
 Aura_Backup
-3_code/frontend
 node_modules
+**/node_modules/**
 venv
 .venv
-*.mp4
-*.png
-*.jpg
-*.db
-*.sqlite3
 __pycache__
+
+# Ignore Frontend Source (Only Keep the Compiled Dist)
+3_code/frontend/src
+3_code/frontend/android
+3_code/frontend/ios
+3_code/frontend/resources
+3_code/frontend/public
+# Keep 3_code/frontend/dist (This is the actual site!)
