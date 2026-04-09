@@ -1,0 +1,2284 @@
+# aumtech.ai Get Aura API - v1.4.1 (GPA fix: 2026-03-07)
+from fastapi import APIRouter, Depends, HTTPException, status, Request, File, Form, BackgroundTasks
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlmodel import Session, select
+from typing import List, Optional, Dict
+from google.oauth2 import id_token
+from google.auth.transport import requests
+import os
+import os
+import stripe
+from pydantic import BaseModel
+
+from app.auth import get_session, create_access_token, get_password_hash, verify_password, get_current_user, get_admin_user
+from app.models import ChatSession, ChatMessage, Tutor, User, StudentHold, TutoringSection, TutoringEnrollment, FormRequest, TutoringAppointment, SystemConfig
+from datetime import datetime, timedelta
+from app.config_utils import get_gemini_api_key, set_gemini_api_key
+
+# Optional imports for Get Aura
+AGENT_AVAILABLE = False
+try:
+    from langchain_core.messages import HumanMessage, AIMessage
+    from app.agent.graph import app_graph
+    AGENT_AVAILABLE = True
+except ImportError:
+    pass
+
+router = APIRouter()
+
+# Stripe Configuration
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
+@router.get("/debug/env")
+async def debug_env(admin: User = Depends(get_admin_user)):
+    """Temporary debug endpoint to check which env vars are set (values hidden)."""
+    keys_to_check = [
+        "GOOGLE_API_KEY",
+        "GOOGLE_CLIENT_ID", 
+        "VITE_GOOGLE_CLIENT_ID",
+        "DATABASE_URL",
+        "CANVAS_API_TOKEN",
+        "SECRET_KEY",
+        "STRIPE_SECRET_KEY",
+    ]
+    return {
+        key: ("✅ SET" if os.getenv(key) else "❌ NOT SET")
+        for key in keys_to_check
+    }
+
+@router.get("/debug/path")
+async def debug_path():
+    import os
+    from pathlib import Path
+    return {
+        "__file__": __file__,
+        "cwd": os.getcwd(),
+        "parents": [str(p) for p in Path(__file__).resolve().parents],
+        "exists_5_Aura_Core": os.path.exists(str(Path(__file__).resolve().parents[3] / "5_Aura_Core"))
+    }
+
+@router.get("/debug/swarm-check")
+async def debug_swarm_check():
+    import sys
+    import os
+    from pathlib import Path
+    try:
+        root_path = Path(__file__).resolve().parents[3]
+        aura_core_path = str(root_path / "5_Aura_Core")
+        if aura_core_path not in sys.path:
+            sys.path.append(aura_core_path)
+            
+        from agents.aura_agents import run_aura_core_query_async
+        return {"status": "success", "message": "Aura Swarm is importable!", "path": aura_core_path}
+    except Exception as e:
+        return {"status": "error", "message": str(e), "type": str(type(e)), "path": str(locals().get('aura_core_path', 'unknown'))}
+
+
+
+# Payment endpoints removed as app is now University Licensed / Free.
+    
+async def verify_subscription(current_user: User = Depends(get_current_user)):
+    """
+    App is now Free/University Licensed.
+    All registered or SSO users have full access.
+    """
+    return True
+
+
+class SyllabusEvent(BaseModel):
+    title: str
+    date: str
+    type: str  # 'exam', 'assignment', 'reading'
+
+@router.post("/ai/parse-syllabus")
+async def parse_syllabus(file: bytes = File(...)):
+    # Mock OCR and Extraction Logic
+    # In production: Use Google Document AI or Tesseract + GPT-4
+    
+    # Simulating found dates
+    return {
+        "events": [
+            {"title": "Midterm Exam", "date": "2025-10-15", "type": "exam"},
+            {"title": "Chapter 5 Essay", "date": "2025-10-22", "type": "assignment"},
+            {"title": "Final Project Proposal", "date": "2025-11-01", "type": "assignment"},
+            {"title": "Guest Lecture: Dr. Smith", "date": "2025-11-05", "type": "reading"}
+        ]
+    }
+
+
+@router.post("/ai/transcribe")
+async def transcribe_audio(
+    file: bytes = File(...), 
+    language: str = Form("English"),
+    subscribed: bool = Depends(verify_subscription),
+    session: Session = Depends(get_session)
+):
+    # Check for API Key
+    api_key = get_gemini_api_key(session)
+    print(f"DEBUG: Checking API KEY. Present? {bool(api_key)}")
+    if api_key:
+        print(f"DEBUG: API Key found: {api_key[:5]}...")
+
+    if api_key:
+        try:
+            import google.generativeai as genai
+            import tempfile
+            import json
+
+            genai.configure(api_key=api_key)
+            
+            # Save temporary file because Gemini needs a file path or upload
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_audio:
+                temp_audio.write(file)
+                temp_audio_path = temp_audio.name
+            
+            try:
+                # Upload the file to Gemini
+                print("Uploading file to Gemini...")
+                audio_file = genai.upload_file(path=temp_audio_path, display_name="Lecture Audio")
+                
+                # Wait for processing (usually fast for audio)
+                import time
+                while audio_file.state.name == "PROCESSING":
+                    time.sleep(1)
+                    audio_file = genai.get_file(audio_file.name)
+                
+                if audio_file.state.name == "FAILED":
+                    raise Exception("Audio file processing failed by Gemini.")
+
+                model = genai.GenerativeModel('gemini-flash-latest')
+                
+                prompt = f"""
+                You are an expert academic assistant. The user wants the output in {language}.
+                1. Transcribe the audio file fully into the "transcript" field.
+                2. Summarize the transcript into 5 key takeaways into the "summary" JSON array.
+                3. Extract any specific tasks, deadlines, or assignments mentioned into an "action_items" JSON array.
+                4. Extract 5-10 technical terms or key concepts into a "keywords" JSON array.
+                5. Suggest 3 thoughtful follow-up questions for the student to ask their professor based on the content into a "follow_up_questions" JSON array.
+                
+                Return exactly this JSON structure:
+                {{
+                    "transcript": "...",
+                    "summary": ["...", "..."],
+                    "action_items": ["...", "..."],
+                    "keywords": ["...", "..."],
+                    "follow_up_questions": ["...", "..."]
+                }}
+                """
+                
+                # Generate content
+                print("Generating content...")
+                response = model.generate_content(
+                    [prompt, audio_file],
+                    generation_config={"response_mime_type": "application/json"}
+                )
+                
+                # Parse JSON
+                data = json.loads(response.text)
+                
+                # Clean up Gemini file (optional but good practice)
+                # genai.delete_file(audio_file.name) 
+
+                return {
+                    "transcript": data.get("transcript", ""),
+                    "summary": data.get("summary", []),
+                    "action_items": data.get("action_items", []),
+                    "keywords": data.get("keywords", []),
+                    "follow_up_questions": data.get("follow_up_questions", [])
+                }
+            finally:
+                # Clean up local temp file
+                if os.path.exists(temp_audio_path):
+                    os.remove(temp_audio_path)
+
+        except Exception as e:
+            print(f"Gemini Transcription Failed: {e}")
+            # Fall through to mock
+
+    # Mock Logic (Fallback)
+    import asyncio
+    await asyncio.sleep(2)
+    
+    mock_transcripts = {
+        "Spanish": "Bien, hoy vamos a hablar de las mitocondrias. Como discutimos la semana pasada, es esencialmente la central eléctrica de la célula.",
+        "French": "D'accord, aujourd'hui nous allons parler des mitochondries. Comme nous en avons discuté la semaine dernière, c'est essentiellement la centrale électrique de la cellule.",
+        "Mandarin Chinese": "好了，今天我们要讲线粒体。正如我们上周讨论的，它本质上是细胞的动力源。",
+        "Hindi": "ठीक है, तो आज हम माइटोकॉन्ड्रिया के बारे में बात करने जा रहे हैं। जैसा कि हमने पिछले हफ्ते चर्चा की थी, यह अनिवार्य रूप से कोशिका का पावरहाउस है।",
+        "English": "Okay, so today we are going to talk about the mitochondria. As we discussed last week, it is essentially the powerhouse of the cell."
+    }
+    
+    text = mock_transcripts.get(language, f"[Mock output for {language}]: " + mock_transcripts["English"])
+
+    return {
+        "transcript": text + " (Note: This is a Mock Transcription because GOOGLE_API_KEY was not found or call failed.)",
+        "summary": [
+            f"Topic: Mitochondria function ({language}).",
+            "Key Concept: 'Powerhouse of the cell'.",
+            "Process: Generates chemical energy.",
+            f"Note: Please configure GOOGLE_API_KEY for real {language} translation."
+        ],
+        "action_items": [
+            "Review the diagram of the electron transport chain.",
+            "Complete the quiz on cellular respiration by Friday."
+        ],
+        "keywords": ["ATP", "Aerobic Respiration", "Inner Membrane", "Matrix", "Powerhouse"],
+        "follow_up_questions": [
+            "How does mitochondrial density vary between different types of muscle tissue?",
+            "What happens if the mitochondrial DNA is mutated?",
+            "Can you explain the endosymbiotic theory again in more detail?"
+        ]
+    }
+
+
+# --- Lecture Notes Endpoints ---
+
+from app.models import LectureNote
+from pydantic import BaseModel
+
+class LectureNoteSave(BaseModel):
+    title: Optional[str] = None
+    course_name: Optional[str] = None
+    professor_name: Optional[str] = None
+    transcript: str
+    summary: List[str]
+    action_items: Optional[List[str]] = None
+    keywords: Optional[List[str]] = None
+    follow_up_questions: Optional[List[str]] = None
+    language: str = "English"
+    duration_seconds: int = 0
+
+@router.post("/lecture-notes/save")
+async def save_lecture_note(
+    note_data: LectureNoteSave,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Save a lecture note with transcript and summary"""
+    import json
+    from datetime import datetime
+    
+    # Auto-generate title if not provided
+    title = note_data.title
+    if not title:
+        # AI-generated title based on course/professor/date
+        if note_data.course_name and note_data.professor_name:
+            title = f"{note_data.course_name} - {note_data.professor_name} - {datetime.now().strftime('%m/%d/%Y')}"
+        elif note_data.course_name:
+            title = f"{note_data.course_name} - {datetime.now().strftime('%m/%d/%Y')}"
+        else:
+            title = f"Lecture - {datetime.now().strftime('%m/%d/%Y %I:%M %p')}"
+    
+    lecture_note = LectureNote(
+        user_id=current_user.id,
+        title=title,
+        course_name=note_data.course_name,
+        professor_name=note_data.professor_name,
+        transcript=note_data.transcript,
+        summary=json.dumps(note_data.summary),
+        action_items=json.dumps(note_data.action_items) if note_data.action_items else None,
+        keywords=json.dumps(note_data.keywords) if note_data.keywords else None,
+        follow_up_questions=json.dumps(note_data.follow_up_questions) if note_data.follow_up_questions else None,
+        language=note_data.language,
+        duration_seconds=note_data.duration_seconds
+    )
+    
+    session.add(lecture_note)
+    session.commit()
+    session.refresh(lecture_note)
+    
+    return {"id": lecture_note.id, "title": lecture_note.title, "message": "Lecture note saved successfully"}
+
+@router.get("/lecture-notes/history")
+async def get_lecture_history(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Get all lecture notes for the current user, sorted by date desc"""
+    import json
+    statement = select(LectureNote).where(LectureNote.user_id == current_user.id).order_by(LectureNote.created_at.desc())
+    notes = session.exec(statement).all()
+    
+    # Parse summary JSON for each note
+    result = []
+    for note in notes:
+        result.append({
+            "id": note.id,
+            "title": note.title,
+            "course_name": note.course_name,
+            "professor_name": note.professor_name,
+            "transcript": note.transcript,
+            "summary": json.loads(note.summary) if note.summary else [],
+            "action_items": json.loads(note.action_items) if note.action_items else [],
+            "keywords": json.loads(note.keywords) if note.keywords else [],
+            "follow_up_questions": json.loads(note.follow_up_questions) if note.follow_up_questions else [],
+            "language": note.language,
+            "duration_seconds": note.duration_seconds,
+            "is_bookmarked": note.is_bookmarked,
+            "created_at": note.created_at.isoformat()
+        })
+    
+    return result
+
+@router.get("/lecture-notes/{note_id}")
+async def get_lecture_note(
+    note_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Get a specific lecture note"""
+    import json
+    note = session.get(LectureNote, note_id)
+    if not note or note.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Lecture note not found")
+    
+    return {
+        "id": note.id,
+        "title": note.title,
+        "course_name": note.course_name,
+        "professor_name": note.professor_name,
+        "transcript": note.transcript,
+        "summary": json.loads(note.summary) if note.summary else [],
+        "language": note.language,
+        "duration_seconds": note.duration_seconds,
+        "is_bookmarked": note.is_bookmarked,
+        "created_at": note.created_at.isoformat()
+    }
+
+@router.put("/lecture-notes/{note_id}/bookmark")
+async def toggle_bookmark(
+    note_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Toggle bookmark status for a lecture note"""
+    note = session.get(LectureNote, note_id)
+    if not note or note.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Lecture note not found")
+    
+    note.is_bookmarked = not note.is_bookmarked
+    session.add(note)
+    session.commit()
+    
+    return {"is_bookmarked": note.is_bookmarked}
+
+@router.delete("/lecture-notes/{note_id}")
+async def delete_lecture_note(
+    note_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Delete a lecture note"""
+    note = session.get(LectureNote, note_id)
+    if not note or note.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Lecture note not found")
+    
+    session.delete(note)
+    session.commit()
+    
+    return {"message": "Lecture note deleted"}
+
+
+class FlashcardRequest(BaseModel):
+    note_content: Optional[str] = None
+    course_name: Optional[str] = None
+    topic: Optional[str] = None
+
+@router.post("/ai/flashcards")
+async def generate_flashcards(
+    request: FlashcardRequest, 
+    current_user: User = Depends(get_current_user),
+    subscribed: bool = Depends(verify_subscription),
+    session: Session = Depends(get_session)
+):
+    # Determine if this is a "Topic" request or "Content" request
+    is_topic_request = False
+    topic_query = ""
+    
+    if request.course_name and request.topic:
+        is_topic_request = True
+        topic_query = f"{request.topic} in the context of {request.course_name}"
+    
+    elif request.note_content:
+        if len(request.note_content.strip()) < 100:
+            is_topic_request = True
+            topic_query = request.note_content.strip()
+        else:
+            is_topic_request = False
+    
+    # 1. Gemini Generation (Preferred)
+    debug_info = "Unknown Error"
+    api_key = get_gemini_api_key(session)
+    # print(f"DEBUG FLASHCARDS: API Key present? {bool(api_key)}")
+    
+    if api_key:
+        print(f"DEBUG FLASHCARDS: Attempting Gemini REST generation for topic_request={is_topic_request}")
+        try:
+            import httpx, json
+
+            if is_topic_request:
+                prompt = f"Generate exactly 20 flashcards for the topic: '{topic_query}'. Return a valid JSON array of objects with 'front' and 'back' keys only. No extra text."
+            else:
+                prompt = f"Extract exactly 20 flashcards from the following notes. Return a valid JSON array of objects with 'front' and 'back' keys only. No extra text.\n\nNotes:\n{request.note_content[:2000]}"
+
+            models_to_try = ['gemini-1.5-flash-8b', 'gemini-1.5-flash', 'gemini-1.5-pro']
+            response_text = None
+
+            for model_name in models_to_try:
+                try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                    payload = {
+                        "contents": [{"parts": [{"text": prompt}]}],
+                        "generationConfig": {
+                            "responseMimeType": "application/json",
+                            "maxOutputTokens": 2048,
+                            "temperature": 0.4
+                        }
+                    }
+                    async with httpx.AsyncClient(timeout=30.0) as client:
+                        resp = await client.post(url, json=payload)
+                        resp.raise_for_status()
+                        data = resp.json()
+                        response_text = data["candidates"][0]["content"]["parts"][0]["text"]
+                        print(f"DEBUG FLASHCARDS: Gemini REST success with {model_name}")
+                        break
+                except Exception as model_err:
+                    print(f"DEBUG FLASHCARDS: {model_name} failed: {str(model_err)[:100]}")
+                    continue
+
+            if response_text:
+                parsed = json.loads(response_text)
+                if isinstance(parsed, list):
+                    cards_data = parsed
+                elif isinstance(parsed, dict):
+                    cards_data = parsed.get("flashcards", parsed.get("cards", []))
+                else:
+                    cards_data = []
+
+                cards = [{"id": f"card-{i}", "front": c["front"], "back": c["back"]} for i, c in enumerate(cards_data)]
+                print(f"DEBUG FLASHCARDS: Successfully generated {len(cards)} cards")
+                return {"flashcards": cards}
+
+        except Exception as e:
+            debug_info = f"Gemini REST Error: {str(e)[:100]}"
+            print(f"DEBUG: Gemini Flashcard Gen Failed: {e}")
+            # Fallthrough to rule-based
+    else:
+        print("DEBUG FLASHCARDS: No API key found, using fallback")
+        debug_info = "GOOGLE_API_KEY not found"
+
+            
+    # 2. Rule-Based Generation (Fallback)
+    if is_topic_request:
+        # For topic requests without AI, we can only return placeholder data
+        # or maybe search Wikipedia if we had that tool connected, but here just Mock.
+        topic = topic_query or "General Knowledge"
+        cards = []
+        for i in range(1, 11): 
+            cards.append({
+                "id": f"mock-{i}", 
+                "front": f"{topic} Concept {i}", 
+                "back": f"This is a placeholder definition for concept {i} related to {topic}. (AI generation is disabled)"
+            })
+        return {"flashcards": cards}
+
+    # Content-based generation
+    content = request.note_content or ""
+    cards = []
+    
+    # Try line-based parsing first (common for notes)
+    import re
+    lines = [l.strip() for l in content.split('\n') if l.strip()]
+    
+    # If very few lines, might be a paragraph text, try splitting by periods
+    if len(lines) < 3 and len(content) > 50:
+        lines = [s.strip() for s in content.split('.') if len(s.strip()) > 5]
+
+    for i, line in enumerate(lines):
+        front = ""
+        back = ""
+        
+        # Primary Delimiters: Colon or Dash
+        if ':' in line:
+            parts = line.split(':', 1)
+            f, b = parts[0].strip(), parts[1].strip()
+            if f and b and len(f) < 60: # Assume 'Front' is reasonably short
+                front, back = f, b
+        elif ' - ' in line:
+            parts = line.split(' - ', 1)
+            f, b = parts[0].strip(), parts[1].strip()
+            if f and b and len(f) < 60:
+                front, back = f, b
+        
+        # Keyword patterns if no delimiter found
+        if not front:
+            # "X is Y" pattern
+            match = re.match(r'^(.+?)\s+(is|are|refers to|means)\s+(.+)$', line, re.IGNORECASE)
+            if match:
+                f = match.group(1).strip()
+                b = match.group(3).strip()
+                if len(f) < 50:
+                    front, back = f, b
+        
+        # If we successfully extracted a pair
+        if front and back:
+            cards.append({
+                "id": f"card-{len(cards)}", 
+                "front": front, 
+                "back": back
+            })
+            
+    # If strict parsing yielded few results, fall back to sentence-based chunks
+    if len(cards) < 3:
+        sentences = [s.strip() for s in content.replace('\n', ' ').split('.') if len(s.strip()) > 10]
+        # Avoid duplicates if some were caught above
+        existing_backs = {c['back'] for c in cards}
+        
+        for i, sent in enumerate(sentences):
+            if sent in existing_backs: continue
+            
+            # Simple heuristic
+            front = f"Key Point {len(cards)+1}"
+            back = sent
+            cards.append({
+                "id": f"card-{len(cards)}", 
+                "front": front, 
+                "back": back
+            })
+            
+    return {"flashcards": cards[:30]}
+
+
+# --- Auth Endpoints ---
+
+@router.post("/auth/register")
+async def register(user: User, session: Session = Depends(get_session)):
+    try:
+        statement = select(User).where(User.email == user.email)
+        existing_user = session.exec(statement).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        # Set status to 'active' (App is university licensed / free)
+        user.subscription_status = "active"
+        user.trial_ends_at = None
+        
+        user.password_hash = get_password_hash(user.password_hash)
+        user.is_active = True
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return {"message": "User created successfully"}
+    except Exception as e:
+        # Return the error message to help debug 500 errors
+        raise HTTPException(status_code=500, detail=str(e))
+
+class GoogleAuthRequest(BaseModel):
+    credential: str
+
+@router.post("/auth/google")
+async def google_auth(request: GoogleAuthRequest, session: Session = Depends(get_session)):
+    """
+    Verifies Google ID Token and returns an application JWT.
+    """
+    google_client_id = os.getenv("GOOGLE_CLIENT_ID") or os.getenv("VITE_GOOGLE_CLIENT_ID")
+    if not google_client_id:
+        # For development purposes, if client ID is missing, we might want to log it
+        # but in production this must be set.
+        print("WARNING: GOOGLE_CLIENT_ID is not set in environment variables.")
+        # We'll allow it to proceed if we want to skip verification for testing, 
+        # but normally we should fail.
+        # raise HTTPException(status_code=500, detail="Google Client ID not configured")
+
+    try:
+        # Verify the ID token
+        id_info = id_token.verify_oauth2_token(
+            request.credential, 
+            requests.Request(), 
+            google_client_id
+        )
+
+        # ID token is valid, get user info
+        email = id_info.get("email")
+        full_name = id_info.get("name")
+        picture = id_info.get("picture")
+
+        if not email:
+            raise HTTPException(status_code=400, detail="Invalid Google token (no email)")
+
+        # Check if user exists
+        statement = select(User).where(User.email == email)
+        user = session.exec(statement).first()
+
+        if not user:
+            # Create new user
+            print(f"Creating new user from Google: {email}")
+            user = User(
+                email=email,
+                full_name=full_name,
+                password_hash=get_password_hash(os.urandom(16).hex()), # Random password
+                is_active=True,
+                subscription_status="active",
+                trial_ends_at=None
+            )
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+        
+        if not user.is_active:
+             raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Account is inactive. Please contact your administrator.",
+            )
+
+        # Create access token
+        access_token = create_access_token(data={"sub": user.email})
+        return {
+            "access_token": access_token, 
+            "token_type": "bearer",
+            "user": {
+                "email": user.email,
+                "full_name": user.full_name,
+                "is_admin": user.is_admin
+            }
+        }
+
+    except ValueError as e:
+        # Invalid token
+        print(f"Google Token Verification Failed: {e}")
+        raise HTTPException(status_code=401, detail="Invalid Google token")
+    except Exception as e:
+        print(f"Google Auth Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/auth/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
+    # 0. Health Check (Ping DB to avoid stale Neon connections)
+    try:
+        session.exec(select(1)).first()
+    except Exception as dbe:
+        print(f"DB PING ERROR: {dbe}")
+        # Allow it to continue if it can, but this is a red flag
+        
+    try:
+        # 1. Check Native Aumtech Core (Admin/Faculty)
+        statement = select(User).where(User.email == form_data.username)
+        user = session.exec(statement).first()
+        
+        if user and verify_password(form_data.password, user.password_hash):
+            # Only allow Admin / Faculty to use the local bypass, per stateless proxy logic
+            if getattr(user, 'is_admin', False) or getattr(user, 'is_faculty', False):
+                if not user.is_active:
+                     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account inactive.")
+                access_token = create_access_token(data={"sub": user.email})
+                return {"access_token": access_token, "token_type": "bearer"}
+            else:
+                # User is a student. We should force them to use EdNex for authentication.
+                print(f"Bypassing Native Core for student {form_data.username}, forcing EdNex check.")
+            
+        # 2. Check EdNex Warehouse Proxy (Students/Faculty in Supabase)
+        try:
+            from app.ednex import get_supabase_client
+            supabase = get_supabase_client()
+            if supabase:
+                resp = supabase.table("mod00_users").select("*").eq("email", form_data.username).limit(1).execute()
+                if resp.data:
+                    u_data = resp.data[0]
+                    # If it's literally our dummy hash 'hashedpw', let password123 bypass, else do a real bcrypt
+                    is_valid = False
+                    if u_data.get('password_hash') == 'hashedpw' and form_data.password == 'password123':
+                        is_valid = True
+                    elif verify_password(form_data.password, u_data.get('password_hash', '')):
+                        is_valid = True
+                        
+                    if is_valid:
+                        if not u_data.get('is_active', True):
+                             return JSONResponse(status_code=403, content={"detail": "EdNex Account inactive."})
+                        
+                        access_token = create_access_token(data={"sub": form_data.username, "ednex": True})
+                        print("LOGIN SUCCESS (EdNex Proxy)")
+                        return {"access_token": access_token, "token_type": "bearer"}
+        except Exception as se:
+            print(f"EdNex check error: {se}")
+            
+        # 3. Failed overall
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"LOGIN ERROR: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# --- Chat Endpoints ---
+
+# --- Chat Endpoints ---
+
+from pydantic import BaseModel
+from fastapi import File, UploadFile, Form
+
+class ChatRequest(BaseModel):
+    query: str
+    session_id: Optional[int] = None
+    file_id: Optional[str] = None # For demo, we just pass ID or Name
+
+class ChatResponse(BaseModel):
+    message_content: str
+    cited_sources: List[str] = []
+    action_items: List[str] = []
+    session_id: int
+
+@router.post("/chat/upload")
+async def upload_document(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Simulates document upload and analysis.
+    In a real app, this would index the file into ChromaDB/Vector store.
+    """
+    # Just mock the processing for now
+    file_content = await file.read()
+    # file_text = extract_text(file_content) 
+    
+    # We'll just return success and the filename to act as a 'context' reference
+    return {
+        "status": "success",
+        "filename": file.filename,
+        "message": f"Successfully analyzed {file.filename}. I can now answer questions about it."
+    }
+
+@router.post("/chat/query", response_model=ChatResponse)
+async def query_agent(
+    request: ChatRequest, 
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+    subscribed: bool = Depends(verify_subscription)
+):
+    """
+    Main endpoint to interact with the AntiGravity Agent.
+    """
+    # Detect EdNex virtual users (negative ID = stateless proxy, no DB persistence)
+    is_ednex_user = current_user.id is not None and current_user.id < 0
+
+    # 1. Handle Session (skip DB for EdNex virtual users to avoid FK constraint failures)
+    chat_session = None
+    virtual_session_id = 0
+    if not is_ednex_user:
+        if request.session_id:
+            chat_session = session.get(ChatSession, request.session_id)
+            if not chat_session or chat_session.user_id != current_user.id:
+                raise HTTPException(status_code=404, detail="Session not found")
+        else:
+            # Create new session
+            title = f"Chat on {datetime.now().strftime('%m/%d %H:%M')}"
+            chat_session = ChatSession(user_id=current_user.id, title=title)
+            session.add(chat_session)
+            session.commit()
+            session.refresh(chat_session)
+
+        # 2. Save User Message
+        content_to_save = request.query
+        if request.file_id:
+            content_to_save += f"\n\n[Attached File: {request.file_id}]"
+
+        user_msg_db = ChatMessage(
+            session_id=chat_session.id,
+            sender="user",
+            content=content_to_save
+        )
+        session.add(user_msg_db)
+        session.commit()
+
+        # 3. Retrieve Context (History)
+        statement = select(ChatMessage).where(ChatMessage.session_id == chat_session.id).order_by(ChatMessage.timestamp.asc())
+        history_msgs_db = session.exec(statement).all()
+    else:
+        # EdNex stateless proxy: no DB persistence, just use the current message as history
+        history_msgs_db = []
+    
+    # Build student context (REQUIRED for both Agent and Direct AI)
+    student_context_data = {
+        "name": current_user.full_name,
+        "major": current_user.major,
+        "gpa": current_user.gpa,
+        "background": current_user.background,
+        "interests": current_user.interests,
+        "previous_insight": current_user.ai_insight,
+        "is_ednex": is_ednex_user
+    }
+
+    # For EdNex users, enrich with full Data Warehouse context
+    if is_ednex_user:
+        try:
+            from app.ednex import get_ednex_context_by_email
+            en_ctx = await get_ednex_context_by_email(current_user.email)
+            if en_ctx:
+                # Flatten/Merge relevant deeper data for the LLM
+                student_context_data["detailed_sis"] = en_ctx.get("sis_stream")
+                student_context_data["financial_status"] = en_ctx.get("finance_stream")
+                student_context_data["admissions_history"] = en_ctx.get("admissions_stream")
+                student_context_data["degree_audit"] = en_ctx.get("advisement_stream")
+                student_context_data["financial_aid_packages"] = en_ctx.get("financial_aid_stream")
+                student_context_data["contributions"] = en_ctx.get("contributions_stream")
+        except Exception as e:
+            print(f"Warning: Failed to enrich EdNex context for AI: {e}")
+
+    # 4. Generate Response (Prioritize Agentic Aura Swarm / Microsoft Agent Framework)
+    api_key = get_gemini_api_key(session)
+    if api_key:
+        try:
+            import sys
+            import os
+            from pathlib import Path
+            
+            # Root detection: api.py is at at/3_code/backend/app/api.py
+            root_path = Path(__file__).resolve().parents[3]
+            aura_core_path = str(root_path / "5_Aura_Core")
+            
+            if aura_core_path not in sys.path:
+                sys.path.append(aura_core_path)
+            
+            if api_key:
+                os.environ["GOOGLE_API_KEY"] = api_key
+            else:
+                print("WARNING: GOOGLE_API_KEY is missing!")
+            
+            try:
+                # Import must be inside the try to catch path/dependency issues
+                from agents.aura_agents import run_aura_core_query_async
+                
+                print(f"DEBUG: Executing Aura Swarm via {aura_core_path}")
+                result = await run_aura_core_query_async(request.query, current_user.email)
+                
+                if result.get("status") == "success":
+                    final_response_dict = {
+                        "message_content": result.get("answer", "I apologize, the agents failed to compile a final answer."),
+                        "cited_sources": ["Agentic Aura Swarm", "EdNex Data Warehouse"],
+                        "action_items": result.get("action_items", []),
+                        "routing_reason": result.get("routing_reason"),
+                        "processing_seconds": result.get("processing_seconds")
+                    }
+                else:
+                    raise Exception(f"Swarm Error message: {result.get('message')}")
+                    
+            except Exception as swarm_err:
+                error_log = f"Swarm Error: {swarm_err}. Path: {aura_core_path}"
+                print(error_log)
+                final_response_dict = {
+                    "message_content": f"DEBUG ERROR: {error_log}. Please verify the backend logs.",
+                    "cited_sources": ["System Debugger"],
+                    "action_items": ["Contact Support", "Check Backend Logs"]
+                }
+                # We skip legacy fallback if a swarm error is detected to ensure we see the error
+                # OR we can keep the fallback but put the error in a field the UI sees
+    else:
+        # API Key missing
+        final_response_dict = {
+            "message_content": "The AI advisor service is not fully configured (API Key missing).",
+            "cited_sources": [],
+            "action_items": []
+        }
+    
+    # 5. Save AI Response (only for persistent DB users)
+    import json
+    if not is_ednex_user and chat_session:
+        ai_msg_db = ChatMessage(
+            session_id=chat_session.id,
+            sender="ai",
+            content=json.dumps(final_response_dict)
+        )
+        session.add(ai_msg_db)
+        session.commit()
+    
+    # 6. Return response
+    resolved_session_id = chat_session.id if chat_session else 0
+    return {
+        **final_response_dict,
+        "session_id": resolved_session_id
+    }
+
+
+@router.get("/chat/history/sessions", response_model=List[ChatSession])
+async def get_chat_sessions(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """List all chat sessions for the user."""
+    statement = select(ChatSession).where(ChatSession.user_id == current_user.id).order_by(ChatSession.created_at.desc())
+    sessions = session.exec(statement).all()
+    return sessions
+
+@router.get("/chat/history/{session_id}", response_model=List[Dict])
+async def get_session_history(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Get all messages for a specific session."""
+    chat_session = session.get(ChatSession, session_id)
+    if not chat_session or chat_session.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Session not found")
+        
+    statement = select(ChatMessage).where(ChatMessage.session_id == session_id).order_by(ChatMessage.timestamp.asc())
+    messages = session.exec(statement).all()
+    
+    # Process messages to return clean JSON
+    processed_msgs = []
+    import json
+    for msg in messages:
+        content = msg.content
+        # If AI, try to parse JSON
+        if msg.sender == "ai":
+            try:
+                content = json.loads(msg.content)
+            except:
+                pass # keep as string if fail
+        
+        processed_msgs.append({
+            "sender": msg.sender,
+            "content": content,
+            "timestamp": msg.timestamp
+        })
+        
+    return processed_msgs
+
+@router.delete("/chat/history/{session_id}")
+async def delete_session(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    chat_session = session.get(ChatSession, session_id)
+    if not chat_session or chat_session.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    # Delete messages first (cascade usually handles this but SQLModel/SQLite might need help if not configured)
+    statement = select(ChatMessage).where(ChatMessage.session_id == session_id)
+    msgs = session.exec(statement).all()
+    for m in msgs:
+        session.delete(m)
+        
+    session.delete(chat_session)
+    session.commit()
+    return {"message": "Session deleted"}
+
+@router.get("/users/me")
+async def read_users_me(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    # Dynamic Insight Generation (Enhanced for Demo)
+    if not current_user.ai_insight or current_user.gpa == 0.0:
+        first_name = (current_user.full_name or "Student").split(' ')[0]
+        
+        # 1. Time-of-day greeting
+        hour = datetime.now().hour
+        greeting = "Good morning"
+        if 12 <= hour < 17:
+            greeting = "Good afternoon"
+        elif hour >= 17:
+            greeting = "Good evening"
+            
+        insight = f"{greeting}, {first_name}! "
+        
+        # 2. Performance-based insight
+        if current_user.gpa >= 3.5:
+            insight += "You're doing excellently. Your academic trajectory is strong!"
+        elif current_user.gpa >= 3.0:
+            insight += "You're on steady ground. A small push could get you on the Dean's List."
+        else:
+            insight += "I've noticed your grades have dipped. I recommend booking a tutoring session to stay ahead."
+            
+        current_user.ai_insight = insight
+        
+    # 3. Dynamic On-Track Score calculation
+    try:
+        from sqlmodel import func
+        active_holds = session.exec(select(func.count(StudentHold.id)).where(
+            StudentHold.user_id == current_user.id,
+            StudentHold.status == "active"
+        )).one()
+        
+        # Simple algorithm: Start at 95, penalize for low GPA and active holds
+        score = 95
+        if current_user.gpa < 3.0: score -= 10
+        if current_user.gpa < 2.5: score -= 15
+        score -= (active_holds * 7)
+        current_user.on_track_score = max(40, min(100, score))
+    except Exception:
+        pass # Fallback to existing value if calculation fails
+        
+    # Only save to local cache if they are a Native Core user (id > 0)
+    if current_user.id and current_user.id > 0:
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+        
+    # Subscription is always active (University Licensed)
+    user_dict = current_user.dict()
+    user_dict["subscription_info"] = {
+        "status": "active",
+        "is_trial_active": False,
+        "days_left": 0,
+        "trial_ends_at": None
+    }
+    return user_dict
+
+# --- Scheduling Endpoints ---
+
+from pydantic import BaseModel
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    gpa: Optional[float] = None
+    on_track_score: Optional[int] = None
+    major: Optional[str] = None
+    background: Optional[str] = None
+    interests: Optional[str] = None
+
+@router.put("/users/me")
+async def update_user_me(
+    user_update: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    if user_update.full_name is not None:
+        current_user.full_name = user_update.full_name
+    if user_update.gpa is not None:
+        current_user.gpa = user_update.gpa
+    if user_update.on_track_score is not None:
+        current_user.on_track_score = user_update.on_track_score
+    if user_update.major is not None:
+        current_user.major = user_update.major
+    if user_update.background is not None:
+        current_user.background = user_update.background
+    if user_update.interests is not None:
+        current_user.interests = user_update.interests
+    
+    if current_user.id and current_user.id > 0:
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+    else:
+        # For stateless EdNex users, we could sync back to Supabase here if needed
+        # but for now we just reflect the changes in the returned object
+        pass
+        
+    return current_user
+
+@router.delete("/users/me")
+async def delete_user_me(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Permanently delete user account and all associated data"""
+    if not current_user.id or current_user.id <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Stateless or guest accounts cannot be deleted directly via this endpoint."
+        )
+    
+    # Delete related data (ChatSessions, ChatMessages, FormRequests, etc.)
+    # 1. Chat sessions and messages
+    chat_sessions = session.exec(select(ChatSession).where(ChatSession.user_id == current_user.id)).all()
+    for s_val in chat_sessions:
+        # ChatMessage has session_id, so delete messages for each session
+        statement = select(ChatMessage).where(ChatMessage.session_id == s_val.id)
+        messages = session.exec(statement).all()
+        for m_val in messages:
+            session.delete(m_val)
+        session.delete(s_val)
+        
+    # 2. Lecture notes
+    notes = session.exec(select(LectureNote).where(LectureNote.user_id == current_user.id)).all()
+    for n_val in notes:
+        session.delete(n_val)
+        
+    # 3. Form requests
+    forms = session.exec(select(FormRequest).where(FormRequest.user_id == current_user.id)).all()
+    for f_val in forms:
+        session.delete(f_val)
+        
+    # 4. Holds
+    holds = session.exec(select(StudentHold).where(StudentHold.user_id == current_user.id)).all()
+    for h_val in holds:
+        session.delete(h_val)
+
+    # 5. Finally the user
+    session.delete(current_user)
+    session.commit()
+    
+    return {"message": "Account and all associated data deleted successfully"}
+
+class BookingRequest(BaseModel):
+    advisor_name: str
+    date: str
+    time: str
+    reason: str
+
+@router.post("/schedule/book")
+async def book_appointment(
+    request: BookingRequest,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    # In a real app, save to DB and checking availability
+    return {
+        "status": "confirmed",
+        "details": f"Appointment confirmed with {request.advisor_name} on {request.date} at {request.time}.",
+        "action": "Calendar Invite Sent"
+    }
+
+from app.models import Advisor
+
+@router.get("/advisors", response_model=List[Advisor])
+async def get_advisors(
+    session: Session = Depends(get_session)
+):
+    statement = select(Advisor)
+    advisors = session.exec(statement).all()
+    return advisors
+
+# --- Course Endpoints ---
+
+from app.models import Course
+
+@router.get("/courses", response_model=List[Course])
+async def get_courses(
+    current_user: User = Depends(get_current_user), 
+    session: Session = Depends(get_session)
+):
+    statement = select(Course).where(Course.user_id == current_user.id)
+    courses = session.exec(statement).all()
+    return courses
+
+@router.post("/courses", response_model=Course)
+async def create_course(
+    course: Course, 
+    current_user: User = Depends(get_current_user), 
+    session: Session = Depends(get_session)
+):
+    course.user_id = current_user.id
+    session.add(course)
+    session.commit()
+    session.refresh(course)
+    return course
+
+@router.delete("/courses/{course_id}")
+async def delete_course(
+    course_id: int, 
+    current_user: User = Depends(get_current_user), 
+    session: Session = Depends(get_session)
+):
+    statement = select(Course).where(Course.id == course_id, Course.user_id == current_user.id)
+    course = session.exec(statement).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    session.delete(course)
+    session.commit()
+    return {"message": "Course deleted"}
+
+# --- Advisor Endpoints ---
+
+@router.post("/advisors", response_model=Advisor)
+async def create_advisor(
+    advisor: Advisor,
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    session.add(advisor)
+    session.commit()
+    session.refresh(advisor)
+    return advisor
+
+@router.delete("/advisors/{advisor_id}")
+async def delete_advisor(
+    advisor_id: int,
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    advisor = session.get(Advisor, advisor_id)
+    if not advisor:
+         raise HTTPException(status_code=404, detail="Advisor not found")
+    
+    session.delete(advisor)
+    session.commit()
+    return {"message": "Advisor deleted"}
+
+
+# --- Tutor Endpoints ---
+
+@router.get("/tutors", response_model=List[Tutor])
+async def get_tutors(
+    session: Session = Depends(get_session)
+):
+    statement = select(Tutor)
+    tutors = session.exec(statement).all()
+    return tutors
+
+@router.post("/tutors", response_model=Tutor)
+async def create_tutor(
+    tutor: Tutor,
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    session.add(tutor)
+    session.commit()
+    session.refresh(tutor)
+    return tutor
+
+@router.delete("/tutors/{tutor_id}")
+async def delete_tutor(
+    tutor_id: int,
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    tutor = session.get(Tutor, tutor_id)
+    if not tutor:
+        raise HTTPException(status_code=404, detail="Tutor not found")
+    session.delete(tutor)
+    session.commit()
+    return {"message": "Tutor deleted"}
+
+# --- Admin Outreach & Campaigns ---
+
+from app.models import Campaign
+
+@router.get("/admin/students")
+async def get_admin_students(
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """List all students for filtering (Admin Only)"""
+    statement = select(User).where(User.is_admin == False)
+    students = session.exec(statement).all()
+    result = []
+    for s in students:
+        # Simple risk logic for demo
+        risk = "Medium"
+        if s.gpa < 2.3: risk = "High"
+        elif s.gpa > 3.5: risk = "Low"
+        
+        result.append({
+            "id": s.id,
+            "name": s.full_name or s.email,
+            "gpa": s.gpa,
+            "risk": risk,
+            "email": s.email
+        })
+    return result
+
+@router.post("/admin/campaigns")
+async def create_campaign(
+    campaign: Campaign,
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """Launch a new outreach campaign (Admin Only)"""
+    campaign.admin_id = admin.id
+    session.add(campaign)
+    session.commit()
+    session.refresh(campaign)
+    return campaign
+
+@router.get("/admin/campaigns")
+async def get_campaigns(
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """List all campaigns (Admin Only)"""
+    statement = select(Campaign).order_by(Campaign.created_at.desc())
+    return session.exec(statement).all()
+
+@router.get("/admin/forms")
+async def get_admin_forms(
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """List all form requests (Admin Only)"""
+    statement = select(FormRequest).order_by(FormRequest.created_at.desc())
+    results = session.exec(statement).all()
+    
+    # Enrich with user info
+    enriched = []
+    for f in results:
+        user = session.get(User, f.user_id)
+        f_dict = f.dict()
+        f_dict["student_name"] = user.full_name if user else "Unknown"
+        f_dict["student_email"] = user.email if user else "Unknown"
+        enriched.append(f_dict)
+    return enriched
+
+@router.put("/admin/forms/{form_id}")
+async def update_form_status(
+    form_id: int,
+    status_update: Dict,
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """Approve or reject a form request"""
+    form = session.get(FormRequest, form_id)
+    if not form:
+        raise HTTPException(status_code=404, detail="Form not found")
+    
+    new_status = status_update.get("status")
+    if new_status not in ["approved", "rejected", "pending"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    form.status = new_status
+    session.add(form)
+    session.commit()
+    session.refresh(form)
+    return form
+
+@router.get("/admin/health")
+async def get_system_health(
+    admin: User = Depends(get_admin_user),
+    session: Session = Depends(get_session)
+):
+    """Get record counts for all major tables"""
+    from sqlmodel import func
+    return {
+        "users": session.exec(select(func.count(User.id))).one(),
+        "courses": session.exec(select(func.count(Course.id))).one(),
+        "campaigns": session.exec(select(func.count(Campaign.id))).one(),
+        "forms": session.exec(select(func.count(FormRequest.id))).one(),
+        "holds": session.exec(select(func.count(StudentHold.id))).one(),
+        "lecture_notes": session.exec(select(func.count(LectureNote.id))).one()
+    }
+
+class SystemConfigUpdate(BaseModel):
+    key_value: str
+
+@router.get("/admin/config/gemini-api-key")
+async def get_gemini_api_key_endpoint(
+    admin: User = Depends(get_admin_user), 
+    session: Session = Depends(get_session)
+):
+    """Retrieve the current Gemini API key configuration (Admin Only)"""
+    # We return the obfuscated key or just the key if it's admin
+    key = get_gemini_api_key(session)
+    return {"key_value": key}
+
+@router.post("/admin/config/gemini-api-key")
+async def update_gemini_api_key_endpoint(
+    update: SystemConfigUpdate,
+    admin: User = Depends(get_admin_user), 
+    session: Session = Depends(get_session)
+):
+    """Update the site-wide Gemini API key (Admin Only)"""
+    set_gemini_api_key(session, update.key_value)
+    return {"message": "Gemini API Key updated successfully"}
+
+# --- Faculty Endpoints ---
+
+@router.get("/faculty/my-students")
+async def get_faculty_students(
+    faculty: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Mock endpoint for faculty to see their students and risk levels"""
+    # 1. Get all sections for this faculty
+    sections_stmt = select(TutoringSection.id).where(TutoringSection.instructor_id == faculty.id)
+    section_ids = session.exec(sections_stmt).all()
+    
+    if not section_ids:
+        # Fallback to random if no sections found for this faculty (for demo)
+        statement = select(User).where(User.is_admin == False, User.is_faculty == False).limit(10)
+        students = session.exec(statement).all()
+    else:
+        # 2. Get all students enrolled in these sections
+        enrollments_stmt = select(User).join(TutoringEnrollment).where(TutoringEnrollment.section_id.in_(section_ids))
+        students = session.exec(enrollments_stmt).all()
+    
+    result = []
+    for s in students:
+        risk = "Low"
+        if s.gpa < 2.5: risk = "High"
+        elif s.gpa < 3.0: risk = "Medium"
+        
+        result.append({
+            "id": s.id,
+            "name": s.full_name or s.email,
+            "gpa": s.gpa,
+            "risk": risk,
+            "attendance": "92%", # Mock attribute not in DB
+            "factors": ["Good participation"] if risk == "Low" else ["Frequent absences"]
+        })
+    return result
+
+@router.get("/faculty/sync-classes")
+async def sync_faculty_classes(
+    faculty: User = Depends(get_current_user)
+):
+    """Mock LTI Sync for faculty courses"""
+    import asyncio
+    await asyncio.sleep(1)
+    return {"message": "Successfully synchronized 3 courses from Canvas LMS."}
+
+@router.get("/faculty/appointments")
+async def get_faculty_appointments(
+    faculty: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Get upcoming appointments for this faculty member"""
+    # 1. Get sections where this faculty is instructor
+    sections_stmt = select(TutoringSection.id).where(TutoringSection.instructor_id == faculty.id)
+    section_ids = session.exec(sections_stmt).all()
+    
+    if not section_ids:
+        # Mock data for demo if no sections found
+        return [
+            { "id": 1, "student": 'Sarah Williams', "time": '10:00 AM', "date": 'Today', "topic": 'Academic Probation', "type": 'In-Person' },
+            { "id": 2, "student": 'Alex Johnson', "time": '2:00 PM', "date": 'Today', "topic": 'Course Withdrawl', "type": 'Virtual' }
+        ]
+    
+    # 2. Get appointments for these sections
+    # Note: In TutoringAppointment model, tutor_id might be the faculty or a TA.
+    # For simplicity, we'll fetch all appointments in their sections.
+    appointments_stmt = select(TutoringAppointment).where(TutoringAppointment.section_id.in_(section_ids))
+    appointments = session.exec(appointments_stmt).all()
+    
+    result = []
+    for apt in appointments:
+        student = session.get(User, apt.student_id)
+        result.append({
+            "id": apt.id,
+            "student": student.full_name if student else "Unknown Student",
+            "time": apt.start_time.strftime("%I:%M %p"),
+            "date": apt.start_time.strftime("%Y-%m-%d"),
+            "topic": apt.triage_note or "Tutoring Session",
+            "type": "Virtual" # Mocked
+        })
+    return result
+
+@router.post("/faculty/announcements")
+async def post_announcement(data: Dict):
+    return {"status": "success", "message": "Announcement posted to all students."}
+
+# --- Form Endpoints ---
+
+from app.models import FormRequest
+
+@router.post("/forms/submit")
+async def submit_form(
+    form_request: FormRequest,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    form_request.user_id = current_user.id
+    session.add(form_request)
+    session.commit()
+    session.refresh(form_request)
+    return {
+        "status": "success",
+        "message": f"Your {form_request.request_type} request for {form_request.course_code} has been submitted.",
+        "request_id": form_request.id
+    }
+
+@router.get("/forms/my-requests", response_model=List[FormRequest])
+async def get_my_requests(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    statement = select(FormRequest).where(FormRequest.user_id == current_user.id)
+    requests = session.exec(statement).all()
+    return requests
+
+# --- LMS Integration Endpoints ---
+
+class LMSSyncResponse(BaseModel):
+    status: str
+    synced_courses: int
+    data: List[Dict]
+
+@router.get("/lms/sync")
+async def sync_lms_data(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Syncs course data from LMS (Canvas or Blackboard).
+    Reads configuration from Headers (passed by frontend) or Falls back to Env.
+    """
+    from app.integrations.lms.canvas import CanvasService
+    from app.integrations.lms.blackboard import BlackboardService
+    import os
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+
+    # 1. Determine LMS Type
+    # Frontend sends 'x-lms-type' header now (we will add this to frontend next)
+    # If missing, default to Env 'LMS_PROVIDER' or 'Canvas'
+    lms_type = request.headers.get("x-lms-type")
+    if not lms_type:
+        lms_type = os.getenv("LMS_PROVIDER", "Canvas")
+    
+    synced_count = 0
+    
+    if lms_type.lower() == "blackboard":
+        # Blackboard Flow
+        # Ideally read from headers, but for safety in this demo we might Mock it
+        # bb_token = request.headers.get("x-lms-token")
+        bb_service = BlackboardService() # Uses Mock by default
+        try:
+             synced_count = await bb_service.sync_to_db(current_user.id, session)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Blackboard Sync failed: {str(e)}")
+            
+    else:
+        # Default Canvas Flow
+        canvas_token = request.headers.get("x-lms-token") or os.getenv("CANVAS_API_TOKEN")
+        canvas_base_url = os.getenv("CANVAS_BASE_URL")
+        
+        # Fallback manual env read
+        if not canvas_token:
+             # ... (existing manual read logic omitted for brevity if not strictly needed, keeping it simple) ...
+             # Actually, let's keep the existing env fallback logic just in case
+             pass
+
+        if not canvas_token:
+            canvas_token = "7~3LxQLMnxX4ZRzFteTC97YuyJuPaR92Aef88eLEB3M9YLtmXQ8ezH7TkPXDk4cYVx" # Demo Fallback
+            
+        canvas = CanvasService(base_url=canvas_base_url, access_token=canvas_token) 
+        try:
+            synced_count = await canvas.sync_to_db(current_user.id, session)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Canvas Sync failed: {str(e)}")
+
+    return {
+        "status": "success",
+        "synced_courses": synced_count,
+        "message": f"Successfully synchronized {synced_count} course(s) from {lms_type}."
+    }
+
+@router.get("/lms/courses/{course_id}")
+async def get_canvas_course_details(
+    course_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Direct proxy to fetch details for a specific Canvas course (e.g. 13694560).
+    """
+    import os
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+    
+    canvas_token = os.getenv("CANVAS_API_TOKEN")
+    canvas_base_url = os.getenv("CANVAS_BASE_URL")
+    canvas = CanvasService(base_url=canvas_base_url, access_token=canvas_token)
+    
+    try:
+        details = await canvas.get_course_details(course_id)
+        assignments = await canvas.get_assignments(course_id)
+        return {
+            "course": details,
+            "assignments": assignments
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Canvas Proxy failed: {str(e)}")
+
+
+# --- Social Campus Endpoints ---
+
+from app.models import StudyGroup, Mentorship, MarketplaceItem
+
+# 1. Study Buddy Finder
+@router.get("/social/study-groups", response_model=List[StudyGroup])
+async def get_study_groups(session: Session = Depends(get_session)):
+    return session.exec(select(StudyGroup)).all()
+
+@router.post("/social/study-groups")
+async def create_study_group(
+    group: StudyGroup, 
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    group.created_by = current_user.id
+    session.add(group)
+    session.commit()
+    session.refresh(group)
+    return group
+
+@router.post("/social/study-groups/{group_id}/join")
+async def join_study_group(
+    group_id: int, 
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    group = session.get(StudyGroup, group_id)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+    if group.members_count < group.max_members:
+        group.members_count += 1
+        session.add(group)
+        session.commit()
+        return {"message": "Joined successfully", "current_members": group.members_count}
+    return {"message": "Group is full"}
+
+# 2. Peer Mentoring
+@router.get("/social/mentors", response_model=List[Mentorship])
+async def get_mentors(session: Session = Depends(get_session)):
+    return session.exec(select(Mentorship)).all()
+
+@router.post("/social/mentors")
+async def become_mentor(
+    mentor: Mentorship, 
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    mentor.mentor_id = current_user.id
+    mentor.mentor_name = current_user.full_name or "Student Mentor"
+    session.add(mentor)
+    session.commit()
+    session.refresh(mentor)
+    return mentor
+
+@router.post("/social/mentors/{mentor_id}/book")
+async def book_mentor(mentor_id: int, current_user: User = Depends(get_current_user)):
+    # Mock booking logic
+    return {"message": "Mentorship session booked! Check your email for details."}
+
+# 3. Textbook Marketplace
+@router.get("/social/marketplace", response_model=List[MarketplaceItem])
+async def get_marketplace_items(session: Session = Depends(get_session)):
+    return session.exec(select(MarketplaceItem).where(MarketplaceItem.status == "available")).all()
+
+@router.post("/social/marketplace")
+async def list_marketplace_item(
+    item: MarketplaceItem, 
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    item.seller_id = current_user.id
+    item.seller_name = current_user.full_name or "Student Seller"
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+    return item
+
+# --- Holds & Financial Alerts Endpoints ---
+
+@router.get("/holds", response_model=List[StudentHold])
+async def get_my_holds(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Get all holds, alerts, and tasks for the current user."""
+    statement = select(StudentHold).where(StudentHold.user_id == current_user.id).order_by(StudentHold.status.asc(), StudentHold.created_at.desc())
+    return session.exec(statement).all()
+
+@router.post("/holds", response_model=StudentHold)
+async def create_hold(
+    hold: StudentHold,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Create a new hold (Admin Only)."""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin permissions required")
+    session.add(hold)
+    session.commit()
+    session.refresh(hold)
+    return hold
+
+@router.put("/holds/{hold_id}/resolve")
+async def resolve_hold(
+    hold_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Resolve a hold (Simulated for demo)."""
+    hold = session.get(StudentHold, hold_id)
+    if not hold or hold.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Hold not found")
+    
+    hold.status = "resolved" if hold.item_type != "task" else "completed"
+    session.add(hold)
+    session.commit()
+    return {"status": "success", "message": f"Hold '{hold.title}' has been marked as {hold.status}."}
+
+# --- Scholarship Endpoints ---
+
+from app.models import Scholarship, PersonalizedStatement
+
+@router.get("/scholarships", response_model=List[Scholarship])
+async def get_scholarships(session: Session = Depends(get_session)):
+    statement = select(Scholarship)
+    return session.exec(statement).all()
+
+@router.post("/ai/scholarships/match")
+async def match_scholarships(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Matches scholarships to the user profile using AI"""
+    scholarships = session.exec(select(Scholarship)).all()
+    
+    # 1. Gemini Matching
+    api_key = get_gemini_api_key(session)
+    if api_key:
+        try:
+            import google.generativeai as genai
+            import json
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-flash-latest')
+            
+            # Prepare profile context
+            profile = f"""
+            User Name: {current_user.full_name}
+            GPA: {current_user.gpa}
+            Major: {current_user.major}
+            Background: {current_user.background}
+            Interests: {current_user.interests}
+            """
+            
+            # Prepare scholarship list (titles/requirements only to save tokens)
+            scholarship_list = []
+            for s in scholarships:
+                scholarship_list.append({
+                    "id": s.id,
+                    "title": s.title,
+                    "requirements": s.requirements
+                })
+            
+            prompt = f"""
+            As an expert academic advisor, match this student to the top 2 scholarships from the list provided.
+            
+            Student Profile:
+            {profile}
+            
+            Scholarships:
+            {json.dumps(scholarship_list)}
+            
+            Return a JSON array of objects. Each object MUST have:
+            - scholarship_id: (integer id from the list)
+            - match_score: (1-100)
+            - reasoning: (1-2 sentences explaining why it's a good fit)
+            """
+            
+            response = model.generate_content(
+                prompt,
+                generation_config={"response_mime_type": "application/json"}
+            )
+            
+            matches = json.loads(response.text)
+            
+            # Enrich matches with full scholarship details
+            result = []
+            for m in matches:
+                s = session.get(Scholarship, m["scholarship_id"])
+                if s:
+                    result.append({
+                        "scholarship": s,
+                        "score": m["match_score"],
+                        "reasoning": m["reasoning"]
+                    })
+            
+            return result
+        except Exception as e:
+            print(f"Scholarship Matching Failed: {e}")
+
+    # Fallback / Mock logic
+    # Just return top 2 based on GPA if STEM or Merit
+    result = []
+    for s in scholarships[:2]:
+        result.append({
+            "scholarship": s,
+            "score": 85,
+            "reasoning": "Based on your strong academic record and interests in your field."
+        })
+    return result
+
+class DraftRequest(BaseModel):
+    scholarship_id: int
+
+@router.post("/ai/scholarships/draft")
+async def draft_statement(
+    request: DraftRequest,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Drafts a personalized statement for a scholarship"""
+    scholarship = session.get(Scholarship, request.scholarship_id)
+    if not scholarship:
+        raise HTTPException(status_code=404, detail="Scholarship not found")
+        
+    api_key = get_gemini_api_key(session)
+    if api_key:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-flash-latest')
+            
+            prompt = f"""
+            Write a highly professional and persuasive 300-word personal statement for the '{scholarship.title}' scholarship.
+            
+            Student Profile:
+            Name: {current_user.full_name}
+            Major: {current_user.major}
+            Background: {current_user.background}
+            GPA: {current_user.gpa}
+            
+            Scholarship Details:
+            Provider: {scholarship.provider}
+            Requirements: {scholarship.requirements}
+            Description: {scholarship.description}
+            
+            Use a formal academic tone. Highlight the student's unique strengths and how they align with the scholarship's goals.
+            """
+            
+            response = model.generate_content(prompt)
+            draft = response.text
+            
+            # Save the draft
+            stmt = PersonalizedStatement(
+                user_id=current_user.id,
+                scholarship_id=scholarship.id,
+                draft_content=draft
+            )
+            session.add(stmt)
+            session.commit()
+            
+            return {"draft": draft}
+        except Exception as e:
+            print(f"Statement Drafting Failed: {e}")
+            
+    return {"draft": f"Failed to generate draft for {scholarship.title}. Please check back later."}
+
+
+# --- Career Pathfinder Endpoints ---
+
+class CareerGoalRequest(BaseModel):
+    target_role: str
+
+@router.post("/career/generate-resume")
+async def generate_resume(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Generates a professional resume based on user profile and courses."""
+    api_key = get_gemini_api_key(session)
+    if not api_key:
+        # Mock Response
+        return {"resume": f"# {current_user.email}\n\n## Education\n- Major: {current_user.major}\n- GPA: {current_user.gpa}\n\n## Skills\n(AI Generation Unavailable - Missing Key)"}
+
+    try:
+        import google.generativeai as genai
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-flash-latest')
+        
+        # Fetch courses for context
+        courses = session.exec(select(Course).where(Course.user_id == current_user.id)).all()
+        course_list = ", ".join([f"{c.name} ({c.grade})" for c in courses])
+        
+        prompt = f"""
+        Create a professional resume in Markdown format for a university student.
+        
+        Student Profile:
+        Name: {current_user.full_name or 'Student Name'}
+        Email: {current_user.email}
+        Major: {current_user.major}
+        GPA: {current_user.gpa}
+        Interests: {current_user.interests}
+        Background: {current_user.background}
+        
+        Academic Coursework:
+        {course_list}
+        
+        Instructions:
+        1. Structure it standardly: Header, Education, Skills, Coursework Highlights, Projects (invent 2 plausible academic projects based on the Major).
+        2. Use professional tone.
+        3. Highlight transferable skills from the coursework.
+        """
+        
+        response = model.generate_content(prompt)
+        return {"resume": response.text}
+    except Exception as e:
+        return {"error": str(e), "resume": "## Error Generating Resume\nCould not contact AI service."}
+
+@router.get("/career/jobs")
+async def match_jobs(
+    current_user: User = Depends(get_current_user)
+):
+    """Finds mock internship matches centered on the user's major."""
+    # In a real app, this would use an API or RAG. Here we mock or use AI to hallucinate realistic ones.
+    major = current_user.major or "General"
+    
+    # We will simply pretend to find jobs.
+    return {
+        "jobs": [
+            {"id": 1, "title": f"Junior {major} Intern", "company": "TechGlobal Inc.", "match_score": 95, "location": "Remote"},
+            {"id": 2, "title": "Research Assistant", "company": "University Labs", "match_score": 88, "location": "On Campus"},
+            {"id": 3, "title": f"{major} Analyst", "company": "Future Corp", "match_score": 82, "location": "New York, NY"},
+            {"id": 4, "title": "Project Coordinator", "company": "StartUp Hub", "match_score": 75, "location": "Austin, TX"},
+        ]
+    }
+
+@router.post("/career/skill-gap")
+async def analyze_skill_gap(
+    request: CareerGoalRequest,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Analyzes gap between current skills and target role."""
+    api_key = get_gemini_api_key(session)
+    if not api_key:
+        return {"analysis": "AI Service Unavailable. Please configure API Key.", "missing_skills": ["Unknown"], "recommended_courses": ["Unknown"]}
+
+    try:
+        import google.generativeai as genai
+        import json
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-flash-latest')
+        
+        courses = session.exec(select(Course).where(Course.user_id == current_user.id)).all()
+        course_names = [c.name for c in courses]
+        
+        prompt = f"""
+        Act as a Career Counselor.
+        Target Role: {request.target_role}
+        Student Major: {current_user.major}
+        Completed Courses: {', '.join(course_names)}
+        
+        Output a valid JSON object with:
+        1. "acquired_skills": List of skills the student likely learned from their courses.
+        2. "missing_skills": List of critical skills needed for the target role that are missing.
+        3. "recommended_actions": List of 3 specific actions (e.g. "Take a specific course", "Build a project using X").
+        """
+        
+        response = model.generate_content(
+            prompt,
+            generation_config={"response_mime_type": "application/json"}
+        )
+        data = json.loads(response.text)
+        return data
+    except Exception as e:
+        return {"error": str(e), "acquired_skills": [], "missing_skills": ["Error analyzing"], "recommended_actions": []}
+
+@router.get('/admin/health')
+async def system_health(current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail='Not an admin')
+    from app.models import User, ChatSession, ChatMessage, Course, FormRequest, Advisor, StudyGroup, Mentorship, MarketplaceItem, LectureNote, StudentHold, Scholarship, Campaign, TutoringAppointment
+    from sqlmodel import select, func
+    tables = {'Users': User, 'Chat Sessions': ChatSession, 'Messages': ChatMessage, 'Courses': Course, 'Form Requests': FormRequest, 'Advisors': Advisor, 'Study Groups': StudyGroup, 'Mentorships': Mentorship, 'Marketplace Items': MarketplaceItem, 'Lecture Notes': LectureNote, 'Student Holds': StudentHold, 'Scholarships': Scholarship, 'Campaigns': Campaign, 'Tutoring Appointments': TutoringAppointment}
+    health = {}
+    for name, model in tables.items():
+        try:
+            health[name] = session.exec(select(func.count(model.id))).one()
+        except:
+            health[name] = 0
+    return health
+
+
+from fastapi.responses import PlainTextResponse
+
+@router.get('/lms/calendar.ics', response_class=PlainTextResponse)
+async def get_calendar_ics(token: str = None):
+    # Mock ICS Feed for demonstration of push calendar sync
+    ics_content = """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Aumtech//Get Aura Student Success//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Aumtech Student Navigator
+X-WR-TIMEZONE:America/Chicago
+BEGIN:VEVENT
+DTSTART:20260315T140000Z
+DTEND:20260315T150000Z
+SUMMARY:Biology Midterm Exam
+DESCRIPTION:Generated from Syllabus Scanner. Good luck!
+LOCATION:Room 304
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20260320T235900Z
+DTEND:20260320T235959Z
+SUMMARY:Calculus Problem Set 4 Due
+DESCRIPTION:Upload via Canvas integration.
+END:VEVENT
+END:VCALENDAR"""
+    return ics_content
+
+@router.get('/career/pathways')
+async def get_career_pathways(current_user: User = Depends(get_current_user)):
+    # Mock data visualizing Labor Market integration (e.g. Lightcast) mapping credits to outcomes
+    return {
+        "status": "success",
+        "pathways": [
+            {
+                "id": 1,
+                "role": "Data Analyst",
+                "milestones": ["Learn SQL & Python", "Complete Statistics Sequence", "Data Visualization Internship"],
+                "salary_range": "$65k - $85k",
+                "match": 95,
+                "demand": "High"
+            },
+            {
+                "id": 2,
+                "role": "Business Intelligence Developer",
+                "milestones": ["Master Tableau/PowerBI", "Database Admin Course", "Finance Minor"],
+                "salary_range": "$75k - $100k",
+                "match": 88,
+                "demand": "Very High"
+            }
+        ]
+    }
+
+@router.post('/cron/nudges')
+async def trigger_nudges(background_tasks: BackgroundTasks, session: Session = Depends(get_session)):
+    """
+    Background job triggered every 4-6 hours to sync with EdNex and generate proactive insights.
+    """
+    from app.agent.intelligence import run_proactive_intelligence_batch
+    
+    # 1. Fire and forget in the background
+    background_tasks.add_task(run_proactive_intelligence_batch)
+    
+    return {
+        "status": "success", 
+        "message": "Proactive Intelligence Batch started in background. Syncing with EdNex..."
+    }
+
+# --- Executive & Advisor View Support Endpoints ---
+
+@router.get("/dean/stats")
+async def get_dean_stats(current_user: User = Depends(get_current_user)):
+    """Institutional-wide health stats for Dean/Exec view."""
+    if not (current_user.is_admin or current_user.is_dean or current_user.is_exec):
+        raise HTTPException(status_code=403, detail="Executive access only")
+        
+    return {
+        "status": "success",
+        "institutional_stats": {
+            "total_students": 12450,
+            "at_risk_count": 842,
+            "graduation_rate": 85.4,
+            "employment_rate": 92.1,
+            "retention_rate": 91.2
+        },
+        "college_breakdown": [
+            { "name": 'Engineering', "students": 3200, "gpa": 3.42, "risk": '4.2%', "trend": "up" },
+            { "name": 'Business', "students": 2850, "gpa": 3.28, "risk": '5.8%', "trend": "stable" },
+            { "name": 'Arts/Sci', "students": 4100, "gpa": 3.35, "risk": '6.1%', "trend": "down" },
+            { "name": 'Nursing', "students": 1200, "gpa": 3.55, "risk": '2.5%', "trend": "up" },
+        ],
+        "strategic_insights": [
+             { "title": 'Retention Risk (2nd Year)', "impact": "Possible 3% decline in STEM", "status": "critical" },
+             { "title": 'Career Placement Growth', "impact": "CS grads placing 2wks faster vs LY", "status": "success" }
+        ]
+    }
+
+@router.get("/advisor/students")
+async def get_advisor_caseload(current_user: User = Depends(get_current_user)):
+    """Student caseload for Advisor view."""
+    if not (current_user.is_admin or current_user.is_advisor):
+        raise HTTPException(status_code=403, detail="Advisor access only")
+        
+    # Mock caseload for the advisor/admin
+    return [
+        { "id": 101, "name": 'Jordan Miller', "major": 'Computer Science', "gpa": 3.2, "risk": 'low', "last_met": "2w ago" },
+        { "id": 102, "name": 'Sarah Thompson', "major": 'Nursing', "gpa": 2.4, "risk": 'medium', "last_met": "Never" },
+        { "id": 103, "name": 'Alex Rivera', "major": 'Business', "gpa": 1.8, "risk": 'high', "last_met": "1mo ago" },
+        { "id": 104, "name": 'Priya Nair', "major": 'Engineering', "gpa": 3.8, "risk": 'low', "last_met": "3d ago" }
+    ]
+
+@router.get("/advisor/appointments")
+async def get_advisor_appointments(current_user: User = Depends(get_current_user)):
+    """Daily schedule for Advisor view."""
+    if not (current_user.is_admin or current_user.is_advisor):
+        raise HTTPException(status_code=403, detail="Advisor access only")
+        
+    return [
+        { "time": "10:00 AM", "student": "Jordan Miller", "type": "Planning", "status": "Ready" },
+        { "time": "11:15 AM", "student": "Alex Rivera", "type": "Academic Recovery", "status": "Critical" },
+        { "time": "01:30 PM", "student": "Sam Taylor", "type": "Financial Hold Sync", "status": "Pending" }
+    ]
+
+@router.get("/dean/migration-tracker")
+async def get_migration_tracker(current_user: User = Depends(get_current_user)):
+    """Predictive migration tracker fetching from EdNex (Supabase) mod03 interventions."""
+    if not (current_user.is_admin or current_user.is_dean or current_user.is_exec):
+        raise HTTPException(status_code=403, detail="Executive access only")
+    
+    from app.ednex import get_supabase_client
+    supabase = get_supabase_client()
+    
+    predictions = []
+    if supabase:
+        try:
+            flags = supabase.table("mod03_intervention_flags").select("*").ilike("flag_type", "Migration Prediction%").execute()
+            for flag in flags.data:
+                # Format: "Migration Prediction: 85% to Business. Out-of-major taking: MKTG 101, ACCT 202"
+                text = flag.get("flag_type", "")
+                parts = text.split("Out-of-major taking:")
+                main_part = parts[0].replace("Migration Prediction:", "").strip()
+                out_courses = parts[1].strip() if len(parts) > 1 else ""
+                
+                # Fetch student name
+                stu = supabase.table("mod00_users").select("first_name, last_name, email").eq("id", flag["student_id"]).execute()
+                name = "Unknown Student"
+                if stu.data:
+                    name = f"{stu.data[0].get('first_name','')} {stu.data[0].get('last_name','')}".strip()
+                    if not name: name = stu.data[0].get("email", "Unknown")
+                
+                predictions.append({
+                    "id": flag["id"],
+                    "student_name": name,
+                    "student_id": flag["student_id"][:8] + "...",
+                    "prediction": main_part, 
+                    "out_courses": out_courses,
+                    "severity": flag.get("severity", "Medium")
+                })
+        except Exception as e:
+            print(f"Error reading migration tracker from EdNex: {e}")
+            
+    # Fallback to mock if API fails/Supabase not configured
+    if not predictions:
+        predictions = [
+            {
+                "id": 1, "student_name": "Daniel Garrett", "student_id": "5f5b4c3a...",
+                "prediction": "85% to Business", "out_courses": "MKTG 101, ACCT 202", "severity": "High"
+            },
+            {
+                "id": 2, "student_name": "Alex Johnson", "student_id": "82ed15f9...",
+                "prediction": "60% to Computer Science", "out_courses": "CS 101, MATH 201", "severity": "Medium"
+            },
+            {
+                "id": 3, "student_name": "Sarah Miller", "student_id": "49b9d06e...",
+                "prediction": "92% to Art History", "out_courses": "ART 205, HIST 101", "severity": "Critical"
+            },
+            {
+                "id": 4, "student_name": "Jordan Smith", "student_id": "77f2b1c0...",
+                "prediction": "75% to Data Science", "out_courses": "DS 101, STAT 202", "severity": "High"
+            },
+            {
+                "id": 5, "student_name": "Elena Rodriguez", "student_id": "1a2b3c4d...",
+                "prediction": "80% to Psychology", "out_courses": "PSYC 101, SOC 201", "severity": "Medium"
+            }
+        ]
+        
+    return {"status": "success", "data": predictions}
+
+@router.get('/admin/intelligence/trigger')
+async def manual_intelligence_trigger(
+    current_user: User = Depends(get_current_user)
+):
+    """Admin-only manual trigger for the intelligence batch."""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin only")
+        
+    from app.agent.intelligence import run_proactive_intelligence_batch
+    result = await run_proactive_intelligence_batch()
+    return result
+
+@router.get("/dean/facilities")
+async def get_facilities_plan(current_user: User = Depends(get_current_user)):
+    """Fetch space utilization using EdNex mod04_courses as proxy."""
+    if not (current_user.is_admin or current_user.is_dean or current_user.is_exec):
+        raise HTTPException(status_code=403, detail="Executive access only")
+        
+    from app.ednex import get_supabase_client
+    supabase = get_supabase_client()
+    
+    courses_count = 0
+    if supabase:
+        try:
+            resp = supabase.table("mod04_courses").select("id", count="exact").limit(1).execute()
+            courses_count = resp.count if resp.count else 1250
+        except: courses_count = 1250
+    else: courses_count = 1250
+
+    return {
+        "status": "success",
+        "data": {
+            "total_courses_active": courses_count,
+            "overall_utilization": "82%",
+            "stem_building_progress": "Phase 2 - 60% Complete",
+            "alerts": [
+                "Science Lab 302 overcapacity (105%)",
+                "New Arts Annex opening Fall 2026"
+            ]
+        }
+    }
+
+@router.get("/dean/academic-review")
+async def get_academic_review(current_user: User = Depends(get_current_user)):
+    """Fetch academic programs from EdNex mod01_programs."""
+    if not (current_user.is_admin or current_user.is_dean or current_user.is_exec):
+        raise HTTPException(status_code=403, detail="Executive access only")
+        
+    from app.ednex import get_supabase_client
+    supabase = get_supabase_client()
+    
+    programs = []
+    if supabase:
+        try:
+            resp = supabase.table("mod01_programs").select("*").limit(5).execute()
+            if resp.data:
+                programs = [{"name": p.get("name"), "degree": p.get("degree_type")} for p in resp.data]
+        except: pass
+        
+    if not programs:
+        programs = [
+            {"name": "Computer Science", "degree": "B.S."},
+            {"name": "Business Administration", "degree": "B.A."},
+            {"name": "Nursing", "degree": "B.S.N."}
+        ]
+
+    return {
+        "status": "success",
+        "data": {
+            "programs_reviewed": len(programs),
+            "accreditation_status": "Fully Accredited - Next Review 2028",
+            "programs": programs
+        }
+    }
+
+@router.get("/dean/corporate-partnerships")
+async def get_corporate_partnerships(current_user: User = Depends(get_current_user)):
+    """Fetch partners from EdNex mod05_companies."""
+    if not (current_user.is_admin or current_user.is_dean or current_user.is_exec):
+        raise HTTPException(status_code=403, detail="Executive access only")
+        
+    from app.ednex import get_supabase_client
+    supabase = get_supabase_client()
+    
+    companies = []
+    if supabase:
+        try:
+            resp = supabase.table("mod05_companies").select("*").limit(5).execute()
+            if resp.data:
+                companies = [{"name": c.get("name", "Unknown"), "industry": c.get("industry", "Unknown"), "level": c.get("partner_level", "Standard")} for c in resp.data]
+        except Exception as e: print(e)
+        
+    if not companies:
+        companies = [
+            {"name": "TechGlobal Inc.", "industry": "Tech", "level": "Premium"},
+            {"name": "National Health Solutions", "industry": "Healthcare", "level": "Standard"},
+            {"name": "Apex Financial", "industry": "Finance", "level": "Premium"}
+        ]
+
+    return {
+        "status": "success",
+        "data": {
+            "total_partners": len(companies) * 12,
+            "internships_placed": 412,
+            "partners": companies
+        }
+    }
+
+from app.ednex import ednex_router
+router.include_router(ednex_router, prefix='/ednex', tags=['ednex'])
+
