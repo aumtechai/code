@@ -9,13 +9,9 @@
   "routes": [
     { "src": "/api/aura/(.*)", "dest": "api/swarm/index.py" },
     { "src": "/api/(.*)",      "dest": "api/core/index.py" },
-    { "src": "/assets/(.*)",   "dest": "/3_code/frontend/dist/assets/$1" },
     { "src": "/academic",      "dest": "/3_code/prepnex_app/roadmap.html" },
     { "src": "/vesta",         "dest": "/3_code/prepnex_app/vesta.html" },
     { "src": "/strategy",      "dest": "/3_code/prepnex_app/strategy.html" },
-    { "src": "/login",         "dest": "/3_code/frontend/dist/index.html" },
-    { "src": "/dashboard",     "dest": "/3_code/frontend/dist/index.html" },
-    { "src": "/prep/(.*)",      "dest": "/3_code/prepnex_app/$1" },
-    { "src": "/(.*)",          "dest": "/3_code/frontend/dist/$1" }
+    { "src": "/(.*)",          "dest": "/$1" }
   ]
 }
