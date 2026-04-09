@@ -31,11 +31,8 @@ const getBaseUrl = () => {
         return 'http://localhost:8000';
     }
 
-    // Fallback for Standard Web App (Dynamic detection for Vercel)
-    if (origin.includes('vercel.app') || window.location.hostname === 'aumtech.ai') {
-        return origin;
-    }
-    return 'https://www.aumtech.ai';
+    // Global Fallback for Standard Web App (Dynamic detection for all domains)
+    return origin;
 };
 
 const api = axios.create({
