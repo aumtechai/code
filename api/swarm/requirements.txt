@@ -3,3 +3,5 @@ python-dotenv
 httpx
 google-auth
 openai
+PyJWT
+cryptography
