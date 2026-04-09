@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple App Review Response - Aura</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 60px;
+            border-radius: 32px;
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary-gradient);
+        }
+
+        header {
+            margin-bottom: 48px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .content {
+            font-size: 1.1rem;
+        }
+
+        .greeting {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 24px;
+        }
+
+        .intro {
+            margin-bottom: 40px;
+            color: var(--text-secondary);
+        }
+
+        .guideline-section {
+            background: #f1f5f9;
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            border-left: 6px solid var(--primary);
+        }
+
+        .guideline-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+        }
+
+        .guideline-section .fix {
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .guideline-section .fix strong {
+            color: var(--success);
+            font-weight: 800;
+        }
+
+        .conclusion {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .closing {
+            margin-top: 40px;
+            font-weight: 600;
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        .copy-button {
+            display: block;
+            width: fit-content;
+            margin: 40px auto 0;
+            padding: 14px 28px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .copy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 40px 24px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Apple Review Response</h1>
+            <p>Submission ID: ee683933-0755-453a-a358-82f36a28a18b</p>
+        </header>
+        
+        <div class="content">
+            <div class="greeting">Dear App Review Team,</div>
+            
+            <p class="intro">
+                Thank you for your feedback regarding our app, Aura (Submission ID: ee683933-0755-453a-a358-82f36a28a18b). We have addressed the outstanding issues as follows:
+            </p>
+
+            <div class="guideline-section">
+                <h2>Guideline 2.1(a) - Performance - App Completeness</h2>
+                <p>
+                    Regarding the registration error message observed on the iPhone 17 Pro Max (iOS 26.4), we have performed a thorough audit of our authentication flow. We identified that certain technical alerts and a sensitive "Self-Healing" schema logic were causing a poor user experience and potential failures under certain network conditions.
+                </p>
+                <div class="fix">
+                    <strong>Fix:</strong> We have refactored the registration process. The app now automatically logs the user in upon successful registration, eliminating the "Redirect/Manual Login" hurdle. We have also unified and simplified all error messaging to ensure users receive helpful, readable feedback rather than technical diagnostic alerts. These improvements ensure the registration flow is robust and completed without error messages.
+                </div>
+            </div>
+
+            <div class="guideline-section">
+                <h2>Guideline 3.1.1 - Business - Payments - In-App Purchase</h2>
+                <p>
+                    Regarding the access of digital content purchased outside the app, we have simplified our access model to align with our institutional licensing strategy.
+                </p>
+                <div class="fix">
+                    <strong>Fix:</strong> Aura is now officially an institutional-only/free-tier platform. We have removed all legacy logic related to "trial periods" and "expired subscriptions" that were previously mentioned or triggered in our backend. Every user is now granted full, active access immediately upon registration (via email or Google SSO). Because there is no longer any concept of a paid subscription or trial balance that can be managed outside the app, our model is consistent throughout and eliminates the need for In-App Purchases for digital content.
+                </div>
+            </div>
+
+            <p class="conclusion">
+                We believe these updates fully resolve the concerns raised. We appreciate your partnership in helping us provide a high-quality experience for students.
+            </p>
+
+            <div class="closing">
+                Best regards,
+                <div class="team-name">The Aura Development Team</div>
+            </div>
+        </div>
+        
+        <button class="copy-button" onclick="navigator.clipboard.writeText(document.querySelector('.content').innerText).then(() => alert('Draft copied to clipboard!'))">
+            Copy Text for App Store Connect
+        </button>
+    </div>
+</body>
+</html>

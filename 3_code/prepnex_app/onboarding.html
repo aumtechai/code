@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Onboarding | prep.aumtech.ai</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+            --text-dim: #64748b;
+            --hero-gradient: linear-gradient(135deg, #1a73e8 0%, #4f46e5 100%);
+        }
+
+        * { margin:0; padding:0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        .onboarding-container {
+            width: 100%; max-width: 800px;
+            height: 80vh;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 40px 100px -20px rgba(15, 23, 42, 0.2);
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            border: 1px solid #e2e8f0;
+        }
+
+        .chat-header {
+            padding: 30px 40px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .chat-body {
+            flex: 1; overflow-y: auto; padding: 40px;
+            display: flex; flex-direction: column; gap: 30px;
+            background-image: 
+                radial-gradient(circle at 2px 2px, #f1f5f9 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .bubble {
+            max-width: 80%; padding: 20px 24px; border-radius: 20px;
+            line-height: 1.6; font-size: 1rem; position: relative;
+        }
+        .bubble.vesta { background: #f8fafc; border: 1px solid #e2e8f0; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .bubble.user { background: var(--hero-gradient); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+        .chat-footer {
+            padding: 30px 40px;
+            border-top: 1px solid #f1f5f9;
+            display: flex; gap: 16px; align-items: center;
+        }
+
+        input {
+            flex: 1; padding: 16px 24px; border-radius: 16px;
+            border: 1px solid #e2e8f0; font-family: inherit; font-size: 1rem;
+            outline: none; transition: border-color 0.2s;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .send-btn {
+            background: var(--hero-gradient); color: white; border: none;
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .send-btn:hover { transform: scale(1.05); }
+
+    </style>
+</head>
+<body>
+    <div class="onboarding-container">
+        <div class="chat-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:20px;">
+                <img src="https://www.aumtech.ai/assets/logo-CRMbVOkl.png" alt="Aumtech Logo" style="height:64px; border-radius:18px;">
+                <div style="font-family:'Outfit'; font-size:1.8rem; font-weight:800; color:var(--text-main); letter-spacing:-1px;">prep.aumtech.ai</div>
+            </div>
+            <div style="width:50px; height:50px; background:var(--hero-gradient); border-radius:14px; display:flex; align-items:center; justify-content:center; color:white; box-shadow:0 10px 20px rgba(0,0,0,0.1);"><i data-lucide="sparkles"></i></div>
+        </div>
+
+        <div class="chat-body" id="chat-stream">
+            <div class="bubble vesta">
+                Hello. I am Vesta. I will be your trajectory engine for the next 7 years. 
+                <br><br>
+                Before we begin, what is your full name and which grade are you currently entering?
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <input type="text" id="user-input" placeholder="Share your academic goals with Vesta...">
+            <button class="send-btn" id="send-btn"><i data-lucide="send"></i></button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { vestaChat } from '/src/PREPNEX_VESTA_LOGIC.js';
+
+        const stream = document.getElementById('chat-stream');
+        const input = document.getElementById('user-input');
+        const btn = document.getElementById('send-btn');
+
+        function append(text, isUser = false) {
+            const bubble = document.createElement('div');
+            bubble.className = `bubble ${isUser ? 'user' : 'vesta'}`;
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            stream.appendChild(bubble);
+            stream.scrollTop = stream.scrollHeight;
+        }
+
+        async function handleSend() {
+            const msg = input.value.trim();
+            if(!msg) return;
+            append(msg, true);
+            input.value = '';
+
+            try {
+                // For onboarding, we use a generic prompt to Gemini via the vestaChat if possible
+                // Since vestaChat needs an ID, we'll use a placeholder 'guest'
+                const res = await vestaChat('c893605c-3f2d-4581-9961-bd8f67332d72', `ONBOARDING MODE: ${msg}`);
+                append(res.reply);
+                
+                if(res.reply.toLowerCase().includes("construction complete") || res.reply.toLowerCase().includes("ready to view your dashboard")) {
+                    setTimeout(() => {
+                        window.location.href = '/dashboard?id=c893605c-3f2d-4581-9961-bd8f67332d72';
+                    }, 3000);
+                }
+            } catch (e) {
+                append("Sync interrupted. Retrying quantum link...");
+            }
+        }
+
+        btn.addEventListener('click', handleSend);
+        input.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleSend(); });
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

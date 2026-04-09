@@ -1,0 +1,22 @@
+{
+  "framework": "vite",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/roadmap", "destination": "/roadmap.html" },
+    { "source": "/essays", "destination": "/essays.html" },
+    { "source": "/tracker", "destination": "/tracker.html" },
+    { "source": "/parent", "destination": "/parent.html" },
+    { "source": "/onboarding", "destination": "/onboarding.html" },
+    { "source": "/vesta", "destination": "/vesta.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/testing", "destination": "/testing.html" },
+    { "source": "/coaching", "destination": "/coaching.html" },
+    { "source": "/strategy", "destination": "/strategy.html" },
+    { "source": "/community", "destination": "/community.html" },
+    { "source": "/financial", "destination": "/financial.html" },
+    { "source": "/scenarios", "destination": "/scenario_viewer.html" }
+  ]
+}

@@ -1,0 +1,13 @@
+# Prompts for Next Generation Session
+# The image limit resets around 11:08 AM UTC (approx. 4h 50m from 00:18 AM CST).
+
+TARGET: Fix the "ai" emphasis by shifting to a stylized "a" with a detached stem (subliminal "i"), or an "a" and "t" monogram.
+
+PROMPT 1 (The Hidden 'i'):
+A highly premium, minimalist 3D tech logo on a crisp white background. The main symbol is a single lowercase letter 'a' designed with a flawless, glass-like 3D ribbon effect. The right vertical stem of the 'a' breaks off slightly at the very top, forming a subtle floating dot, subliminally hiding an 'i' within the 'a'. The color is a gorgeous, premium gradient flowing from seafoam green into deep violet and magenta. Below the symbol, the text reads exactly: 'aumtech.ai' in a clean, modern navy blue sans-serif font.
+
+PROMPT 2 (The A & T Monogram):
+A high-end, modern tech logo for 'aumtech.ai'. The central symbol is a beautifully overlapping monogram of the lowercase letters 'a' and 't', symbolizing Aumtech. The design uses a sleek 3D glassmorphism style, colored in vibrant cyan and deep purple gradients. The symbol is large and authoritative. Positioned below is the text 'aumtech.ai' in a very clean, approachable, rounded typography. Solid white background, corporate and polished.
+
+PROMPT 3 (Abstract 'a' Focus):
+A professional, minimalist app icon logo for 'aumtech.ai'. The central design is exclusively a stylized, modern lowercase letter 'a'. The letter is constructed using sleek geometric shapes and smooth, continuous curves that represent technology and student success. The design uses a very light pastel palette of sky blue and mint green with 3D glassmorphism lighting. Perfectly centered on a pure white background. No secondary text.

@@ -1,0 +1,56 @@
+# Virtual Environments
+venv/
+backend/venv/
+node_modules/
+**/node_modules/
+
+# Python Cache
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Databases and Logs
+**/*.db
+**/*.log
+
+# Non-runtime project folders
+demo/
+docs/
+scripts/
+logs/
+_nav_stack_template/
+.agent/
+.github/
+.vscode/
+.idea/
+
+# Assets and screenshots
+app_store_screenshots/
+/assets/
+frontend/ios/
+frontend/android/
+frontend/resources/
+
+# Build artifacts
+dist/
+frontend/dist/
+frontend/.vite/
+
+# Config and local files
+.env
+.env*.local
+*.sublime-project
+*.sublime-workspace
+
+# Large specific files
+sample_lecture.mp3
+student_navigator_logo.png
+verify_gemini.py
+resize_screenshots.py
+backend/test_*.py
+backend/verify_*.py
+backend/debug_*.py
+backend/load_testing.py
+backend/seed_admins.py
+backend/migrate_*.py

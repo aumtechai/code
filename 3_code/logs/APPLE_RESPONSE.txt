@@ -1,0 +1,20 @@
+Dear Apple Review Team,
+
+Thank you for your feedback regarding Guideline 3.1.1 - Business - Payments - In-App Purchase.
+
+We apologize for the confusion. We DO have In-App Purchases implemented in our application using the native StoreKit framework (via RevenueCat). We have not directed users to purchase subscriptions outside of the app.
+
+The issue may have been that the In-App Purchase product was not correctly attached to the binary during the previous submission, causing the "Upgrade" button to appear disabled or unavailable during your review.
+
+We have now:
+1. Verified our In-App Purchase configuration in App Store Connect.
+2. Verified that the In-App Purchase product ("Success Pass Monthly") is attached to this submission.
+3. Added a "Retry" mechanism to the purchase screen to handle potential network initialization issues.
+4. Fully implemented the "Restore Purchases" functionality as required.
+
+Please use the provided test account credentials to verify the In-App Purchase flow.
+
+Thank you for your time and guidance.
+
+Sincerely,
+The Student Success Navigator Team

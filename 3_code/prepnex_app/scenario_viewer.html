@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PrepNex | Scenario Strategic Viewer</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-dim: #64748b;
+            --border: #e2e8f0;
+            --hero-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 60px 20px;
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                              radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background: #0f172a;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 60px; color: white; }
+        header img { height: 80px; margin-bottom: 24px; border-radius: 20px; box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); }
+        h1 { font-family: 'Outfit'; font-size: 3rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 12px; }
+        header p { font-size: 1.1rem; color: #94a3b8; font-weight: 500; }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(245, 158, 11, 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .scenario-icon {
+            width: 56px; height: 56px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+        }
+
+        .scenario-title { font-family: 'Outfit'; font-size: 1.4rem; font-weight: 700; color: white; letter-spacing: -0.5px; }
+        .scenario-desc { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+
+        .stat-group { display: flex; gap: 12px; }
+        .stat-tag { 
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 6px 12px; 
+            border-radius: 50px; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-launch {
+            margin-top: auto;
+            background: var(--hero-gradient);
+            color: white; border: none;
+            padding: 14px; border-radius: 16px;
+            font-weight: 800; font-size: 0.9rem;
+            text-align: center; text-decoration: none;
+            transition: opacity 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .btn-launch:hover { opacity: 0.9; }
+
+        .ghost-card { border-style: dashed; background: transparent; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <img src="https://www.aumtech.ai/assets/logo-CRMbVOkl.png" alt="Aumtech Logo">
+            <h1>Strategic Persona Hub</h1>
+            <p>Select an admissions scenario to boot into the Pathfinder environment.</p>
+        </header>
+
+        <div class="scenario-grid">
+            <!-- Scenario 1 -->
+            <div class="scenario-card" onclick="launch('00000000-0000-0000-0000-000000000001')">
+                <div class="scenario-icon"><i data-lucide="crown"></i></div>
+                <div>
+                    <div class="scenario-title">The Ivy Prodigy</div>
+                    <div class="scenario-desc">4.0 GPA High SAT. Targeting Stanford & Harvard.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 4.1</span>
+                    <span class="stat-tag">SAT 1580</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000001" class="btn-launch"><i data-lucide="zap"></i> Launch Portfolio</a>
+            </div>
+
+            <!-- Scenario 2 -->
+            <div class="scenario-card" onclick="launch('00000000-0000-0000-0000-000000000002')">
+                <div class="scenario-icon"><i data-lucide="alert-circle"></i></div>
+                <div>
+                    <div class="scenario-title">The Disconnect</div>
+                    <div class="scenario-desc">High testing scores but lower academic consistency.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 2.8</span>
+                    <span class="stat-tag">SAT 1520</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000002" class="btn-launch">Launch Portfolio</a>
+            </div>
+
+            <!-- Scenario 3 -->
+            <div class="scenario-card" onclick="launch('00000000-0000-0000-0000-000000000003')">
+                <div class="scenario-icon"><i data-lucide="award"></i></div>
+                <div>
+                    <div class="scenario-title">EC Workhorse</div>
+                    <div class="scenario-desc">Average academics with national-tier EC impact.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 3.4</span>
+                    <span class="stat-tag">EC Tier 1</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000003" class="btn-launch">Launch Portfolio</a>
+            </div>
+
+            <!-- Scenario 4 -->
+            <div class="scenario-card" onclick="launch('00000000-0000-0000-0000-000000000004')">
+                <div class="scenario-icon"><i data-lucide="banknote"></i></div>
+                <div>
+                    <div class="scenario-title">FinAid Dependent</div>
+                    <div class="scenario-desc">Strong academics with specific scholarship needs.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 3.8</span>
+                    <span class="stat-tag">Matched 5</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000004" class="btn-launch">Launch Portfolio</a>
+            </div>
+
+            <!-- Scenario 5 -->
+            <div class="scenario-card" onclick="launch('00000000-0000-0000-0000-000000000005')">
+                <div class="scenario-icon"><i data-lucide="globe"></i></div>
+                <div>
+                    <div class="scenario-title">International</div>
+                    <div class="scenario-desc">Overseas profile with high tier international creds.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 3.9</span>
+                    <span class="stat-tag">Tier 1</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000005" class="btn-launch">Launch Portfolio</a>
+            </div>
+
+            <!-- Scenario 6 -->
+            <div class="scenario-card" onclick="launch('00000000-0000-0000-0000-000000000006')">
+                <div class="scenario-icon"><i data-lucide="shield-check"></i></div>
+                <div>
+                    <div class="scenario-title">Safety Focus</div>
+                    <div class="scenario-desc">Boundary GPA targeting reliable state safety nets.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 2.3</span>
+                    <span class="stat-tag">Safety List</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000006" class="btn-launch">Launch Portfolio</a>
+            </div>
+
+            <!-- Scenario 7 -->
+            <div class="scenario-card" onclick="launch('00000000-0000-0000-0000-000000000007')">
+                <div class="scenario-icon"><i data-lucide="target"></i></div>
+                <div>
+                    <div class="scenario-title">Testing Struggler</div>
+                    <div class="scenario-desc">Valedictorian-level GPA but lower SAT/ACT scores.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 4.0</span>
+                    <span class="stat-tag">SAT 1050</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000007" class="btn-launch">Launch Portfolio</a>
+            </div>
+
+            <!-- Scenario 8 -->
+            <div class="scenario-card ghost-card" onclick="launch('00000000-0000-0000-0000-000000000008')">
+                <div class="scenario-icon"><i data-lucide="user-minus"></i></div>
+                <div>
+                    <div class="scenario-title">The Ghost Profile</div>
+                    <div class="scenario-desc">Minimal data. A fresh system onboarding state.</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-tag">GPA 3.0</span>
+                    <span class="stat-tag">Data: MINIMAL</span>
+                </div>
+                <a href="/dashboard?id=00000000-0000-0000-0000-000000000008" class="btn-launch">Launch Portfolio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        function launch(id) {
+            window.location.href = `/dashboard?id=${id}`;
+        }
+    </script>
+</body>
+</html>

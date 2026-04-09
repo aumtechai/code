@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdNex | Institute Onboarding Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.5px; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; }
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+        .intro-box {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2.5rem;
+            border: 1px solid #c7d2fe;
+            font-size: 1.05rem;
+        }
+        .step-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border-left: 8px solid #4f46e5;
+            position: relative;
+        }
+        .step-card:hover { transform: translateY(-2px); transition: 0.2s; box-shadow: 0 10px 25px -3px rgba(0,0,0,0.1); }
+        .step-number {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #4f46e5;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.5rem;
+        }
+        .step-title {
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .step-content { color: #475569; font-size: 1.1rem; }
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            margin-top: 1rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .badge-core { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+        .badge-data { background: #dcfce7; color: #15803d; border-color: #86efac; }
+        .badge-ai { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>EdNex Institute Onboarding Protocol</h1>
+    <div class="subtitle">Standard Operating Procedure for provisioning new Multi-Tenant University Systems</div>
+</header>
+
+<div class="container">
+    <div class="intro-box">
+        <strong>Architecture Philosophy:</strong> EdNex utilizes a highly scalable Multi-Tenant Architecture. Entire University Systems (like TAMUS) inhabit a single, isolated Supabase instance. Individual sub-colleges within a system are natively segregated using the <code>university_id</code> relational enforcement coupled with Row Level Security (RLS).
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-card">
+        <div class="step-number">Step 01</div>
+        <h2 class="step-title">System-Level Provisioning</h2>
+        <div class="step-content">
+            <span class="badge badge-core">Infrastructure</span>
+            <p>Provision a new Supabase Enterprise project dedicated to the University System. Establish VPC peering if the institution demands secure, private-network data ingestion from their on-premise SIS.</p>
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card">
+        <div class="step-number">Step 02</div>
+        <h2 class="step-title">Multi-Tenant Schema Configuration</h2>
+        <div class="step-content">
+            <span class="badge badge-core">Database</span>
+            <span class="badge badge-core">Security</span>
+            <p>Execute the EdNex Modular Initialization scripts across the blank database. Ensure that the <code>university_id</code> column is properly indexed across all modules (Mod-00 -> Mod-05).</p>
+            <p>Apply Supabase Row Level Security (RLS) policies to guarantee that an API request with an Auth Token belonging to "College A" can never access records from "College B".</p>
+            <div class="code-block">
+-- Example RLS Enforcement
+CREATE POLICY "Isolate by University ID" ON public.mod01_student_profiles
+FOR SELECT USING (
+  university_id = (auth.jwt() ->> 'assigned_university_id')::uuid
+);
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card">
+        <div class="step-number">Step 03</div>
+        <h2 class="step-title">Establish ETL Data Pipelines</h2>
+        <div class="step-content">
+            <span class="badge badge-data">Data Engineering</span>
+            <p>Integrate the newly created Supabase instance with the institution's existing legacy systems using tools like Airbyte or Fivetran.</p>
+            <p>Map the standard EdNex modular tables to the institution's localized systems: </p>
+            <ul>
+                <li><strong>Mod-01 (SIS):</strong> Banner, Workday Student, Colleague.</li>
+                <li><strong>Mod-02 (Finance):</strong> PeopleSoft, TouchNet.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-card">
+        <div class="step-number">Step 04</div>
+        <h2 class="step-title">Unstructured Knowledge Synchronization</h2>
+        <div class="step-content">
+            <span class="badge badge-ai">Vector Ops</span>
+            <p>Trigger the EdNex Document Parser. Point the ingestion webhooks to the institution's Learning Management Systems (Canvas, Blackboard) and public HTTP directories.</p>
+            <p>The parser will automatically chunk, embed, and store syllabus PDFs, campus maps, and student handbook policies straight into the <code>pgvector</code> database module tagged with the specific <code>university_id</code>.</p>
+        </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-card">
+        <div class="step-number">Step 05</div>
+        <h2 class="step-title">Configure The Intelligence Layer (LLM)</h2>
+        <div class="step-content">
+            <span class="badge badge-ai">Generative AI</span>
+            <p>Map the institution's Gemini API Keys to the backend environment variables. The API Gateway will now automatically intercept incoming student prompts.</p>
+            <p>The Gateway's Context Assembler will silently append the student's live GPA (from Mod-01), current financial standing (from Mod-02), and the student's most recent interaction history memory (from ConvDB) into the prompt string before passing it to the language model.</p>
+        </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-card">
+        <div class="step-number">Step 06</div>
+        <h2 class="step-title">Single Sign-On (SSO) Integration</h2>
+        <div class="step-content">
+            <span class="badge badge-core">Authentication</span>
+            <p>Configure SAML 2.0 or Microsoft Entra ID (Azure AD) connections inside the Supabase Auth Dashboard. Map the incoming external provider's university domain to automatically assign the user's correct <code>university_id</code> upon their first login.</p>
+        </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step-card">
+        <div class="step-number">Step 07</div>
+        <h2 class="step-title">Integration Validation & Handover</h2>
+        <div class="step-content">
+            <span class="badge badge-data">QA</span>
+            <p>Log into the <code>aumtech.ai</code> web portal using a System Administrator account. Access the <strong>Admin Panel</strong> and navigate to the <strong>EdNex Module Status</strong> tab.</p>
+            <p>Verify that all 15 operational data modules return a green "Operational" health status indicating that data from all sub-colleges has been successfully routed and indexed securely into the multi-tenant architecture.</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

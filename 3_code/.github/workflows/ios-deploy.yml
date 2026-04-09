@@ -1,0 +1,59 @@
+name: Build iOS App
+
+on:
+  workflow_dispatch:   # Manual trigger from GitHub Actions UI
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/src/**'
+      - 'frontend/ios/**'
+      - 'frontend/capacitor.config.json'
+      - 'frontend/package.json'
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: 🏗 Setup repository
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: 🚀 Build iOS App (EAS)
+        working-directory: frontend
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+        run: eas build --platform ios --profile production --non-interactive --output build.ipa
+
+      - name: 📤 Submit to TestFlight
+        working-directory: frontend
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}
+        run: eas submit --platform ios --path build.ipa --non-interactive
+
+      - name: 📦 Upload IPA artifact (backup)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aumtech-ios-build-${{ github.run_number }}
+          path: frontend/build.ipa
+          retention-days: 30

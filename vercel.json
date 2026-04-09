@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "functions": {
+    "api/**/*.py": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  },
+  "routes": [
+    { "src": "/api/aura/(.*)", "dest": "api/swarm/index.py" },
+    { "src": "/api/(.*)",      "dest": "api/core/index.py" },
+    { "src": "/src/(.*)",      "dest": "/3_code/prepnex_app/src/$1" },
+    { "src": "/login",         "dest": "/3_code/prepnex_app/login.html" },
+    { "src": "/dashboard",     "dest": "/3_code/prepnex_app/dashboard.html" },
+    { "src": "/aumtech_logo.jpg", "dest": "/3_code/prepnex_app/src/aumtech_logo.jpg" },
+    { "src": "/(.*)",          "dest": "/3_code/prepnex_app/$1" }
+  ]
+}

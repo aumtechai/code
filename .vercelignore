@@ -1,0 +1,25 @@
+# ULTIMATE GIT IGNORE - STOP THE 750MB GHOST
+.git
+.git/**
+**/.git
+**/.git/**
+.agent
+.vercel
+1_marketing
+2_architecture
+4_ednex
+6_integration
+tmp
+at_deploy
+git_backup
+Aura_Backup
+3_code/frontend
+node_modules
+venv
+.venv
+*.mp4
+*.png
+*.jpg
+*.db
+*.sqlite3
+__pycache__

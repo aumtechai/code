@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aura – aumtech.ai | Clinical Intelligence Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:       #6C47FF;
+      --brand-light: #A78BFA;
+      --accent:      #38BDF8;
+      --green:       #34D399;
+      --amber:       #FBBF24;
+      --red:         #F87171;
+      --bg:          #080B18;
+      --surface:     #0F1220;
+      --surface2:    #151929;
+      --border:      rgba(255,255,255,0.07);
+      --border2:     rgba(255,255,255,0.12);
+      --text:        #EEF2FF;
+      --muted:       #6B7AA1;
+      --muted2:      #98A7C8;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════════════
+       LEFT CONTENT PANEL
+    ══════════════════════════════════════════════ */
+    .left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 52px 36px;
+      overflow-y: auto;
+      position: relative;
+      background: linear-gradient(160deg, #080B18 0%, #0C1022 50%, #090D1F 100%);
+    }
+
+    /* Ambient orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      animation: orbDrift 14s ease-in-out infinite alternate;
+    }
+    .orb-a { width:500px;height:500px; background:rgba(108,71,255,.14); top:-120px; left:-80px; }
+    .orb-b { width:380px;height:380px; background:rgba(56,189,248,.10); bottom:80px; left:30%; animation-delay:-5s; }
+    .orb-c { width:280px;height:280px; background:rgba(52,211,153,.08); top:40%; right:5%; animation-delay:-10s; }
+    @keyframes orbDrift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(24px,36px) scale(1.1); }
+    }
+
+    /* ── Top nav bar ── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: 2; margin-bottom: 52px;
+    }
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo-mark {
+      width:42px; height:42px; border-radius:12px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; font-weight:900; color:#fff;
+      box-shadow: 0 4px 20px rgba(108,71,255,.45);
+    }
+    .logo-text { font-size:1.2rem; font-weight:800; letter-spacing:-.4px; }
+    .logo-text em { font-style:normal; color:var(--brand-light); }
+    .nav-pills { display:flex; gap:8px; }
+    .nav-pill {
+      padding:7px 16px; border-radius:20px; font-size:.78rem; font-weight:600;
+      border:1px solid var(--border2); color:var(--muted2); cursor:pointer;
+      background:transparent; transition:.2s;
+    }
+    .nav-pill:hover { background:rgba(255,255,255,.05); color:var(--text); }
+    .nav-pill.active { background:rgba(108,71,255,.18); border-color:rgba(108,71,255,.4); color:var(--brand-light); }
+
+    /* ── Hero ── */
+    .hero { position:relative; z-index:2; max-width:620px; }
+    .badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(108,71,255,.12); border:1px solid rgba(108,71,255,.28);
+      border-radius:20px; padding:6px 14px; margin-bottom:22px;
+      font-size:.72rem; font-weight:700; color:var(--brand-light);
+      text-transform:uppercase; letter-spacing:.8px;
+    }
+    .badge .dot {
+      width:7px; height:7px; border-radius:50%; background:var(--green);
+      box-shadow:0 0 8px var(--green); animation:blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hero h1 {
+      font-size:3.1rem; font-weight:900; line-height:1.12; letter-spacing:-1.5px;
+      margin-bottom:18px;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(90deg, #A78BFA, #38BDF8);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .hero .sub {
+      color:var(--muted2); font-size:1.02rem; line-height:1.72; max-width:520px;
+      margin-bottom:36px;
+    }
+    .hero-ctas { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn-ghost {
+      padding:12px 22px; border-radius:10px; font-size:.88rem; font-weight:600;
+      border:1px solid var(--border2); color:var(--text); background:transparent;
+      cursor:pointer; transition:.2s;
+    }
+    .btn-ghost:hover { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.2); }
+    .btn-outline {
+      padding:12px 22px; border-radius:10px; font-size:.88rem; font-weight:600;
+      border:1px solid rgba(108,71,255,.4); color:var(--brand-light); background:rgba(108,71,255,.08);
+      cursor:pointer; transition:.2s;
+    }
+    .btn-outline:hover { background:rgba(108,71,255,.15); }
+
+    /* ── Stats strip ── */
+    .stats {
+      display:flex; gap:0; margin:44px 0 44px;
+      background:rgba(255,255,255,.03); border:1px solid var(--border);
+      border-radius:16px; overflow:hidden; position:relative; z-index:2; max-width:600px;
+    }
+    .stat-cell {
+      flex:1; padding:22px 24px;
+      border-right:1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right:none; }
+    .stat-num {
+      font-size:2rem; font-weight:900; letter-spacing:-1px;
+      background:linear-gradient(90deg,#fff,var(--brand-light));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      margin-bottom:4px;
+    }
+    .stat-label { font-size:.76rem; color:var(--muted); font-weight:500; }
+    .stat-delta {
+      font-size:.7rem; font-weight:600; color:var(--green);
+      margin-top:4px; display:flex; align-items:center; gap:4px;
+    }
+
+    /* ── Two-col grid layout ── */
+    .content-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:16px;
+      position:relative; z-index:2; max-width:680px;
+    }
+
+    /* Feature card */
+    .feat-card {
+      background:rgba(255,255,255,.025);
+      border:1px solid var(--border);
+      border-radius:18px; padding:24px;
+      transition:.25s; cursor:default;
+      position:relative; overflow:hidden;
+    }
+    .feat-card::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,.025), transparent);
+      pointer-events:none;
+    }
+    .feat-card:hover { border-color:rgba(108,71,255,.35); transform:translateY(-3px); }
+    .feat-icon {
+      width:42px; height:42px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; margin-bottom:14px;
+    }
+    .feat-card h3 { font-size:.9rem; font-weight:700; margin-bottom:7px; }
+    .feat-card p  { font-size:.77rem; color:var(--muted2); line-height:1.6; }
+    .feat-tag {
+      display:inline-block; margin-top:12px;
+      background:rgba(108,71,255,.12); border:1px solid rgba(108,71,255,.22);
+      border-radius:6px; padding:3px 8px;
+      font-size:.67rem; font-weight:700; color:var(--brand-light); letter-spacing:.4px;
+    }
+
+    /* Wide card (span 2) */
+    .feat-card.wide { grid-column:span 2; display:flex; gap:24px; align-items:flex-start; }
+    .feat-card.wide .feat-body { flex:1; }
+    .feat-card.wide .feat-chart { flex-shrink:0; }
+
+    /* Mini sparkline */
+    .sparkline { display:flex; align-items:flex-end; gap:4px; height:48px; }
+    .spark-bar {
+      width:10px; border-radius:4px 4px 0 0;
+      background:linear-gradient(180deg,var(--brand-light),var(--brand));
+      opacity:.7; transition:.3s;
+    }
+    .spark-bar:hover { opacity:1; }
+
+    /* Alert feed */
+    .alert-feed {
+      position:relative; z-index:2;
+      margin-top:16px; max-width:680px;
+      background:rgba(255,255,255,.025);
+      border:1px solid var(--border);
+      border-radius:18px; padding:22px 24px;
+    }
+    .feed-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .feed-header h3 { font-size:.9rem; font-weight:700; }
+    .feed-live {
+      font-size:.7rem; font-weight:700; color:var(--green);
+      display:flex; align-items:center; gap:6px;
+    }
+    .feed-live::before {
+      content:''; width:7px; height:7px; border-radius:50%;
+      background:var(--green); box-shadow:0 0 8px var(--green);
+      animation:blink 2s infinite;
+    }
+    .alert-list { display:flex; flex-direction:column; gap:10px; }
+    .alert-item {
+      display:flex; align-items:center; gap:14px;
+      padding:11px 14px; border-radius:12px;
+      background:rgba(255,255,255,.03); border:1px solid var(--border);
+      font-size:.8rem;
+    }
+    .alert-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+    .alert-item .info { flex:1; }
+    .alert-item .title { font-weight:600; font-size:.82rem; margin-bottom:2px; }
+    .alert-item .meta  { color:var(--muted); font-size:.73rem; }
+    .alert-pill {
+      font-size:.68rem; font-weight:700; padding:3px 9px; border-radius:6px;
+      flex-shrink:0;
+    }
+
+    /* Integrations bar */
+    .integrations {
+      position:relative; z-index:2;
+      margin-top:16px; max-width:680px;
+      background:rgba(255,255,255,.025);
+      border:1px solid var(--border);
+      border-radius:18px; padding:20px 24px;
+      display:flex; align-items:center; gap:20px;
+    }
+    .int-label { font-size:.78rem; color:var(--muted); font-weight:600; white-space:nowrap; }
+    .int-logos { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .int-chip {
+      padding:6px 14px; border-radius:8px;
+      background:rgba(255,255,255,.04); border:1px solid var(--border2);
+      font-size:.74rem; font-weight:600; color:var(--muted2);
+      display:flex; align-items:center; gap:7px;
+    }
+
+    /* Testimonial */
+    .testimonial {
+      position:relative; z-index:2;
+      margin-top:16px; max-width:680px;
+      background:rgba(255,255,255,.025);
+      border:1px solid var(--border);
+      border-radius:18px; padding:24px 28px;
+    }
+    .stars { color:var(--amber); letter-spacing:3px; font-size:13px; margin-bottom:10px; }
+    .quote { font-size:.9rem; color:#C8D5F0; line-height:1.72; margin-bottom:16px; font-style:italic; }
+    .quote::before { content:'"'; font-size:2rem; color:var(--brand-light); line-height:0; vertical-align:-10px; margin-right:4px; }
+    .author-row { display:flex; align-items:center; gap:12px; }
+    .avatar {
+      width:40px; height:40px; border-radius:50%;
+      background:linear-gradient(135deg,var(--brand),var(--accent));
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:800; flex-shrink:0;
+    }
+    .author-name  { font-size:.84rem; font-weight:700; }
+    .author-title { font-size:.73rem; color:var(--muted); margin-top:2px; }
+
+    /* Footer strip */
+    .left-footer {
+      position:relative; z-index:2;
+      margin-top:24px; display:flex; align-items:center; gap:24px;
+      flex-wrap:wrap; padding-top:20px; border-top:1px solid var(--border);
+    }
+    .footer-badge {
+      display:flex; align-items:center; gap:7px;
+      font-size:.74rem; color:var(--muted2); font-weight:500;
+    }
+    .footer-badge span:first-child { font-size:16px; }
+
+    /* ══════════════════════════════════════════════
+       RIGHT LOGIN PANEL
+    ══════════════════════════════════════════════ */
+    .right {
+      width:460px; flex-shrink:0;
+      background:var(--surface);
+      border-left:1px solid var(--border);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:52px 44px;
+      position:relative; overflow:hidden;
+    }
+    .right::before {
+      content:''; position:absolute; top:-150px; right:-100px;
+      width:350px; height:350px;
+      background:radial-gradient(circle,rgba(108,71,255,.13),transparent 70%);
+    }
+    .right::after {
+      content:''; position:absolute; bottom:-100px; left:-80px;
+      width:260px; height:260px;
+      background:radial-gradient(circle,rgba(56,189,248,.08),transparent 70%);
+    }
+
+    .login-wrap { width:100%; max-width:340px; position:relative; z-index:1; }
+
+    .login-logo { display:flex; align-items:center; gap:10px; margin-bottom:32px; }
+    .login-logo .lm {
+      width:38px; height:38px; border-radius:10px;
+      background:linear-gradient(135deg,var(--brand),var(--accent));
+      display:flex; align-items:center; justify-content:center;
+      font-size:17px; font-weight:900; color:#fff;
+      box-shadow:0 3px 16px rgba(108,71,255,.4);
+    }
+    .login-logo .lt { font-size:1.1rem; font-weight:800; letter-spacing:-.3px; }
+    .login-logo .lt em { font-style:normal; color:var(--brand-light); }
+
+    .login-head h2 {
+      font-size:1.75rem; font-weight:800; letter-spacing:-.7px; margin-bottom:6px;
+    }
+    .login-head p { color:var(--muted); font-size:.88rem; margin-bottom:30px; }
+
+    /* Form fields */
+    .field { margin-bottom:16px; }
+    .field label {
+      display:block; font-size:.78rem; font-weight:600;
+      color:var(--muted2); margin-bottom:7px; letter-spacing:.2px;
+    }
+    .field-wrap { position:relative; }
+    .field-icon {
+      position:absolute; left:14px; top:50%; transform:translateY(-50%);
+      font-size:15px; color:var(--muted); pointer-events:none;
+    }
+    .field input {
+      width:100%; padding:13px 14px 13px 42px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:11px; color:var(--text);
+      font-family:'Inter',sans-serif; font-size:.88rem;
+      outline:none; transition:.2s;
+    }
+    .field input:focus {
+      border-color:var(--brand);
+      box-shadow:0 0 0 3px rgba(108,71,255,.18);
+      background:rgba(108,71,255,.04);
+    }
+    .field input::placeholder { color:rgba(107,122,161,.5); }
+
+    .form-meta {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:20px;
+    }
+    .remember {
+      display:flex; align-items:center; gap:8px;
+      font-size:.8rem; color:var(--muted); cursor:pointer;
+    }
+    .remember input { width:auto; padding:0; border:none; background:none; }
+    input[type="checkbox"] { accent-color:var(--brand); width:15px; height:15px; cursor:pointer; }
+    .forgot { font-size:.8rem; color:var(--brand-light); text-decoration:none; font-weight:600; }
+    .forgot:hover { text-decoration:underline; }
+
+    .btn-signin {
+      width:100%; padding:14px;
+      background:linear-gradient(135deg,var(--brand) 0%,#8B5CF6 100%);
+      border:none; border-radius:11px; color:#fff;
+      font-family:'Inter',sans-serif; font-size:.92rem; font-weight:700;
+      cursor:pointer; transition:.2s;
+      box-shadow:0 4px 24px rgba(108,71,255,.38);
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-signin:hover { opacity:.9; transform:translateY(-1px); box-shadow:0 6px 28px rgba(108,71,255,.52); }
+    .btn-signin:active { transform:translateY(0); }
+    .btn-signin .arrow { font-size:18px; transition:.2s; }
+    .btn-signin:hover .arrow { transform:translateX(3px); }
+
+    .divider {
+      display:flex; align-items:center; gap:12px;
+      margin:20px 0; color:var(--muted); font-size:.78rem;
+    }
+    .divider::before,.divider::after {
+      content:''; flex:1; height:1px; background:var(--border);
+    }
+
+    .sso-btns { display:flex; flex-direction:column; gap:10px; }
+    .btn-sso {
+      width:100%; padding:12px 16px;
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:11px; color:var(--text);
+      font-family:'Inter',sans-serif; font-size:.84rem; font-weight:600;
+      cursor:pointer; transition:.2s;
+      display:flex; align-items:center; gap:12px;
+    }
+    .btn-sso:hover { background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.18); }
+    .btn-sso .sso-icon { font-size:18px; width:24px; text-align:center; }
+    .sso-meta { text-align:left; }
+    .sso-title { display:block; font-weight:700; font-size:.83rem; }
+    .sso-sub   { display:block; font-size:.7rem; color:var(--muted); margin-top:1px; }
+
+    .signup-row {
+      text-align:center; margin-top:22px;
+      font-size:.81rem; color:var(--muted);
+    }
+    .signup-row a { color:var(--brand-light); font-weight:600; text-decoration:none; }
+    .signup-row a:hover { text-decoration:underline; }
+
+    /* Trust strip */
+    .trust-strip {
+      margin-top:28px; padding-top:22px;
+      border-top:1px solid var(--border);
+      display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+      text-align:center;
+    }
+    .trust-item { display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .trust-icon { font-size:18px; }
+    .trust-label { font-size:.64rem; font-weight:700; color:var(--muted2); line-height:1.3; }
+
+    /* Password strength indicator */
+    .pw-strength { display:flex; gap:4px; margin-top:8px; }
+    .pw-bar { height:3px; flex:1; border-radius:2px; background:rgba(255,255,255,.08); }
+    .pw-bar.active { background:var(--brand-light); }
+
+    /* Responsive */
+    @media(max-width:900px){
+      .left { display:none; }
+      .right { width:100%; border-left:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ LEFT PANEL ════════════════════ -->
+<div class="left">
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">a</div>
+      <div class="logo-text">aum<em>tech</em>.ai</div>
+    </div>
+    <div class="nav-pills">
+      <button class="nav-pill active">Platform</button>
+      <button class="nav-pill">Solutions</button>
+      <button class="nav-pill">Research</button>
+      <button class="nav-pill">About</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="badge"><div class="dot"></div>Now in General Availability · v3.2</div>
+    <h1>
+      Clinical Intelligence<br/>
+      <span class="grad">Reimagined with AI</span>
+    </h1>
+    <p class="sub">
+      Aura unifies patient workflows, real-time monitoring, and predictive analytics across your entire care ecosystem — helping clinical teams act decisively, faster than ever before.
+    </p>
+    <div class="hero-ctas">
+      <button class="btn-ghost">▶ Watch Demo</button>
+      <button class="btn-outline">View Case Studies →</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-cell">
+      <div class="stat-num">98.6%</div>
+      <div class="stat-label">Clinical Accuracy</div>
+      <div class="stat-delta">↑ 4.2% vs last quarter</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">2.4M+</div>
+      <div class="stat-label">Patients Served</div>
+      <div class="stat-delta">↑ 18% YoY</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">340+</div>
+      <div class="stat-label">Health Systems</div>
+      <div class="stat-delta">↑ 62 new this year</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">31min</div>
+      <div class="stat-label">Avg Response Saved</div>
+      <div class="stat-delta">↓ 28% faster</div>
+    </div>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="content-grid">
+    <div class="feat-card">
+      <div class="feat-icon" style="background:rgba(108,71,255,.15);">🧠</div>
+      <h3>Predictive Analytics</h3>
+      <p>Real-time ML models score patient deterioration risk across vitals, labs, and clinical history — hours before symptoms emerge.</p>
+      <span class="feat-tag">SEPSIS · FALLS · READMIT</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:rgba(56,189,248,.12);">⚡</div>
+      <h3>Smart Automation</h3>
+      <p>Context-aware AI agents automate care escalations, rounding checklists, and documentation — saving 2.4 hours per nurse per shift.</p>
+      <span class="feat-tag">WORKFLOW · RPA · NLP</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:rgba(52,211,153,.12);">📊</div>
+      <h3>Live Dashboards</h3>
+      <p>Executive and bedside views of census, throughput, and quality metrics refreshed every 30 seconds via HL7 FHIR streams.</p>
+      <span class="feat-tag">FHIR R4 · HL7</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:rgba(251,191,36,.10);">🔒</div>
+      <h3>Enterprise Security</h3>
+      <p>HIPAA-compliant infrastructure with AES-256 encryption, full audit trails, and SOC 2 Type II certified access controls.</p>
+      <span class="feat-tag">HIPAA · SOC2 · ISO27001</span>
+    </div>
+
+    <!-- Wide card with sparkline -->
+    <div class="feat-card wide">
+      <div class="feat-body">
+        <div class="feat-icon" style="background:rgba(167,139,250,.12);">📈</div>
+        <h3>Population Health Trends</h3>
+        <p>Aggregate patient cohort analytics across diagnoses, payers, and geographies — powered by federated learning to protect privacy while surfacing system-wide insights.</p>
+        <span class="feat-tag">FEDERATED ML · COHORT ANALYSIS</span>
+      </div>
+      <div class="feat-chart">
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:8px;text-align:right;">Risk score · 14-day</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:28px;"></div>
+          <div class="spark-bar" style="height:35px;"></div>
+          <div class="spark-bar" style="height:22px;"></div>
+          <div class="spark-bar" style="height:42px;"></div>
+          <div class="spark-bar" style="height:30px;"></div>
+          <div class="spark-bar" style="height:48px;opacity:1;"></div>
+          <div class="spark-bar" style="height:38px;"></div>
+          <div class="spark-bar" style="height:44px;"></div>
+          <div class="spark-bar" style="height:18px;"></div>
+          <div class="spark-bar" style="height:32px;"></div>
+        </div>
+        <div style="font-size:.7rem;color:var(--green);margin-top:6px;text-align:right;">↓ 12% this week</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Alert Feed -->
+  <div class="alert-feed">
+    <div class="feed-header">
+      <h3>Live Clinical Alerts</h3>
+      <span class="feed-live">Live Feed</span>
+    </div>
+    <div class="alert-list">
+      <div class="alert-item">
+        <div class="alert-dot" style="background:#F87171;box-shadow:0 0 8px #F87171;"></div>
+        <div class="info">
+          <div class="title">Sepsis Alert — ICU Bed 14 · Patient #M-4892</div>
+          <div class="meta">Lactate 4.2 mmol/L · Temp 38.9°C · HR 118 bpm · 2 min ago</div>
+        </div>
+        <div class="alert-pill" style="background:rgba(248,113,113,.15);color:#F87171;border:1px solid rgba(248,113,113,.3);">CRITICAL</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-dot" style="background:#FBBF24;box-shadow:0 0 8px #FBBF24;"></div>
+        <div class="info">
+          <div class="title">Fall Risk Flag — Ward 7B · Patient #F-2210</div>
+          <div class="meta">STRATIFY score 3 · No bed alarm active · 6 min ago</div>
+        </div>
+        <div class="alert-pill" style="background:rgba(251,191,36,.12);color:#FBBF24;border:1px solid rgba(251,191,36,.3);">HIGH</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-dot" style="background:#34D399;box-shadow:0 0 8px #34D399;"></div>
+        <div class="info">
+          <div class="title">Discharge Ready — ED Bay 3 · Patient #E-0771</div>
+          <div class="meta">All criteria met · Transport arranged · 11 min ago</div>
+        </div>
+        <div class="alert-pill" style="background:rgba(52,211,153,.12);color:#34D399;border:1px solid rgba(52,211,153,.3);">CLEARED</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EHR Integrations -->
+  <div class="integrations">
+    <div class="int-label">Integrates with</div>
+    <div class="int-logos">
+      <div class="int-chip">🏥 Epic</div>
+      <div class="int-chip">🔵 Cerner</div>
+      <div class="int-chip">⚕️ Meditech</div>
+      <div class="int-chip">🟢 Allscripts</div>
+      <div class="int-chip">🔗 HL7 FHIR</div>
+      <div class="int-chip">☁️ AWS HealthLake</div>
+    </div>
+  </div>
+
+  <!-- Testimonial -->
+  <div class="testimonial">
+    <div class="stars">★★★★★</div>
+    <div class="quote">
+      Aura cut our sepsis response time by 34% in the first quarter. The AI alerts integrate seamlessly with Epic and the entire care team adopted it overnight — something I've never seen with any clinical tool before.
+    </div>
+    <div class="author-row">
+      <div class="avatar">MR</div>
+      <div>
+        <div class="author-name">Dr. Michelle Rodriguez, MD, FCCP</div>
+        <div class="author-title">Chief Medical Officer · Lakeside Health System</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer badges -->
+  <div class="left-footer">
+    <div class="footer-badge"><span>🛡️</span> HIPAA Compliant</div>
+    <div class="footer-badge"><span>🔐</span> SOC 2 Type II</div>
+    <div class="footer-badge"><span>🏅</span> ISO 27001</div>
+    <div class="footer-badge"><span>⚕️</span> HL7 FHIR R4</div>
+    <div class="footer-badge"><span>🧾</span> 21st Century Cures Act</div>
+    <div class="footer-badge" style="margin-left:auto;color:var(--muted);font-size:.72rem;">© 2026 aumtech.ai</div>
+  </div>
+</div>
+
+<!-- ════════════════════ RIGHT LOGIN PANEL ════════════════════ -->
+<div class="right">
+  <div class="login-wrap">
+
+    <!-- Mini logo -->
+    <div class="login-logo">
+      <div class="lm">a</div>
+      <div class="lt">aum<em>tech</em>.ai <span style="font-size:.7rem;font-weight:500;color:var(--muted);margin-left:6px;">/ Aura</span></div>
+    </div>
+
+    <!-- Header -->
+    <div class="login-head">
+      <h2>Welcome back 👋</h2>
+      <p>Sign in to your Aura clinical workspace</p>
+    </div>
+
+    <!-- Form -->
+    <form onsubmit="return false;" autocomplete="on">
+
+      <div class="field">
+        <label for="email">University / Organization Email</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉</span>
+          <input type="email" id="email" placeholder="you@hospital.org" value="ram@aumtech.ai" autocomplete="email"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">🔑</span>
+          <input type="password" id="password" placeholder="Enter your password" value="••••••••••••" autocomplete="current-password"
+            oninput="updateStrength(this.value)"/>
+        </div>
+        <div class="pw-strength" id="pwStrength">
+          <div class="pw-bar active" id="b1"></div>
+          <div class="pw-bar active" id="b2"></div>
+          <div class="pw-bar active" id="b3"></div>
+          <div class="pw-bar active" id="b4"></div>
+        </div>
+      </div>
+
+      <div class="form-meta">
+        <label class="remember">
+          <input type="checkbox" checked/> Remember me 30 days
+        </label>
+        <a href="#" class="forgot">Forgot password?</a>
+      </div>
+
+      <button class="btn-signin" type="submit">
+        Sign In to Aura <span class="arrow">→</span>
+      </button>
+    </form>
+
+    <div class="divider">or continue with SSO</div>
+
+    <div class="sso-btns">
+      <button class="btn-sso">
+        <span class="sso-icon">🏥</span>
+        <div class="sso-meta">
+          <span class="sso-title">Hospital SSO</span>
+          <span class="sso-sub">Sign in with your health system account</span>
+        </div>
+      </button>
+      <button class="btn-sso">
+        <span class="sso-icon">🎓</span>
+        <div class="sso-meta">
+          <span class="sso-title">University SSO</span>
+          <span class="sso-sub">Academic medical center credentials</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="signup-row">
+      New to Aura? <a href="#">Request institutional access →</a>
+    </div>
+
+    <!-- Trust strip -->
+    <div class="trust-strip">
+      <div class="trust-item">
+        <span class="trust-icon">🛡️</span>
+        <span class="trust-label">HIPAA<br/>Compliant</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">🔐</span>
+        <span class="trust-label">SOC 2<br/>Type II</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">⚕️</span>
+        <span class="trust-label">HL7<br/>FHIR R4</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">🏅</span>
+        <span class="trust-label">ISO<br/>27001</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function updateStrength(val) {
+    const bars = ['b1','b2','b3','b4'];
+    const len = val.length;
+    const score = len === 0 ? 0 : len < 4 ? 1 : len < 8 ? 2 : len < 12 ? 3 : 4;
+    const colors = ['#F87171','#FBBF24','#A78BFA','#34D399'];
+    bars.forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.style.background = i < score ? colors[Math.min(score-1,3)] : 'rgba(255,255,255,.08)';
+    });
+  }
+  // Nav pill interactivity
+  document.querySelectorAll('.nav-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Intelligence Tiers Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontFamily: 'Inter',
+                primaryColor: '#ffffff',
+                primaryTextColor: '#1e293b',
+                primaryBorderColor: '#e2e8f0',
+                lineColor: '#64748b',
+                secondaryColor: '#f1f5f9',
+                tertiaryColor: '#f8fafc',
+                mainBkg: '#ffffff',
+                nodeBorder: '#e2e8f0',
+                clusterBkg: '#f8fafc',
+                clusterBorder: '#cbd5e1',
+                titleColor: '#0f172a',
+                edgeLabelBackground: '#ffffff',
+                tertiaryTextColor: '#475569'
+            },
+            flowchart: {
+                padding: 30,
+                nodeSpacing: 40,
+                rankSpacing: 60,
+                curve: 'basis'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --brand-aura: #4f46e5;
+            --brand-prism: #6366f1;
+            --brand-vault: #10b981;
+            --brand-security: #f59e0b;
+            --bg-page: #f9fafb;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            padding: 60px;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--brand-aura);
+            letter-spacing: -0.025em;
+        }
+
+        .header h1 span {
+            color: #1e293b;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-size: 1.125rem;
+        }
+
+        .mermaid-boundary {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Aura <span>Intelligence Tiers</span></h1>
+            <p>Logical Data Flow & Sovereignty Architecture</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--brand-prism);"></div> Aura Prism (Cloud Hybrid)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--brand-vault);"></div> Aura Vault (Air-Gapped)
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--brand-security);"></div> Privacy Gateway
+            </div>
+        </div>
+
+        <div class="mermaid-boundary">
+            <div class="mermaid">
+                graph TD
+
+                %% TOP BOX: ACCESS & INTERFACE
+                subgraph ACCESS ["Access & Entry Layer"]
+                USER[Student Portal / Mobile UI]
+                end
+
+                %% MIDDLE BOX: SOVEREIGNTY PROCESSING
+                subgraph SOVEREIGNTY ["Aura Sovereignty Hub (University VPC)"]
+                direction TB
+                API[Stateless API Proxy]
+                EDN[(EdNex Warehouse)]
+                API <--> EDN
+
+                    subgraph PRISM_ENGINE ["Tier 1: Privacy Logic"]
+                    SCR[PII Scrubber]
+                    DET[PII Restorer]
+                    end
+
+                    subgraph VAULT_ENGINE ["Tier 2: Fortress Vault"]
+                    VLT[Private In-House LLM]
+                    end
+                    end
+
+                    %% BOTTOM BOX: INTELLIGENCE EXECUTION
+                    subgraph INTELLIGENCE ["Intelligence & Inference Execution"]
+                    direction LR
+                    GEM[[Gemini Cloud Brain]]
+                    LCL[[Local Academic LLM]]
+                    end
+
+                    %% CONNECTOR FLOWS
+                    USER --> API
+
+                    %% Path 1: Prism Path
+                    API --> SCR
+                    SCR --> GEM
+                    GEM --> DET
+                    DET --> USER
+
+                    %% Path 2: Vault Path
+                    API -.-> VLT
+                    VLT -.-> LCL
+                    LCL -.-> USER
+
+                    %% STYLING
+                    classDef layerBox fill:#f9fafb,stroke:#cbd5e1,stroke-width:2px,color:#1e293b,font-weight:700;
+                    classDef standardNode fill:#ffffff,stroke:#1e293b,stroke-width:1.5px;
+                    classDef securityNode fill:#fffbeb,stroke:#f59e0b,stroke-width:2px;
+                    classDef cloudNode fill:#f0f9ff,stroke:#0ea5e9,stroke-dasharray: 5 5;
+                    classDef localNode fill:#f0fdf4,stroke:#10b981,stroke-width:2px;
+
+                    class ACCESS,SOVEREIGNTY,INTELLIGENCE layerBox;
+                    class USER,API,EDN standardNode;
+                    class SCR,DET securityNode;
+                    class GEM cloudNode;
+                    class VLT,LCL localNode;
+            </div>
+        </div>
+
+        <div class="footer">
+            <div>&copy; 2026 AURA INTELLIGENCE PLATFORM</div>
+            <div>FERPA & HIPAA COMPLIANT ARCHITECTURE</div>
+        </div>
+    </div>
+
+</body>
+
+</html>

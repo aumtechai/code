@@ -1,0 +1,79 @@
+name: Build & Deploy iOS App
+
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-ios:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Select Xcode 26 SDK
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode_26.0.0.app/Contents/Developer || echo "Xcode 26 fallback"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: 3_code/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: 3_code/frontend
+        run: npm install
+
+      - name: Build Web App
+        working-directory: 3_code/frontend
+        run: npm run build
+
+      - name: Freshly Generate iOS Project (Fix Corruption)
+        working-directory: 3_code/frontend
+        run: |
+          rm -rf ios
+          npx cap add ios
+          npx cap sync ios
+          npx capacitor-assets generate --ios
+
+      - name: Inject Info.plist Privacy Strings
+        working-directory: 3_code/frontend/ios/App/App
+        run: |
+          plutil -replace NSMicrophoneUsageDescription -string "Aura requires microphone access to capture and transcribe your lectures for AI-powered note-taking and summarization." Info.plist
+          plutil -replace NSCameraUsageDescription -string "Aura requires camera access to allow you to take photos of your syllabus and course documents for instant AI analysis." Info.plist
+          plutil -replace NSPhotoLibraryUsageDescription -string "Aura requires access to your photo library so you can upload existing course materials, syllabi, and assignment documents for AI processing." Info.plist
+          plutil -replace NSPhotoLibraryAddUsageDescription -string "Aura requires permission to save captured course documents to your photo library." Info.plist
+
+
+      - name: Strip macOS Detritus
+        run: |
+          find . -name "*.png" -exec xattr -c {} \; || true
+          find . -name "*.storyboard" -exec xattr -c {} \; || true
+          find . -name "*.xcassets" -exec xattr -c {} \; || true
+
+      - name: Resolve SPM Dependencies
+        working-directory: 3_code/frontend/ios/App
+        run: xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App
+
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Build and Deploy (Fastlane)
+        working-directory: 3_code
+        run: |
+          gem install fastlane
+          fastlane release --verbose
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
