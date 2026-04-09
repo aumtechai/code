@@ -31,7 +31,10 @@ const getBaseUrl = () => {
         return 'http://localhost:8000';
     }
 
-    // Fallback for Standard Web App
+    // Fallback for Standard Web App (Dynamic detection for Vercel)
+    if (origin.includes('vercel.app') || window.location.hostname === 'aumtech.ai') {
+        return origin;
+    }
     return 'https://www.aumtech.ai';
 };
 
