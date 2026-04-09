@@ -1,11 +1,18 @@
 import os
+import sys
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-# The 'backend' folder is now local to this file
-from .backend.app.api import router as main_api_router
-from .backend.app.api_tutoring import router as tutoring_router
-from .backend.app.integrations import router as integration_router
+# CRITICAL: Add the local backend folder to the sys.path
+# This allows 'from app.api import router' and 'from app.auth import ...' to work perfectly
+current_dir = os.path.dirname(os.path.abspath(__file__))
+backend_dir = os.path.join(current_dir, "backend")
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+from app.api import router as main_api_router
+from app.api_tutoring import router as tutoring_router
+from app.integrations import router as integration_router
 
 app = FastAPI(title="Student Success Core API")
 
@@ -24,8 +31,16 @@ app.include_router(integration_router, prefix="/api/integration", tags=["Integra
 
 @app.get("/api/health")
 def health():
-    return {"status": "healthy", "mode": "local-backend"}
+    return {
+        "status": "healthy",
+        "mode": "bundled-backend",
+        "path": sys.path
+    }
 
-@app.get("/api/aura/status")
-def aura_status():
-    return {"status": "operational", "message": "Backend discovered locally within Lambda bundle."}
+@app.get("/api/env-check")
+def env_check():
+    return {
+        "db": bool(os.getenv("DATABASE_URL")),
+        "secret": bool(os.getenv("SECRET_KEY")),
+        "google": bool(os.getenv("GOOGLE_API_KEY"))
+    }
