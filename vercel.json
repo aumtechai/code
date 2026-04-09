@@ -1,17 +1,37 @@
 {
   "version": 2,
-  "functions": {
-    "api/**/*.py": {
-      "maxDuration": 60,
-      "memory": 1024
+  "name": "aura-stable-final",
+  "builds": [
+    {
+      "src": "api/core/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/swarm/index.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
-    { "src": "/api/aura/(.*)", "dest": "api/swarm/index.py" },
-    { "src": "/api/(.*)",      "dest": "api/core/index.py" },
-    { "src": "/academic",      "dest": "/3_code/prepnex_app/roadmap.html" },
-    { "src": "/vesta",         "dest": "/3_code/prepnex_app/vesta.html" },
-    { "src": "/strategy",      "dest": "/3_code/prepnex_app/strategy.html" },
-    { "src": "/(.*)",          "dest": "/$1" }
+    {
+      "src": "/api/(.*)",
+      "dest": "api/core/index.py"
+    },
+    {
+      "src": "/api/swarm/(.*)",
+      "dest": "api/swarm/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1",
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "status": 200,
+      "dest": "/index.html"
+    }
   ]
 }
