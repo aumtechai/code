@@ -27,7 +27,7 @@
   ],
   "build": {
     "env": {
-      "ENABLE_UV": "0"
+      "ENABLE_VC_PYTHON_UV": "0"
     }
   }
 }
