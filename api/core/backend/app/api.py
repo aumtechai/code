@@ -7,8 +7,6 @@ from typing import List, Optional, Dict
 from google.oauth2 import id_token
 from google.auth.transport import requests
 import os
-import os
-import stripe
 from pydantic import BaseModel
 
 from app.auth import get_session, create_access_token, get_password_hash, verify_password, get_current_user, get_admin_user
@@ -27,8 +25,7 @@ except ImportError:
 
 router = APIRouter()
 
-# Stripe Configuration
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+# Stripe Configuration removed
 
 @router.get("/debug/env")
 async def debug_env(admin: User = Depends(get_admin_user)):
