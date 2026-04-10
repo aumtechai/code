@@ -1,16 +1,7 @@
 {
   "version": 2,
   "name": "aura-stable-final",
-  "builds": [
-    {
-      "src": "api/core/index.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/swarm/index.py",
-      "use": "@vercel/python"
-    }
-  ],
+  "cleanUrls": true,
   "routes": [
     {
       "src": "/api/(.*)",
