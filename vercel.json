@@ -4,17 +4,12 @@
   "cleanUrls": true,
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "api/core/index.py"
-    },
-    {
       "src": "/api/swarm/(.*)",
       "dest": "api/swarm/index.py"
     },
     {
-      "src": "/(.*)",
-      "dest": "/$1",
-      "continue": true
+      "src": "/api/(.*)",
+      "dest": "api/core/index.py"
     },
     {
       "handle": "filesystem"
