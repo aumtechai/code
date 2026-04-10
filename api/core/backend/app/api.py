@@ -878,6 +878,14 @@ async def query_agent(
                 }
                 # We skip legacy fallback if a swarm error is detected to ensure we see the error
                 # OR we can keep the fallback but put the error in a field the UI sees
+                
+        except Exception as e:
+            print(f"Module Import Error: {e}")
+            final_response_dict = {
+                "message_content": f"Backend Error: {str(e)}",
+                "cited_sources": ["System"],
+                "action_items": []
+            }
     else:
         # API Key missing
         final_response_dict = {
