@@ -2,23 +2,16 @@
   "version": 2,
   "name": "aura-stable-final",
   "cleanUrls": true,
-  "outputDirectory": ".",
-  "routes": [
-    {
-      "src": "/api/swarm/(.*)",
-      "dest": "api/swarm/index.py"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "api/core/index.py"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "status": 200,
-      "dest": "/index.html"
+  "functions": {
+    "api/**/*.py": {
+      "maxDuration": 60,
+      "memory": 1024
     }
+  },
+  "routes": [
+    { "src": "/api/swarm/(.*)", "dest": "api/swarm/index.py" },
+    { "src": "/api/(.*)",      "dest": "api/core/index.py" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "status": 200, "dest": "/index.html" }
   ]
 }

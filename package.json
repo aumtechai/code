@@ -3,6 +3,6 @@
   "private": true,
   "version": "1.1.0",
   "scripts": {
-    "build": "echo 'No build needed - static files served from project root'"
+    "build": "mkdir -p dist && cp index.html dist/ && cp -r assets dist/ && cp bookmark_logo.png dist/ && cp logo.png dist/ && cp manifest.json dist/ && cp robots.txt dist/ && cp sitemap.xml dist/ && echo 'Build Successful'"
   }
 }
