@@ -2,8 +2,7 @@
   "name": "aumtech-production",
   "private": true,
   "version": "1.1.0",
-  "description": "Aumtech Production Platform - Python Backend",
-  "engines": {
-    "node": "20.x"
+  "scripts": {
+    "build": "echo 'Python Production Environment: Skipping Node Build' && mkdir -p public && cp index.html public/"
   }
 }
