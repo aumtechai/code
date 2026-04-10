@@ -24,10 +24,5 @@
       "status": 200,
       "dest": "/index.html"
     }
-  ],
-  "build": {
-    "env": {
-      "ENABLE_VC_PYTHON_UV": "0"
-    }
-  }
+  ]
 }

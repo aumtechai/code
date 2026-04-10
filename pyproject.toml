@@ -1,0 +1,7 @@
+[tool.vercel.scripts]
+# Vercel's Python builder detects this hook (runPyprojectScript in utils.ts)
+# and runs it INSTEAD of uv sync. Using pip ensures every installed package
+# gets a proper dist-info/INSTALLER file, which is required by Vercel's
+# @vercel/python-analysis bundler (scanDistributions). uv intentionally omits
+# INSTALLER, causing an ENOENT lstat failure in the bundler post-processing step.
+vercel-install = "pip install -r api/core/requirements.txt -r api/swarm/requirements.txt"
