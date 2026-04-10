@@ -1,0 +1,9 @@
+{
+  "name": "aumtech-production",
+  "private": true,
+  "version": "1.1.0",
+  "description": "Aumtech Production Platform - Python Backend",
+  "engines": {
+    "node": "20.x"
+  }
+}

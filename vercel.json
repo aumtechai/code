@@ -1,29 +1,8 @@
 {
   "version": 2,
   "name": "aura-stable-final",
-  "builds": [
-    {
-      "src": "api/core/index.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/swarm/index.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**",
-      "use": "@vercel/static"
-    }
-  ],
+  "cleanUrls": true,
   "routes": [
-    {
-      "src": "/api/health",
-      "dest": "api/core/index.py"
-    },
     {
       "src": "/api/(.*)",
       "dest": "api/core/index.py"
