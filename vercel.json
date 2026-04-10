@@ -2,6 +2,7 @@
   "version": 2,
   "name": "aura-stable-final",
   "cleanUrls": true,
+  "outputDirectory": ".",
   "routes": [
     {
       "src": "/api/swarm/(.*)",
