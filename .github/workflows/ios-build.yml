@@ -43,7 +43,7 @@ jobs:
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-          npx capacitor-assets generate --ios
+          npx @capacitor/assets generate --ios
 
       - name: Inject Info.plist Privacy Strings
         working-directory: 3_code/frontend/ios/App/App
