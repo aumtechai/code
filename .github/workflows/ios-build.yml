@@ -68,7 +68,7 @@ jobs:
         run: gem install bundler
 
       - name: Build and Deploy (Fastlane)
-        working-directory: 3_code
+        working-directory: 3_code/frontend
         run: |
           gem install fastlane
           fastlane release --verbose
