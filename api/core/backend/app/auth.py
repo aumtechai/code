@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 import jwt
 from jwt.exceptions import PyJWTError as JWTError
-from passlib.context import CryptContext
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select

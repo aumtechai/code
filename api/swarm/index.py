@@ -9,7 +9,7 @@ import traceback
 current_dir = os.path.dirname(os.path.abspath(__file__))
 at_root = os.path.dirname(os.path.dirname(current_dir))
 swarm_backend_path = os.path.join(current_dir, "backend")
-aura_core_path = os.path.join(at_root, "5_Aura_Core")
+aura_core_path = os.path.join(at_root, "api", "swarm", "aura_core")
 backend_path = os.path.join(at_root, "3_code", "backend")
 
 for p in [at_root, swarm_backend_path, aura_core_path, backend_path]:

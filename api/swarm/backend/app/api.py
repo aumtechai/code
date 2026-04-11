@@ -55,7 +55,7 @@ async def debug_path():
         "__file__": __file__,
         "cwd": os.getcwd(),
         "parents": [str(p) for p in Path(__file__).resolve().parents],
-        "exists_5_Aura_Core": os.path.exists(str(Path(__file__).resolve().parents[3] / "5_Aura_Core"))
+        "exists_Aura_Core": os.path.exists(str(Path(__file__).resolve().parents[4] / "api" / "swarm" / "aura_core"))
     }
 
 @router.get("/debug/swarm-check")
@@ -64,8 +64,8 @@ async def debug_swarm_check():
     import os
     from pathlib import Path
     try:
-        root_path = Path(__file__).resolve().parents[3]
-        aura_core_path = str(root_path / "5_Aura_Core")
+        root_path = Path(__file__).resolve().parents[4]
+        aura_core_path = str(root_path / "api" / "swarm" / "aura_core")
         if aura_core_path not in sys.path:
             sys.path.append(aura_core_path)
             
@@ -839,8 +839,8 @@ async def query_agent(
             from pathlib import Path
             
             # Root detection: api.py is at at/3_code/backend/app/api.py
-            root_path = Path(__file__).resolve().parents[3]
-            aura_core_path = str(root_path / "5_Aura_Core")
+            root_path = Path(__file__).resolve().parents[4]
+            aura_core_path = str(root_path / "api" / "swarm" / "aura_core")
             
             if aura_core_path not in sys.path:
                 sys.path.append(aura_core_path)
