@@ -11,7 +11,6 @@ if backend_dir not in sys.path:
 
 from app.api import router as main_api_router
 from app.api_tutoring import router as tutoring_router
-from app.integrations import router as integration_router
 
 app = FastAPI(title="Student Success Core API")
 
@@ -26,7 +25,6 @@ app.add_middleware(
 
 app.include_router(main_api_router, prefix="/api")
 app.include_router(tutoring_router, prefix="/api")
-app.include_router(integration_router, prefix="/api/integration", tags=["Integration"])
 
 @app.get("/api/health")
 def health():
