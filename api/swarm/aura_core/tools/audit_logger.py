@@ -3,7 +3,7 @@ import datetime
 import os
 
 # Audit Log Dir in project local dir
-AUDIT_LOG_DIR = os.path.join(os.getcwd(), "5_Aura_Core", "audit")
+AUDIT_LOG_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "audit"))
 
 def log_agent_call(query: str, agent_name: str, response: str, status: str = "success", duration: float = 0.0, context: dict = None):
     """

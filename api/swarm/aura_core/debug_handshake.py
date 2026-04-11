@@ -3,7 +3,7 @@ import sys
 import json
 
 # Add directory and start a mock query
-sys.path.append(os.path.abspath(os.path.join(os.getcwd(), "5_Aura_Core")))
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from agents.aura_agents import run_aura_core_query
 
 def debug_core():

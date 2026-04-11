@@ -21,7 +21,7 @@ from tools.db_tools import query_ednex_module
 from tools.audit_logger import log_agent_call
 
 # Load Agent Configuration
-CONFIG_PATH = os.path.join(os.getcwd(), "5_Aura_Core", "config", "agent_config.json")
+CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "config", "agent_config.json"))
 
 def load_agent_config():
     with open(CONFIG_PATH, "r") as f:
