@@ -23,9 +23,16 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .main-container {
+            display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            flex: 1;
+            padding: 2rem 0;
         }
 
         .wrapper {
@@ -63,8 +70,15 @@
             font-size: 3.5rem;
             letter-spacing: -0.03em;
             font-weight: 700;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             color: #111827;
+        }
+        
+        h2.tagline {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
         }
 
         .lead-text {
@@ -224,66 +238,129 @@
 </head>
 <body>
 
-    <div class="wrapper">
-        <div class="info-panel">
-            <img src="../logo.png" alt="Aura Logo" class="logo">
-            
-            <h1>Institutional Intelligence, Redefined.</h1>
-            <p class="lead-text">
-                Unify structured SIS data and unstructured academic content into a single sovereign knowledge graph. 
-                Aura empowers students, faculty, and administrators with proactive, compliant AI workflows.
-            </p>
-
-            <div class="feature-columns">
-                <div class="feature-block">
-                    <h3><span>S</span> Student Companion</h3>
-                    <p>Track real-time GPAs across courses, automate tutoring requests, access instant lecture voice note transcriptions, and receive contextual guidance fueled by EdNex and Canvas data logs.</p>
-                </div>
+    <div class="main-container">
+        <div class="wrapper">
+            <div class="info-panel">
+                <img src="../logo.png" alt="Aura Logo" class="logo">
                 
-                <div class="feature-block">
-                    <h3><span>F</span> Faculty Toolkit</h3>
-                    <p>Focus on teaching rather than administrative overhead. Identify falling engagement patterns natively, parse syllabi into structured timelines, and curate specialized interventions.</p>
-                </div>
-                
-                <div class="feature-block">
-                    <h3><span>A</span> Administrative Hub</h3>
-                    <p>Analyze university-wide trends while guaranteeing air-gapped FERPA and HIPAA compliance. Seamless tracking mechanism to gauge retention and intervene predictably.</p>
-                </div>
-                
-                <div class="feature-block">
-                    <h3><span>P</span> Secure Architecture</h3>
-                    <p>With Aura Vault & Prism layers, sensitive PII scrubbing is natively handled on local infrastructures before executing complex cloud inferences, preserving total data sovereignty.</p>
+                <h1>Aura</h1>
+                <h2 class="tagline">Your Campus Co-Pilot</h2>
+                <p class="lead-text">
+                    Unify structured SIS data and unstructured academic content into a single sovereign knowledge graph. 
+                    Aura empowers students, faculty, and administrators with proactive, compliant AI workflows.
+                </p>
+    
+                <div class="feature-columns">
+                    <div class="feature-block">
+                        <h3><span>S</span> Student Companion</h3>
+                        <p>Track real-time GPAs across courses, automate tutoring requests, access instant lecture voice note transcriptions, and receive contextual guidance fueled by EdNex and Canvas data logs.</p>
+                    </div>
+                    
+                    <div class="feature-block">
+                        <h3><span>F</span> Faculty Toolkit</h3>
+                        <p>Focus on teaching rather than administrative overhead. Identify falling engagement patterns natively, parse syllabi into structured timelines, and curate specialized interventions.</p>
+                    </div>
+                    
+                    <div class="feature-block">
+                        <h3><span>A</span> Administrative Hub</h3>
+                        <p>Analyze university-wide trends while guaranteeing air-gapped FERPA and HIPAA compliance. Seamless tracking mechanism to gauge retention and intervene predictably.</p>
+                    </div>
+                    
+                    <div class="feature-block">
+                        <h3><span>P</span> Secure Architecture</h3>
+                        <p>With Aura Vault & Prism layers, sensitive PII scrubbing is natively handled on local infrastructures before executing complex cloud inferences, preserving total data sovereignty.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="login-panel">
-            <div class="login-card">
-                <h2>Secure Portal</h2>
-                <p class="subtitle">Access your unified academic dashboard</p>
-                
-                <form>
-                    <div class="form-group">
-                        <label>Institutional Email</label>
-                        <input type="email" value="admin@aumtech.ai" autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" value="********" autocomplete="new-password">
-                    </div>
+    
+            <div class="login-panel">
+                <div class="login-card">
+                    <h2>Secure Portal</h2>
+                    <p class="subtitle">Access your unified academic dashboard</p>
                     
-                    <button type="button" class="btn-submit">Authenticate</button>
-                    
-                    <div class="sso-text">or continue with</div>
-                    
-                    <button type="button" class="google-btn">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" style="width: 18px;">
-                        Google Workspace
-                    </button>
-                </form>
+                    <form>
+                        <div class="form-group">
+                            <label>Institutional Email</label>
+                            <input type="email" value="admin@aumtech.ai" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" value="********" autocomplete="new-password">
+                        </div>
+                        
+                        <button type="button" class="btn-submit">Authenticate</button>
+                        
+                        <div class="sso-text">or continue with</div>
+                        
+                        <button type="button" class="google-btn">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" style="width: 18px;">
+                            Google Workspace
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    
+    <footer style="background-color: #ffffff; padding: 4rem 2rem 2rem 2rem; border-top: 1px solid #e5e7eb; font-family: 'Inter', sans-serif; color: #4b5563; width: 100%; box-sizing: border-box; margin-top: auto;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem;">
+                        <img src="../logo.png" alt="Logo" style="width: 45px; height: 45px; border-radius: 8px; border: 1px solid #e2e8f0; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));" />
+                        <span style="font-size: 1.75rem; font-weight: 800; color: #111827; letter-spacing: -0.02em;">Aura</span>
+                    </div>
+                    <p style="font-size: 0.95rem; line-height: 1.5; color: #6b7280; max-width: 250px;">
+                        Your Campus Co-Pilot. Empowering higher education with secure, FERPA-compliant AI intelligence.
+                    </p>
+                </div>
+    
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 600; color: #111827; margin: 0; margin-bottom: 0.5rem;">Solutions</h4>
+                    <a href="/features/student-planner" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Student Planner</a>
+                    <a href="/features/at-risk-prediction" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">At-Risk Prediction</a>
+                    <a href="/features/syllabus-ai" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Syllabus AI</a>
+                    <a href="/features/progress-tracker" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Progress Tracker</a>
+                    <a href="/features/career-pathfinder" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Career Pathfinder</a>
+                    <a href="/features/financial-aid" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Financial Aid Nexus</a>
+                </div>
+    
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 600; color: #111827; margin: 0; margin-bottom: 0.5rem;">Aura Platform</h4>
+                    <a href="/architecture" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Aura Vault Strategy</a>
+                    <a href="/architecture" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Aura Prism Network</a>
+                    <a href="/architecture" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">EdNex Data Lake</a>
+                    <a href="/features/secure-llm" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Secure LLM Proxy</a>
+                    <a href="/features/data-sovereignty" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Data Sovereignty</a>
+                    <a href="/features/hipaa-ferpa" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">FERPA / HIPAA Compliant</a>
+                </div>
+    
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 600; color: #111827; margin: 0; margin-bottom: 0.5rem;">Company</h4>
+                    <a href="/about" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">About</a>
+                    <a href="/team" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Partners</a>
+                    <a href="/blog" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">News</a>
+                    <a href="/blog" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Awards</a>
+                    <a href="/support" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Contact</a>
+                    <a href="/careers" style="text-decoration: none; color: #64748b; font-size: 0.95rem;">Careers</a>
+                </div>
+            </div>
+    
+            <div style="border-top: 1px solid #e5e7eb; padding-top: 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+                <div style="font-size: 0.9rem; color: #9ca3af;">
+                    &copy; 2026 Aura Academic Intelligence. All rights reserved.
+                </div>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.9rem;">
+                    <a href="/support" style="text-decoration: none; color: #9ca3af; font-weight: 500;">Ethics Hotline</a>
+                    <a href="/privacy" style="text-decoration: none; color: #9ca3af; font-weight: 500;">Privacy Policy</a>
+                    <a href="/msa" style="text-decoration: none; color: #9ca3af; font-weight: 500;">MSA</a>
+                    <a href="/sla" style="text-decoration: none; color: #9ca3af; font-weight: 500;">SLA</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
