@@ -9,8 +9,8 @@
     }
   },
   "routes": [
-    { "src": "/api/swarm/(.*)", "dest": "api/swarm/index.py" },
-    { "src": "/api/(.*)",      "dest": "api/core/index.py" },
+    { "src": "/api/swarm/(.*)", "dest": "/api/swarm/index" },
+    { "src": "/api/(.*)",      "dest": "/api/core/index" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "status": 200, "dest": "/index.html" }
   ]
