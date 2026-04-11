@@ -11,12 +11,20 @@ const Footer = ({ onNavigate }) => {
                     {/* Brand Column */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.5rem' }}>
-                            <img src={logoAsset} alt="Logo" style={{ width: '45px', height: '45px', borderRadius: '8px', border: '1px solid #e2e8f0', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.05))' }} />
-                            <span style={{ fontSize: '1.75rem', fontWeight: '800', color: '#111827', letterSpacing: '-0.02em' }}>Aura</span>
+                            <img src={logoAsset} alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '6px', border: '1px solid #e2e8f0', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.05))' }} />
+                            <span style={{ fontSize: '1.5rem', fontWeight: '800', color: '#111827', letterSpacing: '-0.02em' }}>Aura</span>
                         </div>
-                        <p style={{ fontSize: '0.95rem', lineHeight: '1.5', color: '#6b7280', maxWidth: '250px' }}>
-                            Your Campus Co-Pilot. Empowering higher education with secure, FERPA-compliant AI intelligence.
-                        </p>
+                        <div style={{ display: 'flex', gap: '10px', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '0.75rem', background: '#f3f4f6', color: '#374151', padding: '4px 8px', borderRadius: '4px', border: '1px solid #e5e7eb', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                🔒 SOC 2 Compliant
+                            </span>
+                            <span style={{ fontSize: '0.75rem', background: '#f3f4f6', color: '#374151', padding: '4px 8px', borderRadius: '4px', border: '1px solid #e5e7eb', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                🛡️ FERPA
+                            </span>
+                            <span style={{ fontSize: '0.75rem', background: '#e0e7ff', color: '#4338ca', padding: '4px 8px', borderRadius: '4px', border: '1px solid #c7d2fe', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                🏥 HIPAA
+                            </span>
+                        </div>
                     </div>
 
                     {/* Solutions */}

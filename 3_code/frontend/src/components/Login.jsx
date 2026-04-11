@@ -69,49 +69,79 @@ const Login = () => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#0f172a' }}>
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'linear-gradient(to bottom, #fffaf0 0%, #ffffff 40%)' }}>
+            
+            {/* Transparent Fixed Header */}
+            <header className="landing-header">
+                <a href="/" className="logo-wrapper">
+                    <img src={logoAsset} alt="Aura Logo" style={{ width: '32px', height: '32px' }} />
+                    Aura
+                </a>
+                <nav>
+                    <a href="/architecture">Platform</a>
+                    <a href="/features/student-planner">Solutions</a>
+                    <a href="/privacy">Security</a>
+                    <a href="/about">Company</a>
+                </nav>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                    <a href="#" style={{ textDecoration: 'none', color: '#111827', fontWeight: '600', fontSize: '0.95rem' }} onClick={(e) => e.preventDefault()}>Log In</a>
+                    <button className="header-btn">Get Started</button>
+                </div>
+            </header>
+
             <div className="login-wrapper">
+                {/* Ambient glow in background */}
+                <div className="ambient-glow"></div>
+
                 {/* Left side – hero illustration and tagline */}
                 <div className="login-hero">
                     <h1 style={{
-                        fontSize: '3.5rem',
+                        fontSize: '4.5rem',
                         fontWeight: '800',
-                        background: 'linear-gradient(to right, #fff, #94a3b8)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
+                        color: '#111827',
+                        lineHeight: '1.1',
+                        letterSpacing: '-0.04em',
                         margin: 0
                     }}>Aura</h1>
-                    <h2 style={{ color: '#a5b4fc', fontSize: '1.75rem', marginTop: '-0.25rem', marginBottom: '1.5rem', fontWeight: '600' }}>
+                    <h2 style={{ 
+                        fontSize: '2rem', 
+                        background: 'linear-gradient(90deg, #4f46e5, #fbbf24)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        marginTop: '0.5rem', 
+                        marginBottom: '1.5rem', 
+                        fontWeight: '700' 
+                    }}>
                         Your Campus Co-Pilot
                     </h2>
-                    <p style={{ fontSize: '1.15rem', lineHeight: '1.6', opacity: 0.9 }}>
-                        The premier AI infrastructure for higher education.
-                        <br />
-                        Deeply integrated with your institution's core networks to deliver highly context-aware, FERPA & HIPAA-compliant multi-agent intelligence directly to stakeholders.
+                    <p style={{ fontSize: '1.2rem', lineHeight: '1.6', color: '#4b5563', marginBottom: '3.5rem', maxWidth: '650px' }}>
+                        Unify structured SIS data and unstructured academic content into a single sovereign knowledge graph. Aura empowers students, faculty, and administrators with proactive, compliant AI workflows.
                     </p>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.75rem', marginTop: '1.5rem' }}>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
-                        Real‑time GPA & course tracker
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-                        AI chat for instant academic help
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-                        Wellness check‑ins & personalized resources
-                    </li>
-                </ul>
-            </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem' }}>
+                        <div>
+                            <h3 style={{ fontSize: '1.1rem', color: '#1f2937', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700' }}>
+                                <span style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', width: '32px', height: '32px', background: 'white', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '8px', fontSize: '14px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', color: '#4f46e5' }}>S</span> Student Companion
+                            </h3>
+                            <p style={{ color: '#4b5563', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>Track real-time GPAs across courses, automate tutoring requests, and receive contextual guidance fueled by EdNex.</p>
+                        </div>
+                        <div>
+                            <h3 style={{ fontSize: '1.1rem', color: '#1f2937', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700' }}>
+                                <span style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', width: '32px', height: '32px', background: 'white', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '8px', fontSize: '14px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', color: '#4f46e5' }}>A</span> Admin Hub
+                            </h3>
+                            <p style={{ color: '#4b5563', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>Analyze university-wide trends while guaranteeing air-gapped FERPA and HIPAA compliance seamlessly.</p>
+                        </div>
+                    </div>
+                </div>
 
-            {/* Right side – glass‑morphism login form */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="glass-panel"
-            >
+                {/* Right side – login form */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem', position: 'relative' }}>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="glass-panel"
+                    >
                 <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
                     <div style={{
                         display: 'flex',
