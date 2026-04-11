@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import logoAsset from '../assets/logo.png';
-
+import Footer from './Footer';
 
 import './Login.css';
 
@@ -69,26 +69,27 @@ const Login = () => {
     };
 
     return (
-        <div className="login-wrapper">
-            {/* Left side – hero illustration and tagline */}
-            <div className="login-hero">
-                <h1 style={{
-                    fontSize: '3rem',
-                    fontWeight: '800',
-                    background: 'linear-gradient(to right, #fff, #94a3b8)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    margin: 0
-                }}>Aura | Student Success AI</h1>
-                <h2 style={{ color: '#a5b4fc', fontSize: '1.5rem', marginTop: '-0.5rem', marginBottom: '1.5rem', fontWeight: '600' }}>
-                    Powered by AI Agents
-                </h2>
-                <p style={{ fontSize: '1.2rem', lineHeight: '1.6', opacity: 0.9 }}>
-                    Your personal AI‑powered academic companion –
-                    <br />
-                    track grades, book tutoring, check‑in on wellness, and get instant AI advice.
-                </p>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#0f172a' }}>
+            <div className="login-wrapper">
+                {/* Left side – hero illustration and tagline */}
+                <div className="login-hero">
+                    <h1 style={{
+                        fontSize: '3.5rem',
+                        fontWeight: '800',
+                        background: 'linear-gradient(to right, #fff, #94a3b8)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        margin: 0
+                    }}>Aura</h1>
+                    <h2 style={{ color: '#a5b4fc', fontSize: '1.75rem', marginTop: '-0.25rem', marginBottom: '1.5rem', fontWeight: '600' }}>
+                        Your Campus Co-Pilot
+                    </h2>
+                    <p style={{ fontSize: '1.15rem', lineHeight: '1.6', opacity: 0.9 }}>
+                        The premier AI infrastructure for higher education.
+                        <br />
+                        Deeply integrated with your institution's core networks to deliver highly context-aware, FERPA & HIPAA-compliant multi-agent intelligence directly to stakeholders.
+                    </p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.75rem', marginTop: '1.5rem' }}>
                     <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
                         Real‑time GPA & course tracker
@@ -156,7 +157,7 @@ const Login = () => {
                         {isRegistering ? 'Create Account' : 'Sign In'}
                     </h1>
                     <p style={{ color: 'rgba(148, 163, 184, 0.8)', fontSize: '1rem', marginTop: '0.5rem', fontWeight: '500' }}>
-                        {isRegistering ? 'Join the Student Success AI community' : 'Welcome back to Aura'}
+                        {isRegistering ? 'Join Aura' : 'Welcome back to Aura'}
                     </p>
                 </div>
                 <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -239,6 +240,8 @@ const Login = () => {
                     </p>
                 </div>
             </motion.div>
+            </div>
+            <Footer />
         </div>
     );
 };

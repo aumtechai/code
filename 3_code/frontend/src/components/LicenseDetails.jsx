@@ -76,7 +76,7 @@ const LicenseDetails = ({ userData, onBack }) => {
 
                     <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
                         <h3 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.75rem', color: '#1e293b' }}>Institutional License</h3>
-                        <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem' }}>Enjoy the complete Student Success AI suite via your university partnership.</p>
+                        <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem' }}>Enjoy the complete Aura Campus Co-Pilot suite via your university partnership.</p>
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center' }}>
                             <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#10b981' }}>UNLOCKED</span>
                         </div>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Professional Corporate AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #070B14;
+            --card-bg: #111827;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 4rem;
+            padding: 2rem;
+        }
+
+        .left-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo-wrap {
+            margin-bottom: 3rem;
+            display: inline-block;
+        }
+
+        .logo-wrap img {
+            width: 160px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            color: #f3f4f6;
+        }
+
+        .sub-header {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            max-width: 90%;
+        }
+
+        .roles-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .role-box {
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem 2rem;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .role-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .role-desc {
+            font-size: 0.95rem;
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+
+        .login-side {
+            display: flex;
+            align-items: center;
+        }
+
+        .login-panel {
+            background: var(--card-bg);
+            width: 100%;
+            padding: 3rem;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .login-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), transparent, transparent, var(--primary));
+            z-index: -1;
+            border-radius: 18px;
+            opacity: 0.3;
+        }
+
+        .login-panel h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .login-panel p.welcome {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+        }
+
+        .field {
+            margin-bottom: 1.5rem;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 1rem;
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #2563eb;
+        }
+        
+        .divider {
+            margin: 2rem 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 50%; width: 100%; height: 1px;
+            background: #374151;
+            z-index: 1;
+        }
+        
+        .divider span {
+            background: var(--card-bg);
+            padding: 0 10px;
+            position: relative;
+            z-index: 2;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .sso-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #374151;
+            color: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .sso-btn:hover {
+            background: #1f2937;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Side -->
+        <div class="left-content">
+            <div class="logo-wrap">
+                <img src="../logo.png" alt="Aura Logo">
+            </div>
+            <h1>Aura Intelligence Platform</h1>
+            <p class="sub-header">
+                The premier AI infrastructure for higher education. Aura deeply integrates with your institution's Banner and Canvas networks to deliver highly context-aware, FERPA & HIPAA-compliant multi-agent intelligence directly to your campus stakeholders.
+            </p>
+
+            <div class="roles-container">
+                <div class="role-box">
+                    <div class="role-title">The Student Experience</div>
+                    <div class="role-desc">A 24/7 personal academic companion. Track real-time course grades, automatically book tutoring sessions, receive wellness check-ins, and obtain instant, specialized academic and financial aid guidance.</div>
+                </div>
+
+                <div class="role-box">
+                    <div class="role-title">Faculty Enablement</div>
+                    <div class="role-desc">Automate tedious tasks like syllabus parsing to the EdNex database, instantly identify at-risk students through Aura's predictive analytics, and boost overall classroom engagement.</div>
+                </div>
+
+                <div class="role-box">
+                    <div class="role-title">Administrative Oversight</div>
+                    <div class="role-desc">Maintain full compliance guarantees via Aura Vault's sovereign models. Access macro-level institutional metrics and seamlessly cross-reference performance analytics without compromising data security.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="login-side">
+            <div class="login-panel">
+                <h2>Portal Access</h2>
+                <p class="welcome">Enter your institutional credentials</p>
+                <form>
+                    <div class="field">
+                        <label>Email Address</label>
+                        <input type="email" value="admin@aumtech.ai" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <input type="password" value="********" autocomplete="new-password">
+                    </div>
+                    <button type="button" class="submit-btn">Sign In</button>
+                    
+                    <div class="divider"><span>OR</span></div>
+                    
+                    <button type="button" class="sso-btn">Sign in with Microsoft Edu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
