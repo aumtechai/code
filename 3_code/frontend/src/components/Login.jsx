@@ -29,6 +29,7 @@ const Login = () => {
     const [fullName, setFullName] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
     const navigate = useNavigate();
 
     const handleGoogleSuccess = async (credentialResponse) => {
@@ -55,6 +56,7 @@ const Login = () => {
             : new URLSearchParams({ username: email, password: password });
 
         setLoading(true);
+        setErrorMsg('');
         try {
             const config = isRegistering ? {} : { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
             const response = await api.post(endpoint, payload, config);
@@ -74,7 +76,7 @@ const Login = () => {
             console.error("Auth Error:", error);
             const detail = error.response?.data?.detail;
             const message = typeof detail === 'string' ? detail : "Authentication failed. Please check your credentials.";
-            alert(message);
+            setErrorMsg(message);
         } finally {
             setLoading(false);
         }
@@ -242,6 +244,16 @@ const Login = () => {
                             <button type="submit" disabled={loading} className="login-button">
                                 {loading ? "Authenticating…" : (isRegistering ? "Create Account" : "Authenticate →")}
                             </button>
+
+                            {errorMsg && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: -10 }} 
+                                    animate={{ opacity: 1, y: 0 }} 
+                                    className="login-error-msg"
+                                >
+                                    {errorMsg}
+                                </motion.div>
+                            )}
 
                         </form>
 

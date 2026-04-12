@@ -451,6 +451,20 @@ body {
   cursor: not-allowed;
 }
 
+/* ---- Error Message ---- */
+.login-error-msg {
+  color: #b91c1c; /* red-700 */
+  background: #fef2f2; /* red-50 */
+  border: 1px solid #fecaca; /* red-200 */
+  font-size: 0.825rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  text-align: left;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
 /* ---- Divider ---- */
 .divider-row {
   display: flex;
