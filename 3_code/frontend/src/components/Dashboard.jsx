@@ -14,6 +14,7 @@ import Progress from './Progress';
 import History from './History';
 import AdminPanel from './AdminPanel';
 import AdminEdnex from './AdminEdnex';
+import AdminAgentConfig from './AdminAgentConfig';
 import IntegrationWizard from './IntegrationWizard';
 import FlashcardGenerator from './FlashcardGenerator';
 import SyllabusScanner from './SyllabusScanner';
@@ -161,6 +162,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                             <div className="section-title">Admin</div>
                             <div className={`nav-item ${activeTab === 'adminPanel' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminPanel')}><Shield size= {20} strokeWidth={2.75} /> Admin Panel</div>
                             <div className={`nav-item ${activeTab === 'adminEdnex' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminEdnex')}><Database size={20} strokeWidth={2.75} /> EdNex Config</div>
+                            <div className={`nav-item ${activeTab === 'adminAgentConfig' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminAgentConfig')}><Brain size={20} strokeWidth={2.75} /> Agent Swarm Config</div>
                             <div className={`nav-item ${activeTab === 'integration' ? 'active' : ''}`} onClick={() => handleProtectedTab('integration')}><Map size={20} strokeWidth={2.75} /> Institution Integration</div>
                             <div className={`nav-item ${activeTab === 'quoteGen' ? 'active' : ''}`} onClick={() => handleProtectedTab('quoteGen')}><Calculator size={20} strokeWidth={2.75} /> Quote Generator</div>
                         </>
@@ -1050,6 +1052,7 @@ const Dashboard = () => {
                     {activeTab === 'license' && <LicenseDetails userData={userData} onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'adminPanel' && <AdminPanel onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'adminEdnex' && <AdminEdnex onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'adminAgentConfig' && <AdminAgentConfig onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'integration' && <IntegrationWizard onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'quoteGen' && <QuoteGenerator onBack={() => setActiveTab('dashboard')} />}
 

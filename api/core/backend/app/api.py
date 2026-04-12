@@ -71,6 +71,38 @@ async def debug_swarm_check():
     except Exception as e:
         return {"status": "error", "message": str(e), "type": str(type(e)), "path": str(locals().get('aura_core_path', 'unknown'))}
 
+@router.get("/admin/agents")
+async def get_agent_config(admin: User = Depends(get_admin_user)):
+    import json
+    from pathlib import Path
+    try:
+        config_path = Path(__file__).resolve().parents[4] / "api" / "swarm" / "aura_core" / "config" / "agent_config.json"
+        if not config_path.exists():
+            raise HTTPException(status_code=404, detail="agent_config.json not found")
+        with open(config_path, "r") as f:
+            data = json.load(f)
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/agents")
+async def update_agent_config(request: Request, admin: User = Depends(get_admin_user)):
+    import json
+    from pathlib import Path
+    try:
+        data = await request.json()
+        config_path = Path(__file__).resolve().parents[4] / "api" / "swarm" / "aura_core" / "config" / "agent_config.json"
+        
+        # Validate that 'master' node exists
+        if "master" not in data or "prompt" not in data["master"]:
+            raise HTTPException(status_code=400, detail="Config must contain a 'master' node with a 'prompt'.")
+            
+        with open(config_path, "w") as f:
+            json.dump(data, f, indent=2)
+            
+        return {"status": "success", "message": "Agent Configuration Updated Successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # Payment endpoints removed as app is now University Licensed / Free.

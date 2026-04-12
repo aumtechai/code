@@ -4,6 +4,7 @@ import json
 import time
 import asyncio
 import traceback
+import re
 from typing import List, Dict, Any
 from openai import AsyncOpenAI
 
@@ -26,6 +27,26 @@ CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "con
 def load_agent_config():
     with open(CONFIG_PATH, "r") as f:
         return json.load(f)
+
+def extract_json(text: str) -> dict:
+    try:
+        return json.loads(text)
+    except Exception:
+        pass
+    match = re.search(r'```(?:json)?\s*(.*?)\s*```', text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(1))
+        except Exception:
+            pass
+    start = text.find('{')
+    end = text.rfind('}')
+    if start != -1 and end != -1 and end > start:
+        try:
+            return json.loads(text[start:end+1])
+        except Exception:
+            pass
+    return {}
 
 # Lightweight Agent Peer for Swarm logic
 class LightweightAgent:
@@ -86,29 +107,26 @@ async def run_aura_core_query_async(query: str, student_email: str):
 
     try:
         # 1. Planning Phase: Orchestrator
+        master_config = config.get("master", {})
+        orchestrator_prompt = master_config.get("prompt", 
+            'You are the Aura Master Orchestrator. Respond ONLY with JSON: {"selected_agents": ["AGENT_KEY"], "reasoning": "..."}'
+        )
         orchestrator = LightweightAgent(
-            name="Aura_Orchestrator",
-            system_message="""You are the Aura Master Orchestrator. 
-Identify ALL specialists needed from: ACADEMIC_ADVISOR, FINANCIER, STUDENT_HELP, CAREER_PLACEMENT.
-Respond ONLY with JSON: {"selected_agents": ["AGENT_KEY"], "reasoning": "..."}""",
+            name=master_config.get("name", "Aura_Orchestrator"),
+            system_message=orchestrator_prompt,
             client=client
         )
 
         print(f"[Aura_Core] Orchestrating: {query}")
         plan_raw = await orchestrator.chat(f"User Query: {query}\nWhich specialists are needed?")
         
-        # Clean JSON
-        plan_clean = plan_raw.strip().replace("```json", "").replace("```", "")
-        master_decision = json.loads(plan_clean)
+        master_decision = extract_json(plan_raw)
         
-        agent_key_map = {
-            "STUDENT_HELP": "student_help",
-            "ACADEMIC_ADVISOR": "academic_advisor",
-            "FINANCIER": "financier",
-            "CAREER_PLACEMENT": "placement"
-        }
+        # Dynamically build key map from config keys (ignoring master)
+        agent_key_map = {k.upper(): k for k in config.keys() if k != "master"}
 
-        selected_keys = [agent_key_map.get(k) for k in master_decision.get("selected_agents", []) if agent_key_map.get(k)]
+        # Lookup selected agents
+        selected_keys = [agent_key_map.get(str(k).upper()) for k in master_decision.get("selected_agents", []) if agent_key_map.get(str(k).upper())]
         if not selected_keys: selected_keys = ["student_help"]
 
         flow_log.append({
@@ -132,8 +150,7 @@ Respond ONLY with JSON: {"selected_agents": ["AGENT_KEY"], "reasoning": "..."}""
             # Sub-Phase A: Tool/Module Decision
             spec_msg = f"User Query: {query}. From student: {student_email}. Based on your role, suggest target_module in JSON: {{\"target_module\": \"...\"}}"
             spec_init_raw = await specialist.chat(spec_msg)
-            spec_init_clean = spec_init_raw.strip().replace("```json", "").replace("```", "")
-            spec_decision = json.loads(spec_init_clean)
+            spec_decision = extract_json(spec_init_raw)
             target_module = spec_decision.get("target_module", "general")
             
             # Sub-Phase B: Data Retrieval
@@ -142,8 +159,7 @@ Respond ONLY with JSON: {"selected_agents": ["AGENT_KEY"], "reasoning": "..."}""
             # Sub-Phase C: Final Domain Answer (Maintain Context)
             final_msg = f"EdNex DB Data for {target_module}: {db_data}. Provide your final analysis in JSON: {{\"message_content\": \"...\", \"sources\": [...]}}"
             final_raw = await specialist.chat(final_msg, clear_history=False)
-            final_clean = final_raw.strip().replace("```json", "").replace("```", "")
-            final_result = json.loads(final_clean)
+            final_result = extract_json(final_raw)
             
             specialist_answers.append({
                 "agent": agent_name,
@@ -165,8 +181,7 @@ Respond ONLY with JSON: {"selected_agents": ["AGENT_KEY"], "reasoning": "..."}""
         
         synth_prompt = f"User query: {query}\n\nReports:\n{json.dumps(specialist_answers)}\nProvide final synthesis."
         synth_raw = await synthesizer.chat(synth_prompt)
-        synth_clean = synth_raw.strip().replace("```json", "").replace("```", "")
-        synthesis_result = json.loads(synth_clean)
+        synthesis_result = extract_json(synth_raw)
 
         duration = time.time() - start_time
         log_agent_call(query, "Aura_Lightweight_Swarm", synthesis_result.get("final_answer", ""), duration=duration)
