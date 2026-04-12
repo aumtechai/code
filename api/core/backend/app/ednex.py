@@ -37,7 +37,7 @@ def get_supabase_credentials():
     if not url or not key:
         return None, None
         
-    return url, key
+    return url.strip(), key.strip()
 
 def get_supabase_client():
     url, key = get_supabase_credentials()
