@@ -263,29 +263,18 @@ def ingest_data(
         
     mappings = json.loads(mappings_json)
     create_columns = json.loads(create_columns_json)
-    import pandas as pd
-    try:
-        csv_file.file.seek(0)
-        df = pd.read_csv(csv_file.file, encoding='utf-8')
-    except UnicodeDecodeError:
-        csv_file.file.seek(0)
-        df = pd.read_csv(csv_file.file, encoding='windows-1252')
-    except Exception as read_err:
-        raise HTTPException(status_code=400, detail=f"Failed to read CSV: {str(read_err)}")
     
-    # 1. Transform DataFrame based on mapping
-    rename_dict = {k: v for k, v in mappings.items() if v}
-    df_mapped = df[list(rename_dict.keys())].rename(columns=rename_dict)
-    
-    # 1.5 Handle Dynamic Schema Alterations
+    import csv 
+    import io
+
+    # 1. Handle Dynamic Schema Alterations
     try:
         if create_columns:
             with engine.connect() as conn:
                 for col in create_columns:
-                    # Very simple sanitization
                     safe_col = "".join([c for c in col if c.isalnum() or c == "_"]).lower()
                     if safe_col:
-                        sql = f'ALTER TABLE {schema_name}.{table_name} ADD COLUMN "{safe_col}" VARCHAR'
+                        sql = f'ALTER TABLE "{schema_name}"."{table_name}" ADD COLUMN "{safe_col}" VARCHAR'
                         conn.execute(text(sql))
                 conn.commit()
     except Exception as alt_err:
@@ -293,20 +282,53 @@ def ingest_data(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to create custom column in schema: {str(alt_err)}")
 
-    # 2. Write to DB
+    # 2. Parse CSV
     try:
-        # Use pandas to_sql or raw SQL for large sets
-        # Note: to_sql might not support schemas perfectly if engine is not pre-configured.
-        df_mapped.to_sql(
-            table_name, 
-            engine, 
-            schema=schema_name, 
-            if_exists='append', 
-            index=False,
-            method='multi' # Optimized insertion
-        )
-        return {"status": "success", "rows_ingested": len(df_mapped)}
+        csv_file.file.seek(0)
+        raw_content = csv_file.file.read()
+        try:
+            content_str = raw_content.decode('utf-8')
+        except UnicodeDecodeError:
+            content_str = raw_content.decode('windows-1252')
+            
+        csv_reader = csv.DictReader(io.StringIO(content_str))
+    except Exception as read_err:
+        raise HTTPException(status_code=400, detail=f"Failed to read CSV: {str(read_err)}")
+    
+    # 3. Transform
+    rename_dict = {k: v for k, v in mappings.items() if v}
+    if not rename_dict:
+        raise HTTPException(status_code=400, detail="No active mappings selected.")
+        
+    target_columns_ordered = list(rename_dict.values())
+    
+    rows_to_insert = []
+    for row in csv_reader:
+        clean_row = {rename_dict[k]: (v if v else None) for k, v in row.items() if k in rename_dict}
+        rows_to_insert.append(clean_row)
+
+    if not rows_to_insert:
+        return {"status": "success", "rows_ingested": 0}
+
+    # 4. Write to DB using SQLAlchemy Batches (Removes Pandas Dependency from Vercel Serverless)
+    try:
+        with engine.connect() as conn:
+            chunk_size = 500
+            for i in range(0, len(rows_to_insert), chunk_size):
+                chunk = rows_to_insert[i:i+chunk_size]
+                
+                cols_str = ", ".join([f'"{c}"' for c in target_columns_ordered])
+                vals_str = ", ".join([f":{c}" for c in target_columns_ordered])
+                
+                sql = f'INSERT INTO "{schema_name}"."{table_name}" ({cols_str}) VALUES ({vals_str})'
+                
+                # Executemany execution
+                conn.execute(text(sql), chunk)
+                
+            conn.commit()
+            
+        return {"status": "success", "rows_ingested": len(rows_to_insert)}
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Database Insertion Error: {str(e)}")
