@@ -93,10 +93,13 @@ const IntegrationWizard = () => {
                 if (m.target) mappingDict[m.source] = m.target;
             });
 
+            const createColumns = mappings.filter(m => m.create_column).map(m => m.source);
+
             const formData = new FormData();
             formData.append('schema_name', schema);
             formData.append('table_name', activeTargetTable);
             formData.append('mappings_json', JSON.stringify(mappingDict));
+            formData.append('create_columns_json', JSON.stringify(createColumns));
             formData.append('csv_file', selectedFiles[0]);
 
             const res = await api.post('/api/integration/ingest', formData);
@@ -110,11 +113,20 @@ const IntegrationWizard = () => {
         }
     };
 
+    const handleCreateColumn = (index) => {
+        const newMappings = [...mappings];
+        newMappings[index].target = newMappings[index].source;
+        newMappings[index].status = 'custom';
+        newMappings[index].create_column = true;
+        setMappings(newMappings);
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
             case 'green': return '#10b981';
             case 'yellow': return '#f59e0b';
             case 'red': return '#ef4444';
+            case 'custom': return '#3b82f6';
             default: return '#94a3b8';
         }
     };
@@ -320,9 +332,9 @@ const IntegrationWizard = () => {
                                     <p style={{ color: '#64748b' }}>Mapping <b>{selectedFiles[0]?.name}</b> to table <b>{activeTargetTable}</b></p>
                                 </div>
                                 <div style={{ display: 'flex', gap: '8px' }}>
-                                    {['green', 'yellow', 'red'].map(s => (
+                                    {['green', 'yellow', 'custom', 'red'].map(s => (
                                         <div key={s} style={{ fontSize: '0.75rem', fontWeight: '800', padding: '4px 10px', borderRadius: '6px', background: `${getStatusColor(s)}15`, color: getStatusColor(s), textTransform: 'uppercase' }}>
-                                            {s === 'green' ? 'Exact' : s === 'yellow' ? 'Semantic' : 'Missing'}
+                                            {s === 'green' ? 'Exact' : s === 'yellow' ? 'Semantic' : s === 'custom' ? 'Custom' : 'Missing'}
                                         </div>
                                     ))}
                                 </div>
@@ -349,6 +361,14 @@ const IntegrationWizard = () => {
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                         <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: getStatusColor(m.status) }}></div>
                                                         <span style={{ fontWeight: '600', color: m.status === 'red' ? '#ef4444' : '#1e293b' }}>{m.target || 'UNMAPPED'}</span>
+                                                        {m.status === 'red' && (
+                                                            <button 
+                                                                onClick={() => handleCreateColumn(i)}
+                                                                style={{ marginLeft: '12px', fontSize: '0.75rem', padding: '4px 8px', background: '#e2e8f0', color: '#475569', borderRadius: '4px', cursor: 'pointer', border: '1px solid #cbd5e1', fontWeight: '700' }}
+                                                            >
+                                                                + Add Column
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: '1rem', textAlign: 'right' }}>

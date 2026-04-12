@@ -254,6 +254,7 @@ def ingest_data(
     schema_name: str = Form(...),
     table_name: str = Form(...),
     mappings_json: str = Form(...), # { csv_col: target_col }
+    create_columns_json: str = Form("[]"),
     csv_file: UploadFile = File(...),
     current_user: User = Depends(get_current_user)
 ):
@@ -261,6 +262,7 @@ def ingest_data(
         raise HTTPException(status_code=403, detail="Admin restricted")
         
     mappings = json.loads(mappings_json)
+    create_columns = json.loads(create_columns_json)
     import pandas as pd
     try:
         csv_file.file.seek(0)
@@ -275,6 +277,22 @@ def ingest_data(
     rename_dict = {k: v for k, v in mappings.items() if v}
     df_mapped = df[list(rename_dict.keys())].rename(columns=rename_dict)
     
+    # 1.5 Handle Dynamic Schema Alterations
+    try:
+        if create_columns:
+            with engine.connect() as conn:
+                for col in create_columns:
+                    # Very simple sanitization
+                    safe_col = "".join([c for c in col if c.isalnum() or c == "_"]).lower()
+                    if safe_col:
+                        sql = f'ALTER TABLE {schema_name}.{table_name} ADD COLUMN "{safe_col}" VARCHAR'
+                        conn.execute(text(sql))
+                conn.commit()
+    except Exception as alt_err:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to create custom column in schema: {str(alt_err)}")
+
     # 2. Write to DB
     try:
         # Use pandas to_sql or raw SQL for large sets
@@ -289,4 +307,6 @@ def ingest_data(
         )
         return {"status": "success", "rows_ingested": len(df_mapped)}
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
