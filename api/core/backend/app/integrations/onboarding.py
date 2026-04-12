@@ -347,7 +347,7 @@ def ingest_data(
                 
             conn.commit()
             
-        return {"status": "success", "rows_ingested": len(rows_to_insert)}
+        return {"status": "success", "rows_ingested": len(rows_to_insert), "sample_data": rows_to_insert[:3]}
     except Exception as e:
         import traceback
         traceback.print_exc()

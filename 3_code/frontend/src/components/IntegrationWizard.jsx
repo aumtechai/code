@@ -19,6 +19,7 @@ const IntegrationWizard = () => {
     const [mappings, setMappings] = useState([]);
     const [activeTargetTable, setActiveTargetTable] = useState('mod01_student_profiles');
     const [ingestionResult, setIngestionResult] = useState(null);
+    const [showSample, setShowSample] = useState(false);
 
     useEffect(() => {
         fetchInstitutions();
@@ -433,9 +434,43 @@ const IntegrationWizard = () => {
                                 </div>
                             </div>
 
-                            <div style={{ display: 'flex', gap: '1rem' }}>
-                                <button className="primary-btn" onClick={() => window.location.reload()}>Start Another Integration</button>
-                                <button style={{ background: 'white', border: '2px solid #e2e8f0', padding: '12px 32px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}>View Data in Supabase</button>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', width: '100%', maxWidth: '800px' }}>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <button className="primary-btn" onClick={() => window.location.reload()}>Start Another Integration</button>
+                                    <button 
+                                        onClick={() => setShowSample(!showSample)}
+                                        style={{ background: 'white', border: '2px solid #e2e8f0', padding: '12px 32px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}
+                                    >
+                                        {showSample ? 'Hide Preview' : 'Preview Ingested Sample'}
+                                    </button>
+                                </div>
+
+                                {showSample && ingestionResult?.sample_data && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: -20 }} 
+                                        animate={{ opacity: 1, y: 0 }}
+                                        style={{ width: '100%', overflowX: 'auto', background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0' }}
+                                    >
+                                        <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                                            <thead style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                                                <tr>
+                                                    {Object.keys(ingestionResult.sample_data[0]).map(k => (
+                                                        <th key={k} style={{ padding: '12px 16px', color: '#475569', fontWeight: 'bold' }}>{k}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {ingestionResult.sample_data.map((row, idx) => (
+                                                    <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                                        {Object.values(row).map((val, vIdx) => (
+                                                            <td key={vIdx} style={{ padding: '12px 16px', color: '#334155' }}>{val?.toString() || ''}</td>
+                                                        ))}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </motion.div>
+                                )}
                             </div>
                         </motion.div>
                     )}
