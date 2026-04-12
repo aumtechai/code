@@ -326,6 +326,8 @@ async def get_ednex_health(current_user: User = Depends(get_current_user)):
         return {'status': 'success', 'modules': health_data}
         
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
         print(f"Critical EdNex Health Failure: {e}")
         # Return partial data even on failure so UI remains functional
         return {
