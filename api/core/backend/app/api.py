@@ -701,7 +701,12 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Sessi
                         print("LOGIN SUCCESS (EdNex Proxy)")
                         return {"access_token": access_token, "token_type": "bearer"}
         except Exception as se:
+            import traceback
+            traceback.print_exc()
             print(f"EdNex check error: {se}")
+            # DO NOT SWALLOW IT! Let's return it directly to debug prod!
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=500, content={"detail": f"EDNEX PROXY ERROR: {str(se)}"})
             
         # 3. Failed overall
         raise HTTPException(
