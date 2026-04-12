@@ -4,8 +4,8 @@ import json
 import requests
 
 # Connection setup: Reusing project defaults or env
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://rfkoylpcuptzkakmqotq.supabase.co")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://rfkoylpcuptzkakmqotq.supabase.co").strip()
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "").strip()
 
 def query_ednex_module(module_name: str, email: str):
     """

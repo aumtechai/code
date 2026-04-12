@@ -71,6 +71,8 @@ async def run_aura_core_query_async(query: str, student_email: str):
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         return {"status": "error", "message": "GOOGLE_API_KEY is not set."}
+    
+    api_key = api_key.strip()
         
     # Initialize OpenAI-compatible Client for Gemini
     client = AsyncOpenAI(
