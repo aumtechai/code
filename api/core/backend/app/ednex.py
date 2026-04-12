@@ -81,7 +81,7 @@ async def get_ednex_health(current_user: User = Depends(get_current_user)):
     import requests
     headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
     
-    health_status = []
+    health_status = {}
     
     try:
         for module in modules:
@@ -89,34 +89,26 @@ async def get_ednex_health(current_user: User = Depends(get_current_user)):
                 # To get exact count in PostgREST, we can use head request with Prefer: count=exact
                 resp = requests.head(f"{url}/rest/v1/{module['id']}", headers=headers, params={"limit": 1})
                 # But realistically the dashboard just wants a number, or just 10 (status OK)
-                # Let's perform a simple GET limit 1
+                # Let's perform a simple GET limit 100
                 resp = requests.get(f"{url}/rest/v1/{module['id']}?select=*&limit=100", headers=headers)
                 
                 if resp.status_code == 200:
-                    health_status.append({
-                        "module": module["id"],
-                        "name": module["name"],
-                        "status": "Healthy",
-                        "records": len(resp.json()) # Return visible amount
-                    })
+                    health_status[module["name"]] = {
+                        "count": len(resp.json()),
+                        "status": "Healthy"
+                    }
                 else:
-                    health_status.append({
-                        "module": module["id"],
-                        "name": module["name"],
-                        "status": "Critical Failure",
-                        "records": 0,
-                        "error": resp.text
-                    })
+                    health_status[module["name"]] = {
+                        "count": 0,
+                        "status": f"Critical Failure: {resp.text}"
+                    }
             except Exception as e:
-                health_status.append({
-                    "module": module["id"],
-                    "name": module["name"],
-                    "status": "Critical Failure",
-                    "records": 0,
-                    "error": str(e)
-                })
+                health_status[module["name"]] = {
+                    "count": 0,
+                    "status": "Critical Failure"
+                }
         
-        return health_status
+        return {"modules": health_status}
         
     except Exception as e:
         import traceback
