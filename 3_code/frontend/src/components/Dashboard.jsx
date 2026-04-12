@@ -90,7 +90,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
 
                     <div style={{ textAlign: 'center', marginTop: '16px' }}>
                         <h2 style={{ fontSize: '1.6rem', fontWeight: '900', margin: 0, lineHeight: 1.1, color: '#1e293b', letterSpacing: '-0.02em' }}>Aura</h2>
-                        <span style={{ fontSize: '0.95rem', color: '#64748b', fontWeight: '600' }}>Intelligent Academic Platform</span>
+                        <span style={{ fontSize: '0.95rem', color: '#64748b', fontWeight: '600' }}>Your Campus Co-Pilot</span>
                     </div>
 
                     {/* Mobile Close Button */}
