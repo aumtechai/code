@@ -1,14 +1,20 @@
 import os
-from supabase import create_client, Client
 import time
 import json
+import sys
 
-# Connection setup: Reusing project defaults or env
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://rfkoylpcuptzkakmqotq.supabase.co")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
-
-def get_supabase():
-    return create_client(SUPABASE_URL, SUPABASE_KEY)
+# Safely import the central App DB Engine to fully bypass Vercel uncompiled supabase-py packages
+try:
+    from pathlib import Path
+    root_path = Path(__file__).resolve().parents[4]
+    api_core_path = str(root_path / "api" / "core" / "backend")
+    if api_core_path not in sys.path:
+        sys.path.append(api_core_path)
+    from app.auth import engine
+    from sqlalchemy import text
+except Exception as e:
+    engine = None
+    print(f"[Aura_Core] DB DB Tool Import Error: {e}")
 
 def query_ednex_module(module_name: str, email: str):
     """
@@ -16,32 +22,46 @@ def query_ednex_module(module_name: str, email: str):
     This is a core 'hand' for specialists.
     """
     start_time = time.time()
-    supabase = get_supabase()
     
+    if not engine:
+        return "Critical Error: SQLAlchemy Engine is not available inside Swarm runtime."
+        
     try:
-        # Step 1: Match User ID from Email
-        user_resp = supabase.table("mod00_users").select("id").eq("email", email).execute()
-        if not user_resp.data:
-            return f"Error: Student with email {email} not found in EdNex."
-        
-        user_id = user_resp.data[0]["id"]
-        
-        # Step 2: Query the target module
-        # Dynamic filter for cross-module consistency
-        target_col = "user_id"
-        if module_name in ["mod02_student_accounts", "mod04_enrollments", "mod08_aid_packages", "mod03_advising_appointments"]:
-            target_col = "student_id"
-        
-        result = supabase.table(module_name).select("*").eq(target_col, user_id).execute()
-        
-        duration = time.time() - start_time
-        print(f"[Aura_Core] DB Tool: Query {module_name} took {duration:.2f}s")
-        
-        if result.data:
-            return json.dumps(result.data, indent=2)
-        else:
-            return f"Notice: No records found in {module_name} for this student."
+        with engine.connect() as conn:
+            # Step 1: Match User ID from Email
+            q_user = text('SELECT id FROM "public"."mod00_users" WHERE email = :email')
+            user_res = conn.execute(q_user, {"email": email}).mappings().first()
             
+            if not user_res:
+                return f"Error: Student with email {email} not found in EdNex."
+                
+            user_id = str(user_res["id"])
+            
+            # Step 2: Query the target module
+            target_col = "user_id"
+            if module_name in ["mod02_student_accounts", "mod04_enrollments", "mod08_aid_packages", "mod03_advising_appointments"]:
+                target_col = "student_id"
+                
+            q_target = text(f'SELECT * FROM "public"."{module_name}" WHERE {target_col} = :uid LIMIT 10')
+            target_res = conn.execute(q_target, {"uid": user_id}).mappings().all()
+            
+            # Serialize
+            results_list = []
+            for r in target_res:
+                r_dict = dict(r)
+                for k, v in r_dict.items():
+                    if hasattr(v, 'isoformat'):
+                        r_dict[k] = v.isoformat()
+                results_list.append(r_dict)
+                
+            duration = time.time() - start_time
+            print(f"[Aura_Core] DB Tool: Query {module_name} took {duration:.2f}s")
+            
+            if results_list:
+                return json.dumps(results_list, indent=2)
+            else:
+                return f"Notice: No records found in {module_name} for this student."
+                
     except Exception as e:
         return f"Database Error in {module_name}: {str(e)}"
 
