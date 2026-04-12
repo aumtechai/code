@@ -1,38 +1,22 @@
 import React from 'react';
-import { ChevronLeft } from 'lucide-react';
+import PublicLayout from './PublicLayout';
 
 const PublicPage = ({ title, onBack }) => (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
-        <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button 
-                onClick={onBack || (() => window.history.back())} 
-                style={{ 
-                    background: 'white', 
-                    border: '1px solid #e2e8f0', 
-                    borderRadius: '12px', 
-                    padding: '8px 16px',
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '8px',
-                    cursor: 'pointer', 
-                    color: '#475569',
-                    fontWeight: '700',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                    flexShrink: 0,
-                    transition: 'all 0.2s'
-                }}
-                onMouseOver={e => e.currentTarget.style.background = '#f8fafc'}
-                onMouseOut={e => e.currentTarget.style.background = 'white'}
-            >
-                <ChevronLeft size={20} strokeWidth={3} /> Back
-            </button>
-            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0 }}>{title}</h1>
+    <PublicLayout onBack={onBack || (() => window.history.back())}>
+        <div style={{ background: '#faf7f2', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 2rem' }}>
+            <div style={{ maxWidth: '540px', width: '100%', textAlign: 'center' }}>
+                <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '1rem' }}>Aura</span>
+                <h1 style={{ fontSize: '2.2rem', fontWeight: '900', letterSpacing: '-0.04em', color: '#0f172a', marginBottom: '1rem' }}>{title}</h1>
+                <div style={{ background: 'white', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '3rem 2.5rem', marginTop: '1.5rem' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.5rem' }}>🔄</div>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.75rem' }}>Page Coming Soon</h2>
+                    <p style={{ color: '#64748b', lineHeight: '1.7', fontSize: '0.95rem' }}>
+                        We're working on the <strong>{title}</strong> page.<br />Please check back shortly.
+                    </p>
+                </div>
+            </div>
         </div>
-        <div className="card-white" style={{ lineHeight: '1.6', color: '#334155', textAlign: 'center', padding: '4rem 2rem' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>Page Coming Soon</h2>
-            <p>We are currently working on the <strong>{title}</strong> page. Please check back later!</p>
-        </div>
-    </div>
+    </PublicLayout>
 );
 
 export default PublicPage;

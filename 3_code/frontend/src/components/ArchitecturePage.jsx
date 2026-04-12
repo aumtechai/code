@@ -1,23 +1,21 @@
 import React from 'react';
 import AumtechAnimation from './AumtechAnimation';
+import PublicLayout from './PublicLayout';
 import './ArchitecturePage.css';
 
-const ArchitecturePage = () => {
-    return (
-        <div className="architecture-page">
-            <header className="arch-header">
+const ArchitecturePage = () => (
+    <PublicLayout onBack={() => window.history.back()}>
+        <div className="arch-content">
+            <div className="arch-page-header">
+                <span className="arch-eyebrow">Platform</span>
                 <h1>Aumtech.ai Architecture</h1>
-                <p>Internal Preview of the AI Engine & Ecosystem</p>
-                <button className="back-btn" onClick={() => window.history.back()}>← Back</button>
-            </header>
-            <main className="arch-main">
+                <p>Internal preview of the AI engine &amp; institutional data ecosystem</p>
+            </div>
+            <div className="arch-diagram-wrapper">
                 <AumtechAnimation />
-            </main>
-            <footer className="arch-footer">
-                <p>© 2026 Aumtech AI. Confidential Architecture Diagram.</p>
-            </footer>
+            </div>
         </div>
-    );
-};
+    </PublicLayout>
+);
 
 export default ArchitecturePage;

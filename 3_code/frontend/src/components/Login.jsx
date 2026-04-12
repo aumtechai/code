@@ -3,10 +3,25 @@ import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
+import { Link } from 'react-router-dom';
 import logoAsset from '../assets/logo.png';
-import Footer from './Footer';
 
 import './Login.css';
+
+const CheckIcon = () => (
+    <svg className="feature-check" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="10" fill="rgba(99,102,241,0.18)"/>
+        <path d="M6 10.5L8.5 13L14 7.5" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+const LockIcon = () => (
+    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="7" width="10" height="8" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+        <path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+        <circle cx="8" cy="11" r="1" fill="currentColor"/>
+    </svg>
+);
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -46,8 +61,8 @@ const Login = () => {
 
             if (isRegistering) {
                 const loginPayload = new URLSearchParams({ username: email, password: password });
-                const loginResponse = await api.post('/api/auth/login', loginPayload, { 
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' } 
+                const loginResponse = await api.post('/api/auth/login', loginPayload, {
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 });
                 localStorage.setItem('token', loginResponse.data.access_token);
                 navigate('/dashboard');
@@ -67,116 +82,117 @@ const Login = () => {
 
     return (
         <div className="login-page-container">
-            
-            {/* Transparent Fixed Header */}
+
+            {/* === HEADER === */}
             <header className="landing-header">
-                <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', fontWeight: '800', fontSize: '1.5rem', color: '#111827', textDecoration: 'none' }}>
-                    <img src={logoAsset} alt="Aura Logo" style={{ width: '32px', height: '32px' }} />
+                <a href="/" className="header-logo-link">
+                    <img src={logoAsset} alt="Aura" />
                     Aura
                 </a>
                 <nav>
-                    <a href="/architecture">Platform</a>
-                    <a href="/features/student-planner">Solutions</a>
-                    <a href="/privacy">Security</a>
-                    <a href="/about">Company</a>
+                    <Link to="/architecture">Platform</Link>
+                    <Link to="/features/student-planner">Solutions</Link>
+                    <Link to="/privacy">Security</Link>
+                    <Link to="/about">Company</Link>
                 </nav>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                    <a href="#" style={{ textDecoration: 'none', color: '#111827', fontWeight: '600', fontSize: '0.95rem' }} onClick={(e) => e.preventDefault()}>Log In</a>
+                <div className="header-actions">
+                    <button className="header-login-link" onClick={() => {}}>Log In</button>
                     <button className="header-btn">Get Started</button>
                 </div>
             </header>
 
+            {/* === MAIN SPLIT LAYOUT === */}
             <div className="login-main">
-                {/* Left side – hero illustration and tagline */}
-                <div className="login-hero">
-                    <img src={logoAsset} alt="Aura Logo Large" className="hero-logo" />
 
-                    <h1 style={{
-                        fontSize: '4.5rem',
-                        fontWeight: '800',
-                        color: '#111827',
-                        lineHeight: '1.1',
-                        letterSpacing: '-0.04em',
-                        margin: 0
-                    }}>Aura</h1>
-                    <h2 style={{ 
-                        fontSize: '2rem', 
-                        background: 'linear-gradient(90deg, #4f46e5, #fbbf24)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        marginTop: '0.5rem', 
-                        marginBottom: '1.5rem', 
-                        fontWeight: '700' 
-                    }}>
-                        Your Campus Co-Pilot
-                    </h2>
-                    <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: '#4b5563', marginBottom: '2.5rem' }}>
+                {/* LEFT - Hero content */}
+                <div className="login-hero">
+
+                    {/* Brand block */}
+                    <div className="hero-brand">
+                        <div className="hero-brand-mark">
+                            <img src={logoAsset} alt="Aura Logo" className="hero-brand-logo" />
+                        </div>
+                        <div className="hero-brand-text">
+                            <span className="hero-brand-eyebrow">Aura</span>
+                            <span className="hero-brand-name">Your Campus Co-Pilot</span>
+                        </div>
+                    </div>
+
+                    <p className="hero-description">
                         Unify structured SIS data and unstructured academic content into a single sovereign knowledge graph. Aura empowers students, faculty, and administrators with proactive, compliant AI workflows.
                     </p>
-                    
-                    {/* Bullet List for features */}
-                    <ul className="bullet-list">
-                        <li className="bullet-item">
-                            <div className="bullet-icon">S</div>
-                            <div className="bullet-content">
-                                <h3>Student Companion</h3>
-                                <p>Track real-time GPAs across courses, automate tutoring requests, and receive contextual guidance fueled by EdNex and Canvas data logs.</p>
+
+                    {/* 2×2 Feature Card Grid */}
+                    <div className="feature-grid">
+                        <div className="feature-card">
+                            <div className="feature-card-header">
+                                <span className="feature-badge">S</span>
+                                <h4>Student Companion</h4>
                             </div>
-                        </li>
-                        <li className="bullet-item">
-                            <div className="bullet-icon">F</div>
-                            <div className="bullet-content">
-                                <h3>Faculty Toolkit</h3>
-                                <p>Identify falling engagement natively, parse syllabi into structured timelines, and curate specialized interventions.</p>
+                            <p>Track real-time GPAs across courses, automate tutoring requests, access instant lecture voice note transcriptions, and receive contextual guidance fueled by EdNex and Canvas data logs.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-card-header">
+                                <span className="feature-badge">F</span>
+                                <h4>Faculty Toolkit</h4>
                             </div>
-                        </li>
-                        <li className="bullet-item">
-                            <div className="bullet-icon">A</div>
-                            <div className="bullet-content">
-                                <h3>Administrative Hub</h3>
-                                <p>Analyze university-wide trends while guaranteeing air-gapped FERPA and HIPAA compliance seamlessly.</p>
+                            <p>Focus on teaching rather than administrative overhead. Identify falling engagement patterns natively, parse syllabi into structured timelines, and curate specialized interventions.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-card-header">
+                                <span className="feature-badge">A</span>
+                                <h4>Administrative Hub</h4>
                             </div>
-                        </li>
-                        <li className="bullet-item">
-                            <div className="bullet-icon">P</div>
-                            <div className="bullet-content">
-                                <h3>Secure Architecture</h3>
-                                <p>PII scrubbing is handled natively on local infrastructures before cloud inferences, preserving total sovereignty.</p>
+                            <p>Analyze university-wide trends while guaranteeing air-gapped FERPA and HIPAA compliance. Seamless tracking mechanism to gauge retention and intervene predictively.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-card-header">
+                                <span className="feature-badge">P</span>
+                                <h4>Secure Architecture</h4>
                             </div>
-                        </li>
-                    </ul>
+                            <p>With Aura Vault &amp; Prism layers, sensitive PII scrubbing is natively handled on local infrastructures before executing complex cloud inferences, preserving total data sovereignty.</p>
+                        </div>
+                    </div>
+
+                    {/* Trust badges */}
+                    <div className="trust-row">
+                        <span className="trust-badge">🔒 SOC 2 Compliant</span>
+                        <span className="trust-badge">🛡️ FERPA</span>
+                        <span className="trust-badge">🏥 HIPAA</span>
+                        <span className="trust-badge">✓ EdNex Certified</span>
+                    </div>
                 </div>
 
-                {/* Right side – login form */}
+                {/* RIGHT - Login panel, flush to right edge */}
                 <div className="login-panel-container">
-                    <div className="ambient-glow"></div>
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
+                        initial={{ opacity: 0, x: 24 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
                         className="glass-panel"
                     >
-                        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                            <h1 style={{ 
-                                fontSize: '1.75rem', 
-                                fontWeight: '800', 
-                                margin: '0', 
-                                color: '#111827' 
-                            }}>
-                                {isRegistering ? 'Create Account' : 'Secure Portal'}
-                            </h1>
-                            <p style={{ color: '#6b7280', fontSize: '0.95rem', marginTop: '0.5rem', fontWeight: '500' }}>
-                                Access your unified academic dashboard
-                            </p>
+                        {/* Mobile-only brand strip */}
+                        <div className="mobile-brand-strip">
+                            <div className="mobile-brand-mark">
+                                <img src={logoAsset} alt="Aura" className="mobile-brand-logo" />
+                            </div>
+                            <div className="mobile-brand-text">
+                                <span className="mobile-brand-eyebrow">Aura</span>
+                                <span className="mobile-brand-tagline">Your Campus Co-Pilot</span>
+                            </div>
                         </div>
 
-                        <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="login-header-block">
+                            <h2>{isRegistering ? 'Create Account' : 'Secure Portal'}</h2>
+                            <p>Access your unified academic dashboard</p>
+                        </div>
+
+                        <form onSubmit={handleAuth}>
                             {isRegistering && (
-                                <div>
-                                    <label htmlFor="fullName" style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Full Name</label>
+                                <div className="form-field">
+                                    <label className="form-label" htmlFor="fullName">Full Name</label>
                                     <input
                                         id="fullName"
-                                        name="fullName"
                                         type="text"
                                         placeholder="Alex Johnson"
                                         value={fullName}
@@ -187,52 +203,55 @@ const Login = () => {
                                     />
                                 </div>
                             )}
-                            <div>
-                                <label htmlFor="email" style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Institutional Email</label>
+
+                            <div className="form-field">
+                                <label className="form-label" htmlFor="email">Institutional Email</label>
                                 <input
                                     id="email"
                                     name="username"
                                     type="email"
-                                    placeholder="admin@aumtech.ai"
+                                    placeholder=""
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    autoComplete="off"
+                                    autoComplete="new-password"
+                                    readOnly
+                                    onFocus={e => e.target.removeAttribute('readOnly')}
                                     className="login-input"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="password" style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#374151', marginBottom: '0.35rem' }}>Password</label>
+
+                            <div className="form-field">
+                                <label className="form-label" htmlFor="password">Password</label>
                                 <input
                                     id="password"
                                     name="password"
                                     type="password"
-                                    placeholder="********"
+                                    placeholder=""
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    autoComplete="off"
+                                    autoComplete="new-password"
+                                    readOnly
+                                    onFocus={e => e.target.removeAttribute('readOnly')}
                                     className="login-input"
                                 />
                             </div>
+
                             <button type="submit" disabled={loading} className="login-button">
-                                {loading ? "Processing..." : (isRegistering ? "Create Account" : "Authenticate")}
+                                {loading ? "Authenticating…" : (isRegistering ? "Create Account" : "Authenticate →")}
                             </button>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '0.5rem 0' }}>
-                                <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
-                                <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>or continue with</span>
-                                <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }}></div>
+                            <div className="divider-row">
+                                <div className="divider-line"></div>
+                                <span className="divider-text">or continue with</span>
+                                <div className="divider-line"></div>
                             </div>
 
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <div className="google-btn-container">
                                 <GoogleLogin
                                     onSuccess={handleGoogleSuccess}
-                                    onError={() => {
-                                        console.log('Login Failed');
-                                        alert("Google Login Failed");
-                                    }}
-                                    useOneTap
+                                    onError={() => alert("Google Login Failed")}
                                     theme="outline"
                                     text="continue_with"
                                     shape="rectangular"
@@ -241,19 +260,48 @@ const Login = () => {
                             </div>
                         </form>
 
-                        <div style={{ textAlign: 'center', marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #f3f4f6' }}>
-                            <p style={{ color: '#6b7280', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s', fontWeight: '500', margin: 0 }} onClick={() => setIsRegistering(!isRegistering)}>
-                                {isRegistering ? (
-                                    <span>Already have an account? <span style={{ color: '#4f46e5', fontWeight: '700' }}>Sign in</span></span>
-                                ) : (
-                                    <span>Don't have an account? <span style={{ color: '#4f46e5', fontWeight: '700' }}>Sign up</span></span>
-                                )}
-                            </p>
+                        <div className="signup-toggle" onClick={() => setIsRegistering(!isRegistering)}>
+                            {isRegistering
+                                ? <>Already have an account? <span>Sign in</span></>
+                                : <>Don't have an account? <span>Sign up free</span></>
+                            }
+                        </div>
+
+                        <div className="login-security-note">
+                            <LockIcon />
+                            256-bit TLS &nbsp;·&nbsp; FERPA-compliant &nbsp;·&nbsp; SOC 2 certified
                         </div>
                     </motion.div>
                 </div>
             </div>
-            <Footer />
+
+            {/* === COMPACT FOOTER === */}
+            <footer className="landing-footer">
+                <div className="footer-left">
+                    <span>© 2026 Aura Academic Intelligence</span>
+                    <div className="footer-badges">
+                        <span className="footer-badge">SOC 2</span>
+                        <span className="footer-badge">FERPA</span>
+                        <span className="footer-badge">HIPAA</span>
+                    </div>
+                </div>
+
+                <nav className="footer-nav">
+                    <Link to="/features/student-planner">Student Planner</Link>
+                    <Link to="/features/at-risk-prediction">At-Risk</Link>
+                    <Link to="/architecture">Platform</Link>
+                    <Link to="/about">Company</Link>
+                    <Link to="/careers">Careers</Link>
+                </nav>
+
+                <nav className="footer-nav">
+                    <Link to="/support">Ethics Hotline</Link>
+                    <Link to="/privacy">Privacy Policy</Link>
+                    <Link to="/msa">MSA</Link>
+                    <Link to="/sla">SLA</Link>
+                </nav>
+            </footer>
+
         </div>
     );
 };

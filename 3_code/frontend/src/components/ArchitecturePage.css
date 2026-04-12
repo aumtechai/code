@@ -1,75 +1,60 @@
-.architecture-page {
-    min-height: 100vh;
+/* ArchitecturePage – content styles only.
+   Header/footer styles come from PublicLayout.css  */
+
+.arch-content {
     display: flex;
     flex-direction: column;
-    background: #0f172a;
-    color: white;
-    font-family: 'Outfit', 'Inter', sans-serif;
+    flex: 1;
+    background: #faf7f2;
 }
 
-.arch-header {
-    padding: 2rem;
+/* ── Page hero strip ── */
+.arch-page-header {
     text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: relative;
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
 }
 
-.arch-header h1 {
-    font-size: 2.5rem;
+.arch-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
     font-weight: 800;
-    margin: 0;
-    background: linear-gradient(to right, #fff, #94a3b8);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4f46e5;
+    margin-bottom: 0.6rem;
 }
 
-.arch-header p {
-    color: #94a3b8;
-    margin-top: 0.5rem;
+.arch-page-header h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #0f172a;
+    margin: 0 0 0.5rem;
 }
 
-.back-btn {
-    position: absolute;
-    left: 2rem;
-    top: 2rem;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
+.arch-page-header p {
+    font-size: 0.95rem;
+    color: #64748b;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
 }
 
-.back-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.arch-main {
+/* ── Diagram area ── */
+.arch-diagram-wrapper {
     flex: 1;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 2rem;
-    background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
-}
-
-.arch-footer {
-    padding: 1.5rem;
-    text-align: center;
-    font-size: 0.8rem;
-    color: #64748b;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    /* Dark canvas behind the interactive diagram */
+    background: radial-gradient(ellipse at center, #1e1b4b 0%, #0f172a 100%);
+    min-height: 480px;
 }
 
 @media (max-width: 768px) {
-    .arch-header h1 {
-        font-size: 1.75rem;
-    }
-    .back-btn {
-        position: static;
-        margin-top: 1rem;
-        display: inline-block;
-    }
+    .arch-page-header h1 { font-size: 1.6rem; }
+    .arch-diagram-wrapper { padding: 1.5rem 1rem; min-height: 360px; }
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, Mail, Phone, HelpCircle, ChevronDown, ChevronUp, ChevronLeft, GraduationCap } from 'lucide-react';
-// import logoAsset from '../assets/logo.png';
+import { MessageCircle, Mail, Phone, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import PublicLayout from './PublicLayout';
 
 const FAQItem = ({ question, answer }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -36,45 +36,19 @@ const Support = ({ onBack }) => {
     };
 
     return (
+        <PublicLayout onBack={onBack || (() => window.history.back())}>
         <div 
             style={{ 
-                minHeight: '100vh', 
-                background: '#f8fafc', 
-                padding: window.innerWidth <= 768 ? '1.25rem' : '3rem',
-                paddingTop: window.innerWidth <= 768 ? 'calc(6rem + env(safe-area-inset-top))' : '3rem'
+                background: '#faf7f2',
+                flex: 1,
+                padding: '3rem 2rem',
             }}
         >
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '3rem' }}>
-                    {onBack && (
-                        <button 
-                            onClick={onBack} 
-                            style={{ 
-                                background: 'white', 
-                                border: '1px solid #e2e8f0', 
-                                borderRadius: '12px', 
-                                padding: '8px 16px',
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '8px',
-                                cursor: 'pointer', 
-                                color: '#475569',
-                                fontWeight: '700',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                flexShrink: 0,
-                                transition: 'all 0.2s'
-                            }}
-                            onMouseOver={e => e.currentTarget.style.background = '#f8fafc'}
-                            onMouseOut={e => e.currentTarget.style.background = 'white'}
-                        >
-                            <ChevronLeft size={20} strokeWidth={3} /> Back
-                        </button>
-                    )}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <GraduationCap size={40} color="#4f46e5" />
-                        <h1 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0 }}>Support Center</h1>
-                    </div>
+                <div style={{ marginBottom: '3rem' }}>
+                    <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '0.5rem' }}>Aura · Support</span>
+                    <h1 style={{ fontSize: '2rem', fontWeight: '900', letterSpacing: '-0.04em', color: '#0f172a', margin: 0 }}>Support Center</h1>
                 </div>
 
                 {/* Hero */}
@@ -192,6 +166,7 @@ const Support = ({ onBack }) => {
                 </div>
             </div>
         </div>
+        </PublicLayout>
     );
 };
 

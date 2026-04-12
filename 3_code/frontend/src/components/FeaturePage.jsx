@@ -2,35 +2,35 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck, BookOpen, Clock, Bot, ArrowRight, BrainCircuit } from 'lucide-react';
-import logoAsset from '../assets/logo.png';
+import PublicLayout from './PublicLayout';
 
 const featureData = {
     'syllabus-scanner': {
         title: "AI Syllabus Scanner & Academic Planner",
         subtitle: "Instantly convert unstructured PDF syllabi into an organized, trackable schedule.",
-        heroText: "Stop manually entering due dates. Aumtech.ai extracts reading assignments, exam dates, and grading weights directly from your syllabus.",
-        icon: <BookOpen size={40} color="#6366f1" />,
+        heroText: "Stop manually entering due dates. Aura extracts reading assignments, exam dates, and grading weights directly from your syllabus.",
+        icon: <BookOpen size={36} color="#4f46e5" />,
         benefits: ["Automated Deadline Tracking", "Grade Weight Calculation", "Calendar Export"]
     },
     'wellness-check': {
         title: "Student Wellness & Burnout Prevention AI",
         subtitle: "Your mental health matters just as much as your GPA.",
         heroText: "Our Wellness Check AI analyzes your workload density and study habits, prompting you when it's time to take a break or access campus counseling.",
-        icon: <ShieldCheck size={40} color="#10b981" />,
+        icon: <ShieldCheck size={36} color="#10b981" />,
         benefits: ["Burnout Forecasting", "Guided Breathing", "Campus Resource Linking"]
     },
     'ai-tutor': {
         title: "24/7 AI Tutor & Concept Explainer",
         subtitle: "Never get stuck on an assignment at 2 AM again.",
         heroText: "The Student Success Navigator includes a context-aware AI tutor. Whether it's Calculus or Psychology, get step-by-step explanations.",
-        icon: <Bot size={40} color="#f59e0b" />,
+        icon: <Bot size={36} color="#f59e0b" />,
         benefits: ["Socratic Questioning", "Upload Class Notes", "Homework Help"]
     },
     'gpa-predictor': {
         title: "GPA Tracker & Academic Forecasting",
         subtitle: "Know exactly what you need on the final to get an A.",
         heroText: "Our GPA forecasting tool runs simulations based on your current grades, showing precisely what scores you need to hit your target GPA.",
-        icon: <BrainCircuit size={40} color="#ec4899" />,
+        icon: <BrainCircuit size={36} color="#ec4899" />,
         benefits: ["What-If Scenarios", "Cumulative GPA Tracking", "Goal Setting"]
     }
 };
@@ -40,69 +40,56 @@ const FeaturePage = () => {
     const feature = featureData[featureId] || {
         title: "Get Aura | Intelligence for Higher Ed",
         subtitle: "AI-powered tools to optimize your college experience.",
-        heroText: "Aumtech.ai provides a full suite of autonomous tools to help you study smarter, not harder.",
-        icon: <Clock size={40} color="#4f46e5" />,
+        heroText: "Aura provides a full suite of autonomous tools to help you study smarter, not harder.",
+        icon: <Clock size={36} color="#4f46e5" />,
         benefits: ["Time Management", "Academic Planning", "Focus Tracking"]
     };
 
-    // Update Meta Title for SEO
     useEffect(() => {
-        document.title = `${feature.title} | Aumtech.ai`;
+        document.title = `${feature.title} | Aura`;
     }, [feature]);
 
     return (
-        <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#1e293b', fontFamily: 'system-ui, sans-serif' }}>
-            {/* Minimal Header */}
-            <header style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', background: 'white' }}>
-                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: '#1e293b' }}>
-                    <img src={logoAsset} alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '6px' }} />
-                    <span style={{ fontWeight: '800', fontSize: '1.25rem' }}>Aumtech.ai</span>
-                </Link>
-                <Link to="/login" style={{ background: '#4f46e5', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', textDecoration: 'none', fontWeight: '600' }}>
-                    Student Success Hub
-                </Link>
-            </header>
-
-            {/* Hero Section */}
-            <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '4rem 2rem', textAlign: 'center' }}>
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                    <div style={{ display: 'inline-block', padding: '1rem', background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', marginBottom: '2rem' }}>
+        <PublicLayout onBack={() => window.history.back()}>
+            <div style={{ background: '#faf7f2', flex: 1 }}>
+                {/* Hero */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ maxWidth: '840px', margin: '0 auto', padding: '4rem 2rem 2rem', textAlign: 'center' }}
+                >
+                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'white', borderRadius: '18px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(99,102,241,0.1)', marginBottom: '2rem' }}>
                         {feature.icon}
                     </div>
-
-                    {/* H1 Optimized for SEO */}
-                    <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '1rem', letterSpacing: '-0.02em', lineHeight: '1.1' }}>
+                    <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '0.75rem' }}>Solutions</span>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a' }}>
                         {feature.title}
                     </h1>
-
-                    {/* H2 Subtitle */}
-                    <h2 style={{ fontSize: '1.5rem', color: '#64748b', fontWeight: '400', marginBottom: '2rem', maxWidth: '800px', margin: '0 auto 2rem' }}>
+                    <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1.5rem', maxWidth: '640px', margin: '0 auto 1.5rem', lineHeight: '1.7' }}>
                         {feature.subtitle}
-                    </h2>
-
-                    <p style={{ fontSize: '1.125rem', color: '#475569', maxWidth: '600px', margin: '0 auto 3rem', lineHeight: '1.7' }}>
+                    </p>
+                    <p style={{ fontSize: '1rem', color: '#475569', maxWidth: '580px', margin: '0 auto 2.5rem', lineHeight: '1.7' }}>
                         {feature.heroText}
                     </p>
-
-                    <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#1e293b', color: 'white', padding: '1rem 2rem', borderRadius: '12px', textDecoration: 'none', fontWeight: '700', fontSize: '1.1rem', transition: 'transform 0.2s', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}>
-                        Enter My Dashboard <ArrowRight size={20} />
+                    <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: 'white', padding: '0.85rem 2rem', borderRadius: '10px', textDecoration: 'none', fontWeight: '700', fontSize: '1rem', boxShadow: '0 4px 14px rgba(79,70,229,0.35)' }}>
+                        Access Dashboard <ArrowRight size={18} />
                     </Link>
                 </motion.div>
 
-                {/* Benefits / Content Section for SEO Crawlers */}
-                <div style={{ marginTop: '5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', textAlign: 'left' }}>
+                {/* Benefit Cards */}
+                <div style={{ maxWidth: '840px', margin: '3rem auto 4rem', padding: '0 2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
                     {feature.benefits.map((benefit, idx) => (
-                        <div key={idx} style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                            <div style={{ width: '12px', height: '12px', background: '#4f46e5', borderRadius: '50%', marginBottom: '1rem' }} />
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>{benefit}</h3>
-                            <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                                Powerful algorithms specifically tuned to handle {benefit.toLowerCase()}, allowing you to focus purely on learning rather than administrative overhead.
+                        <div key={idx} style={{ background: 'white', padding: '1.75rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                            <div style={{ width: '10px', height: '10px', background: '#4f46e5', borderRadius: '50%', marginBottom: '1rem' }} />
+                            <h3 style={{ fontSize: '1.05rem', fontWeight: '700', marginBottom: '0.5rem', color: '#0f172a' }}>{benefit}</h3>
+                            <p style={{ color: '#64748b', fontSize: '0.875rem', lineHeight: '1.6' }}>
+                                Powerful algorithms tuned for {benefit.toLowerCase()}, letting you focus purely on learning.
                             </p>
                         </div>
                     ))}
                 </div>
-            </main>
-        </div>
+            </div>
+        </PublicLayout>
     );
 };
 
