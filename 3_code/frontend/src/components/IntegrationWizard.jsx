@@ -437,15 +437,9 @@ const IntegrationWizard = () => {
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', width: '100%', maxWidth: '800px' }}>
                                 <div style={{ display: 'flex', gap: '1rem' }}>
                                     <button className="primary-btn" onClick={() => window.location.reload()}>Start Another Integration</button>
-                                    <button 
-                                        onClick={() => setShowSample(!showSample)}
-                                        style={{ background: 'white', border: '2px solid #e2e8f0', padding: '12px 32px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}
-                                    >
-                                        {showSample ? 'Hide Preview' : 'Preview Ingested Sample'}
-                                    </button>
                                 </div>
 
-                                {showSample && ingestionResult?.sample_data && (
+                                {ingestionResult?.sample_data && (
                                     <motion.div 
                                         initial={{ opacity: 0, y: -20 }} 
                                         animate={{ opacity: 1, y: 0 }}

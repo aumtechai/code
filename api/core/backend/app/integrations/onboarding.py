@@ -274,7 +274,7 @@ def ingest_data(
                 for col in create_columns:
                     safe_col = "".join([c for c in col if c.isalnum() or c == "_"]).lower()
                     if safe_col:
-                        sql = f'ALTER TABLE "{schema_name}"."{table_name}" ADD COLUMN "{safe_col}" VARCHAR'
+                        sql = f'ALTER TABLE "{schema_name}"."{table_name}" ADD COLUMN IF NOT EXISTS "{safe_col}" VARCHAR'
                         conn.execute(text(sql))
                 conn.commit()
                 
@@ -316,7 +316,16 @@ def ingest_data(
         raise HTTPException(status_code=400, detail=f"Failed to read CSV: {str(read_err)}")
     
     # 3. Transform
-    rename_dict = {k: v for k, v in mappings.items() if v}
+    rename_dict = {}
+    for k, v in mappings.items():
+        if not v: continue
+        if v in create_columns:
+            # Replicate the lowering done during table alteration
+            safe_col = "".join([c for c in v if c.isalnum() or c == "_"]).lower()
+            rename_dict[k] = safe_col if safe_col else v
+        else:
+            rename_dict[k] = v
+
     if not rename_dict:
         raise HTTPException(status_code=400, detail="No active mappings selected.")
         
