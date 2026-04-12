@@ -116,9 +116,9 @@ const IntegrationWizard = () => {
     };
 
     return (
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '2rem' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem 2rem' }}>
             {/* Header */}
-            <div style={{ marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ background: 'linear-gradient(135deg, #4f46e5, #0ea5e9)', padding: '1rem', borderRadius: '16px', color: 'white', boxShadow: '0 10px 20px -5px rgba(79, 70, 229, 0.4)' }}>
                     <DatabaseBackup size={32} />
                 </div>
@@ -129,14 +129,14 @@ const IntegrationWizard = () => {
             </div>
 
             {/* Stepper */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '1.5rem' }}>
                 {[1, 2, 3, 4].map((s) => (
                     <div key={s} style={{ flex: 1, height: '6px', borderRadius: '3px', background: step >= s ? '#4f46e5' : '#e2e8f0', transition: 'background 0.4s ease' }}></div>
                 ))}
             </div>
 
             {/* Content Area */}
-            <div className="card-white" style={{ padding: '3rem', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+            <div className="card-white" style={{ padding: '2rem 3rem', minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
                 <AnimatePresence mode="wait">
                     {step === 1 && (
                         <motion.div
@@ -146,19 +146,19 @@ const IntegrationWizard = () => {
                             exit={{ opacity: 0, x: -20 }}
                             style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}
                         >
-                            <div style={{ background: '#f0f9ff', padding: '2rem', borderRadius: '50%', marginBottom: '2.5rem' }}>
-                                <Database size={64} color="#0ea5e9" />
+                            <div style={{ background: '#f0f9ff', padding: '1.5rem', borderRadius: '50%', marginBottom: '1.5rem' }}>
+                                <Database size={56} color="#0ea5e9" />
                             </div>
-                            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '1rem' }}>Onboard New Institution</h2>
-                            <p style={{ color: '#64748b', maxWidth: '500px', marginBottom: '2.5rem', lineHeight: '1.6' }}>
+                            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.5rem' }}>Onboard New Institution</h2>
+                            <p style={{ color: '#64748b', maxWidth: '600px', marginBottom: '1.5rem', lineHeight: '1.6' }}>
                                 Enter the official name of the institution. We will dynamically spin up a dedicated 
                                 <b> Supabase ednex-schema</b> and execute all <b>canonical EdNex Table DDLs</b> instantly.
                             </p>
                             
-                            <div style={{ width: '100%', maxWidth: '450px' }}>
+                            <div style={{ width: '100%', maxWidth: '600px' }}>
                                 {existingInstitutions.length > 0 && (
-                                    <div style={{ marginBottom: '2.5rem' }}>
-                                        <label style={{ display: 'block', textAlign: 'left', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>Select Existing Institution</label>
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <label style={{ display: 'block', textAlign: 'left', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>Select Existing Institution</label>
                                         <select 
                                             onChange={(e) => {
                                                 if (e.target.value) {
@@ -174,7 +174,7 @@ const IntegrationWizard = () => {
                                             ))}
                                         </select>
                                         
-                                        <div style={{ margin: '1.5rem 0', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                             <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }}></div>
                                             <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8' }}>OR</span>
                                             <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }}></div>
@@ -182,19 +182,19 @@ const IntegrationWizard = () => {
                                     </div>
                                 )}
 
-                                <label style={{ display: 'block', textAlign: 'left', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>Create New Institution</label>
+                                <label style={{ display: 'block', textAlign: 'left', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>Create New Institution</label>
                                 <input 
                                     type="text" 
                                     value={institutionName}
                                     onChange={(e) => setInstitutionName(e.target.value)}
                                     placeholder="e.g. Stanford University"
-                                    style={{ width: '100%', padding: '1.25rem', borderRadius: '14px', border: '2px solid #e2e8f0', fontSize: '1.1rem', marginBottom: '2rem', outline: 'none', transition: 'border-color 0.2s' }}
+                                    style={{ width: '100%', padding: '1rem', borderRadius: '14px', border: '2px solid #e2e8f0', fontSize: '1.1rem', marginBottom: '1.5rem', outline: 'none', transition: 'border-color 0.2s' }}
                                 />
                                 <button 
                                     onClick={onBoard}
                                     disabled={!institutionName || loading}
                                     className="primary-btn"
-                                    style={{ width: '100%', padding: '1.25rem', justifyContent: 'center', fontSize: '1.1rem' }}
+                                    style={{ width: '100%', padding: '1rem', justifyContent: 'center', fontSize: '1.1rem' }}
                                 >
                                     {loading ? <Loader2 className="animate-spin" /> : <><Plus size={20} /> Create EdNex Schema</>}
                                 </button>
@@ -210,7 +210,7 @@ const IntegrationWizard = () => {
                             exit={{ opacity: 0, x: -20 }}
                             style={{ flex: 1 }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '3rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                                 <div>
                                     <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.5rem' }}>Select Institutional Data</h2>
                                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#ecfdf5', color: '#065f46', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700' }}>
@@ -232,10 +232,10 @@ const IntegrationWizard = () => {
                                 </div>
                             </div>
 
-                            <div style={{ background: '#f8fafc', border: '3px dashed #e2e8f0', borderRadius: '24px', padding: '4rem', textAlign: 'center', marginBottom: '2rem' }}>
-                                <Upload size={48} color="#94a3b8" style={{ marginBottom: '1.5rem' }} />
-                                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '1rem' }}>Upload Institutional CSV Files</h3>
-                                <p style={{ color: '#64748b', marginBottom: '2rem' }}>Drop your raw CSV exports or click to browse local folders.</p>
+                            <div style={{ background: '#f8fafc', border: '3px dashed #e2e8f0', borderRadius: '24px', padding: '2.5rem', textAlign: 'center', marginBottom: '1.5rem' }}>
+                                <Upload size={48} color="#94a3b8" style={{ marginBottom: '1rem' }} />
+                                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.5rem' }}>Upload Institutional CSV Files</h3>
+                                <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Drop your raw CSV exports or click to browse local folders.</p>
                                 <input 
                                     type="file" 
                                     multiple 
@@ -290,7 +290,7 @@ const IntegrationWizard = () => {
                             exit={{ opacity: 0, x: -20 }}
                             style={{ flex: 1 }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                 <div>
                                     <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.5rem' }}>AI Column Mapping</h2>
                                     <p style={{ color: '#64748b' }}>Mapping <b>{selectedFiles[0]?.name}</b> to table <b>{activeTargetTable}</b></p>
@@ -304,7 +304,7 @@ const IntegrationWizard = () => {
                                 </div>
                             </div>
 
-                            <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', marginBottom: '2rem' }}>
+                            <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', marginBottom: '1.5rem' }}>
                                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                     <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                                         <tr>
@@ -359,16 +359,16 @@ const IntegrationWizard = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}
                         >
-                            <div style={{ background: '#ecfdf5', padding: '2rem', borderRadius: '50%', marginBottom: '2.5rem' }}>
-                                <CheckCircle2 size={80} color="#10b981" />
+                            <div style={{ background: '#ecfdf5', padding: '1.5rem', borderRadius: '50%', marginBottom: '1.5rem' }}>
+                                <CheckCircle2 size={64} color="#10b981" />
                             </div>
-                            <h2 style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem', color: '#065f46' }}>Integration Complete!</h2>
-                            <p style={{ color: '#64748b', fontSize: '1.2rem', maxWidth: '600px', marginBottom: '3rem' }}>
+                            <h2 style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '0.5rem', color: '#065f46' }}>Integration Complete!</h2>
+                            <p style={{ color: '#64748b', fontSize: '1.2rem', maxWidth: '600px', marginBottom: '2rem' }}>
                                 Successfully ingested <b>{ingestionResult?.rows_ingested.toLocaleString()}</b> student records into the 
                                 <b> {schema}</b> data warehouse.
                             </p>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', width: '100%', maxWidth: '600px', marginBottom: '3rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', width: '100%', maxWidth: '600px', marginBottom: '2rem' }}>
                                 <div style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'left' }}>
                                     <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '8px' }}>Log: Schema Strategy</div>
                                     <div style={{ fontWeight: '600', color: '#1e293b' }}>Enterprise Proxy (Isolation)</div>
