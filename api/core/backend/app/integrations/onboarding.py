@@ -279,15 +279,24 @@ def ingest_data(
                 conn.commit()
                 
         # Relax strict normalized constraints on custom schemas to permit flat-file flat CSV insertions
-        with engine.connect() as conn:
-            try:
-                # Disable FKs and NOT NULLs specifically on student profiles
-                conn.execute(text(f'ALTER TABLE "{schema_name}"."mod01_student_profiles" DROP CONSTRAINT IF EXISTS mod01_student_profiles_user_id_fkey CASCADE;'))
-                conn.execute(text(f'ALTER TABLE "{schema_name}"."mod01_student_profiles" ALTER COLUMN "user_id" DROP NOT NULL;'))
-                conn.execute(text(f'ALTER TABLE "{schema_name}"."mod01_student_profiles" DROP CONSTRAINT IF EXISTS mod01_student_profiles_pkey CASCADE;'))
-            except Exception as e:
-                print(f"Constraint relaxation skipped/failed: {e}")
-            conn.commit()
+        try:
+            with engine.connect() as conn:
+                try:
+                    conn.execute(text(f'ALTER TABLE "{schema_name}"."mod01_student_profiles" DROP CONSTRAINT IF EXISTS mod01_student_profiles_pkey CASCADE;'))
+                    conn.commit()
+                except Exception: pass
+                
+                try:
+                    conn.execute(text(f'ALTER TABLE "{schema_name}"."mod01_student_profiles" DROP CONSTRAINT IF EXISTS mod01_student_profiles_user_id_fkey CASCADE;'))
+                    conn.commit()
+                except Exception: pass
+                
+                try:
+                    conn.execute(text(f'ALTER TABLE "{schema_name}"."mod01_student_profiles" ALTER COLUMN "user_id" DROP NOT NULL;'))
+                    conn.commit()
+                except Exception: pass
+        except Exception as e:
+            print(f"Relaxation wrapper failed: {e}")
     except Exception as alt_err:
         import traceback
         traceback.print_exc()
