@@ -26,6 +26,12 @@ app.add_middleware(
 app.include_router(main_api_router, prefix="/api")
 app.include_router(tutoring_router, prefix="/api")
 
+try:
+    from app.integrations import router as integration_router
+    app.include_router(integration_router, prefix="/api/integration", tags=["Integration"])
+except Exception as e:
+    print(f"Failed to mount integration router: {e}")
+
 @app.get("/api/health")
 def health():
     return {
