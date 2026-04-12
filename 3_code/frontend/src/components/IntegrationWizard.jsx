@@ -13,6 +13,7 @@ const IntegrationWizard = () => {
     const [existingInstitutions, setExistingInstitutions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
+    const [errorMsg, setErrorMsg] = useState('');
     const [schema, setSchema] = useState('');
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [mappings, setMappings] = useState([]);
@@ -35,6 +36,7 @@ const IntegrationWizard = () => {
     const onBoard = async () => {
         if (!institutionName) return;
         setLoading(true);
+        setErrorMsg('');
         setStatus('Creating dynamic Supabase schema and executing EdNex core DDLs...');
         try {
             const res = await api.post('/api/integration/onboard', {
@@ -43,7 +45,7 @@ const IntegrationWizard = () => {
             setSchema(res.data.schema_name);
             setStep(2);
         } catch (err) {
-            alert("Onboarding failed: " + (err.response?.data?.detail || err.message));
+            setErrorMsg("Onboarding failed: " + (err.response?.data?.detail || err.message));
         } finally {
             setLoading(false);
             setStatus(null);
@@ -58,6 +60,7 @@ const IntegrationWizard = () => {
     const runMapping = async () => {
         if (selectedFiles.length === 0) return;
         setLoading(true);
+        setErrorMsg('');
         setStatus(`Integration Agent analyzing '${selectedFiles[0].name}' vs target schema...`);
         try {
             const formData = new FormData();
@@ -73,7 +76,7 @@ const IntegrationWizard = () => {
                 throw new Error("Invalid mapping response");
             }
         } catch (err) {
-            alert("Mapping failed: " + (err.response?.data?.detail || err.message));
+            setErrorMsg("Mapping failed: " + (err.response?.data?.detail || err.message));
         } finally {
             setLoading(false);
             setStatus(null);
@@ -82,6 +85,7 @@ const IntegrationWizard = () => {
 
     const runIngestion = async () => {
         setLoading(true);
+        setErrorMsg('');
         setStatus("Transforming data and ingesting into institution schema...");
         try {
             const mappingDict = {};
@@ -99,7 +103,7 @@ const IntegrationWizard = () => {
             setIngestionResult(res.data);
             setStep(4);
         } catch (err) {
-            alert("Ingestion failed: " + (err.response?.data?.detail || err.message));
+            setErrorMsg("Ingestion failed: " + (err.response?.data?.detail || err.message));
         } finally {
             setLoading(false);
             setStatus(null);
@@ -198,6 +202,16 @@ const IntegrationWizard = () => {
                                 >
                                     {loading ? <Loader2 className="animate-spin" /> : <><Plus size={20} /> Create EdNex Schema</>}
                                 </button>
+                                
+                                {errorMsg && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: -10 }} 
+                                        animate={{ opacity: 1, y: 0 }} 
+                                        style={{ marginTop: '1rem', padding: '0.65rem 0.85rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '6px', fontSize: '0.825rem', fontWeight: '500', textAlign: 'left' }}
+                                    >
+                                        {errorMsg}
+                                    </motion.div>
+                                )}
                             </div>
                         </motion.div>
                     )}
@@ -279,6 +293,16 @@ const IntegrationWizard = () => {
                                     {loading ? <Loader2 className="animate-spin" /> : <><Sparkles size={18} /> Map Columns with AI Integration Agent</>}
                                 </button>
                             </div>
+
+                            {errorMsg && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: -10 }} 
+                                    animate={{ opacity: 1, y: 0 }} 
+                                    style={{ marginTop: '1rem', padding: '0.65rem 0.85rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '6px', fontSize: '0.825rem', fontWeight: '500', textAlign: 'left' }}
+                                >
+                                    {errorMsg}
+                                </motion.div>
+                            )}
                         </motion.div>
                     )}
 
@@ -349,6 +373,16 @@ const IntegrationWizard = () => {
                                     {loading ? <Loader2 className="animate-spin" /> : <>Finalize & Ingest Data</>}
                                 </button>
                             </div>
+
+                            {errorMsg && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: -10 }} 
+                                    animate={{ opacity: 1, y: 0 }} 
+                                    style={{ marginTop: '1rem', padding: '0.65rem 0.85rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '6px', fontSize: '0.825rem', fontWeight: '500', textAlign: 'left' }}
+                                >
+                                    {errorMsg}
+                                </motion.div>
+                            )}
                         </motion.div>
                     )}
 
