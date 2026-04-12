@@ -77,8 +77,8 @@ body {
 }
 
 .header-logo-link img {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
   border: 1px solid var(--slate-200);
 }
@@ -165,19 +165,20 @@ body {
 /* ---- Brand / Tagline ---- */
 .hero-brand {
   display: flex;
-  align-items: center;
-  gap: 1.1rem;
-  margin-bottom: 1.1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 /* Pill container keeps the logo clipped — hides the aumtech.ai subtitle */
 .hero-brand-mark {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 140px;
+  height: 140px;
+  border-radius: 28px;
   overflow: hidden;          /* clips the logo image to the box */
   border: 1px solid rgba(99,102,241,0.18);
-  box-shadow: 0 4px 14px rgba(99,102,241,0.14);
+  box-shadow: 0 10px 30px rgba(99,102,241,0.15);
   flex-shrink: 0;
   background: var(--white);
   display: flex;
@@ -186,8 +187,8 @@ body {
 }
 
 .hero-brand-logo {
-  width: 52px;
-  height: 52px;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
   object-position: top center;  /* show the icon, not the text below */
   display: block;
@@ -196,21 +197,21 @@ body {
 .hero-brand-text {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0.25rem;
 }
 
 /* Small "Aura" label above the main tagline */
 .hero-brand-eyebrow {
-  font-size: 0.8rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--indigo-600);
   line-height: 1;
 }
 
 .hero-brand-name {
-  font-size: 2rem;
+  font-size: 3.5rem;
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1.1;

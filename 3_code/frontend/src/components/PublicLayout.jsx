@@ -45,10 +45,17 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => (
                     <span className="pub-footer-badge">HIPAA</span>
                 </div>
             </div>
+
             <nav className="pub-footer-nav">
                 <Link to="/features/student-planner">Student Planner</Link>
+                <Link to="/features/at-risk-prediction">At-Risk</Link>
                 <Link to="/architecture">Platform</Link>
                 <Link to="/about">Company</Link>
+                <Link to="/careers">Careers</Link>
+            </nav>
+
+            <nav className="pub-footer-nav">
+                <Link to="/support">Ethics Hotline</Link>
                 <Link to="/privacy">Privacy Policy</Link>
                 <Link to="/msa">MSA</Link>
                 <Link to="/sla">SLA</Link>

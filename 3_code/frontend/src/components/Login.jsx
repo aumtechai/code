@@ -242,22 +242,6 @@ const Login = () => {
                                 {loading ? "Authenticating…" : (isRegistering ? "Create Account" : "Authenticate →")}
                             </button>
 
-                            <div className="divider-row">
-                                <div className="divider-line"></div>
-                                <span className="divider-text">or continue with</span>
-                                <div className="divider-line"></div>
-                            </div>
-
-                            <div className="google-btn-container">
-                                <GoogleLogin
-                                    onSuccess={handleGoogleSuccess}
-                                    onError={() => alert("Google Login Failed")}
-                                    theme="outline"
-                                    text="continue_with"
-                                    shape="rectangular"
-                                    width="100%"
-                                />
-                            </div>
                         </form>
 
                         <div className="signup-toggle" onClick={() => setIsRegistering(!isRegistering)}>
