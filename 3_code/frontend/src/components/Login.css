@@ -167,8 +167,9 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 2rem;
+  gap: 3.5rem; /* Pushes content much further to the right */
   margin-bottom: 2rem;
+  padding-left: 1rem; /* Shifts the entire block towards the middle */
 }
 
 .hero-brand-content {
@@ -180,12 +181,12 @@ body {
 
 /* Pill container keeps the logo clipped — hides the aumtech.ai subtitle */
 .hero-brand-mark {
-  width: 140px;
-  height: 140px;
-  border-radius: 28px;
+  width: 200px; /* Massive logo as requested */
+  height: 200px;
+  border-radius: 36px;
   overflow: hidden;          /* clips the logo image to the box */
   border: 1px solid rgba(99,102,241,0.18);
-  box-shadow: 0 10px 30px rgba(99,102,241,0.15);
+  box-shadow: 0 12px 35px rgba(99,102,241,0.16);
   flex-shrink: 0;
   background: var(--white);
   display: flex;
@@ -194,8 +195,8 @@ body {
 }
 
 .hero-brand-logo {
-  width: 140px;
-  height: 140px;
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   object-position: top center;  /* show the icon, not the text below */
   display: block;

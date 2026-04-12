@@ -21,11 +21,9 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => (
                 <Link to="/about">Company</Link>
             </nav>
             <div className="pub-header-actions">
-                {onBack && (
-                    <button className="pub-back-btn" onClick={onBack}>
-                        {backLabel}
-                    </button>
-                )}
+                <Link to="/login" className="pub-back-btn">
+                    {backLabel}
+                </Link>
                 <Link to="/login" className="pub-cta-btn">Sign In</Link>
             </div>
         </header>
