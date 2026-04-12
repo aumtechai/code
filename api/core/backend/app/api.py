@@ -675,13 +675,16 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Sessi
             
         # 2. Check EdNex Warehouse Proxy (Students/Faculty in Supabase)
         try:
-            from app.auth import engine
-            from sqlalchemy import text
-            with engine.connect() as conn:
-                q = text('SELECT * FROM "public"."mod00_users" WHERE email = :email LIMIT 1')
-                res = conn.execute(q, {"email": form_data.username}).mappings().first()
-                if res:
-                    u_data = dict(res)
+            from app.ednex import get_supabase_credentials
+            url, key = get_supabase_credentials()
+            if url and key:
+                import requests
+                headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
+                rest_url = f"{url}/rest/v1/mod00_users?select=*&email=eq.{form_data.username}&limit=1"
+                resp = requests.get(rest_url, headers=headers)
+                
+                if resp.status_code == 200 and len(resp.json()) > 0:
+                    u_data = resp.json()[0]
                     # If it's literally our dummy hash 'hashedpw', let password123 bypass, else do a real bcrypt
                     is_valid = False
                     if u_data.get('password_hash') == 'hashedpw' and form_data.password == 'password123':

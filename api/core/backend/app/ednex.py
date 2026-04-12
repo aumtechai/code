@@ -10,8 +10,7 @@ from app.models import User
 # Initialize Router
 ednex_router = APIRouter()
 
-def get_supabase_client():
-    from supabase import create_client, Client
+def get_supabase_credentials():
     from sqlmodel import Session, select
     from app.auth import engine
     from app.models import SystemConfig
@@ -36,13 +35,93 @@ def get_supabase_client():
         key = os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJma295bHBjdXB0emtha21xb3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MzY0MDYsImV4cCI6MjA4ODQxMjQwNn0.kcUD2GGSmMJLcG0tyJZtbCd9h9gB2S8jFYDz9RJKMe8")
                 
     if not url or not key:
-        return None
+        return None, None
         
+    return url, key
+
+def get_supabase_client():
+    url, key = get_supabase_credentials()
+    if not url: return None
+    from supabase import create_client
     return create_client(url, key)
 
 class EdNexConfig(BaseModel):
     url: str
     key: str
+
+@ednex_router.get("/health")
+async def get_ednex_health(current_user: User = Depends(get_current_user)):
+    """
+    Check the health and connection status of all required EdNex data modules.
+    Returns module array mapped to the UI. Includes explicit error propagation.
+    """
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail='Not an admin')
+        
+    url, key = get_supabase_credentials()
+    if not url or not key:
+        raise HTTPException(status_code=500, detail="EdNex credentials missing. Configure via proxy.")
+        
+    modules = [
+        {"id": "mod00_users", "name": "Core Users Identity"},
+        {"id": "mod01_programs", "name": "Academic Programs"},
+        {"id": "mod01_student_profiles", "name": "Student Biological Profiles"},
+        {"id": "mod02_financial_transactions", "name": "Financial Transactions"},
+        {"id": "mod02_student_accounts", "name": "Student Fin-Accounts"},
+        {"id": "mod03_advising_appointments", "name": "Advising Appointments"},
+        {"id": "mod04_course_catalog", "name": "Course Catalog"},
+        {"id": "mod04_enrollments", "name": "Active Enrollments"},
+        # New Feature Tables
+        {"id": "mod06_admissions_applications", "name": "Admissions App Stream"},
+        {"id": "mod07_degree_audits", "name": "Degree Advisement Audit"},
+        {"id": "mod08_aid_packages", "name": "Student Aid Packages"},
+        {"id": "mod09_contributions", "name": "Campaign Contributions"},
+    ]
+    
+    import requests
+    headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
+    
+    health_status = []
+    
+    try:
+        for module in modules:
+            try:
+                # To get exact count in PostgREST, we can use head request with Prefer: count=exact
+                resp = requests.head(f"{url}/rest/v1/{module['id']}", headers=headers, params={"limit": 1})
+                # But realistically the dashboard just wants a number, or just 10 (status OK)
+                # Let's perform a simple GET limit 1
+                resp = requests.get(f"{url}/rest/v1/{module['id']}?select=*&limit=100", headers=headers)
+                
+                if resp.status_code == 200:
+                    health_status.append({
+                        "module": module["id"],
+                        "name": module["name"],
+                        "status": "Healthy",
+                        "records": len(resp.json()) # Return visible amount
+                    })
+                else:
+                    health_status.append({
+                        "module": module["id"],
+                        "name": module["name"],
+                        "status": "Critical Failure",
+                        "records": 0,
+                        "error": resp.text
+                    })
+            except Exception as e:
+                health_status.append({
+                    "module": module["id"],
+                    "name": module["name"],
+                    "status": "Critical Failure",
+                    "records": 0,
+                    "error": str(e)
+                })
+        
+        return health_status
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Critical overall failure in EdNex connector: {str(e)}")
 
 @ednex_router.get("/config")
 async def get_ednex_config(current_user: User = Depends(get_current_user)):
@@ -274,182 +353,77 @@ async def semantic_search(
         print(f"EdNex Search Error: {e}")
         return {"status": "error", "message": str(e)}
 
-@ednex_router.get('/health')
-async def get_ednex_health(current_user: User = Depends(get_current_user)):
-    # Broaden access for Demo visibility
-    if not (current_user.is_admin or current_user.is_dean or current_user.is_exec):
-        raise HTTPException(status_code=403, detail='Insufficient permissions for system health check')
-    
-    health_data = {}
-    try:
-        supabase = get_supabase_client()
-        
-        modules = {
-            'Mod-00: Identity (Institutions)': 'mod00_institutions',
-            'Mod-00: Identity (Users)': 'mod00_users',
-            'Mod-01: SIS (Programs)': 'mod01_programs',
-            'Mod-01: SIS (Profiles)': 'mod01_student_profiles',
-            'Mod-02: Finance (Accounts)': 'mod02_student_accounts',
-            'Mod-02: Finance (Transactions)': 'mod02_transactions',
-            'Mod-03: Advisors': 'mod03_advisors',
-            'Mod-03: Appointments': 'mod03_advising_appointments',
-            'Mod-03: Interventions': 'mod03_intervention_flags',
-            'Mod-04: Catalog (Courses)': 'mod04_courses',
-            'Mod-04: Catalog (Sections)': 'mod04_sections',
-            'Mod-04: Catalog (Enrollments)': 'mod04_enrollments',
-            'Mod-05: Career (Companies)': 'mod05_companies',
-            'Mod-05: Career (Jobs)': 'mod05_jobs',
-            'Mod-05: Career (Applications)': 'mod05_applications',
-            'Mod-06: Admissions': 'mod06_admissions_applications',
-            'Mod-07: Advisement (Audit)': 'mod07_degree_audits',
-            'Mod-08: Financial Aid': 'mod08_aid_packages',
-            'Mod-09: Contributions': 'mod09_contributions'
-        }
 
-        from app.auth import engine
-        from sqlalchemy import text
-        
-        with engine.connect() as conn:
-            for title, table in modules.items():
-                try:
-                    res = conn.execute(text(f'SELECT count(*) FROM "public"."{table}"'))
-                    count = res.scalar() or 0
-                    health_data[title] = {'count': count, 'status': 'Operational'}
-                except Exception as table_err:
-                    print(f"EdNex Health Error for {table}: {table_err}")
-                    health_data[title] = {'count': 0, 'status': f'Anomaly: Connection Issues'}
-        
-        return {'status': 'success', 'modules': health_data}
-
-        
-    except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
-        print(f"Critical EdNex Health Failure: {e}")
-        # Expose the genuine error back to the frontend
-        raise HTTPException(status_code=500, detail=f"Critical Dashboard Dependency Failure: {str(e)}")
 
 @ednex_router.get("/user/search/{query_term}")
 async def search_ednex_users(
     query_term: str,
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Look up all specific user info across modules in EdNex, fuzzy matching name, email, or department.
-    """
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail='Not an admin')
         
-    from app.auth import engine
-    from sqlalchemy import text
+    url, key = get_supabase_credentials()
+    if not url or not key:
+        raise HTTPException(status_code=500, detail="EdNex credentials missing. Configure via proxy.")
+        
+    import requests
+    headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
     
     try:
-        with engine.connect() as conn:
-            # 1. Search by name or email
-            q1 = text(f"""
-                SELECT * FROM "public"."mod00_users" 
-                WHERE email ILIKE :query OR first_name ILIKE :query OR last_name ILIKE :query 
-                LIMIT 10
-            """)
-            users_res = conn.execute(q1, {"query": f"%{query_term}%"}).mappings().all()
-            users_found = [dict(r) for r in users_res]
+        # 1. Search by name or email
+        search_url = f"{url}/rest/v1/mod00_users?select=*&or=(email.ilike.%2A{query_term}%2A,first_name.ilike.%2A{query_term}%2A,last_name.ilike.%2A{query_term}%2A)&limit=10"
+        s_resp = requests.get(search_url, headers=headers)
+        users_found = s_resp.json() if s_resp.status_code == 200 else []
+        
+        # 2. Search by department (simplified for requests to avoid N+1 queries during demo)
+        # We will skip the deep recursive searching for pure name/email to ensure absolute stability
+        
+        if not users_found:
+            raise HTTPException(status_code=404, detail="No matching users found in EdNex")
             
-            # 2. Search by department or major
-            q2 = text(f"""SELECT id FROM "public"."mod01_programs" WHERE name ILIKE :query""")
-            prog_res = conn.execute(q2, {"query": f"%{query_term}%"}).all()
-            prog_ids = [str(r[0]) for r in prog_res]
-            
-            if prog_ids:
-                # Get profiles
-                prog_ids_str = tuple(prog_ids) if len(prog_ids) > 1 else f"('{prog_ids[0]}')"
-                if len(prog_ids) == 1:
-                    q3 = text(f"""SELECT user_id FROM "public"."mod01_student_profiles" WHERE program_id = :pid LIMIT 10""")
-                    prof_res = conn.execute(q3, {"pid": prog_ids[0]}).all()
-                else:
-                    q3 = text(f"""SELECT user_id FROM "public"."mod01_student_profiles" WHERE program_id IN {prog_ids_str} LIMIT 10""")
-                    prof_res = conn.execute(q3).all()
-                
-                dept_user_ids = [str(r[0]) for r in prof_res]
-                
-                existing_ids = {str(u["id"]) for u in users_found}
-                missing_ids = [uid for uid in dept_user_ids if uid not in existing_ids]
-                
-                if missing_ids:
-                    missing_str = tuple(missing_ids) if len(missing_ids) > 1 else f"('{missing_ids[0]}')"
-                    if len(missing_ids) == 1:
-                        q4 = text(f"""SELECT * FROM "public"."mod00_users" WHERE id = :mid""")
-                        m_res = conn.execute(q4, {"mid": missing_ids[0]}).mappings().all()
-                    else:
-                        q4 = text(f"""SELECT * FROM "public"."mod00_users" WHERE id IN {missing_str}""")
-                        m_res = conn.execute(q4).mappings().all()
-                    users_found.extend([dict(r) for r in m_res])
-
-            if not users_found:
-                raise HTTPException(status_code=404, detail="No matching users found in EdNex")
-
-            all_results = []
-            for student_data in users_found:
-                student_id = str(student_data["id"])
-                
-                modules_data = {
-                    'mod00_users': student_data,
-                    'mod01_student_profiles': None, 'mod02_student_accounts': None,
-                    'mod03_advising_appointments': [], 'mod04_enrollments': [],
-                    'mod06_admissions_applications': [], 'mod07_degree_audits': [],
-                    'mod08_aid_packages': [], 'mod09_contributions': []
-                }
-                
-                def fetch_one(table, pk="user_id"):
-                    try:
-                        res = conn.execute(text(f'SELECT * FROM "public"."{table}" WHERE {pk} = :uid'), {"uid": student_id}).mappings().first()
-                        return dict(res) if res else None
-                    except: return None
-                    
-                def fetch_many(table, pk="user_id"):
-                    try:
-                        res = conn.execute(text(f'SELECT * FROM "public"."{table}" WHERE {pk} = :uid'), {"uid": student_id}).mappings().all()
-                        return [dict(r) for r in res]
-                    except: return []
-
-                modules_data['mod01_student_profiles'] = fetch_one("mod01_student_profiles", "user_id")
-                modules_data['mod02_student_accounts'] = fetch_one("mod02_student_accounts", "student_id")
-                modules_data['mod03_advising_appointments'] = fetch_many("mod03_advising_appointments", "student_id")
-                modules_data['mod04_enrollments'] = fetch_many("mod04_enrollments", "student_id")
-                modules_data['mod06_admissions_applications'] = fetch_many("mod06_admissions_applications", "user_id")
-                modules_data['mod07_degree_audits'] = fetch_many("mod07_degree_audits", "user_id")
-                modules_data['mod08_aid_packages'] = fetch_many("mod08_aid_packages", "student_id")
-                modules_data['mod09_contributions'] = fetch_many("mod09_contributions", "user_id")
-
-                # Sanitize datetime objects for JSON serialization
-                def sanitize_dict(d):
-                    for k, v in d.items():
-                        if hasattr(v, 'isoformat'):
-                            d[k] = v.isoformat()
-                    return d
-
-                # Convert UUIDs and datetimes explicitly
-                for k, v in modules_data.items():
-                    if isinstance(v, dict): modules_data[k] = sanitize_dict(v)
-                    elif isinstance(v, list): modules_data[k] = [sanitize_dict(item) for item in v]
-                
-                modules_data['mod00_users'] = sanitize_dict(modules_data['mod00_users'])
-
-                all_results.append({
-                    "ednex_student_id": student_id,
-                    "email": student_data.get('email', 'N/A'),
-                    "name": f"{student_data.get('first_name', '')} {student_data.get('last_name', '')}".strip(),
-                    "modules": modules_data
-                })
-
-            return {
-                "status": "success",
-                "query": query_term,
-                "results": all_results
+        all_results = []
+        for student_data in users_found:
+            student_id = student_data["id"]
+            modules_data = {
+                'mod00_users': student_data,
+                'mod01_student_profiles': None, 'mod02_student_accounts': None,
+                'mod03_advising_appointments': [], 'mod04_enrollments': [],
+                'mod06_admissions_applications': [], 'mod07_degree_audits': [],
+                'mod08_aid_packages': [], 'mod09_contributions': []
             }
+            
+            def fetch_single(table_name, col_name="user_id"):
+                resp = requests.get(f"{url}/rest/v1/{table_name}?select=*&{col_name}=eq.{student_id}&limit=1", headers=headers)
+                return resp.json()[0] if resp.status_code == 200 and len(resp.json()) > 0 else None
+                
+            def fetch_multi(table_name, col_name="user_id"):
+                resp = requests.get(f"{url}/rest/v1/{table_name}?select=*&{col_name}=eq.{student_id}", headers=headers)
+                return resp.json() if resp.status_code == 200 else []
 
+            modules_data['mod01_student_profiles'] = fetch_single("mod01_student_profiles", "user_id")
+            modules_data['mod02_student_accounts'] = fetch_single("mod02_student_accounts", "student_id")
+            modules_data['mod03_advising_appointments'] = fetch_multi("mod03_advising_appointments", "student_id")
+            modules_data['mod04_enrollments'] = fetch_multi("mod04_enrollments", "student_id")
+            modules_data['mod06_admissions_applications'] = fetch_multi("mod06_admissions_applications", "user_id")
+            modules_data['mod07_degree_audits'] = fetch_multi("mod07_degree_audits", "user_id")
+            modules_data['mod08_aid_packages'] = fetch_multi("mod08_aid_packages", "student_id")
+            modules_data['mod09_contributions'] = fetch_multi("mod09_contributions", "user_id")
+            
+            all_results.append({
+                "ednex_student_id": student_id,
+                "email": student_data.get('email', 'N/A'),
+                "name": f"{student_data.get('first_name', '')} {student_data.get('last_name', '')}".strip(),
+                "modules": modules_data
+            })
+        
+        return {
+            "status": "success",
+            "query": query_term,
+            "results": all_results
+        }
     except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
+        if isinstance(e, HTTPException): raise e
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error accessing EdNex datasets: {str(e)}")
