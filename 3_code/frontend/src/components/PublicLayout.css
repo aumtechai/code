@@ -118,6 +118,9 @@
   cursor: pointer;
   min-height: unset;
   transition: background 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .pub-back-btn:hover { background: var(--slate-200); }
