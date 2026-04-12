@@ -112,15 +112,16 @@ const Login = () => {
                         <div className="hero-brand-mark">
                             <img src={logoAsset} alt="Aura Logo" className="hero-brand-logo" />
                         </div>
-                        <div className="hero-brand-text">
-                            <span className="hero-brand-eyebrow">Aura</span>
-                            <span className="hero-brand-name">Your Campus Co-Pilot</span>
+                        <div className="hero-brand-content">
+                            <div className="hero-brand-text">
+                                <span className="hero-brand-eyebrow">Aura</span>
+                                <span className="hero-brand-name">Your Campus Co-Pilot</span>
+                            </div>
+                            <p className="hero-description">
+                                Unify structured SIS data and unstructured academic content into a single sovereign knowledge graph. Aura empowers students, faculty, and administrators with proactive, compliant AI workflows.
+                            </p>
                         </div>
                     </div>
-
-                    <p className="hero-description">
-                        Unify structured SIS data and unstructured academic content into a single sovereign knowledge graph. Aura empowers students, faculty, and administrators with proactive, compliant AI workflows.
-                    </p>
 
                     {/* 2×2 Feature Card Grid */}
                     <div className="feature-grid">

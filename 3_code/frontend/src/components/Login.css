@@ -165,11 +165,18 @@ body {
 /* ---- Brand / Tagline ---- */
 .hero-brand {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
   margin-bottom: 2rem;
 }
+
+.hero-brand-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 
 /* Pill container keeps the logo clipped — hides the aumtech.ai subtitle */
 .hero-brand-mark {
@@ -231,10 +238,10 @@ body {
 .hero-description {
   font-size: 1rem;
   color: var(--slate-600);
-  line-height: 1.75;
-  margin-bottom: 2rem;
-  max-width: 560px;
+  line-height: 1.6;
+  max-width: 600px;
   font-weight: 400;
+  margin-bottom: 0;
 }
 
 /* =====================================================
