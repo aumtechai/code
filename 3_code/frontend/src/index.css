@@ -78,7 +78,10 @@ body {
 /* New Component Classes */
 
 .sidebar {
-  background: var(--sidebar-bg);
+  background: #faf7f2;
+  background-image:
+    radial-gradient(ellipse at 10% 20%, rgba(99,102,241,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 80%, rgba(124,58,237,0.05) 0%, transparent 50%);
   border-right: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
