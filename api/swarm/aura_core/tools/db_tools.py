@@ -3,6 +3,10 @@ import time
 import json
 import requests
 
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv(".env.local"))
+
 # Connection setup: Reusing project defaults or env
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://rfkoylpcuptzkakmqotq.supabase.co").strip()
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "").strip()
