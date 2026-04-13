@@ -32,6 +32,13 @@ const Login = () => {
     const [errorMsg, setErrorMsg] = useState('');
     const navigate = useNavigate();
 
+    React.useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/dashboard');
+        }
+    }, [navigate]);
+
     const handleGoogleSuccess = async (credentialResponse) => {
         setLoading(true);
         try {

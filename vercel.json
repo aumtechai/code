@@ -8,10 +8,9 @@
       "memory": 1024
     }
   },
-  "routes": [
-    { "src": "/api/swarm/(.*)", "dest": "/api/swarm/index" },
-    { "src": "/api/(.*)",      "dest": "/api/core/index" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "status": 200, "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/swarm/(.*)", "destination": "/api/swarm/index" },
+    { "source": "/api/(.*)",      "destination": "/api/core/index" },
+    { "source": "/(.*)",          "destination": "/index.html" }
   ]
 }
