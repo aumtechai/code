@@ -14,6 +14,8 @@ const AdminEdnex = ({ onBack }) => {
 
     // Status state
     const [healthData, setHealthData] = useState(null);
+    const [schemas, setSchemas] = useState([]);
+    const [selectedSchema, setSelectedSchema] = useState('public');
 
     // Lookup state
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,8 +26,22 @@ const AdminEdnex = ({ onBack }) => {
 
     useEffect(() => {
         if (activeTab === 'config') checkConfig();
-        if (activeTab === 'status') fetchHealth();
+        if (activeTab === 'status') {
+            fetchSchemas();
+            fetchHealth();
+        }
     }, [activeTab]);
+
+    const fetchSchemas = async () => {
+        try {
+            const res = await api.get('/api/integration/institutions');
+            if (res.data && res.data.schemas) {
+                setSchemas(res.data.schemas);
+            }
+        } catch (e) {
+            console.error("Failed to fetch schemas", e);
+        }
+    };
 
     const checkConfig = async () => {
         try {
@@ -56,7 +72,7 @@ const AdminEdnex = ({ onBack }) => {
         setLoading(true);
         setHealthError('');
         try {
-            const res = await api.get('/api/ednex/health');
+            const res = await api.get(`/api/ednex/health?schema_name=${selectedSchema}`);
             if (res.data && res.data.modules) {
                 setHealthData(res.data.modules);
             } else {
@@ -200,9 +216,21 @@ const AdminEdnex = ({ onBack }) => {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                         <h3>EdNex Module Health</h3>
-                        <button onClick={fetchHealth} disabled={loading} style={{ background: 'white', border: '1px solid #cbd5e1', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <RefreshCw size={14} /> Refresh
-                        </button>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <select 
+                                value={selectedSchema} 
+                                onChange={(e) => setSelectedSchema(e.target.value)}
+                                style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', fontWeight: 'bold', color: '#4f46e5', minWidth: '150px' }}
+                            >
+                                <option value="public">public (Core Data)</option>
+                                {schemas.map(s => (
+                                    <option key={s} value={s}>{s}</option>
+                                ))}
+                            </select>
+                            <button onClick={fetchHealth} disabled={loading} style={{ background: 'white', border: '1px solid #cbd5e1', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <RefreshCw size={14} /> Refresh
+                            </button>
+                        </div>
                     </div>
 
                     {loading && !healthData ? <p style={{ color: '#64748b', fontStyle: 'italic' }}>Initializing session and fetching module health from across EdNex clusters...</p> : null}

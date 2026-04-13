@@ -50,7 +50,10 @@ class EdNexConfig(BaseModel):
     key: str
 
 @ednex_router.get("/health")
-async def get_ednex_health(current_user: User = Depends(get_current_user)):
+async def get_ednex_health(
+    schema_name: str = "public",
+    current_user: User = Depends(get_current_user)
+):
     """
     Check the health and connection status of all required EdNex data modules.
     Returns module array mapped to the UI. Includes explicit error propagation.
@@ -66,10 +69,10 @@ async def get_ednex_health(current_user: User = Depends(get_current_user)):
         {"id": "mod00_users", "name": "Core Users Identity"},
         {"id": "mod01_programs", "name": "Academic Programs"},
         {"id": "mod01_student_profiles", "name": "Student Biological Profiles"},
-        {"id": "mod02_financial_transactions", "name": "Financial Transactions"},
+        {"id": "mod02_transactions", "name": "Financial Transactions"},  # FIXED ID
         {"id": "mod02_student_accounts", "name": "Student Fin-Accounts"},
         {"id": "mod03_advising_appointments", "name": "Advising Appointments"},
-        {"id": "mod04_course_catalog", "name": "Course Catalog"},
+        {"id": "mod04_courses", "name": "Course Catalog"},               # FIXED ID
         {"id": "mod04_enrollments", "name": "Active Enrollments"},
         # New Feature Tables
         {"id": "mod06_admissions_applications", "name": "Admissions App Stream"},
@@ -79,7 +82,11 @@ async def get_ednex_health(current_user: User = Depends(get_current_user)):
     ]
     
     import requests
-    headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
+    headers = {
+        'apikey': key, 
+        'Authorization': f'Bearer {key}',
+        'Accept-Profile': schema_name
+    }
     
     health_status = {}
     
