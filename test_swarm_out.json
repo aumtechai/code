@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "answer": "Your current cumulative GPA is 2.465. Please be aware that your academic standing is currently listed as Academic Probation.",
+  "flow_log": [
+    {
+      "sender": "Aura_Orchestrator",
+      "content": "Plan: Standard consult."
+    },
+    {
+      "sender": "Student_Help_Agent",
+      "content": "Analysis complete via mod01_student_profiles."
+    }
+  ],
+  "processing_seconds": 12.99,
+  "routing_reason": "Multi-Agent Intelligence Path",
+  "action_items": [
+    "Review the specific requirements and policies related to Academic Probation at your institution.",
+    "Contact student support services if you are experiencing personal or non-academic challenges affecting your studies.",
+    "Schedule a meeting with an academic advisor to develop a plan for improving your GPA and returning to good standing."
+  ]
+}
