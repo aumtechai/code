@@ -772,3 +772,22 @@ body {
     line-height: 1.4;
     font-weight: 500;
 }
+
+.forgot-password-link-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.forgot-password-link {
+    font-size: 0.825rem;
+    color: var(--indigo-600) !important;
+    cursor: pointer;
+    font-weight: 700;
+    transition: opacity 0.15s;
+}
+
+.forgot-password-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}

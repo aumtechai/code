@@ -274,12 +274,8 @@ const Login = () => {
                                 </div>
 
                                 <button type="submit" disabled={loading} className="login-button">
-                                    {loading ? "Authenticating…" : (isRegistering ? "Create Account" : "Authenticate →")}
+                                    {loading ? "Authenticating…" : "Authenticate →"}
                                 </button>
-
-                                <div className="forgot-password-link" onClick={() => setIsChangingPassword(true)}>
-                                    Change or reset password?
-                                </div>
                             </form>
                         ) : (
                             <form onSubmit={handleChangePassword}>
@@ -320,12 +316,14 @@ const Login = () => {
                                 <button type="submit" disabled={loading} className="login-button">
                                     {loading ? "Updating…" : "Update Password"}
                                 </button>
-
-                                <div className="forgot-password-link" onClick={() => setIsChangingPassword(false)}>
-                                    Back to Login
-                                </div>
                             </form>
                         )}
+
+                        <div className="forgot-password-link-container">
+                             <div className="forgot-password-link" onClick={() => setIsChangingPassword(!isChangingPassword)}>
+                                {isChangingPassword ? "Back to Login" : "Change or reset password?"}
+                            </div>
+                        </div>
 
                         {errorMsg && (
                             <motion.div 
