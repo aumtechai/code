@@ -28,8 +28,12 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
     const navigate = useNavigate();
 
     React.useEffect(() => {
@@ -50,6 +54,30 @@ const Login = () => {
         } catch (error) {
             console.error("Google Auth Error:", error);
             alert("Google Sign-In failed. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setErrorMsg('');
+        setSuccessMsg('');
+        try {
+            const response = await api.post('/api/auth/change-password', {
+                email,
+                old_password: oldPassword,
+                new_password: newPassword
+            });
+            setSuccessMsg(response.data.message);
+            // Reset fields
+            setOldPassword('');
+            setNewPassword('');
+            setTimeout(() => setIsChangingPassword(false), 3000);
+        } catch (error) {
+            const detail = error.response?.data?.detail;
+            setErrorMsg(typeof detail === 'string' ? detail : "Password change failed.");
         } finally {
             setLoading(false);
         }
@@ -193,76 +221,131 @@ const Login = () => {
                         </div>
 
                         <div className="login-header-block">
-                            <h2>{isRegistering ? 'Create Account' : 'Secure Portal'}</h2>
-                            <p>Access your unified academic dashboard</p>
+                            <h2>{isChangingPassword ? 'Update Password' : (isRegistering ? 'Create Account' : 'Secure Portal')}</h2>
+                            <p>{isChangingPassword ? 'Securely refresh your campus credentials' : 'Access your unified academic dashboard'}</p>
                         </div>
 
-                        <form onSubmit={handleAuth}>
-                            {isRegistering && (
+                        {!isChangingPassword ? (
+                            <form onSubmit={handleAuth}>
+                                {isRegistering && (
+                                    <div className="form-field">
+                                        <label className="form-label" htmlFor="fullName">Full Name</label>
+                                        <input
+                                            id="fullName"
+                                            type="text"
+                                            placeholder="Alex Johnson"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
+                                            required={isRegistering}
+                                            autoComplete="name"
+                                            className="login-input"
+                                        />
+                                    </div>
+                                )}
+
                                 <div className="form-field">
-                                    <label className="form-label" htmlFor="fullName">Full Name</label>
+                                    <label className="form-label" htmlFor="email">Institutional Email</label>
                                     <input
-                                        id="fullName"
-                                        type="text"
-                                        placeholder="Alex Johnson"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
-                                        required={isRegistering}
-                                        autoComplete="name"
+                                        id="email"
+                                        name="username"
+                                        type="email"
+                                        placeholder=""
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        autoComplete="email"
                                         className="login-input"
                                     />
                                 </div>
-                            )}
 
-                            <div className="form-field">
-                                <label className="form-label" htmlFor="email">Institutional Email</label>
-                                <input
-                                    id="email"
-                                    name="username"
-                                    type="email"
-                                    placeholder=""
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    autoComplete="new-password"
-                                    readOnly
-                                    onFocus={e => e.target.removeAttribute('readOnly')}
-                                    className="login-input"
-                                />
-                            </div>
+                                <div className="form-field">
+                                    <label className="form-label" htmlFor="password">Password</label>
+                                    <input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        placeholder=""
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        autoComplete="current-password"
+                                        className="login-input"
+                                    />
+                                </div>
 
-                            <div className="form-field">
-                                <label className="form-label" htmlFor="password">Password</label>
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    placeholder=""
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    autoComplete="new-password"
-                                    readOnly
-                                    onFocus={e => e.target.removeAttribute('readOnly')}
-                                    className="login-input"
-                                />
-                            </div>
+                                <button type="submit" disabled={loading} className="login-button">
+                                    {loading ? "Authenticating…" : (isRegistering ? "Create Account" : "Authenticate →")}
+                                </button>
 
-                            <button type="submit" disabled={loading} className="login-button">
-                                {loading ? "Authenticating…" : (isRegistering ? "Create Account" : "Authenticate →")}
-                            </button>
+                                <div className="forgot-password-link" onClick={() => setIsChangingPassword(true)}>
+                                    Change or reset password?
+                                </div>
+                            </form>
+                        ) : (
+                            <form onSubmit={handleChangePassword}>
+                                <div className="form-field">
+                                    <label className="form-label" htmlFor="reset-email">Institutional Email</label>
+                                    <input
+                                        id="reset-email"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        className="login-input"
+                                    />
+                                </div>
+                                <div className="form-field">
+                                    <label className="form-label" htmlFor="old-pass">Current Password</label>
+                                    <input
+                                        id="old-pass"
+                                        type="password"
+                                        value={oldPassword}
+                                        onChange={(e) => setOldPassword(e.target.value)}
+                                        required
+                                        className="login-input"
+                                    />
+                                </div>
+                                <div className="form-field">
+                                    <label className="form-label" htmlFor="new-pass">New Password</label>
+                                    <input
+                                        id="new-pass"
+                                        type="password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        required
+                                        className="login-input"
+                                    />
+                                </div>
 
-                            {errorMsg && (
-                                <motion.div 
-                                    initial={{ opacity: 0, y: -10 }} 
-                                    animate={{ opacity: 1, y: 0 }} 
-                                    className="login-error-msg"
-                                >
-                                    {errorMsg}
-                                </motion.div>
-                            )}
+                                <button type="submit" disabled={loading} className="login-button">
+                                    {loading ? "Updating…" : "Update Password"}
+                                </button>
 
-                        </form>
+                                <div className="forgot-password-link" onClick={() => setIsChangingPassword(false)}>
+                                    Back to Login
+                                </div>
+                            </form>
+                        )}
+
+                        {errorMsg && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: -10 }} 
+                                animate={{ opacity: 1, y: 0 }} 
+                                className="login-error-msg"
+                            >
+                                {errorMsg}
+                            </motion.div>
+                        )}
+
+                        {successMsg && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: -10 }} 
+                                animate={{ opacity: 1, y: 0 }} 
+                                className="login-success-msg"
+                            >
+                                {successMsg}
+                            </motion.div>
+                        )}
 
                         <div className="signup-toggle" onClick={() => setIsRegistering(!isRegistering)}>
                             {isRegistering

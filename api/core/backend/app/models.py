@@ -57,9 +57,21 @@ class Course(SQLModel, table=True):
     code: str
     grade: str
     credits: int
+    semester: Optional[str] = Field(default="Spring 2026")
+    syllabus_url: Optional[str] = Field(default=None)
     suggestion: Optional[str] = Field(default=None)
     
     user: User = Relationship(back_populates="courses")
+
+class CalendarEvent(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    course_id: Optional[int] = Field(default=None, foreign_key="course.id")
+    title: str
+    description: Optional[str] = None
+    event_date: datetime
+    event_type: str = Field(default="assignment") # assignment, exam, quiz, holiday
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class Tutor(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)

@@ -136,7 +136,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
         raise credentials_exception
     
     if is_ednex:
-        # Proxy validation
+        # Try to find the local user first to get their real ID
+        statement = select(User).where(User.email == email)
+        user = session.exec(statement).first()
+        if user:
+            return user
+
+        # Proxy validation fallback to Supabase if local user doesn't exist yet
         from app.ednex import get_supabase_client
         supabase = get_supabase_client()
         if supabase:
@@ -151,14 +157,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
                 try:
                     prof_resp = supabase.table("mod01_student_profiles").select("*").eq("user_id", u["id"]).limit(1).execute()
                     if prof_resp.data:
-                        # Handle varied naming conventions in Supabase (GPA vs cumulative_gpa)
                         gpa = prof_resp.data[0].get("cumulative_gpa") or prof_resp.data[0].get("gpa") or 0.0
                         ai_insight = prof_resp.data[0].get("ai_insight", "")
                 except Exception as e:
                     print(f"EdNex Profile fetch error: {e}")
                     
-                # NOTE: using a negative temporary ID to indicate this is a stateless proxy user
-                # Using 7 hex chars to ensure it fits in a 32-bit signed integer range
                 import hashlib
                 virtual_id = -int(hashlib.md5(email.encode()).hexdigest()[:7], 16)
                 
@@ -173,7 +176,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
                     major=major,
                     ai_insight=ai_insight,
                     subscription_status='active',
-                    # required missing fields
                     background="",
                     interests="",
                     on_track_score=100

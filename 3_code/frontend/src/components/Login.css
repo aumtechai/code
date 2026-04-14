@@ -744,3 +744,31 @@ body {
 @media (min-width: 769px) {
   .mobile-brand-strip { display: none; }
 }
+/* -- Change Password Styles -- */
+.forgot-password-link {
+    font-size: 0.825rem;
+    color: var(--slate-400);
+    text-align: center;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: color 0.15s;
+    font-weight: 500;
+}
+
+.forgot-password-link:hover {
+    color: var(--indigo-600);
+    text-decoration: underline;
+}
+
+.login-success-msg {
+    color: #065f46; /* green-800 */
+    background: #ecfdf5; /* green-50 */
+    border: 1px solid #a7f3d0; /* green-200 */
+    font-size: 0.825rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    text-align: left;
+    line-height: 1.4;
+    font-weight: 500;
+}

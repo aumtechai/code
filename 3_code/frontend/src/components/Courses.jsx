@@ -1,8 +1,102 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { BookOpen, Plus, Trash2, TrendingUp, Award, RefreshCw, Settings, Calendar, ChevronLeft } from 'lucide-react';
+import { BookOpen, Plus, Trash2, TrendingUp, Award, RefreshCw, Settings, Calendar, ChevronLeft, Check, Loader2, Upload, ScanLine, X } from 'lucide-react';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const SyllabusScanModal = ({ course, onClose, onSuccess }) => {
+    const [file, setFile] = useState(null);
+    const [scanning, setScanning] = useState(false);
+    const [count, setCount] = useState(0);
+
+    const handleUpload = async () => {
+        if (!file) return;
+        setScanning(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await api.post(`/api/courses/${course.id}/upload-syllabus`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setCount(res.data.events_extracted);
+            setTimeout(() => {
+                onSuccess();
+            }, 2000);
+        } catch (error) {
+            alert("Analysis failed. Please check your API key.");
+            setScanning(false);
+        }
+    };
+
+    return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: '1rem' }}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="card-white" style={{ width: '100%', maxWidth: '500px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                    <div>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0 }}>Scan Syllabus</h3>
+                        <p style={{ color: '#64748b', fontSize: '0.9rem' }}>{course.name} ({course.code})</p>
+                    </div>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button>
+                </div>
+
+                {count > 0 ? (
+                    <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+                        <div style={{ background: '#dcfce7', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                            <Check size={32} color="#166534" />
+                        </div>
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#166534' }}>Extracted {count} Events!</h4>
+                        <p style={{ fontSize: '0.9rem', color: '#64748b' }}>Your calendar has been updated with new deadlines.</p>
+                    </div>
+                ) : (
+                    <>
+                        <div 
+                            style={{ 
+                                border: '2px dashed #e2e8f0', 
+                                borderRadius: '12px', 
+                                padding: '2rem', 
+                                textAlign: 'center', 
+                                marginBottom: '1.5rem',
+                                background: file ? '#f8fafc' : 'transparent'
+                            }}
+                        >
+                            <input type="file" onChange={e => setFile(e.target.files[0])} style={{ display: 'none' }} id="syl-upload" />
+                            <label htmlFor="syl-upload" style={{ cursor: 'pointer' }}>
+                                <div style={{ background: '#eff6ff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                                    <Upload size={24} color="#4f46e5" />
+                                </div>
+                                <div style={{ fontWeight: '700', color: '#1e293b' }}>{file ? file.name : 'Select Syllabus Document'}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>PDF, Docx or Images accepted</div>
+                            </label>
+                        </div>
+
+                        <button 
+                            onClick={handleUpload}
+                            disabled={!file || scanning}
+                            style={{ 
+                                width: '100%', 
+                                padding: '12px', 
+                                background: '#4f46e5', 
+                                color: 'white', 
+                                border: 'none', 
+                                borderRadius: '10px', 
+                                fontWeight: '700', 
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                opacity: (!file || scanning) ? 0.6 : 1
+                            }}
+                        >
+                            {scanning ? <Loader2 className="animate-spin" size={18} /> : <ScanLine size={18} />}
+                            {scanning ? 'AI Analyzing...' : 'Begin Smart Scan'}
+                        </button>
+                    </>
+                )}
+            </motion.div>
+        </div>
+    );
+};
 
 const gradePoints = {
     'A': 4.0, 'A-': 3.7,
@@ -17,6 +111,7 @@ const Courses = ({ userData: externalUserData, onBack }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncStatus, setSyncStatus] = useState(null);
+    const [scannerCourse, setScannerCourse] = useState(null);
     const [newCourse, setNewCourse] = useState({ name: '', code: '', grade: 'B', credits: 3 });
 
     useEffect(() => {
@@ -182,7 +277,7 @@ const Courses = ({ userData: externalUserData, onBack }) => {
 
             {/* Course List Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexDirection: window.innerWidth <= 768 ? 'column' : 'row', gap: '1rem' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>My Courses</h2>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Spring 2026 Curriculum</h2>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', width: window.innerWidth <= 768 ? '100%' : 'auto' }}>
                     {syncStatus && (
                         <motion.div
@@ -224,27 +319,7 @@ const Courses = ({ userData: externalUserData, onBack }) => {
                             fontSize: '0.85rem'
                         }}>
                         <RefreshCw size={16} className={isSyncing ? 'animate-spin' : ''} />
-                        {window.innerWidth <= 600 ? 'Sync' : 'Refresh EdNex'}
-                    </button>
-                    <button
-                        onClick={() => window.open((api.defaults.baseURL || '') + '/api/lms/calendar.ics')}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px',
-                            background: 'white',
-                            color: '#e63b7a',
-                            border: '1px solid #e2e8f0',
-                            padding: '10px 16px',
-                            borderRadius: '10px',
-                            cursor: 'pointer',
-                            fontWeight: '700',
-                            flex: window.innerWidth <= 768 ? 1 : 'none',
-                            fontSize: '0.85rem'
-                        }}>
-                        <Calendar size={16} />
-                        {window.innerWidth <= 600 ? 'Calendar' : 'Subscribe'}
+                        Sync EdNex
                     </button>
                     <button
                         onClick={() => setIsAdding(true)}
@@ -268,8 +343,6 @@ const Courses = ({ userData: externalUserData, onBack }) => {
                 </div>
             </div>
 
-
-
             <div className="card-white" style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{ overflowX: 'auto', width: '100%' }}>
                     <table style={{ width: '100%', minWidth: '600px', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -277,14 +350,15 @@ const Courses = ({ userData: externalUserData, onBack }) => {
                             <tr>
                                 <th style={{ padding: '16px 24px', fontSize: '0.8rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Course Title</th>
                                 <th style={{ padding: '16px 24px', fontSize: '0.8rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Credits</th>
-                                <th style={{ padding: '16px 24px', fontSize: '0.8rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Grade</th>
+                                <th style={{ padding: '16px 24px', fontSize: '0.8rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Semester</th>
+                                <th style={{ padding: '16px 24px', fontSize: '0.8rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
                                 <th style={{ padding: '16px 24px', fontSize: '0.8rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'right' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {courses.length === 0 ? (
                                 <tr>
-                                    <td colSpan="4" style={{ padding: '4rem 2rem', textAlign: 'center', color: '#94a3b8' }}>
+                                    <td colSpan="5" style={{ padding: '4rem 2rem', textAlign: 'center', color: '#94a3b8' }}>
                                         <div style={{ background: '#f1f5f9', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
                                             <BookOpen size={30} />
                                         </div>
@@ -300,22 +374,40 @@ const Courses = ({ userData: externalUserData, onBack }) => {
                                             <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600' }}>{course.code}</div>
                                         </td>
                                         <td style={{ padding: '16px 24px', fontWeight: '600' }}>{course.credits}</td>
+                                        <td style={{ padding: '16px 24px' }}>{course.semester || 'N/A'}</td>
                                         <td style={{ padding: '16px 24px' }}>
-                                            <span style={{
-                                                padding: '6px 12px',
-                                                borderRadius: '20px',
-                                                fontSize: '0.85rem',
-                                                fontWeight: '800',
-                                                background: course.grade.startsWith('A') ? '#dcfce7' : course.grade.startsWith('B') ? '#dbeafe' : course.grade.startsWith('C') ? '#fef9c3' : '#fee2e2',
-                                                color: course.grade.startsWith('A') ? '#166534' : course.grade.startsWith('B') ? '#1e40af' : course.grade.startsWith('C') ? '#854d0e' : '#991b1b',
-                                            }}>
-                                                {course.grade}
-                                            </span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                {course.syllabus_url ? (
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.8rem', fontWeight: '700' }}>
+                                                        <Check size={14} strokeWidth={3} /> Syllabus Scanned
+                                                    </div>
+                                                ) : (
+                                                    <button 
+                                                        onClick={() => setScannerCourse(course)}
+                                                        style={{ 
+                                                            fontSize: '0.75rem', 
+                                                            background: '#eff6ff', 
+                                                            color: '#3b82f6', 
+                                                            border: '1px solid #bfdbfe', 
+                                                            padding: '4px 8px', 
+                                                            borderRadius: '6px', 
+                                                            cursor: 'pointer',
+                                                            fontWeight: '700',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '4px'
+                                                        }}>
+                                                        <Plus size={12} /> Scan Syllabus
+                                                    </button>
+                                                )}
+                                            </div>
                                         </td>
                                         <td style={{ padding: '16px 24px', textAlign: 'right' }}>
-                                            <button onClick={() => handleDelete(course.id)} style={{ border: 'none', background: '#fee2e2', color: '#ef4444', cursor: 'pointer', padding: '8px', borderRadius: '8px', transition: 'all 0.2s' }}>
-                                                <Trash2 size={16} />
-                                            </button>
+                                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                <button onClick={() => handleDelete(course.id)} style={{ border: 'none', background: '#fee2e2', color: '#ef4444', cursor: 'pointer', padding: '8px', borderRadius: '8px', transition: 'all 0.2s' }}>
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -324,6 +416,20 @@ const Courses = ({ userData: externalUserData, onBack }) => {
                     </table>
                 </div>
             </div>
+
+            {/* SCANNER MODAL */}
+            <AnimatePresence>
+                {scannerCourse && (
+                    <SyllabusScanModal 
+                        course={scannerCourse} 
+                        onClose={() => setScannerCourse(null)} 
+                        onSuccess={() => {
+                            setScannerCourse(null);
+                            fetchCourses();
+                        }} 
+                    />
+                )}
+            </AnimatePresence>
 
             {/* Add Course Modal Overlay */}
             {isAdding && (
