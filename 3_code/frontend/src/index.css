@@ -373,3 +373,28 @@ button {
 }
 
 /* trigger build */
+
+.license-badge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(255,255,255,0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: white;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+@media (max-width: 768px) {
+  .license-badge {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    margin-top: 0.5rem;
+    display: inline-block;
+  }
+}

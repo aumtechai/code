@@ -262,7 +262,12 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                         <Brain size={18} strokeWidth={2.5} /> Aura Intelligence Engine
                     </div>
                     <h1 style={{ fontSize: '2.5rem', margin: '0.5rem 0 1rem 0', fontWeight: '700' }}>
-                        Good afternoon, {userData?.full_name ? userData.full_name.split(' ')[0] : 'Student'}!
+                        {(() => {
+                            const hour = new Date().getHours();
+                            if (hour < 12) return 'Good morning';
+                            if (hour < 18) return 'Good afternoon';
+                            return 'Good evening';
+                        })()}, {userData?.full_name ? userData.full_name.split(' ')[0] : 'Student'}!
                     </h1>
                     <p style={{ maxWidth: '500px', fontSize: '1.1rem', opacity: 0.9, marginBottom: '2rem', lineHeight: '1.6' }}>
                         {userData?.ai_insight || "Welcome to Aura. Your personal academic intelligence platform designed to help you succeed."}
@@ -308,7 +313,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                 </div>
 
                 {userData?.is_ednex_verified && (
-                    <div style={{ position: 'absolute', bottom: '1rem', right: '1rem', background: 'rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', color: 'white', fontWeight: '600', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}>
+                    <div className="license-badge">
                         Institutional License Active
                     </div>
                 )}
