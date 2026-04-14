@@ -148,7 +148,7 @@ async def run_aura_core_query_async(query: str, student_email: str):
             print(f"[Aura_Core] Consulting {agent_name}...")
             
             # Sub-Phase A: Tool/Module Decision
-            spec_msg = f"User Query: {query}. From student: {student_email}. Based on your role, suggest target_module in JSON: {{\"target_module\": \"...\"}}"
+            spec_msg = f"User Query: {query}. From student: {student_email}. Select the best target_module from: [mod01_student_profiles, mod02_student_accounts, mod04_courses, mod04_enrollments, mod07_advisement, mod08_aid_packages, mod09_contributions]. Return ONLY JSON: {{\"target_module\": \"...\"}}"
             spec_init_raw = await specialist.chat(spec_msg)
             spec_decision = extract_json(spec_init_raw)
             target_module = spec_decision.get("target_module", "general")
