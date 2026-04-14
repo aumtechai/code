@@ -1,1 +1,3 @@
 app_identifier("com.studentsuccess.navigator")
+team_id(ENV["APPLE_TEAM_ID"])
+itc_team_id(ENV["APPLE_TEAM_ID"])
