@@ -21,6 +21,8 @@ platform :ios do
       teamid: ENV["APPLE_TEAM_ID"]
     )
     
+    get_certificates
+    
     get_provisioning_profile(
       app_identifier: "com.studentsuccess.navigator",
       team_id: ENV["APPLE_TEAM_ID"]
