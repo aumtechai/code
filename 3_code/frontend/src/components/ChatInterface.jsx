@@ -419,6 +419,28 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
                         />
                     </div>
                     <button
+                        type="button"
+                        onClick={() => setShowConsentModal(true)}
+                        style={{ 
+                            background: '#f8fafc', 
+                            border: '1px solid #e2e8f0', 
+                            cursor: 'pointer', 
+                            color: '#64748b',
+                            width: '44px',
+                            height: '44px',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'}
+                        onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}
+                        title="AI Privacy Info"
+                    >
+                        <Info size={20} />
+                    </button>
+                    <button
                         type="submit"
                         className="btn-primary"
                         disabled={loading}
@@ -437,6 +459,9 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
                         <Send size={22} color="white" />
                     </button>
                 </form>
+                <div style={{ marginTop: '0.75rem', textAlign: 'center', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '600', letterSpacing: '0.02em' }}>
+                    Aura AI is powered by Google Gemini. Data shared for academic processing.
+                </div>
             </div>
             {/* PRIVACY CONSENT MODAL (Apple Compliance) */}
             <AnimatePresence>

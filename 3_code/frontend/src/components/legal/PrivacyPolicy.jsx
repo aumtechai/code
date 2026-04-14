@@ -23,7 +23,10 @@ const PrivacyPolicy = ({ onBack }) => (
         <h3 style={{ marginTop: '1.75rem', fontWeight: '700', color: '#0f172a', fontSize: '1rem' }}>3. Data Protection</h3>
         <p>We implement industry-standard security measures to encrypt and protect your data. We do not sell your personal information to third parties.</p>
 
-        <h3 style={{ marginTop: '1.75rem', fontWeight: '700', color: '#0f172a', fontSize: '1rem' }}>4. Contact Us</h3>
+        <h3 style={{ marginTop: '1.75rem', fontWeight: '700', color: '#0f172a', fontSize: '1rem' }}>4. Third-Party AI Services</h3>
+        <p>Aura utilizes <strong>Google Gemini AI</strong> to provide real-time academic guidance and data analysis. When you interact with our AI agents, your chat queries and relevant academic context (such as your course list) are transmitted securely to Google. Google processes this information solely to generate responses for you and adheres to high standards of data protection and security. We do not use your data to train public AI models.</p>
+
+        <h3 style={{ marginTop: '1.75rem', fontWeight: '700', color: '#0f172a', fontSize: '1rem' }}>5. Contact Us</h3>
         <p>If you have questions about this policy, please contact <a href="mailto:support@aumtech.ai" style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none' }}>support@aumtech.ai</a>.</p>
     </LegalPage>
 );
