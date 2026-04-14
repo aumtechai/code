@@ -329,9 +329,18 @@ const Login = () => {
                             <motion.div 
                                 initial={{ opacity: 0, y: -10 }} 
                                 animate={{ opacity: 1, y: 0 }} 
-                                className="login-error-msg"
+                                className="login-error-container"
                             >
-                                {errorMsg}
+                                <div className="login-error-msg">{errorMsg}</div>
+                                {!isRegistering && !isChangingPassword && (
+                                    <button 
+                                        type="button" 
+                                        className="inline-reset-btn"
+                                        onClick={() => setIsChangingPassword(true)}
+                                    >
+                                        Forgot or Change Password?
+                                    </button>
+                                )}
                             </motion.div>
                         )}
 

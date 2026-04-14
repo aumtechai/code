@@ -791,3 +791,31 @@ body {
     opacity: 0.8;
     text-decoration: underline;
 }
+
+.login-error-container {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inline-reset-btn {
+    background: var(--indigo-600);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.inline-reset-btn:hover {
+    background: var(--indigo-700);
+}
