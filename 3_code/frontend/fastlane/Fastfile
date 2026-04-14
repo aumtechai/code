@@ -22,7 +22,7 @@ platform :ios do
     )
     
     get_certificates(
-      keychain_path: lane_context[:KEYCHAIN_PATH],
+      keychain_path: "#{lane_context[:KEYCHAIN_PATH]}-db",
       keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"]
     )
     
