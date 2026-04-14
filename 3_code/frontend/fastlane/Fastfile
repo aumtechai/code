@@ -16,26 +16,18 @@ platform :ios do
       in_house: false
     )
 
-    update_project_team(
-      path: "ios/App/App.xcodeproj",
-      teamid: ENV["APPLE_TEAM_ID"]
-    )
-    
-    get_certificates(
-      keychain_path: "#{lane_context[:KEYCHAIN_PATH]}-db",
-      keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"]
-    )
-    
-    get_provisioning_profile(
-      app_identifier: "com.studentsuccess.navigator",
-      team_id: ENV["APPLE_TEAM_ID"]
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      team_id: ENV["APPLE_TEAM_ID"],
+      path: "ios/App/App.xcodeproj"
     )
     
     build_app(
       workspace: "ios/App/App.xcworkspace",
       scheme: "App",
       export_method: "app-store",
-      xcargs: ENV["APPLE_TEAM_ID"] ? "-allowProvisioningUpdates DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']}" : "-allowProvisioningUpdates"
+      api_key: lane_context[SharedValues::APP_STORE_CONNECT_API_KEY],
+      xcargs: "-allowProvisioningUpdates"
     )
 
     upload_to_testflight(skip_waiting_for_build_processing: true)
