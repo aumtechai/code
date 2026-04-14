@@ -16,28 +16,36 @@ platform :ios do
       in_house: false
     )
 
-    get_certificates(
-      force: true,
-      keychain_path: "#{lane_context[:KEYCHAIN_PATH]}-db",
-      keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"]
-    )
-    
-    get_provisioning_profile(
-      app_identifier: "com.studentsuccess.navigator",
-      team_id: ENV["APPLE_TEAM_ID"]
-    )
-
     update_code_signing_settings(
-      use_automatic_signing: false,
+      use_automatic_signing: true,
+      team_id: ENV["APPLE_TEAM_ID"],
       path: "ios/App/App.xcodeproj"
     )
+
+    # Write the API Key to a temporary .p8 file for xcodebuild auth
+    key_content = ENV["APP_STORE_CONNECT_KEY_CONTENT"]
+    key_path = File.expand_path("AuthKey.p8")
+    
+    # Handle base64 or raw PEM
+    if key_content && !key_content.include?("-----BEGIN")
+      require 'base64'
+      File.write(key_path, Base64.decode64(key_content))
+    else
+      File.write(key_path, key_content)
+    end
     
     build_app(
       workspace: "ios/App/App.xcworkspace",
       scheme: "App",
       export_method: "app-store",
       export_team_id: ENV["APPLE_TEAM_ID"],
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']}"
+      xcargs: [
+        "-allowProvisioningUpdates",
+        "-authenticationKeyID #{ENV['APP_STORE_CONNECT_KEY_ID']}",
+        "-authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_ISSUER_ID']}",
+        "-authenticationKeyPath #{key_path}",
+        "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']}"
+      ].join(" ")
     )
 
     upload_to_testflight(skip_waiting_for_build_processing: true)
