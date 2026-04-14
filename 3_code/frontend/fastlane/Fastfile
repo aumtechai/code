@@ -21,7 +21,10 @@ platform :ios do
       teamid: ENV["APPLE_TEAM_ID"]
     )
     
-    get_certificates
+    get_certificates(
+      keychain_path: ENV["MATCH_KEYCHAIN_NAME"],
+      keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"]
+    )
     
     get_provisioning_profile(
       app_identifier: "com.studentsuccess.navigator",
