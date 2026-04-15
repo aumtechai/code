@@ -190,16 +190,22 @@ body {
   flex-shrink: 0;
   background: var(--white);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  position: relative;
 }
 
+/* The actual <img> tag is scaled up and translated to show only the icon portion */
 .hero-brand-logo {
-  width: 200px;
-  height: 200px;
+  width: 320px;
+  height: 320px;
   object-fit: cover;
-  object-position: top center;  /* show the icon, not the text below */
+  object-position: 50% top;
   display: block;
+  flex-shrink: 0;
+  transform: translateY(-20px) scale(1);
+  /* Only show the top 62% of the image (icon area only) */
+  clip-path: inset(0 0 38% 0);
 }
 
 .hero-brand-text {

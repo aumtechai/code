@@ -18,6 +18,7 @@ node_modules
 venv
 .venv
 __pycache__
+**/__pycache__/**
 
 # Ignore Frontend Source (Only Keep the Compiled Dist)
 3_code/frontend/src
@@ -26,3 +27,48 @@ __pycache__
 3_code/frontend/resources
 3_code/frontend/public
 # Keep 3_code/frontend/dist (This is the actual site!)
+
+# CRITICAL: Exclude backend test/script/migration files
+# These were being auto-discovered by Vercel as lambda functions,
+# exceeding function limits and shadowing the real api/core/index.py entry point.
+api/core/backend/test_*.py
+api/core/backend/seed_*.py
+api/core/backend/debug_*.py
+api/core/backend/migrate_*.py
+api/core/backend/check_*.py
+api/core/backend/verify_*.py
+api/core/backend/ensure_*.py
+api/core/backend/load_*.py
+api/core/backend/make_*.py
+api/core/backend/introspect_*.py
+api/core/backend/Procfile
+api/swarm/backend/test_*.py
+api/swarm/backend/seed_*.py
+api/swarm/backend/debug_*.py
+api/swarm/backend/migrate_*.py
+
+# Root-level diagnostic/test scripts
+diagnose_login.py
+test_db_conn.py
+check_db.py
+find_real_student.py
+inject_ednex_users.py
+inspect_db_state.py
+list_models.py
+list_users.py
+migrate_vars.py
+query_demo_users.py
+reset_demo_passwords.py
+scratch_test.py
+test_agent.py
+test_agent3.py
+test_ingest.py
+test_multiple_questions.py
+test_swarm.py
+test_syllabus_workflow.py
+update_key.py
+dummy.csv
+out.txt
+test_results.txt
+test_swarm_out.json
+*.db

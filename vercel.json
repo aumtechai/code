@@ -1,17 +1,19 @@
 {
   "version": 2,
   "name": "aura-stable-final",
-  "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/**/*.py": {
-      "maxDuration": 300,
-      "memory": 1024
+    "api/core/index.py": {
+      "maxDuration": 300
+    },
+    "api/swarm/index.py": {
+      "maxDuration": 300
     }
   },
   "rewrites": [
-    { "source": "/api/swarm/(.*)", "destination": "/api/swarm/index.py" },
-    { "source": "/api/(.*)",      "destination": "/api/core/index.py" },
+    { "source": "/api/swarm/:path*", "destination": "/api/swarm/index.py" },
+    { "source": "/api/:path*",       "destination": "/api/core/index.py" },
     { "source": "/((?!api/|assets/|static/|favicon.ico|manifest.json|logo.png|bookmark_logo.png|robots.txt|sitemap.xml).*)", "destination": "/index.html" }
   ]
 }
+

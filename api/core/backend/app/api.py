@@ -591,37 +591,92 @@ class ChangePasswordRequest(BaseModel):
 @router.post("/auth/change-password")
 async def change_password(req: ChangePasswordRequest, session: Session = Depends(get_session)):
     """
-    Securely updates a local user's password after verifying their existing credentials.
-    Students managed via EdNex are directed to the central portal.
+    Securely updates a user's password after verifying their existing credentials.
+    Writes the new bcrypt hash to BOTH the local DB (if the user exists there)
+    and to EdNex (mod00_users.password_hash) so that future logins through
+    either path immediately use the new password.
     """
+    new_hash = None  # We'll compute this once if verification passes
+
     try:
+        # ── 1. Check Local DB first ──────────────────────────────────────────
         statement = select(User).where(User.email == req.email)
-        user = session.exec(statement).first()
-        
-        if not user:
-            # Fallback: Check if this is an EdNex user (who doesn't have a local record yet)
-            from app.ednex import get_supabase_client
-            supabase = get_supabase_client()
-            if supabase:
-                resp = supabase.table("mod00_users").select("email").eq("email", req.email).limit(1).execute()
-                if resp.data:
-                    raise HTTPException(
-                        status_code=400, 
-                        detail="Student credentials must be managed via the EdNex Central Portal. Please contact your registrar."
-                    )
-            
-            raise HTTPException(status_code=404, detail="User not found in local directory.")
-        
-        if not verify_password(req.old_password, user.password_hash):
-            raise HTTPException(status_code=401, detail="Verification failed: Current password incorrect.")
-        
-        # Hash and persist new password
-        user.password_hash = get_password_hash(req.new_password)
-        session.add(user)
-        session.commit()
-        return {"status": "success", "message": "Password updated successfully. Please log in with your new credentials."}
-        
-    except HTTPException: raise
+        local_user = session.exec(statement).first()
+
+        if local_user:
+            # Verify old password against local hash
+            is_hashedpw = (local_user.password_hash == 'hashedpw')
+            if is_hashedpw:
+                if req.old_password != 'password123':
+                    raise HTTPException(status_code=401, detail="Verification failed: Current password incorrect.")
+            elif not verify_password(req.old_password, local_user.password_hash or ''):
+                raise HTTPException(status_code=401, detail="Verification failed: Current password incorrect.")
+            new_hash = get_password_hash(req.new_password)
+            local_user.password_hash = new_hash
+            session.add(local_user)
+            session.commit()
+            print(f"[ChangePassword] Local DB updated for {req.email}")
+
+        # ── 2. Check & Update EdNex regardless (EdNex is authoritative) ──────
+        ednex_updated = False
+        try:
+            from app.ednex import get_supabase_credentials
+            import requests as _req
+            url, key = get_supabase_credentials()
+            if url and key:
+                headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
+                rest_url = f"{url}/rest/v1/mod00_users?select=id,email,password_hash&email=eq.{req.email}&limit=1"
+                resp = _req.get(rest_url, headers=headers, timeout=8)
+
+                if resp.status_code == 200 and resp.json():
+                    ednex_user = resp.json()[0]
+                    ednex_hash = ednex_user.get('password_hash', '')
+                    ednex_id   = ednex_user['id']
+
+                    # Verify old password against EdNex hash
+                    is_ednex_dummy = (ednex_hash == 'hashedpw')
+                    if not local_user:  # Only re-verify if local already didn't do it
+                        if is_ednex_dummy:
+                            if req.old_password != 'password123':
+                                raise HTTPException(status_code=401, detail="Verification failed: Current password incorrect.")
+                        elif not verify_password(req.old_password, ednex_hash):
+                            raise HTTPException(status_code=401, detail="Verification failed: Current password incorrect.")
+
+                    if new_hash is None:
+                        new_hash = get_password_hash(req.new_password)
+
+                    # Write new bcrypt hash to EdNex
+                    patch_headers = {**headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'}
+                    patch_url = f"{url}/rest/v1/mod00_users?id=eq.{ednex_id}"
+                    patch_resp = _req.patch(patch_url, json={'password_hash': new_hash}, headers=patch_headers, timeout=8)
+                    if patch_resp.status_code in (200, 204):
+                        ednex_updated = True
+                        print(f"[ChangePassword] EdNex updated for {req.email}")
+                    else:
+                        print(f"[ChangePassword] EdNex PATCH failed: {patch_resp.status_code} {patch_resp.text[:200]}")
+
+                elif not local_user:
+                    # User found in neither local nor EdNex
+                    raise HTTPException(status_code=404, detail="User not found.")
+        except HTTPException:
+            raise
+        except Exception as se:
+            print(f"[ChangePassword] EdNex write failed (non-fatal if local updated): {se}")
+
+        if not local_user and not ednex_updated:
+            raise HTTPException(status_code=404, detail="User not found in any directory.")
+
+        return {
+            "status": "success",
+            "message": "Password updated successfully. Please log in with your new credentials.",
+            "sources_updated": {
+                "local_db": local_user is not None,
+                "ednex": ednex_updated
+            }
+        }
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error during password change: {str(e)}")
 
@@ -705,68 +760,86 @@ async def google_auth(request: GoogleAuthRequest, session: Session = Depends(get
 
 @router.post("/auth/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
-    # 0. Health Check (Ping DB to avoid stale Neon connections)
+    """
+    Authentication flow (in order):
+      1. Local DB — fast path for admin/faculty/seeded accounts.
+      2. EdNex (Supabase mod00_users) — authoritative for all students.
+         - Accepts real bcrypt hashes stored in EdNex.
+         - Accepts legacy 'hashedpw' placeholder with 'password123' as migration path,
+           then immediately upgrades the hash in EdNex to a real bcrypt.
+    """
+    # 0. DB liveness ping
     try:
         session.exec(select(1)).first()
     except Exception as dbe:
         print(f"DB PING ERROR: {dbe}")
-        # Allow it to continue if it can, but this is a red flag
-        
+
     try:
-        # 1. Check Native Aumtech Core (Admin/Faculty)
+        # ── 1. Local DB ───────────────────────────────────────────────────────
         statement = select(User).where(User.email == form_data.username)
         user = session.exec(statement).first()
-        
-        if user and verify_password(form_data.password, user.password_hash):
-            # Only allow Admin / Faculty to use the local bypass, per stateless proxy logic
-            if getattr(user, 'is_admin', False) or getattr(user, 'is_faculty', False):
-                if not user.is_active:
-                     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account inactive.")
-                access_token = create_access_token(data={"sub": user.email})
-                return {"access_token": access_token, "token_type": "bearer"}
-            else:
-                # User is a student. We should force them to use EdNex for authentication.
-                print(f"Bypassing Native Core for student {form_data.username}, forcing EdNex check.")
-            
-        # 2. Check EdNex Warehouse Proxy (Students/Faculty in Supabase)
+
+        if user and verify_password(form_data.password, user.password_hash or ''):
+            if not user.is_active:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account inactive.")
+            access_token = create_access_token(data={"sub": user.email})
+            print(f"LOGIN SUCCESS (Local Core): {user.email}")
+            return {"access_token": access_token, "token_type": "bearer"}
+
+        # ── 2. EdNex (authoritative for students) ─────────────────────────────
         try:
             from app.ednex import get_supabase_credentials
+            import requests as _req
             url, key = get_supabase_credentials()
             if url and key:
-                import requests
                 headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
-                rest_url = f"{url}/rest/v1/mod00_users?select=*&email=eq.{form_data.username}&limit=1"
-                resp = requests.get(rest_url, headers=headers)
-                
-                if resp.status_code == 200 and len(resp.json()) > 0:
+                rest_url = f"{url}/rest/v1/mod00_users?select=id,email,password_hash,is_active,role&email=eq.{form_data.username}&limit=1"
+                resp = _req.get(rest_url, headers=headers, timeout=8)
+
+                if resp.status_code == 200 and resp.json():
                     u_data = resp.json()[0]
-                    # If it's literally our dummy hash 'hashedpw', let password123 bypass, else do a real bcrypt
+                    ednex_hash = u_data.get('password_hash', '')
                     is_valid = False
-                    if u_data.get('password_hash') == 'hashedpw' and form_data.password == 'password123':
-                        is_valid = True
-                    elif verify_password(form_data.password, u_data.get('password_hash', '')):
-                        is_valid = True
-                        
+                    upgrade_hash = False  # Whether we need to store a real bcrypt in EdNex
+
+                    if ednex_hash == 'hashedpw':
+                        # Legacy migration path: accept 'password123', then upgrade hash
+                        if form_data.password == 'password123':
+                            is_valid = True
+                            upgrade_hash = True
+                    elif ednex_hash:
+                        # Real bcrypt — standard verification
+                        is_valid = verify_password(form_data.password, ednex_hash)
+
                     if is_valid:
                         if not u_data.get('is_active', True):
-                             from fastapi.responses import JSONResponse
-                             return JSONResponse(status_code=403, content={"detail": "EdNex Account inactive."})
-                        
+                            from fastapi.responses import JSONResponse
+                            return JSONResponse(status_code=403, content={"detail": "EdNex Account inactive."})
+
+                        # Upgrade dummy hash to real bcrypt in EdNex (fire-and-forget)
+                        if upgrade_hash:
+                            try:
+                                new_hash = get_password_hash(form_data.password)
+                                patch_headers = {**headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'}
+                                patch_url = f"{url}/rest/v1/mod00_users?id=eq.{u_data['id']}"
+                                _req.patch(patch_url, json={'password_hash': new_hash}, headers=patch_headers, timeout=5)
+                                print(f"[Login] Upgraded EdNex hash for {form_data.username}")
+                            except Exception as ue:
+                                print(f"[Login] Hash upgrade failed (non-fatal): {ue}")
+
                         access_token = create_access_token(data={"sub": form_data.username, "ednex": True})
-                        print("LOGIN SUCCESS (EdNex Proxy)")
+                        print(f"LOGIN SUCCESS (EdNex): {form_data.username}")
                         return {"access_token": access_token, "token_type": "bearer"}
+
+        except HTTPException:
+            raise
         except Exception as se:
-            import traceback
-            traceback.print_exc()
-            print(f"EdNex check error: {se}")
-            # DO NOT SWALLOW IT! Let's return it directly to debug prod!
-            from fastapi.responses import JSONResponse
-            return JSONResponse(status_code=500, content={"detail": f"EDNEX PROXY ERROR: {str(se)}"})
-            
-        # 3. Failed overall
+            print(f"EdNex check failed (non-fatal): {se}")
+
+        # ── 3. All paths failed ───────────────────────────────────────────────
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Authentication failed. Please check your credentials.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     except HTTPException:

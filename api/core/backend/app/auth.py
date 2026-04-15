@@ -10,7 +10,7 @@ from sqlmodel import Session, select
 from app.models import User
 
 # In a production app, use environment variables!
-SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey_change_me_in_production") 
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey_change_me_in_production").strip()
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
