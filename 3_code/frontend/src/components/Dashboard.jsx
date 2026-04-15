@@ -441,6 +441,12 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
     const [interests, setInterests] = useState(userData?.interests || '');
     const [defaultLang, setDefaultLang] = useState(localStorage.getItem('defaultLanguage') || 'English');
 
+    // Change Password state
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [pwLoading, setPwLoading] = useState(false);
+    const [pwMsg, setPwMsg] = useState(null); // { type: 'success'|'error', text }
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -449,18 +455,49 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                 full_name: fullName,
                 gpa: parseFloat(gpa),
                 on_track_score: parseInt(_onTrackScore),
-
                 major,
                 background,
                 interests
             });
             localStorage.setItem('defaultLanguage', defaultLang);
-
             onRefresh();
             onClose();
         } catch (error) {
             console.error("Update failed:", error);
             alert("Failed to update profile");
+        }
+    };
+
+    const handleChangePassword = async () => {
+        setPwMsg(null);
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            setPwMsg({ type: 'error', text: 'All password fields are required.' });
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPwMsg({ type: 'error', text: 'New passwords do not match.' });
+            return;
+        }
+        if (newPassword.length < 6) {
+            setPwMsg({ type: 'error', text: 'New password must be at least 6 characters.' });
+            return;
+        }
+        setPwLoading(true);
+        try {
+            const res = await api.post('/api/auth/change-password', {
+                email: userData?.email,
+                old_password: oldPassword,
+                new_password: newPassword
+            });
+            setPwMsg({ type: 'success', text: res.data?.message || 'Password updated successfully!' });
+            setOldPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (err) {
+            const detail = err.response?.data?.detail;
+            setPwMsg({ type: 'error', text: typeof detail === 'string' ? detail : 'Password update failed. Check your current password.' });
+        } finally {
+            setPwLoading(false);
         }
     };
 
@@ -505,20 +542,25 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                     <h3 style={{ margin: 0, fontSize: '1.75rem', fontWeight: '800', color: '#1e293b' }}>Profile Settings</h3>
                     <button
                         onClick={onClose}
+                        title="Close"
                         style={{
                             background: '#f1f5f9',
-                            border: 'none',
+                            border: '1.5px solid #e2e8f0',
                             borderRadius: '50%',
-                            width: '40px',
-                            height: '40px',
+                            width: '42px',
+                            height: '42px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             cursor: 'pointer',
-                            color: '#64748b'
+                            color: '#334155',
+                            flexShrink: 0,
+                            transition: 'all 0.15s'
                         }}
+                        onMouseOver={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
+                        onMouseOut={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#334155'; }}
                     >
-                        <X size={24} />
+                        <X size={20} strokeWidth={2.5} />
                     </button>
                 </div>
 
@@ -640,7 +682,84 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                         </div>
                     </div>
 
-                    {/* Section 4: Data Control */}
+                    {/* Section 4: Change Password */}
+                    <div style={{ marginTop: '1rem', borderTop: '1px solid #e2e8f0', paddingTop: '2rem' }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            🔑 Change Password
+                        </h4>
+                        <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.25rem' }}>
+                            Update your login credentials. Changes are synced to your institutional account.
+                        </p>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>Current Password</label>
+                                <input
+                                    type="password"
+                                    value={oldPassword}
+                                    onChange={e => setOldPassword(e.target.value)}
+                                    placeholder="Current password"
+                                    autoComplete="current-password"
+                                    style={{ width: '100%', padding: '0.875rem 1rem', borderRadius: '12px', border: '2px solid #e2e8f0', fontSize: '0.95rem', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>New Password</label>
+                                <input
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={e => setNewPassword(e.target.value)}
+                                    placeholder="New password"
+                                    autoComplete="new-password"
+                                    style={{ width: '100%', padding: '0.875rem 1rem', borderRadius: '12px', border: '2px solid #e2e8f0', fontSize: '0.95rem', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>Confirm New</label>
+                                <input
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={e => setConfirmPassword(e.target.value)}
+                                    placeholder="Confirm password"
+                                    autoComplete="new-password"
+                                    style={{ width: '100%', padding: '0.875rem 1rem', borderRadius: '12px', border: `2px solid ${confirmPassword && confirmPassword !== newPassword ? '#fca5a5' : '#e2e8f0'}`, fontSize: '0.95rem', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                                />
+                            </div>
+                        </div>
+                        {pwMsg && (
+                            <div style={{
+                                padding: '0.75rem 1rem',
+                                borderRadius: '10px',
+                                marginBottom: '1rem',
+                                fontSize: '0.875rem',
+                                fontWeight: '600',
+                                background: pwMsg.type === 'success' ? '#ecfdf5' : '#fef2f2',
+                                color: pwMsg.type === 'success' ? '#065f46' : '#b91c1c',
+                                border: `1px solid ${pwMsg.type === 'success' ? '#a7f3d0' : '#fecaca'}`
+                            }}>{pwMsg.text}</div>
+                        )}
+                        <button
+                            type="button"
+                            onClick={handleChangePassword}
+                            disabled={pwLoading}
+                            style={{
+                                padding: '10px 24px',
+                                background: pwLoading ? '#c7d2fe' : '#4f46e5',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '10px',
+                                fontWeight: '700',
+                                cursor: pwLoading ? 'not-allowed' : 'pointer',
+                                fontSize: '0.9rem',
+                                fontFamily: 'inherit',
+                                boxShadow: '0 2px 8px rgba(79,70,229,0.3)',
+                                transition: 'all 0.15s'
+                            }}
+                        >
+                            {pwLoading ? 'Updating…' : 'Update Password'}
+                        </button>
+                    </div>
+
+                    {/* Section 5: Data Control */}
                     <div style={{ marginTop: '1rem', borderTop: '1px solid #fee2e2', paddingTop: '2.5rem' }}>
                         <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#b91c1c', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                              <ShieldAlert size={18} /> Danger Zone
