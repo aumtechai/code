@@ -259,7 +259,16 @@ const Login = () => {
                                 </div>
 
                                 <div className="form-field">
-                                    <label className="form-label" htmlFor="password">Password</label>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.45rem' }}>
+                                        <label className="form-label" htmlFor="password" style={{ marginBottom: 0 }}>Password</label>
+                                        <div 
+                                            className="forgot-password-link" 
+                                            onClick={() => setIsChangingPassword(true)}
+                                            style={{ margin: 0, color: 'var(--indigo-600)', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}
+                                        >
+                                            Forgot password?
+                                        </div>
+                                    </div>
                                     <input
                                         id="password"
                                         name="password"
@@ -316,14 +325,17 @@ const Login = () => {
                                 <button type="submit" disabled={loading} className="login-button">
                                     {loading ? "Updating…" : "Update Password"}
                                 </button>
+                                
+                                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                                    <span 
+                                        className="forgot-password-link" 
+                                        onClick={() => setIsChangingPassword(false)}
+                                    >
+                                        &larr; Back to Login
+                                    </span>
+                                </div>
                             </form>
                         )}
-
-                        <div className="forgot-password-link-container">
-                             <div className="forgot-password-link" onClick={() => setIsChangingPassword(!isChangingPassword)}>
-                                {isChangingPassword ? "Back to Login" : "Change or reset password?"}
-                            </div>
-                        </div>
 
                         {errorMsg && (
                             <motion.div 
