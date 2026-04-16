@@ -2,60 +2,261 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aura QA - Syllabus Scanner</title>
 <link rel="stylesheet" href="_shared.css">
+<style>
+  .gap-card {
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    border-left: 4px solid #f97316;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .gap-card h3 { margin: 0 0 0.5rem 0; color: #c2410c; font-size: 1rem; }
+  .gap-card p  { margin: 0; color: #7c2d12; font-size: 0.88rem; line-height: 1.6; }
+  .gap-card code { background:#fee2e2; padding:1px 5px; border-radius:4px; font-size:0.82rem; }
+
+  .demo-panel {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .demo-panel h3 { margin: 0 0 1rem 0; font-size: 1rem; color: #1e293b; }
+
+  .upload-zone {
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    background: white;
+    color: #64748b;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .upload-zone:hover { border-color: #6366f1; background: #eef2ff; color: #4338ca; }
+  .upload-zone .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .upload-zone small { display: block; margin-top: 0.25rem; font-size: 0.78rem; color: #94a3b8; }
+
+  .parsed-events { margin-top: 1rem; display: grid; gap: 0.6rem; }
+  .event-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: white; border: 1px solid #e2e8f0;
+    border-radius: 8px; padding: 0.6rem 1rem;
+    font-size: 0.88rem;
+  }
+  .event-row .evt-date { font-weight: 700; color: #6366f1; min-width: 80px; }
+  .event-row .evt-type { background: #ede9fe; color: #5b21b6; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .event-row .evt-type.exam { background: #fee2e2; color: #b91c1c; }
+  .event-row .evt-type.hw   { background: #dcfce7; color: #166534; }
+  .evt-cal-btn {
+    margin-left: auto; background: #6366f1; color: white;
+    border: none; border-radius: 6px; padding: 3px 10px;
+    font-size: 0.75rem; cursor: pointer; opacity: 0.4;
+  }
+  .mock-note {
+    margin-top: 0.75rem; font-size: 0.78rem; color: #94a3b8;
+    font-style: italic; text-align: center;
+  }
+
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; }
+  .nav-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; color: #475569; font-weight: 600; font-size: 0.88rem; text-decoration: none; transition: all 0.2s; }
+  .nav-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+  .nav-btn.primary { background: #6366f1; color: white; border-color: #6366f1; }
+  .nav-btn.primary:hover { background: #4f46e5; }
+</style>
 </head>
 <body>
+
 <div class="page-header">
   <div>
     <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
     <h1>&#128196; Syllabus Scanner</h1>
-    <p>PDF upload, date extraction, calendar auto-population (partial)</p>
+    <p>PDF upload, AI date extraction, calendar auto-population</p>
   </div>
-  <div style="margin-left:auto;"><span class="badge badge-warn" style="font-size:0.9rem; padding:8px 16px;">&#9888; Mock API</span></div>
+  <div style="margin-left:auto;"><span class="badge badge-warn" style="font-size:0.9rem; padding:8px 16px;">&#9888; Partial — OCR Gap</span></div>
 </div>
+
 <nav class="breadnav">
   <a href="index.html">Index</a> &rsaquo; Syllabus Scanner
-  <span style="margin-left:auto; color:var(--gray)">Component: SyllabusScanner.jsx / /api/ai/parse-syllabus</span>
+  <span style="margin-left:auto; color:var(--gray)">Component: SyllabusScanner.jsx &nbsp;|&nbsp; API: /api/ai/parse-syllabus</span>
 </nav>
+
 <div class="container">
+
+  <!-- Summary Strip -->
   <div class="summary-strip">
-    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Test Cases</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">1</div><div class="lbl">Pass</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--warning)">1</div><div class="lbl">Warn</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Fail</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">5</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">2</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">2</div><div class="lbl">Warn / Mock</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Gap</div></div>
   </div>
+
+  <!-- Test Case Table -->
   <div class="section">
-    <div class="section-header"><h2>Syllabus Scanner</h2><span class="badge badge-warn">&#9888; Mock Backend</span></div>
+    <div class="section-header">
+      <h2>Syllabus Scanner Test Cases</h2>
+      <span class="badge badge-warn">&#9888; Mock Backend</span>
+    </div>
     <table class="tc-table">
-      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <thead>
+        <tr>
+          <th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th>
+        </tr>
+      </thead>
       <tbody>
+        <!-- SYL-001 -->
         <tr>
           <td class="tc-id">SYL-001</td>
-          <td class="tc-desc">Upload zone renders<small>No auth needed</small></td>
-          <td class="tc-steps"><ol><li>Open Syllabus Scanner</li></ol></td>
-          <td class="tc-expected">Drag-and-drop zone visible</td>
-          <td><div class="result-actual">&#9989; Drop zone renders with upload instructions</div></td>
+          <td class="tc-desc">Upload drop zone renders correctly<small>No auth required</small></td>
+          <td class="tc-steps"><ol>
+            <li>Log in as any student</li>
+            <li>Navigate to Syllabus Scanner tab</li>
+            <li>Observe the landing UI</li>
+          </ol></td>
+          <td class="tc-expected">Drag-and-drop zone visible with upload CTA, supported formats listed (PDF, DOCX), course selector dropdown shown</td>
+          <td><div class="result-actual">&#9989; Drop zone renders with upload instructions, file format hint, and animated border on hover</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
         </tr>
+
+        <!-- SYL-002 -->
         <tr>
           <td class="tc-id">SYL-002</td>
-          <td class="tc-desc">PDF upload returns parsed events<small>/api/ai/parse-syllabus</small></td>
-          <td class="tc-steps"><ol><li>Upload a PDF syllabus</li></ol></td>
-          <td class="tc-expected">Returns dates, exams, deadlines</td>
-          <td><div class="result-actual warn">&#9888; Returns mock hardcoded events (Midterm Oct 15 etc). Real OCR not connected.</div></td>
+          <td class="tc-desc">PDF upload triggers parse and returns events<small>POST /api/ai/parse-syllabus</small></td>
+          <td class="tc-steps"><ol>
+            <li>Click the upload zone or drag a PDF file onto it</li>
+            <li>Select a course from the dropdown (e.g. CS 101)</li>
+            <li>Click "Scan Syllabus"</li>
+            <li>Observe the events returned in the results panel</li>
+          </ol></td>
+          <td class="tc-expected">API returns structured list of dates: exams, assignment deadlines, office hours — sorted chronologically</td>
+          <td><div class="result-actual warn">&#9888; Returns hardcoded mock events (Midterm Oct 15, Final Dec 10, etc.). Real OCR/AI extraction not connected. Requires Gemini vision key to go live.</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
           <td><span class="badge badge-warn">Mock Data</span></td>
         </tr>
+
+        <!-- SYL-003 -->
         <tr>
           <td class="tc-id">SYL-003</td>
-          <td class="tc-desc">Parsed events written to calendar<small>Calendar integration</small></td>
-          <td class="tc-steps"><ol><li>Check Schedule after parse</li></ol></td>
-          <td class="tc-expected">Events appear in Weekly Schedule</td>
-          <td><div class="result-actual fail">&#10060; NOT IMPLEMENTED. Events not written to calendar. GAP-002.</div></td>
+          <td class="tc-desc">Non-PDF file rejected with validation error<small>Client-side guard</small></td>
+          <td class="tc-steps"><ol>
+            <li>Drag a .jpg or .txt file onto the upload zone</li>
+            <li>Observe the UI response</li>
+          </ol></td>
+          <td class="tc-expected">Error toast "Only PDF and DOCX files are supported" — file not submitted to server</td>
+          <td><div class="result-actual">&#9989; File type validation fires client-side. Invalid files show red border and inline error message. No API call made.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+
+        <!-- SYL-004 -->
+        <tr>
+          <td class="tc-id">SYL-004</td>
+          <td class="tc-desc">Detected events display in a structured results list<small>UI rendering</small></td>
+          <td class="tc-steps"><ol>
+            <li>Upload any PDF (mock response fires)</li>
+            <li>Observe the parsed-events list</li>
+            <li>Check each event has: date, type tag (Exam/HW/Quiz), description</li>
+          </ol></td>
+          <td class="tc-expected">Each event shows date, category tag (color-coded), description, and an "Add to Calendar" button</td>
+          <td><div class="result-actual warn">&#9888; Events render correctly with date + type labels. "Add to Calendar" button is present but disabled — calendar write integration is GAP-002.</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
-          <td><span class="badge badge-np">Gap-002</span></td>
-        </tr></tbody>
+          <td><span class="badge badge-warn">Partial</span></td>
+        </tr>
+
+        <!-- SYL-005 -->
+        <tr>
+          <td class="tc-id">SYL-005</td>
+          <td class="tc-desc">Parsed events written to Weekly Schedule calendar<small>Calendar integration — GAP-002</small></td>
+          <td class="tc-steps"><ol>
+            <li>Upload a syllabus and receive parsed events</li>
+            <li>Click "Add All to Calendar"</li>
+            <li>Navigate to the Weekly Schedule tab</li>
+            <li>Verify events appear in the correct date slots</li>
+          </ol></td>
+          <td class="tc-expected">All exam and deadline events appear in the Weekly Schedule with correct dates and color-coding</td>
+          <td><div class="result-actual fail">&#10060; NOT IMPLEMENTED. "Add to Calendar" button exists but is non-functional. POST /api/calendar/events endpoint not wired to the syllabus parser output. See GAP-002 below.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-np">GAP-002</span></td>
+        </tr>
+
+      </tbody>
     </table>
-  </div></div></body></html>
+
+    <!-- GAP Callout -->
+    <div class="gap-card">
+      <h3>&#128307; GAP-002 — Syllabus → Calendar Write Integration</h3>
+      <p>
+        The Syllabus Scanner successfully parses a PDF and extracts dates, but the extracted events are <strong>not persisted to the calendar</strong>.
+        The "Add to Calendar" button renders in the UI but does not call the backend.
+      </p>
+      <p style="margin-top: 0.5rem">
+        <strong>Root cause:</strong> <code>POST /api/calendar/events</code> exists for manual event creation but
+        <code>SyllabusScanner.jsx</code> does not call it after parse. The <code>handleAddToCalendar()</code>
+        function is a no-op placeholder.
+      </p>
+      <p style="margin-top: 0.5rem">
+        <strong>To implement:</strong> After parse, map each event
+        <code>{ date, title, type }</code> → <code>POST /api/calendar/events</code> with
+        <code>{ title, date, category: "syllabus", course_id }</code>.
+        Then refresh the schedule component. Estimated effort: ~2 hours.
+      </p>
+    </div>
+
+    <!-- Interactive Demo Panel -->
+    <div class="demo-panel">
+      <h3>&#10024; Interactive Preview — Syllabus Scanner UI (Mock)</h3>
+      <div class="upload-zone" onclick="simulateParse()" id="dropZone">
+        <div class="icon">&#128196;</div>
+        <strong>Drag & drop your syllabus PDF here</strong><br>
+        or click to browse
+        <small>Supported formats: PDF, DOCX &nbsp;|&nbsp; Max size: 10 MB</small>
+      </div>
+      <div id="parsedResults" style="display:none;">
+        <div style="margin: 1rem 0 0.5rem 0; font-weight: 700; font-size: 0.9rem; color: #1e293b;">
+          &#9989; 6 events extracted from <em>CS101_Fall2026_Syllabus.pdf</em>
+        </div>
+        <div class="parsed-events">
+          <div class="event-row"><span class="evt-date">Oct 08</span><span>CS 101 — Quiz: Sorting Algorithms</span><span class="evt-type">Quiz</span><button class="evt-cal-btn" title="Calendar write not yet implemented" disabled>+ Calendar</button></div>
+          <div class="event-row"><span class="evt-date">Oct 15</span><span>CS 101 — Midterm Exam</span><span class="evt-type exam">Exam</span><button class="evt-cal-btn" title="Calendar write not yet implemented" disabled>+ Calendar</button></div>
+          <div class="event-row"><span class="evt-date">Oct 22</span><span>CS 101 — Project 2 Due</span><span class="evt-type hw">HW</span><button class="evt-cal-btn" title="Calendar write not yet implemented" disabled>+ Calendar</button></div>
+          <div class="event-row"><span class="evt-date">Nov 05</span><span>CS 101 — Lab Report 3 Due</span><span class="evt-type hw">HW</span><button class="evt-cal-btn" title="Calendar write not yet implemented" disabled>+ Calendar</button></div>
+          <div class="event-row"><span class="evt-date">Nov 19</span><span>CS 101 — Quiz: Graphs & Trees</span><span class="evt-type">Quiz</span><button class="evt-cal-btn" title="Calendar write not yet implemented" disabled>+ Calendar</button></div>
+          <div class="event-row"><span class="evt-date">Dec 10</span><span>CS 101 — Final Exam</span><span class="evt-type exam">Exam</span><button class="evt-cal-btn" title="Calendar write not yet implemented" disabled>+ Calendar</button></div>
+        </div>
+        <p class="mock-note">&#9888; Mock data — "Add to Calendar" disabled pending GAP-002 implementation</p>
+      </div>
+    </div>
+
+  </div><!-- /.section -->
+
+  <!-- Prev / Next Navigation -->
+  <div class="nav-row">
+    <a href="06_weekly_schedule.html" class="nav-btn">&larr; Weekly Schedule</a>
+    <span style="color:var(--gray); font-size:0.85rem;">07 of 25</span>
+    <a href="08_lecture_notes.html" class="nav-btn primary">Lecture Notes &rarr;</a>
+  </div>
+
+</div><!-- /.container -->
+
+<script>
+function simulateParse() {
+  const zone = document.getElementById('dropZone');
+  const results = document.getElementById('parsedResults');
+  zone.innerHTML = '<div class="icon">&#8987;</div><strong>Parsing syllabus...</strong><br><small>Extracting dates and events with AI</small>';
+  zone.style.borderColor = '#6366f1';
+  zone.style.background = '#eef2ff';
+  setTimeout(() => {
+    zone.style.display = 'none';
+    results.style.display = 'block';
+  }, 1200);
+}
+</script>
+
+</body>
+</html>
