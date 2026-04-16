@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Admin Panel</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>Admin Admin Panel</h1>
+    <p>User management, smart outreach, EdNex config, agent swarm config</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Admin Panel
+  <span style="margin-left:auto; color:var(--gray)">Component: AdminPanel.jsx / AdminEdnex.jsx / AdminAgentConfig.jsx</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">6</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">5</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">1</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Admin Panel</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">ADM-001</td>
+          <td class="tc-desc">Admin panel loads<small>is_admin=true</small></td>
+          <td class="tc-steps"><ol><li>Login as admin, open Admin Panel</li></ol></td>
+          <td class="tc-expected">User mgmt and tools visible</td>
+          <td><div class="result-actual">&#9989; User management, outreach, system health visible</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">ADM-002</td>
+          <td class="tc-desc">User search/filter<small>All users</small></td>
+          <td class="tc-steps"><ol><li>Search by email</li></ol></td>
+          <td class="tc-expected">Matching user shown</td>
+          <td><div class="result-actual">&#9989; Search and filter by role, status, GPA range works</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">ADM-003</td>
+          <td class="tc-desc">Smart outreach campaign<small>GPA filter</small></td>
+          <td class="tc-steps"><ol><li>Set GPA < 2.5, send nudge</li></ol></td>
+          <td class="tc-expected">Cohort receives nudge</td>
+          <td><div class="result-actual">&#9989; Bulk SMS/email nudge works for filtered cohort</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">ADM-004</td>
+          <td class="tc-desc">EdNex Config panel<small>Admin + Supabase</small></td>
+          <td class="tc-steps"><ol><li>Open EdNex Config</li></ol></td>
+          <td class="tc-expected">Supabase connection, sync controls</td>
+          <td><div class="result-actual">&#9989; EdNex config shows URL, key, table sync health</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">ADM-005</td>
+          <td class="tc-desc">Agent Swarm Config<small>Admin access</small></td>
+          <td class="tc-steps"><ol><li>Open Agent Swarm Config</li></ol></td>
+          <td class="tc-expected">Config JSON editable, save works</td>
+          <td><div class="result-actual">&#9989; agent_config.json editable and saves</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">ADM-006</td>
+          <td class="tc-desc">Non-admin cannot see admin tab<small>is_admin=false</small></td>
+          <td class="tc-steps"><ol><li>Login as student</li></ol></td>
+          <td class="tc-expected">Admin tab not in sidebar</td>
+          <td><div class="result-actual warn">&#9888; Tab hidden in sidebar. Direct URL bypass not tested.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-warn">Needs URL Test</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

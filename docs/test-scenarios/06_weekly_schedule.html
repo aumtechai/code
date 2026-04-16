@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Weekly Schedule</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#128197; Weekly Schedule</h1>
+    <p>Calendar grid, class times, room locations</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Weekly Schedule
+  <span style="margin-left:auto; color:var(--gray)">Component: WeeklySchedule.jsx</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Weekly Schedule</h2><span class="badge badge-pass">&#10003; Present</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">SCH-001</td>
+          <td class="tc-desc">Schedule grid renders<small>Weekly calendar</small></td>
+          <td class="tc-steps"><ol><li>Open Schedule tab</li></ol></td>
+          <td class="tc-expected">Grid with time slots populated</td>
+          <td><div class="result-actual">&#9989; Weekly grid with CS101 Gates Hall 302, CHEM101 Lab Hall 5 etc.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">SCH-002</td>
+          <td class="tc-desc">Classes in correct slots<small>Enrollment data</small></td>
+          <td class="tc-steps"><ol><li>View calendar grid</li></ol></td>
+          <td class="tc-expected">Each class at correct day/time</td>
+          <td><div class="result-actual">&#9989; Classes placed correctly based on schedule data</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">SCH-003</td>
+          <td class="tc-desc">Week navigation<small>Arrow buttons</small></td>
+          <td class="tc-steps"><ol><li>Click next/prev week</li></ol></td>
+          <td class="tc-expected">Calendar advances/retreats</td>
+          <td><div class="result-actual">&#9989; Week navigation works</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>
