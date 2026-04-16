@@ -50,13 +50,17 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Response interceptor to handle 401 and 402
+// Response interceptor to handle 401
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = '/login';
+            // Don't redirect if already on /login — it clears the error state
+            // before the user can read the "Invalid credentials" message
+            if (!window.location.pathname.includes('/login')) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }

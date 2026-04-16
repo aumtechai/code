@@ -208,22 +208,24 @@ const FacultyDashboard = ({ onBack }) => {
             >
                 {activeTab === 'risk' ? (
                     <div style={{ display: 'grid', gap: '2rem' }}>
-                        {/* Summary Stats */}
+                        {/* Summary Stats — computed from live data */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1rem' }}>
                             <div className="card-white" style={{ padding: '1.25rem', borderRadius: '16px', background: 'white', border: '1px solid #e2e8f0' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                                     <h3 style={{ margin: 0, color: '#64748b', fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase' }}>Total Students</h3>
                                     <Users size={18} color="#4f46e5" />
                                 </div>
-                                <div style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>142</div>
-                                <span style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: '600' }}>+12 this semester</span>
+                                <div style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>{students.length || '—'}</div>
+                                <span style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: '600' }}>Live roster</span>
                             </div>
                             <div className="card-white" style={{ padding: '1.25rem', borderRadius: '16px', background: 'white', border: '1px solid #e2e8f0' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                                     <h3 style={{ margin: 0, color: '#64748b', fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase' }}>At-Risk Flagged</h3>
                                     <AlertTriangle size={18} color="#ef4444" />
                                 </div>
-                                <div style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>18</div>
+                                <div style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>
+                                    {students.filter(s => s.risk === 'High').length || '—'}
+                                </div>
                                 <span style={{ color: '#ef4444', fontSize: '0.8rem', fontWeight: '600' }}>Requires Attention</span>
                             </div>
                             <div className="card-white" style={{ padding: '1.25rem', borderRadius: '16px', background: 'white', border: '1px solid #e2e8f0' }}>
@@ -231,10 +233,15 @@ const FacultyDashboard = ({ onBack }) => {
                                     <h3 style={{ margin: 0, color: '#64748b', fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase' }}>Intervention Rate</h3>
                                     <TrendingUp size={18} color="#10b981" />
                                 </div>
-                                <div style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>85%</div>
-                                <span style={{ color: '#64748b', fontSize: '0.8rem' }}>Success rate</span>
+                                <div style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>
+                                    {students.length > 0
+                                        ? `${Math.round((students.filter(s => s.risk === 'Low').length / students.length) * 100)}%`
+                                        : '—'}
+                                </div>
+                                <span style={{ color: '#64748b', fontSize: '0.8rem' }}>Good standing rate</span>
                             </div>
                         </div>
+
 
                         {/* Student List */}
                         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>

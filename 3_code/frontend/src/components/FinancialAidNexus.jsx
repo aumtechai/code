@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     DollarSign,
@@ -13,13 +13,55 @@ import {
     Landmark,
     FileQuestion,
     ExternalLink,
-    ChevronLeft
+    ChevronLeft,
+    Database,
+    AlertCircle
 } from 'lucide-react';
 import ScholarshipMatcher from './ScholarshipMatcher';
+import api from '../api';
 
 const FinancialAidNexus = ({ onNavigate, onBack }) => {
     const [activeTab, setActiveTab] = useState('overview');
+    const [financialData, setFinancialData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const loadFinancialData = async () => {
+            try {
+                const res = await api.get('/api/financial/summary');
+                setFinancialData(res.data);
+            } catch (err) {
+                console.warn('Financial summary unavailable, using estimates', err);
+                setFinancialData({
+                    source: 'fallback',
+                    tuition_balance: 12500.00,
+                    fees_balance: 450.00,
+                    financial_aid_award: 8000.00,
+                    net_amount_due: 4950.00,
+                    has_financial_hold: false,
+                    payment_due_date: '2026-10-01',
+                    aid_status: 'Accepted',
+                    aid_disbursed: 4000.00,
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadFinancialData();
+    }, []);
+
+    // Derive display values from live or fallback data
+    const summaryData = {
+        totalDue: financialData?.net_amount_due ?? 4950.00,
+        nextPayment: {
+            amount: financialData ? (financialData.net_amount_due / 4).toFixed(2) : 1237.50,
+            date: financialData?.payment_due_date ?? '2026-10-01'
+        },
+        aidDisbursed: financialData?.aid_disbursed ?? 4000.00,
+        pendingAid: financialData ? (financialData.financial_aid_award - (financialData.aid_disbursed || 0)) : 4000.00,
+        source: financialData?.source ?? 'loading',
+        hasHold: financialData?.has_financial_hold ?? false,
+    };
     const tabs = [
         { id: 'overview', label: 'Overview', icon: PieChart },
         { id: 'scholarships', label: 'Scholarship Matcher', icon: GraduationCap },
@@ -28,13 +70,12 @@ const FinancialAidNexus = ({ onNavigate, onBack }) => {
         { id: 'fafsa', label: 'FAFSA Assistant', icon: FileQuestion },
     ];
 
-    // Mock Data for Overview
-    const summaryData = {
-        totalDue: 4500.00,
-        nextPayment: { amount: 1125.00, date: '2025-10-15' },
-        aidDisbursed: 12500.00,
-        pendingAid: 2500.00
-    };
+    const dataSourceBadge = summaryData.source === 'live'
+        ? { label: 'Live EdNex Data', color: '#10b981', bg: '#d1fae5', icon: Database }
+        : summaryData.source === 'loading'
+        ? { label: 'Loading...', color: '#6366f1', bg: '#ede9fe', icon: Database }
+        : { label: 'Estimated', color: '#f59e0b', bg: '#fef3c7', icon: AlertCircle };
+
 
     const renderOverview = () => (
         <div style={{ display: 'grid', gap: '2rem' }}>
