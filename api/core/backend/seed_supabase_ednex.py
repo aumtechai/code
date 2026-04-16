@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from app.ednex import get_supabase_client
+from app.ednex import get_supabase_admin_client
 
 INSTITUTION_ID = "48b3789f-4097-4040-95d6-cf5fee5a6917"
 
@@ -128,9 +128,10 @@ def upsert_user(sb, email, first, last, role):
 
 
 def seed_ednex_supabase():
-    sb = get_supabase_client()
+    sb = get_supabase_admin_client()
     if not sb:
-        print("ERR: Supabase not configured.")
+        print("ERR: Supabase admin client not configured. "
+              "Make sure SUPABASE_SERVICE_KEY is in your .env file.")
         return
 
     print("[START] EdNex Full Cohort Seed")

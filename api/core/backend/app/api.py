@@ -2627,9 +2627,10 @@ async def get_faculty_appointments(
 
 @router.get("/financial/summary")
 async def get_financial_summary(current_user: User = Depends(get_current_user)):
-    """Fetch real financial data for the current user from EdNex mod02 + mod08."""
-    from app.ednex import get_supabase_client
-    supabase = get_supabase_client()
+    """Fetch real financial data for the current user from EdNex mod02 + mod08.
+    Uses service-role client to read through RLS on sensitive financial tables."""
+    from app.ednex import get_supabase_admin_client
+    supabase = get_supabase_admin_client()
 
     financial = None
     aid = None

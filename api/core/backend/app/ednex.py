@@ -10,38 +10,79 @@ from app.models import User
 # Initialize Router
 ednex_router = APIRouter()
 
-def get_supabase_credentials():
+def get_supabase_credentials(use_service_role: bool = False):
+    """
+    Returns (url, key) for the Supabase client.
+    use_service_role=True  → returns the service_role key (bypasses all RLS).
+                             Use for backend write operations and seed scripts.
+    use_service_role=False → returns the anon key (respects RLS read policies).
+                             Kept for legacy read-only API calls.
+    """
     from sqlmodel import Session, select
     from app.auth import engine
     from app.models import SystemConfig
-    
+
     url = None
     key = None
-    
-    # Check Database Config FIRST (Allows UI Override)
+
+    # Check Database Config FIRST (allows Admin UI override)
     try:
         with Session(engine) as session:
             url_cfg = session.exec(select(SystemConfig).where(SystemConfig.key_name == 'SUPABASE_URL')).first()
-            key_cfg = session.exec(select(SystemConfig).where(SystemConfig.key_name == 'SUPABASE_KEY')).first()
+            # Prefer service role key when requested
+            key_name = 'SUPABASE_SERVICE_KEY' if use_service_role else 'SUPABASE_KEY'
+            key_cfg = session.exec(select(SystemConfig).where(SystemConfig.key_name == key_name)).first()
             if url_cfg and key_cfg and url_cfg.key_value and key_cfg.key_value:
                 url = url_cfg.key_value
                 key = key_cfg.key_value
     except Exception as e:
         print("Error accessing SystemConfig:", e)
-    
+
     # Fallback to Environment Variables
     if not url or not key:
         url = os.environ.get("SUPABASE_URL", "https://rfkoylpcuptzkakmqotq.supabase.co")
-        key = os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJma295bHBjdXB0emtha21xb3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MzY0MDYsImV4cCI6MjA4ODQxMjQwNn0.kcUD2GGSmMJLcG0tyJZtbCd9h9gB2S8jFYDz9RJKMe8")
-                
+        if use_service_role:
+            # SUPABASE_SERVICE_KEY → get from Supabase Dashboard → Settings → API → service_role
+            key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+            if not key:
+                # Warn and fall back to anon key so reads still work
+                print("WARNING: SUPABASE_SERVICE_KEY not set. "
+                      "Write operations will be blocked by RLS. "
+                      "Add it to your .env file.")
+                key = os.environ.get(
+                    "SUPABASE_KEY",
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJma295bHBjdXB0emtha21xb3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MzY0MDYsImV4cCI6MjA4ODQxMjQwNn0.kcUD2GGSmMJLcG0tyJZtbCd9h9gB2S8jFYDz9RJKMe8"
+                )
+        else:
+            key = os.environ.get(
+                "SUPABASE_KEY",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJma295bHBjdXB0emtha21xb3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MzY0MDYsImV4cCI6MjA4ODQxMjQwNn0.kcUD2GGSmMJLcG0tyJZtbCd9h9gB2S8jFYDz9RJKMe8"
+            )
+
     if not url or not key:
         return None, None
-        
+
     return url.strip(), key.strip()
 
+
 def get_supabase_client():
-    url, key = get_supabase_credentials()
-    if not url: return None
+    """Anon-key client — respects RLS read policies. Use for read-only API endpoints."""
+    url, key = get_supabase_credentials(use_service_role=False)
+    if not url:
+        return None
+    from supabase import create_client
+    return create_client(url, key)
+
+
+def get_supabase_admin_client():
+    """
+    Service-role client — bypasses all RLS.
+    Use for: seed scripts, admin write operations, financial data fetches.
+    Requires SUPABASE_SERVICE_KEY in .env
+    """
+    url, key = get_supabase_credentials(use_service_role=True)
+    if not url:
+        return None
     from supabase import create_client
     return create_client(url, key)
 
