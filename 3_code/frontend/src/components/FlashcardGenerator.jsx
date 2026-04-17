@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { RotateCcw, Brain, Sparkles, ChevronLeft, ChevronRight, FileText, BookOpen } from 'lucide-react';
 import api from '../api';
 import './FlashcardGenerator.css';
+import AiConsentModal from './AiConsentModal';
 
 const FlashcardGenerator = ({ prefilledData, onBack }) => {
     const [mode, setMode] = useState('notes'); // 'notes' or 'canvas'
@@ -17,6 +18,8 @@ const FlashcardGenerator = ({ prefilledData, onBack }) => {
     const [loading, setLoading] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
+    const [hasConsented, setHasConsented] = useState(localStorage.getItem('aura_ai_consent') === 'true');
+    const [showConsentModal, setShowConsentModal] = useState(false);
 
     useEffect(() => {
         if (prefilledData?.notes) {
@@ -46,6 +49,11 @@ const FlashcardGenerator = ({ prefilledData, onBack }) => {
     }, []);
 
     const handleGenerate = async () => {
+        if (!hasConsented) {
+            setShowConsentModal(true);
+            return;
+        }
+
         if (mode === 'notes' && !notes.trim()) return;
         if (mode === 'canvas' && (!selectedCourse || !chapter.trim())) return;
 
@@ -247,6 +255,16 @@ const FlashcardGenerator = ({ prefilledData, onBack }) => {
                     </button>
                 </div>
             )}
+            
+            <AiConsentModal 
+                isOpen={showConsentModal} 
+                onClose={() => setShowConsentModal(false)}
+                onConsent={() => {
+                    setHasConsented(true);
+                    setShowConsentModal(false);
+                    handleGenerate();
+                }}
+            />
         </div>
     );
 };

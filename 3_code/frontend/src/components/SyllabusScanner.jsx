@@ -3,6 +3,7 @@ import { Upload, Calendar, Check, X, Loader2, ScanLine, ChevronLeft } from 'luci
 
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
+import AiConsentModal from './AiConsentModal';
 
 const SyllabusScanner = ({ onBack }) => {
     const [file, setFile] = useState(null);
@@ -10,6 +11,8 @@ const SyllabusScanner = ({ onBack }) => {
     const [scanning, setScanning] = useState(false);
     const [confirmed, setConfirmed] = useState(false);
     const [dragActive, setDragActive] = useState(false);
+    const [hasConsented, setHasConsented] = useState(localStorage.getItem('aura_ai_consent') === 'true');
+    const [showConsentModal, setShowConsentModal] = useState(false);
     const inputRef = useRef(null);
 
     const handleFiles = (files) => {
@@ -49,6 +52,10 @@ const SyllabusScanner = ({ onBack }) => {
     };
 
     const handleScan = async () => {
+        if (!hasConsented) {
+            setShowConsentModal(true);
+            return;
+        }
         if (!file) return;
         setScanning(true);
         const formData = new FormData();
@@ -242,6 +249,16 @@ const SyllabusScanner = ({ onBack }) => {
                 )}
             </AnimatePresence>
             <style>{`.spin { animation: spin 1s linear infinite; } @keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+            
+            <AiConsentModal 
+                isOpen={showConsentModal} 
+                onClose={() => setShowConsentModal(false)}
+                onConsent={() => {
+                    setHasConsented(true);
+                    setShowConsentModal(false);
+                    if (file) handleScan();
+                }}
+            />
         </div>
     );
 };

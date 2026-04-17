@@ -12,10 +12,10 @@ import {
     UserCircle,
     Copy,
     Check
-
 } from 'lucide-react';
 import api from '../api';
 import './ScholarshipMatcher.css';
+import AiConsentModal from './AiConsentModal';
 
 const ScholarshipMatcher = () => {
     const [user, setUser] = useState(null);
@@ -25,6 +25,11 @@ const ScholarshipMatcher = () => {
     const [currentDraft, setCurrentDraft] = useState('');
     const [showDraftModal, setShowDraftModal] = useState(false);
     const [copied, setCopied] = useState(false);
+    
+    // AI Privacy Consent State
+    const [hasConsented, setHasConsented] = useState(localStorage.getItem('aura_ai_consent') === 'true');
+    const [showConsentModal, setShowConsentModal] = useState(false);
+    const [pendingAction, setPendingAction] = useState(null);
 
     // Profile Edit State
     const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -50,9 +55,14 @@ const ScholarshipMatcher = () => {
                 gpa: res.data.gpa || 0
             });
 
-            // If profile is complete, auto-match
+            // If profile is complete, auto-match conditionally via consent
             if (res.data.major) {
-                handleMatch();
+                if (localStorage.getItem('aura_ai_consent') === 'true') {
+                    handleMatch();
+                } else {
+                    setPendingAction(() => handleMatch);
+                    setShowConsentModal(true);
+                }
             }
         } catch (err) {
             console.error("User fetch failed:", err.response?.data || err.message);
@@ -76,6 +86,12 @@ const ScholarshipMatcher = () => {
     };
 
     const handleMatch = async () => {
+        if (!hasConsented) {
+            setPendingAction(() => handleMatch);
+            setShowConsentModal(true);
+            return;
+        }
+
         setLoading(true);
         try {
             const res = await api.post('/api/ai/scholarships/match');
@@ -88,6 +104,12 @@ const ScholarshipMatcher = () => {
     };
 
     const handleDraft = async (scholarshipId) => {
+        if (!hasConsented) {
+            setPendingAction(() => () => handleDraft(scholarshipId));
+            setShowConsentModal(true);
+            return;
+        }
+
         setDraftingId(scholarshipId);
         try {
             const res = await api.post('/api/ai/scholarships/draft', { scholarship_id: scholarshipId });
@@ -295,6 +317,23 @@ const ScholarshipMatcher = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* AI Consent Modal */}
+            <AiConsentModal 
+                isOpen={showConsentModal} 
+                onClose={() => {
+                    setShowConsentModal(false);
+                    setPendingAction(null);
+                }}
+                onConsent={() => {
+                    setHasConsented(true);
+                    setShowConsentModal(false);
+                    if (pendingAction) {
+                        pendingAction();
+                        setPendingAction(null);
+                    }
+                }}
+            />
         </div>
     );
 };

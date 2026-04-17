@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Mic, Square, FileAudio, FileText, Check, Loader2, Bookmark, BookmarkCheck, Trash2, Clock, Book, User, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
+import AiConsentModal from './AiConsentModal';
 
 const LectureVoiceNotes = ({ onNavigate, onBack }) => {
     const [isRecording, setIsRecording] = useState(false);
@@ -21,6 +22,8 @@ const LectureVoiceNotes = ({ onNavigate, onBack }) => {
     const [driveSynced, setDriveSynced] = useState(false);
     const [selectedNote, setSelectedNote] = useState(null);
     const [showHistory, setShowHistory] = useState(false);
+    const [hasConsented, setHasConsented] = useState(localStorage.getItem('aura_ai_consent') === 'true');
+    const [showConsentModal, setShowConsentModal] = useState(false);
 
     const languages = [
         "English", "Spanish", "Mandarin Chinese", "Hindi", "French",
@@ -152,6 +155,11 @@ const LectureVoiceNotes = ({ onNavigate, onBack }) => {
     };
 
     const handleTranscribe = async () => {
+        if (!hasConsented) {
+            setShowConsentModal(true);
+            return;
+        }
+
         if (!audioBlob) return;
         setProcessing(true);
 
@@ -692,6 +700,16 @@ const LectureVoiceNotes = ({ onNavigate, onBack }) => {
                 )}
             </div>
             <style>{`.spin { animation: spin 1s linear infinite; } @keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+            
+            <AiConsentModal 
+                isOpen={showConsentModal} 
+                onClose={() => setShowConsentModal(false)}
+                onConsent={() => {
+                    setHasConsented(true);
+                    setShowConsentModal(false);
+                    if (audioBlob) handleTranscribe();
+                }}
+            />
         </div>
     );
 };
