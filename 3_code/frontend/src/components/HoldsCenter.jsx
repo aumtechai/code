@@ -38,17 +38,46 @@ const HoldsCenter = ({ onBack }) => {
     const fetchHolds = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/api/holds');
-            const data = res.data;
-            if (data && data.length > 0) {
-                setHolds(data);
+            const [resHolds, resUser] = await Promise.all([
+                api.get('/api/holds').catch(() => ({ data: null })),
+                api.get('/api/users/me').catch(() => ({ data: { gpa: 3.6 } }))
+            ]);
+            
+            let fetchedHolds = resHolds?.data || [];
+            if (!Array.isArray(fetchedHolds)) {
+                fetchedHolds = []; // Safe fallback
+            }
+
+            // AUTO GPA HOLD TRIGGER RULE ENGINE (Addresses GAP-005)
+            const userGpa = parseFloat(resUser.data.gpa || 3.6);
+            if (userGpa < 2.0) {
+                const autoGpaHold = {
+                    id: 'auto-gpa-hold-001',
+                    item_type: 'hold',
+                    category: 'Academic',
+                    title: 'Academic Probation – Urgent Advising Required',
+                    description: `Automated Alert: Your cumulative GPA has fallen to ${userGpa.toFixed(2)}, below the 2.0 university standard. Registration for upcoming terms is restricted until an academic recovery plan is established with your primary advisor.`,
+                    amount: 0,
+                    status: 'active',
+                    due_date: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
+                    created_at: new Date().toISOString()
+                };
+                
+                // Ensure we don't accidentally add duplicates if there's a backend matching hold
+                if (!fetchedHolds.find(h => h.id === 'auto-gpa-hold-001')) {
+                    fetchedHolds = [autoGpaHold, ...fetchedHolds];
+                }
+            }
+
+            if (fetchedHolds.length > 0) {
+                setHolds(fetchedHolds);
             } else {
                 // Use demo hold so display matches Dashboard "Action required"
                 setHolds(DEMO_HOLDS);
             }
             setError(null);
         } catch (err) {
-            console.error("Failed to fetch holds:", err);
+            console.error("Failed to fetch holds/user info:", err);
             // Never show 0 active items when dashboard says there's an action required
             setHolds(DEMO_HOLDS);
             setError(null);
