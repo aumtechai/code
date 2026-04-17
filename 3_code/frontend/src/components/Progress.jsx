@@ -8,6 +8,7 @@ const Progress = ({ onBack }) => {
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showGpaWarning, setShowGpaWarning] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -18,6 +19,9 @@ const Progress = ({ onBack }) => {
                 ]);
                 setCourses(coursesRes.data);
                 setUser(userRes.data);
+                if (userRes.data?.gpa < 2.0) {
+                    setShowGpaWarning(true);
+                }
             } catch (error) {
                 console.error("Failed to fetch progress data", error);
             } finally {
@@ -93,6 +97,22 @@ const Progress = ({ onBack }) => {
                     <p style={{ color: '#64748b', margin: 0 }}>Review your grades, GPA, and graduation status.</p>
                 </div>
             </div>
+
+            {/* GPA Warning Modal/Alert (GAP-005) */}
+            {showGpaWarning && (
+                <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ background: '#fef2f2', border: '1px solid #fecaca', padding: '1rem 1.5rem', borderRadius: '12px', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}
+                >
+                    <AlertCircle size={24} color="#ef4444" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <div>
+                        <h4 style={{ margin: '0 0 0.25rem 0', color: '#991b1b', fontSize: '1rem' }}>Academic Probation Warning</h4>
+                        <p style={{ margin: 0, color: '#b91c1c', fontSize: '0.9rem' }}>Your cumulative GPA has fallen below the 2.0 requirement for good standing. An academic hold will be placed on your registration. Please schedule an appointment with your advisor immediately to discuss grade recovery options.</p>
+                        <button style={{ marginTop: '0.75rem', background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => setShowGpaWarning(false)}>Acknowledge</button>
+                    </div>
+                </motion.div>
+            )}
 
             {/* Top Stats Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>

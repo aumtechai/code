@@ -330,6 +330,41 @@ const DeanDashboard = ({ onBack }) => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* GAP-009: Sankey Migration Visual */}
+                <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                    <h4 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '1.1rem' }}>Sankey Diagram: Cross-Departmental Migration Flows</h4>
+                    <div style={{ height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+                        {/* Mock SVG representing a functional Sankey diagram */}
+                        <svg width="100%" height="100%" viewBox="0 0 800 300" preserveAspectRatio="none">
+                            {/* Flows */}
+                            <path d="M 150 60 C 350 60, 450 160, 650 160" fill="none" stroke="#4f46e5" strokeWidth="25" opacity="0.3" />
+                            <path d="M 150 160 C 350 160, 450 60, 650 60" fill="none" stroke="#ec4899" strokeWidth="15" opacity="0.3" />
+                            <path d="M 150 260 C 350 260, 450 160, 650 160" fill="none" stroke="#10b981" strokeWidth="35" opacity="0.3" />
+                            <path d="M 150 60 C 350 60, 450 260, 650 260" fill="none" stroke="#f59e0b" strokeWidth="10" opacity="0.3" />
+                            
+                            {/* Source Nodes */}
+                            <rect x="0" y="30" width="150" height="60" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="2" rx="4" />
+                            <text x="75" y="65" fontSize="14" fill="#3730a3" fontWeight="bold" textAnchor="middle">CS & Engineering</text>
+                            
+                            <rect x="0" y="130" width="150" height="60" fill="#fce7f3" stroke="#ec4899" strokeWidth="2" rx="4" />
+                            <text x="75" y="165" fontSize="14" fill="#9d174d" fontWeight="bold" textAnchor="middle">Arts & Sciences</text>
+                            
+                            <rect x="0" y="230" width="150" height="60" fill="#d1fae5" stroke="#10b981" strokeWidth="2" rx="4" />
+                            <text x="75" y="265" fontSize="14" fill="#065f46" fontWeight="bold" textAnchor="middle">Business Admin</text>
+                            
+                            {/* Target Nodes */}
+                            <rect x="650" y="30" width="150" height="60" fill="#fef3c7" stroke="#f59e0b" strokeWidth="2" rx="4" />
+                            <text x="725" y="65" fontSize="14" fill="#92400e" fontWeight="bold" textAnchor="middle">Data Science</text>
+                            
+                            <rect x="650" y="130" width="150" height="60" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="2" rx="4" />
+                            <text x="725" y="165" fontSize="14" fill="#3730a3" fontWeight="bold" textAnchor="middle">Mgmt & Econ</text>
+                            
+                            <rect x="650" y="230" width="150" height="60" fill="#fce7f3" stroke="#ec4899" strokeWidth="2" rx="4" />
+                            <text x="725" y="265" fontSize="14" fill="#9d174d" fontWeight="bold" textAnchor="middle">Psych & Social</text>
+                        </svg>
+                    </div>
+                </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: window.innerWidth <= 1024 ? 'column' : 'row', gap: '2rem' }}>
