@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Student Dashboard</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#127968; Student Dashboard</h1>
+    <p>Home page, GPA stats, quick actions, AI team section, recent activity</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Functional</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Student Dashboard
+  <span style="margin-left:auto; color:var(--gray)">Component: Dashboard.jsx / DashboardHome</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">6</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">4</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">2</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Dashboard Home</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">DASH-001</td>
+          <td class="tc-desc">Dashboard loads after login<small>JWT required</small></td>
+          <td class="tc-steps"><ol><li>Navigate to /dashboard</li></ol></td>
+          <td class="tc-expected">Hero card with GPA and on-track score</td>
+          <td><div class="result-actual">&#9989; GPA=3.6, On-track=95%. Personalized greeting renders.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DASH-002</td>
+          <td class="tc-desc">GPA stat card displays<small>From user profile</small></td>
+          <td class="tc-steps"><ol><li>Check stat-card-glass elements</li></ol></td>
+          <td class="tc-expected">Current GPA readable</td>
+          <td><div class="result-actual">&#9989; GPA=3.6. Editable via pencil button.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DASH-003</td>
+          <td class="tc-desc">Quick action cards navigate<small>8 cards visible</small></td>
+          <td class="tc-steps"><ol><li>Click each quick action card</li></ol></td>
+          <td class="tc-expected">Each navigates to correct tab</td>
+          <td><div class="result-actual">&#9989; All 8 quick actions navigate correctly</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DASH-004</td>
+          <td class="tc-desc">AI Team 3 agent cards render<small>The Tutor/Admin/Coach</small></td>
+          <td class="tc-steps"><ol><li>Scroll to AI Team section</li></ol></td>
+          <td class="tc-expected">3 cards with example prompts</td>
+          <td><div class="result-actual">&#9989; All 3 agent cards present with tags</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DASH-005</td>
+          <td class="tc-desc">Recent activity panel<small>Static mock data</small></td>
+          <td class="tc-steps"><ol><li>Scroll to Recent Activity</li></ol></td>
+          <td class="tc-expected">4 items with timestamps</td>
+          <td><div class="result-actual warn">&#9888; Static mock data. Not a live activity log.</div></td>
+          <td><span class="tc-prio prio-p3">P3</span></td>
+          <td><span class="badge badge-warn">Mock Data</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DASH-006</td>
+          <td class="tc-desc">Campus Intelligence stats<small>Static values</small></td>
+          <td class="tc-steps"><ol><li>View Campus Intelligence card</li></ol></td>
+          <td class="tc-expected">Avg GPA, Tutoring %, Outcomes shown</td>
+          <td><div class="result-actual warn">&#9888; Static hardcoded values. Mark for live EdNex integration.</div></td>
+          <td><span class="tc-prio prio-p3">P3</span></td>
+          <td><span class="badge badge-warn">Mock Data</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

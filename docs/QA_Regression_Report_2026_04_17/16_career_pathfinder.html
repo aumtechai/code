@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Career Pathfinder</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#128188; Career Pathfinder</h1>
+    <p>AI career matching, internship suggestions, proactive outreach</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-warn" style="font-size:0.9rem; padding:8px 16px;">&#9888; Mock Data</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Career Pathfinder
+  <span style="margin-left:auto; color:var(--gray)">Component: CareerPathfinder.jsx</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">4</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">2</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">1</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Career Pathfinder</h2><span class="badge badge-warn">&#9888; Mock Data</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">CAR-001</td>
+          <td class="tc-desc">UI renders<small>['Open tab']</small></td>
+          <td class="tc-steps"><ol><li>Open Career Pathfinder</li></ol></td>
+          <td class="tc-expected">Job/internship cards visible</td>
+          <td><div class="result-actual">&#9989; UI renders with cards, filters, match scores</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">CAR-002</td>
+          <td class="tc-desc">Filter by field<small>Filter controls</small></td>
+          <td class="tc-steps"><ol><li>Select Software Engineering</li></ol></td>
+          <td class="tc-expected">Filtered results</td>
+          <td><div class="result-actual">&#9989; Client-side filter works</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">CAR-003</td>
+          <td class="tc-desc">Live job API integration<small>LinkedIn/Handshake</small></td>
+          <td class="tc-steps"><ol><li>View job cards</li></ol></td>
+          <td class="tc-expected">Real current postings</td>
+          <td><div class="result-actual fail">&#10060; NOT IMPLEMENTED. All mock data. GAP-007.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-np">Gap-007</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">CAR-004</td>
+          <td class="tc-desc">Personalized match scores<small>Student profile</small></td>
+          <td class="tc-steps"><ol><li>View match %</li></ol></td>
+          <td class="tc-expected">Score reflects student</td>
+          <td><div class="result-actual warn">&#9888; Scores shown but static, not from profile.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-warn">Static</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

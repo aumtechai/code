@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../api';
-import { Send, BookOpen, CheckSquare, Paperclip, X, Brain, Shield, User, Zap, Activity, Info, ChevronRight, Search, FileSearch, Database } from 'lucide-react';
+import { Send, BookOpen, CheckSquare, Paperclip, X, Brain, Shield, User, Zap, Activity, Info, ChevronRight, Search, FileSearch, Database, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) => {
+const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, onNavigate }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -148,6 +148,7 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
         if (mode === 'admin') return { title: "Hello! I am The Admin.", sub: "Ask me about forms, deadlines, financial aid, and registration." };
         if (mode === 'fafsa') return { title: "Hello! I am your FAFSA Expert.", sub: "I can guide you through the FAFSA application, explain financial terms, and help with tax data questions." };
         if (mode === 'coach') return { title: "Hello! I am The Coach.", sub: "I'm here to support your mental health and well-being." };
+        if (mode === 'strategist') return { title: "Hello! I am The Strategist.", sub: "I can query anonymized historical student outcomes to provide peer-based grade recovery pathways and retake analysis." };
         return { title: "Hello! I am Student Success.", sub: "Ask me about your courses, grades, deadlines, or how you're feeling." };
     };
     const intro = getIntro();
@@ -183,6 +184,12 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
                         <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#10b981', border: '2px solid white', marginLeft: '-8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><Shield size={12} /></div>
                         <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#ec4899', border: '2px solid white', marginLeft: '-8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><Zap size={12} /></div>
                     </div>
+                    <button 
+                        onClick={() => onNavigate && onNavigate('book-advisor')}
+                        style={{ marginLeft: '12px', padding: '6px 12px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px rgba(239, 68, 68, 0.2)' }}
+                    >
+                        <ShieldAlert size={14} /> Escalate to L2 Human
+                    </button>
                 </div>
             </div>
 
@@ -322,6 +329,18 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null }) 
                                              )}
                                          </div>
                                      )}
+
+                                     <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
+                                         <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Still need help?</span>
+                                         <button 
+                                             onClick={() => onNavigate && onNavigate('book-advisor')}
+                                             style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '6px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+                                             onMouseOver={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
+                                             onMouseOut={(e) => { e.currentTarget.style.background = '#fef2f2'; }}
+                                         >
+                                             <User size={14} /> Escalate to Human Advisor (L2)
+                                         </button>
+                                     </div>
                                 </div>
                             )}
                         </div>

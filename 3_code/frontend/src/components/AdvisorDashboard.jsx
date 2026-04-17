@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Users, Calendar, AlertTriangle, CheckCircle, 
     Search, Clock, MessageSquare, ChevronRight, 
-    Plus, Filter, Mail, Phone, MapPin, ChevronLeft
+    Plus, Filter, Mail, Phone, MapPin, ChevronLeft, Briefcase, Send
 } from 'lucide-react';
 import api from '../api';
 
@@ -140,6 +140,7 @@ const AdvisorDashboard = ({ onBack }) => {
             }}>
                 <Tab active={activeTab === 'students'} onClick={() => setActiveTab('students')} label="Students" count={students.length} />
                 <Tab active={activeTab === 'migration'} onClick={() => setActiveTab('migration')} label="Migration" count={migrations.length} />
+                <Tab active={activeTab === 'career'} onClick={() => setActiveTab('career')} label="Career Outreach" count="3" />
                 <Tab active={activeTab === 'appointments'} onClick={() => setActiveTab('appointments')} label="Schedule" count={appointments.length} />
                 <Tab active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} label="Cases" count="4" />
             </div>
@@ -259,6 +260,67 @@ const AdvisorDashboard = ({ onBack }) => {
                                             </td>
                                             <td style={{ padding: '1.25rem 1.5rem', textAlign: 'right' }}>
                                                 <button style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer' }}>Schedule Intervention</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'career' && (
+                    <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                         <div style={{ padding: '1.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <h3 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#1e293b', margin: '0 0 0.25rem 0' }}>Career Counseling Tracker</h3>
+                                <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem' }}>Track placements, internships, and initiate targeted SMS/Email nudges.</p>
+                            </div>
+                            <button style={{ background: '#ec4899', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '12px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                                <Send size={16} /> Batch Nudge Seniors (Missing Offers)
+                            </button>
+                        </div>
+                        <div style={{ overflowX: 'auto', width: '100%' }}>
+                            <table style={{ width: '100%', minWidth: '800px', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ textAlign: 'left', background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
+                                        <th style={{ padding: '1rem 1.5rem', color: '#64748b', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase' }}>Student</th>
+                                        <th style={{ padding: '1rem 1.5rem', color: '#64748b', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase' }}>Standing / Major</th>
+                                        <th style={{ padding: '1rem 1.5rem', color: '#64748b', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase' }}>Application Status</th>
+                                        <th style={{ padding: '1rem 1.5rem', color: '#64748b', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase' }}>Risk Factor</th>
+                                        <th style={{ padding: '1rem 1.5rem', color: '#64748b', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase' }}></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        { id: '1', name: 'Zoe Madison', major: 'Marketing', standing: 'Senior', status: '0 Active Apps (Handshake)', risk: 'Critical - No Post-Grad Plan' },
+                                        { id: '2', name: 'Ethan Hunt', major: 'Pre-Law', standing: 'Junior', status: '3 Apps (Pending LSAT)', risk: 'Medium - Missing Internship' },
+                                        { id: '3', name: 'Alex Rivera', major: 'Business', standing: 'Sophomore', status: 'No Profile Found', risk: 'High - At Risk of Attrition' },
+                                    ].map(stu => (
+                                        <tr key={stu.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                            <td style={{ padding: '1.25rem 1.5rem' }}>
+                                                <div style={{ fontWeight: '800', color: '#1e293b' }}>{stu.name}</div>
+                                                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>ID: {stu.id}9345X</div>
+                                            </td>
+                                            <td style={{ padding: '1.25rem 1.5rem', fontWeight: '700', color: '#4f46e5' }}>{stu.standing} <span style={{ color: '#64748b', fontWeight: '500' }}>({stu.major})</span></td>
+                                            <td style={{ padding: '1.25rem 1.5rem' }}>
+                                                <div style={{ background: '#f1f5f9', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', color: '#475569', display: 'inline-block', fontWeight: '600' }}>
+                                                    {stu.status}
+                                                </div>
+                                            </td>
+                                            <td style={{ padding: '1.25rem 1.5rem' }}>
+                                                <span style={{ 
+                                                    background: stu.risk.includes('Critical') || stu.risk.includes('High') ? '#fee2e2' : '#fef3c7', 
+                                                    color: stu.risk.includes('Critical') || stu.risk.includes('High') ? '#dc2626' : '#d97706', 
+                                                    padding: '4px 10px', borderRadius: '10px', fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase'
+                                                }}>
+                                                    {stu.risk}
+                                                </span>
+                                            </td>
+                                            <td style={{ padding: '1.25rem 1.5rem', textAlign: 'right' }}>
+                                                <button style={{ background: 'white', color: '#ec4899', border: '1px solid #fbcfe8', padding: '8px 16px', borderRadius: '8px', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                                    Nudge <Send size={12} />
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}

@@ -1,13 +1,75 @@
-import React, { useState } from 'react';
-import { Book, CheckCircle, Circle, AlertCircle, Calendar, ChevronRight, Wand2, Download, Trash2, Plus, ChevronLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Book, CheckCircle, Circle, AlertCircle, Calendar, ChevronRight, Wand2, Download, Trash2, Plus, ChevronLeft, RefreshCcw, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../api';
+
+const SubstitutionModal = ({ course, onClose, onSubstitute }) => {
+    const [loading, setLoading] = useState(true);
+    const [suggestions, setSuggestions] = useState([]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (course.type === 'Major') {
+                setSuggestions([
+                    { code: `${course.code.split(' ')[0]} 299`, name: 'Special Topics in ' + course.code.split(' ')[0], credits: course.credits },
+                    { code: `${course.code.split(' ')[0]} 490`, name: 'Independent Study', credits: course.credits }
+                ]);
+            } else {
+                setSuggestions([
+                    { code: 'PHIL 101', name: 'Intro to Philosophy', credits: 3 },
+                    { code: 'SOC 101', name: 'Intro to Sociology', credits: 3 },
+                    { code: 'ENG 202', name: 'Advanced Composition', credits: 3 }
+                ]);
+            }
+            setLoading(false);
+        }, 800);
+    }, [course]);
+
+    return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300, padding: '1rem' }}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="card-white" style={{ width: '100%', maxWidth: '500px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                    <div>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0 }}>Course Substitution</h3>
+                        <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Substitute options for {course.code}</p>
+                    </div>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button>
+                </div>
+                
+                {loading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem', color: '#6366f1' }}>
+                        <RefreshCcw size={24} className="animate-spin" />
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {suggestions.map((s, i) => (
+                            <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                    <div style={{ fontWeight: '700', color: '#1e293b' }}>{s.code}</div>
+                                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{s.name}</div>
+                                </div>
+                                <button 
+                                    onClick={() => onSubstitute(course, s)}
+                                    style={{ background: '#4f46e5', color: 'white', padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}
+                                >
+                                    Select
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </motion.div>
+        </div>
+    );
+};
 
 const DegreeRoadmap = ({ onBack }) => {
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [substitutingCourse, setSubstitutingCourse] = useState(null);
     const [audit, setAudit] = useState([
-        { id: 'cs101', code: 'CS 101', name: 'Intro to Programming', credits: 4, type: 'Major', status: 'completed' },
-        { id: 'math101', code: 'MATH 101', name: 'Calculus I', credits: 4, type: 'Core', status: 'completed' },
-        { id: 'eng101', code: 'ENG 101', name: 'College Writing', credits: 3, type: 'GenEd', status: 'completed' },
+        { id: 'cs101', code: 'CS 101', name: 'Intro to Programming', credits: 4, type: 'Major', status: 'pending' },
+        { id: 'math101', code: 'MATH 101', name: 'Calculus I', credits: 4, type: 'Core', status: 'pending' },
+        { id: 'eng101', code: 'ENG 101', name: 'College Writing', credits: 3, type: 'GenEd', status: 'pending' },
         { id: 'cs102', code: 'CS 102', name: 'Data Structures', credits: 4, type: 'Major', status: 'pending' },
         { id: 'math102', code: 'MATH 102', name: 'Calculus II', credits: 4, type: 'Core', status: 'pending' },
         { id: 'phys101', code: 'PHYS 101', name: 'Physics I', credits: 4, type: 'GenEd', status: 'pending' },
@@ -18,15 +80,52 @@ const DegreeRoadmap = ({ onBack }) => {
     ]);
 
     const [plan, setPlan] = useState({
-        'Fall 2024': ['cs101', 'math101', 'eng101'],
-        'Spring 2025': ['cs102', 'math102', 'phys101'],
-        'Fall 2025': ['cs201', 'cs202', 'hist101'],
-        'Spring 2026': ['art101'],
+        'Fall 2024': [],
+        'Spring 2025': [],
+        'Fall 2025': [],
+        'Spring 2026': [],
         'Fall 2026': [],
         'Spring 2027': [],
     });
 
     const [isGenerating, setIsGenerating] = useState(false);
+
+    useEffect(() => {
+        const fetchEnrollments = async () => {
+            try {
+                const res = await api.get('/api/courses');
+                const userCourses = res.data;
+                const newPlan = { ...plan };
+                
+                setAudit(prev => {
+                    const nextAudit = [...prev];
+                    userCourses.forEach(uc => {
+                        const reqIndex = nextAudit.findIndex(r => r.code === uc.code || r.name === uc.name);
+                        let cid = `user_${uc.id}`;
+                        if (reqIndex >= 0) {
+                            nextAudit[reqIndex].status = 'completed';
+                            cid = nextAudit[reqIndex].id;
+                        } else {
+                            nextAudit.push({
+                                id: cid, code: uc.code, name: uc.name, credits: uc.credits, type: 'Elective', status: 'completed'
+                            });
+                        }
+                        
+                        // Place course into plan
+                        const targetSem = uc.semester && newPlan[uc.semester] ? uc.semester : Object.keys(newPlan)[0];
+                        if (!newPlan[targetSem].includes(cid)) {
+                            newPlan[targetSem].push(cid);
+                        }
+                    });
+                    setPlan(newPlan);
+                    return nextAudit;
+                });
+            } catch(e) {
+                console.error("Failed to fetch SIS enrollments", e);
+            }
+        };
+        fetchEnrollments();
+    }, []);
 
     // Helpers
     const getCourse = (id) => audit.find(c => c.id === id);
@@ -61,6 +160,13 @@ const DegreeRoadmap = ({ onBack }) => {
         }
         setPlan(newPlan);
         setSelectedCourse(null);
+    };
+
+    const handleSubstitute = (oldCourse, newCourseData) => {
+        setAudit(prev => prev.map(c => 
+            c.id === oldCourse.id ? { ...c, code: newCourseData.code, name: newCourseData.name } : c
+        ));
+        setSubstitutingCourse(null);
     };
 
     return (
@@ -147,11 +253,20 @@ const DegreeRoadmap = ({ onBack }) => {
                                                     transition: 'all 0.2s'
                                                 }}
                                             >
-                                                <div>
-                                                    <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155' }}>{course.code}</div>
-                                                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{course.name}</div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                    <div>
+                                                        <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155' }}>{course.code}</div>
+                                                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{course.name}</div>
+                                                    </div>
+                                                    {isPlanned ? <CheckCircle size={16} color="#10b981" /> : 
+                                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                        <div style={{ fontSize: '0.75rem', fontWeight: '600', color: '#94a3b8' }}>{course.credits} Cr</div>
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setSubstitutingCourse(course); }}
+                                                            style={{ padding: '2px 6px', fontSize: '0.7rem', background: '#e0e7ff', color: '#4f46e5', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '700' }}
+                                                        >Sub</button>
+                                                    </div>}
                                                 </div>
-                                                {isPlanned ? <CheckCircle size={16} color="#10b981" /> : <div style={{ fontSize: '0.75rem', fontWeight: '600', color: '#94a3b8' }}>{course.credits} Cr</div>}
                                             </div>
                                         );
                                     })}
@@ -238,6 +353,15 @@ const DegreeRoadmap = ({ onBack }) => {
                     ))}
                 </div>
             </div>
+            <AnimatePresence>
+                {substitutingCourse && (
+                    <SubstitutionModal 
+                        course={substitutingCourse} 
+                        onClose={() => setSubstitutingCourse(null)} 
+                        onSubstitute={handleSubstitute} 
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };

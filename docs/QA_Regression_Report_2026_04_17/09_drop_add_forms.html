@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Drop/Add Forms</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#128221; Drop/Add Forms</h1>
+    <p>Form submission, status tracking, approval workflows</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Drop/Add Forms
+  <span style="margin-left:auto; color:var(--gray)">Component: DropAddForms.jsx</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">4</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">1</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Drop/Add Forms</h2><span class="badge badge-pass">&#10003; Present</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">FORM-001</td>
+          <td class="tc-desc">Forms list renders<small>['Open tab']</small></td>
+          <td class="tc-steps"><ol><li>Open Drop/Add Forms</li></ol></td>
+          <td class="tc-expected">Form categories listed</td>
+          <td><div class="result-actual">&#9989; Add Course, Drop, Withdrawal, Major Change all shown</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">FORM-002</td>
+          <td class="tc-desc">Submit drop request<small>Select course</small></td>
+          <td class="tc-steps"><ol><li>Fill drop form, submit</li></ol></td>
+          <td class="tc-expected">Status shows Pending</td>
+          <td><div class="result-actual">&#9989; Submit flow works. Status shows Pending after submit.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">FORM-003</td>
+          <td class="tc-desc">Status tracking existing requests<small>Prior submissions</small></td>
+          <td class="tc-steps"><ol><li>View active requests</li></ol></td>
+          <td class="tc-expected">Status badges on prior requests</td>
+          <td><div class="result-actual">&#9989; Pending/Approved/Denied status shown per request</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">FORM-004</td>
+          <td class="tc-desc">Deadline shown near form<small>Hardcoded date</small></td>
+          <td class="tc-steps"><ol><li>View form header</li></ol></td>
+          <td class="tc-expected">Deadline date visible</td>
+          <td><div class="result-actual warn">&#9888; Deadline is static "Oct 15". Not pulled from registrar.</div></td>
+          <td><span class="tc-prio prio-p3">P3</span></td>
+          <td><span class="badge badge-warn">Static</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

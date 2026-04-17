@@ -404,6 +404,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1rem', marginTop: '1.5rem', paddingBottom: '2rem' }}>
                 {[
+                    { title: "The Strategist", mode: "strategist", role: "Historical grade recovery paths", color: "#f59e0b", icon: TrendingUp, tags: ["Grade recovery path", "Peer-based insights", "Retake analysis"] },
                     { title: "The Tutor", mode: "tutor", role: "Course content specialist", color: "#4f46e5", icon: GraduationCap, tags: ["Explain photosynthesis", "Help with calculus", "Review my essay"] },
                     { title: "The Admin", mode: "admin", role: "Forms & deadlines expert", color: "#10b981", icon: FileText, tags: ["Drop deadline?", "Add a course", "Transcript request"] },
                     { title: "The Coach", mode: "coach", role: "Wellness & support guide", color: "#ec4899", icon: Heart, tags: ["Feeling stressed", "Find a club", "Mental health resouces"] },
@@ -1140,7 +1141,7 @@ const Dashboard = () => {
                         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1.5rem' }}>
                             <h2 style={{ marginBottom: '1rem' }}>Get Aura AI</h2>
                             <div style={{ flex: 1, background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden' }}>
-                                <ChatInterface mode={chatMode} initialSessionId={chatSessionId} prefilledData={prefilledData} />
+                                <ChatInterface mode={chatMode} initialSessionId={chatSessionId} prefilledData={prefilledData} onNavigate={handleFeatureNavigate} />
                             </div>
                         </div>
                     )}

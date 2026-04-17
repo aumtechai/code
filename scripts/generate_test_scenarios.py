@@ -60,7 +60,7 @@ def make_page(filename, title, icon, subtitle, badge_class, badge_text, componen
 <div class="container">'''
     return header + make_summary(t, p, w, f) + sections_html + SHARED_FOOTER
 
-OUT = r'c:\Projects\AA\at\docs\test-scenarios'
+OUT = r'c:\Projects\AA\at\docs\QA_Regression_Report_2026_04_17'
 
 pages = [
     ('02_student_dashboard.html', 'Student Dashboard', '&#127968;',

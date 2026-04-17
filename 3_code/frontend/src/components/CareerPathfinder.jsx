@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2, ChevronLeft } from 'lucide-react';
+import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2, ChevronLeft, BellRing, Bell, ExternalLink, Zap } from 'lucide-react';
 import api from '../api';
 
 const CareerPathfinder = ({ onBack }) => {
@@ -15,6 +15,7 @@ const CareerPathfinder = ({ onBack }) => {
     // Jobs State
     const [jobs, setJobs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [pushEnabled, setPushEnabled] = useState(false);
 
     // Skills State
     const [targetRole, setTargetRole] = useState('');
@@ -163,10 +164,49 @@ const CareerPathfinder = ({ onBack }) => {
             <AnimatePresence mode="wait">
                 {activeTab === 'jobs' && (
                     <motion.div key="jobs" variants={tabVariants} initial="hidden" animate="visible" exit="exit">
+                        {/* Proactive Push Notification Toggle */}
+                        <div style={{ background: 'linear-gradient(to right, #4f46e5, #ec4899)', padding: '1px', borderRadius: '16px', marginBottom: '2rem' }}>
+                            <div style={{ background: '#ffffff', borderRadius: '15px', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: pushEnabled ? '#ecfdf5' : '#f1f5f9', color: pushEnabled ? '#10b981' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s' }}>
+                                        {pushEnabled ? <BellRing size={20} /> : <Bell size={20} />}
+                                    </div>
+                                    <div>
+                                        <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#1e293b' }}>Proactive AI Match Engine</h3>
+                                        <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', color: '#64748b' }}>
+                                            Automatically scans Handshake, LinkedIn, and Indeed matching your degree pathway.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setPushEnabled(!pushEnabled)}
+                                    style={{
+                                        background: pushEnabled ? '#10b981' : '#f8fafc',
+                                        border: `1px solid ${pushEnabled ? '#10b981' : '#cbd5e1'}`,
+                                        color: pushEnabled ? 'white' : '#475569',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '20px',
+                                        fontWeight: '700',
+                                        fontSize: '0.9rem',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s',
+                                        boxShadow: pushEnabled ? '0 4px 12px rgba(16, 185, 129, 0.3)' : 'none'
+                                    }}
+                                >
+                                    {pushEnabled ? 'Push Notifications: ON' : 'Enable Push Alerts'}
+                                </button>
+                            </div>
+                        </div>
+
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                             {jobs.slice((currentPage - 1) * 10, currentPage * 10).map((job) => (
-                                <div key={job.id} className="card-white" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'transform 0.2s, box-shadow 0.2s', border: '1px solid #e2e8f0' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                                <div key={job.id} className="card-white" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'transform 0.2s, box-shadow 0.2s', border: '1px solid #e2e8f0', position: 'relative' }}>
+                                    {job.proactive_matched && (
+                                        <div style={{ position: 'absolute', top: '-10px', left: '16px', background: 'linear-gradient(to right, #f59e0b, #ec4899)', padding: '2px 10px', borderRadius: '10px', fontSize: '0.65rem', fontWeight: '800', letterSpacing: '0.05em', color: 'white', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <Zap size={10} fill="white" /> AI MATCH
+                                        </div>
+                                    )}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginTop: job.proactive_matched ? '10px' : '0' }}>
                                         <div>
                                             <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#1e293b' }}>{job.title}</h3>
                                             <p style={{ color: '#64748b', marginTop: '0.25rem', fontSize: '0.9rem', fontWeight: '500' }}>{job.company} • {job.location}</p>
@@ -183,6 +223,11 @@ const CareerPathfinder = ({ onBack }) => {
                                             {job.match_score}% Match
                                         </div>
                                     </div>
+                                    
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: '700', color: '#475569', textTransform: 'uppercase' }}>
+                                        <Briefcase size={12} /> Live Source: <span style={{ color: job.source === 'LinkedIn' ? '#0a66c2' : job.source === 'Handshake' ? '#ef4444' : '#2563eb' }}>{job.source || 'Aggregator API'}</span>
+                                    </div>
+
                                     <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: '#475569' }}>
                                         This role aligns perfectly with your major and recent coursework in related subjects.
                                     </p>
@@ -205,7 +250,7 @@ const CareerPathfinder = ({ onBack }) => {
                                         onMouseOver={(e) => { e.currentTarget.style.background = '#eef2ff'; e.currentTarget.style.borderColor = '#c7d2fe'; }}
                                         onMouseOut={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
                                     >
-                                        Apply Now <ChevronRight size={16} />
+                                        Apply via {job.source || 'External API'} <ExternalLink size={16} />
                                     </button>
                                 </div>
                             ))}
