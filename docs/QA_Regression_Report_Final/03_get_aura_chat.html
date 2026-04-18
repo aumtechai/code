@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aura Live Validation - Get Aura (AI Chat)</title>
+<title>Aura QA - Get Aura (AI Chat)</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
     <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
-    <h1>&#128172; Get Aura (AI Chat) (Live Vercel Diagnostics)</h1>
+    <h1>&#128172; Get Aura (AI Chat)</h1>
     <p>AI chat, swarm query, agent modes, session history</p>
   </div>
-  <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-    <span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span>
-    <button style="background:white; color:#ef4444; border:1px solid #fee2e2; border-radius:20px; padding:6px 14px; font-weight:700; cursor:pointer;" onclick="alert('Logged out from preview.')">Logout</button>
-  </div>
+  <div style="margin-left:auto;"><span class="badge badge-warn" style="font-size:0.9rem; padding:8px 16px;">&#9888; Latency</span></div>
 </div>
 <nav class="breadnav">
   <a href="index.html">Index</a> &rsaquo; Get Aura (AI Chat)
@@ -24,19 +21,19 @@
 <div class="container">
   <div class="summary-strip">
     <div class="summary-stat"><div class="num" style="color:var(--primary)">5</div><div class="lbl">Test Cases</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">5</div><div class="lbl">Pass</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">2</div><div class="lbl">Warn</div></div>
     <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
   <div class="section">
-    <div class="section-header"><h2>Chat Interface</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <div class="section-header"><h2>Chat Interface</h2><span class="badge badge-warn">&#9888; Latency Observed</span></div>
     <table class="tc-table">
       <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
       <tbody>
         <tr>
           <td class="tc-id">CHAT-001</td>
-          <td class="tc-desc">Chat loads<br><small style="color:var(--gray)">['Auth required']</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click Get Aura</li></ol></td>
+          <td class="tc-desc">Chat loads<small>['Auth required']</small></td>
+          <td class="tc-steps"><ol><li>Click Get Aura</li></ol></td>
           <td class="tc-expected">Input active, session list visible</td>
           <td><div class="result-actual">&#9989; Chat interface loads with placeholder text</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
@@ -44,17 +41,17 @@
         </tr>
         <tr>
           <td class="tc-id">CHAT-002</td>
-          <td class="tc-desc">Send question get response<br><small style="color:var(--gray)">Swarm backend running</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Type question, click Send</li></ol></td>
+          <td class="tc-desc">Send question get response<small>Swarm backend running</small></td>
+          <td class="tc-steps"><ol><li>Type question, click Send</li></ol></td>
           <td class="tc-expected">AI response within ~30s</td>
-          <td><div class="result-actual warn">&#9989; Optimized latency. Response < 200ms.</div></td>
+          <td><div class="result-actual warn">&#9888; Response received but 10-30s latency. "Finalizing Reasoning" step observed.</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
-          <td><span class="badge badge-pass">Pass</span></td>
+          <td><span class="badge badge-warn">Slow</span></td>
         </tr>
         <tr>
           <td class="tc-id">CHAT-003</td>
-          <td class="tc-desc">Switch agent mode<br><small style="color:var(--gray)">Mode selector present</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click Tutor/Admin/Coach mode</li></ol></td>
+          <td class="tc-desc">Switch agent mode<small>Mode selector present</small></td>
+          <td class="tc-steps"><ol><li>Click Tutor/Admin/Coach mode</li></ol></td>
           <td class="tc-expected">System prompt and persona shift</td>
           <td><div class="result-actual">&#9989; Mode switching works across all 3 personas</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -62,8 +59,8 @@
         </tr>
         <tr>
           <td class="tc-id">CHAT-004</td>
-          <td class="tc-desc">History persists across refresh<br><small style="color:var(--gray)">Sessions in DB</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Send messages, refresh page</li></ol></td>
+          <td class="tc-desc">History persists across refresh<small>Sessions in DB</small></td>
+          <td class="tc-steps"><ol><li>Send messages, refresh page</li></ol></td>
           <td class="tc-expected">Prior session in sidebar</td>
           <td><div class="result-actual">&#9989; Sessions stored. Sidebar lists history.</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -71,8 +68,8 @@
         </tr>
         <tr>
           <td class="tc-id">CHAT-005</td>
-          <td class="tc-desc">New chat button<br><small style="color:var(--gray)">Active session exists</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click New Chat</li></ol></td>
+          <td class="tc-desc">New chat button<small>Active session exists</small></td>
+          <td class="tc-steps"><ol><li>Click New Chat</li></ol></td>
           <td class="tc-expected">New session created, old preserved</td>
           <td><div class="result-actual">&#9989; New session works. Old session saved.</div></td>
           <td><span class="tc-prio prio-p3">P3</span></td>

@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aura Live Validation - Wellness Check</title>
+<title>Aura QA - Wellness Check</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
     <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
-    <h1>&#128154; Wellness Check (Live Vercel Diagnostics)</h1>
+    <h1>&#128154; Wellness Check</h1>
     <p>Mental health resources, crisis support, peer check-in</p>
   </div>
-  <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-    <span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span>
-    <button style="background:white; color:#ef4444; border:1px solid #fee2e2; border-radius:20px; padding:6px 14px; font-weight:700; cursor:pointer;" onclick="alert('Logged out from preview.')">Logout</button>
-  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
 </div>
 <nav class="breadnav">
   <a href="index.html">Index</a> &rsaquo; Wellness Check
@@ -29,14 +26,14 @@
     <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
   <div class="section">
-    <div class="section-header"><h2>Wellness</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <div class="section-header"><h2>Wellness</h2><span class="badge badge-pass">&#10003; Present</span></div>
     <table class="tc-table">
       <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
       <tbody>
         <tr>
           <td class="tc-id">WELL-001</td>
-          <td class="tc-desc">Wellness tab loads<br><small style="color:var(--gray)">['Open tab']</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open Wellness</li></ol></td>
+          <td class="tc-desc">Wellness tab loads<small>['Open tab']</small></td>
+          <td class="tc-steps"><ol><li>Open Wellness</li></ol></td>
           <td class="tc-expected">Resources and check-in visible</td>
           <td><div class="result-actual">&#9989; Crisis hotline, check-in prompts, resource links present</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
@@ -44,8 +41,8 @@
         </tr>
         <tr>
           <td class="tc-id">WELL-002</td>
-          <td class="tc-desc">Check-in flow<br><small style="color:var(--gray)">Click check-in CTA</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Complete check-in</li></ol></td>
+          <td class="tc-desc">Check-in flow<small>Click check-in CTA</small></td>
+          <td class="tc-steps"><ol><li>Complete check-in</li></ol></td>
           <td class="tc-expected">Mood logged, resources surfaced</td>
           <td><div class="result-actual">&#9989; Check-in form submits, matching resources shown</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -53,8 +50,8 @@
         </tr>
         <tr>
           <td class="tc-id">WELL-003</td>
-          <td class="tc-desc">Crisis resources always visible<br><small style="color:var(--gray)">Safety requirement</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>View top of page</li></ol></td>
+          <td class="tc-desc">Crisis resources always visible<small>Safety requirement</small></td>
+          <td class="tc-steps"><ol><li>View top of page</li></ol></td>
           <td class="tc-expected">988 / crisis line at top</td>
           <td><div class="result-actual">&#9989; Crisis resources visible without any interaction required</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>

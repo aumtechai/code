@@ -1197,6 +1197,37 @@ const Dashboard = () => {
                 />
             )}
 
+            {/* Global Static Top-Right Logout Button */}
+            <button
+                onClick={() => {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                }}
+                style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1.5rem',
+                    background: 'white',
+                    color: '#ef4444',
+                    border: '1px solid #fecaca',
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    fontWeight: '700',
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                    transition: 'all 0.2s'
+                }}
+                onMouseOver={e => { e.currentTarget.style.background = '#fef2f2'; }}
+                onMouseOut={e => { e.currentTarget.style.background = 'white'; }}
+            >
+                <LogOut size={16} strokeWidth={2.5} /> Logout
+            </button>
+
             {activeTab !== 'chat' && (
                 <motion.button
                     whileHover={{ scale: 1.05 }}

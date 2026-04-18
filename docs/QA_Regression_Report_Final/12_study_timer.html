@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aura Live Validation - Study Timer</title>
+<title>Aura QA - Study Timer</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
     <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
-    <h1>&#9201; Study Timer (Live Vercel Diagnostics)</h1>
+    <h1>&#9201; Study Timer</h1>
     <p>Pomodoro timer, session tracking, break reminders</p>
   </div>
-  <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-    <span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span>
-    <button style="background:white; color:#ef4444; border:1px solid #fee2e2; border-radius:20px; padding:6px 14px; font-weight:700; cursor:pointer;" onclick="alert('Logged out from preview.')">Logout</button>
-  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
 </div>
 <nav class="breadnav">
   <a href="index.html">Index</a> &rsaquo; Study Timer
@@ -29,14 +26,14 @@
     <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
   <div class="section">
-    <div class="section-header"><h2>Study Timer</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <div class="section-header"><h2>Study Timer</h2><span class="badge badge-pass">&#10003; Present</span></div>
     <table class="tc-table">
       <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
       <tbody>
         <tr>
           <td class="tc-id">TMR-001</td>
-          <td class="tc-desc">Timer UI renders<br><small style="color:var(--gray)">['Open tab']</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open Study Timer</li></ol></td>
+          <td class="tc-desc">Timer UI renders<small>['Open tab']</small></td>
+          <td class="tc-steps"><ol><li>Open Study Timer</li></ol></td>
           <td class="tc-expected">Countdown and Start visible</td>
           <td><div class="result-actual">&#9989; Timer with customizable durations renders</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -44,8 +41,8 @@
         </tr>
         <tr>
           <td class="tc-id">TMR-002</td>
-          <td class="tc-desc">Start timer counts down<br><small style="color:var(--gray)">Click Start</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Start timer</li></ol></td>
+          <td class="tc-desc">Start timer counts down<small>Click Start</small></td>
+          <td class="tc-steps"><ol><li>Start timer</li></ol></td>
           <td class="tc-expected">Counts down correctly</td>
           <td><div class="result-actual">&#9989; Countdown updates every second</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -53,8 +50,8 @@
         </tr>
         <tr>
           <td class="tc-id">TMR-003</td>
-          <td class="tc-desc">Pause and resume<br><small style="color:var(--gray)">Timer running</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Pause then Resume</li></ol></td>
+          <td class="tc-desc">Pause and resume<small>Timer running</small></td>
+          <td class="tc-steps"><ol><li>Pause then Resume</li></ol></td>
           <td class="tc-expected">Resumes from correct time</td>
           <td><div class="result-actual">&#9989; Pause/resume without reset</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -62,8 +59,8 @@
         </tr>
         <tr>
           <td class="tc-id">TMR-004</td>
-          <td class="tc-desc">Break mode after session<br><small style="color:var(--gray)">Let timer expire</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Let timer run to zero</li></ol></td>
+          <td class="tc-desc">Break mode after session<small>Let timer expire</small></td>
+          <td class="tc-steps"><ol><li>Let timer run to zero</li></ol></td>
           <td class="tc-expected">Break mode activates</td>
           <td><div class="result-actual">&#9989; Break mode auto-triggers with visual change</div></td>
           <td><span class="tc-prio prio-p3">P3</span></td>

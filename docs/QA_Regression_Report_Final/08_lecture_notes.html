@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aura Live Validation - Lecture Voice Notes</title>
+<title>Aura QA - Lecture Voice Notes</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
     <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
-    <h1>&#127908; Lecture Voice Notes (Live Vercel Diagnostics)</h1>
+    <h1>&#127908; Lecture Voice Notes</h1>
     <p>Audio transcription, AI summaries, history, multi-language</p>
   </div>
-  <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-    <span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span>
-    <button style="background:white; color:#ef4444; border:1px solid #fee2e2; border-radius:20px; padding:6px 14px; font-weight:700; cursor:pointer;" onclick="alert('Logged out from preview.')">Logout</button>
-  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
 </div>
 <nav class="breadnav">
   <a href="index.html">Index</a> &rsaquo; Lecture Voice Notes
@@ -24,19 +21,19 @@
 <div class="container">
   <div class="summary-strip">
     <div class="summary-stat"><div class="num" style="color:var(--primary)">5</div><div class="lbl">Test Cases</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">5</div><div class="lbl">Pass</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">2</div><div class="lbl">Warn</div></div>
     <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
   <div class="section">
-    <div class="section-header"><h2>Lecture Notes</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <div class="section-header"><h2>Lecture Notes</h2><span class="badge badge-pass">&#10003; Present</span></div>
     <table class="tc-table">
       <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
       <tbody>
         <tr>
           <td class="tc-id">LEC-001</td>
-          <td class="tc-desc">UI renders<br><small style="color:var(--gray)">['Open tab']</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open Lecture Notes</li></ol></td>
+          <td class="tc-desc">UI renders<small>['Open tab']</small></td>
+          <td class="tc-steps"><ol><li>Open Lecture Notes</li></ol></td>
           <td class="tc-expected">Record button, transcript area visible</td>
           <td><div class="result-actual">&#9989; Full notebook UI with record button and history panel</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
@@ -44,8 +41,8 @@
         </tr>
         <tr>
           <td class="tc-id">LEC-002</td>
-          <td class="tc-desc">Start/stop recording<br><small style="color:var(--gray)">Browser mic</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click Record, click Stop</li></ol></td>
+          <td class="tc-desc">Start/stop recording<small>Browser mic</small></td>
+          <td class="tc-steps"><ol><li>Click Record, click Stop</li></ol></td>
           <td class="tc-expected">Audio captured</td>
           <td><div class="result-actual">&#9989; Browser recording API invoked, progress indicator shown</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
@@ -53,26 +50,26 @@
         </tr>
         <tr>
           <td class="tc-id">LEC-003</td>
-          <td class="tc-desc">Transcription returned<br><small style="color:var(--gray)">Gemini or mock</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Stop recording, submit</li></ol></td>
+          <td class="tc-desc">Transcription returned<small>Gemini or mock</small></td>
+          <td class="tc-steps"><ol><li>Stop recording, submit</li></ol></td>
           <td class="tc-expected">Transcript in main panel</td>
-          <td><div class="result-actual warn">&#9989; Successfully deployed and integrated with live EdNex data.</div></td>
+          <td><div class="result-actual warn">&#9888; Returns mock transcript without GOOGLE_API_KEY. Real transcription when key set.</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
-          <td><span class="badge badge-pass">Pass</span></td>
+          <td><span class="badge badge-warn">API Key Dependent</span></td>
         </tr>
         <tr>
           <td class="tc-id">LEC-004</td>
-          <td class="tc-desc">AI summary generated<br><small style="color:var(--gray)">Gemini call</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>View summary panel</li></ol></td>
+          <td class="tc-desc">AI summary generated<small>Gemini call</small></td>
+          <td class="tc-steps"><ol><li>View summary panel</li></ol></td>
           <td class="tc-expected">Bullet-point summary shown</td>
-          <td><div class="result-actual warn">&#9989; Successfully deployed and integrated with live EdNex data.</div></td>
+          <td><div class="result-actual warn">&#9888; Summary generated (mock or real). Action items and keywords shown.</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
-          <td><span class="badge badge-pass">Pass</span></td>
+          <td><span class="badge badge-warn">API Key Dependent</span></td>
         </tr>
         <tr>
           <td class="tc-id">LEC-005</td>
-          <td class="tc-desc">History saved<br><small style="color:var(--gray)">DB persistence</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Create note, reload</li></ol></td>
+          <td class="tc-desc">History saved<small>DB persistence</small></td>
+          <td class="tc-steps"><ol><li>Create note, reload</li></ol></td>
           <td class="tc-expected">Note in history list</td>
           <td><div class="result-actual">&#9989; Notes saved. History panel shows with titles, dates, bookmarks.</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>

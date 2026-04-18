@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aura Live Validation - Financial Nexus</title>
+<title>Aura QA - Financial Nexus</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
     <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
-    <h1>&#128176; Financial Nexus (Live Vercel Diagnostics)</h1>
+    <h1>&#128176; Financial Nexus</h1>
     <p>Aid status, balance, scholarship matcher, payment tracking</p>
   </div>
-  <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-    <span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span>
-    <button style="background:white; color:#ef4444; border:1px solid #fee2e2; border-radius:20px; padding:6px 14px; font-weight:700; cursor:pointer;" onclick="alert('Logged out from preview.')">Logout</button>
-  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
 </div>
 <nav class="breadnav">
   <a href="index.html">Index</a> &rsaquo; Financial Nexus
@@ -24,19 +21,19 @@
 <div class="container">
   <div class="summary-strip">
     <div class="summary-stat"><div class="num" style="color:var(--primary)">4</div><div class="lbl">Test Cases</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">4</div><div class="lbl">Pass</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">1</div><div class="lbl">Warn</div></div>
     <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
   <div class="section">
-    <div class="section-header"><h2>Financial Nexus</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <div class="section-header"><h2>Financial Nexus</h2><span class="badge badge-pass">&#10003; Present</span></div>
     <table class="tc-table">
       <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
       <tbody>
         <tr>
           <td class="tc-id">FIN-001</td>
-          <td class="tc-desc">Financial overview loads<br><small style="color:var(--gray)">['Open tab']</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open Financial Nexus</li></ol></td>
+          <td class="tc-desc">Financial overview loads<small>['Open tab']</small></td>
+          <td class="tc-steps"><ol><li>Open Financial Nexus</li></ol></td>
           <td class="tc-expected">Balance due, aid status visible</td>
           <td><div class="result-actual">&#9989; Balance due $4,500, Aid $12,500 shown clearly</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
@@ -44,8 +41,8 @@
         </tr>
         <tr>
           <td class="tc-id">FIN-002</td>
-          <td class="tc-desc">Scholarship Matcher section<br><small style="color:var(--gray)">Scroll down</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>View Scholarship section</li></ol></td>
+          <td class="tc-desc">Scholarship Matcher section<small>Scroll down</small></td>
+          <td class="tc-steps"><ol><li>View Scholarship section</li></ol></td>
           <td class="tc-expected">Scholarship cards with match %</td>
           <td><div class="result-actual">&#9989; Scholarship cards render with amounts and match scores</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -53,8 +50,8 @@
         </tr>
         <tr>
           <td class="tc-id">FIN-003</td>
-          <td class="tc-desc">Payment plan details<br><small style="color:var(--gray)">View payments</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click payment section</li></ol></td>
+          <td class="tc-desc">Payment plan details<small>View payments</small></td>
+          <td class="tc-steps"><ol><li>Click payment section</li></ol></td>
           <td class="tc-expected">Schedule visible</td>
           <td><div class="result-actual">&#9989; Payment breakdown by semester shown</div></td>
           <td><span class="tc-prio prio-p2">P2</span></td>
@@ -62,12 +59,12 @@
         </tr>
         <tr>
           <td class="tc-id">FIN-004</td>
-          <td class="tc-desc">Data from EdNex<br><small style="color:var(--gray)">SIS financial integration</small></td>
-          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Compare with registrar</li></ol></td>
+          <td class="tc-desc">Data from EdNex<small>SIS financial integration</small></td>
+          <td class="tc-steps"><ol><li>Compare with registrar</li></ol></td>
           <td class="tc-expected">Data matches institution</td>
-          <td><div class="result-actual warn">&#9989; Successfully deployed and integrated with live EdNex data.</div></td>
+          <td><div class="result-actual warn">&#9888; Mock/static data. EdNex financial integration not wired.</div></td>
           <td><span class="tc-prio prio-p1">P1</span></td>
-          <td><span class="badge badge-pass">Pass</span></td>
+          <td><span class="badge badge-warn">Mock Data</span></td>
         </tr></tbody>
     </table>
   </div></div></body></html>
