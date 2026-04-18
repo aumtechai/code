@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Dean's Dashboard</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>Dean Dean's Dashboard</h1>
+    <p>Institutional metrics, retention, graduation, analytics</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Dean's Dashboard
+  <span style="margin-left:auto; color:var(--gray)">Component: DeanDashboard.jsx (Role: Dean/Exec)</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">4</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">4</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Dean Dashboard</h2><span class="badge badge-pass">&#10003; Present</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">DEAN-001</td>
+          <td class="tc-desc">Dean view via role switch<small>Admin login</small></td>
+          <td class="tc-steps"><ol><li>Switch to Dean/Exec View</li></ol></td>
+          <td class="tc-expected">Dean Dashboard tab appears</td>
+          <td><div class="result-actual">&#9989; Executive metrics panel loads</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DEAN-002</td>
+          <td class="tc-desc">Retention / graduation KPIs<small>University data</small></td>
+          <td class="tc-steps"><ol><li>View executive dashboard</li></ol></td>
+          <td class="tc-expected">Retention, Grad rate, At-risk count</td>
+          <td><div class="result-actual">&#9989; KPIs displayed (partial real + mock data)</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DEAN-003</td>
+          <td class="tc-desc">Cohort analytics<small>Drill down</small></td>
+          <td class="tc-steps"><ol><li>Click into department</li></ol></td>
+          <td class="tc-expected">Sub-cohort analytics shown</td>
+          <td><div class="result-actual">&#9989; Department breakdown renders</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">DEAN-004</td>
+          <td class="tc-desc">Sankey migration diagram<small>Phase 5</small></td>
+          <td class="tc-steps"><ol><li>View Student Flow section</li></ol></td>
+          <td class="tc-expected">Sankey diagram of major migrations</td>
+          <td><div class="result-actual">&#9989; Sankey diagrams render cross-departmental migration streams.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

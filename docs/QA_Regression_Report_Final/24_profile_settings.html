@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Profile & Settings</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>Profile Profile & Settings</h1>
+    <p>Profile update, change password, language, account deletion</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Present</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Profile & Settings
+  <span style="margin-left:auto; color:var(--gray)">Component: Dashboard.jsx / EditProfileModal</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">5</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">5</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Profile Settings</h2><span class="badge badge-pass">&#10003; Present</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">PROF-001</td>
+          <td class="tc-desc">Settings modal opens<small>Click Settings</small></td>
+          <td class="tc-steps"><ol><li>Click Settings nav item</li></ol></td>
+          <td class="tc-expected">Profile modal renders</td>
+          <td><div class="result-actual">&#9989; EditProfileModal renders with all sections</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">PROF-002</td>
+          <td class="tc-desc">Update full name<small>Edit field</small></td>
+          <td class="tc-steps"><ol><li>Change Full Name, Save</li></ol></td>
+          <td class="tc-expected">Name refreshes in sidebar</td>
+          <td><div class="result-actual">&#9989; PUT /api/users/me succeeds</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">PROF-003</td>
+          <td class="tc-desc">Change password from modal<small>All 3 fields required</small></td>
+          <td class="tc-steps"><ol><li>Fill current/new/confirm, Update Password</li></ol></td>
+          <td class="tc-expected">Password synced to DB + EdNex</td>
+          <td><div class="result-actual">&#9989; Syncs to NeonDB and EdNex Supabase. Success message shown.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">PROF-004</td>
+          <td class="tc-desc">Mismatch validation<small>Different new/confirm</small></td>
+          <td class="tc-steps"><ol><li>Enter mismatched passwords</li></ol></td>
+          <td class="tc-expected">Inline error shown</td>
+          <td><div class="result-actual">&#9989; Client-side validation before API call</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">PROF-005</td>
+          <td class="tc-desc">Delete account<small>Double confirm</small></td>
+          <td class="tc-steps"><ol><li>Click Delete, type DELETE</li></ol></td>
+          <td class="tc-expected">Account deleted, redirect to login</td>
+          <td><div class="result-actual">&#9989; Double confirmation required. DELETE /api/users/me called.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

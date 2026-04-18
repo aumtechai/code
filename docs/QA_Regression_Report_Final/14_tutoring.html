@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Tutoring Center</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#127891; Tutoring Center</h1>
+    <p>Tutor matching, session booking, subject search</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-warn" style="font-size:0.9rem; padding:8px 16px;">&#9888; Mock Data</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Tutoring Center
+  <span style="margin-left:auto; color:var(--gray)">Component: TutoringCenter.jsx</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">4</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">2</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">2</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Tutoring Center</h2><span class="badge badge-warn">&#9888; Mock Data</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">TUT-001</td>
+          <td class="tc-desc">Tutor list renders<small>['Open tab']</small></td>
+          <td class="tc-steps"><ol><li>Open Tutoring Center</li></ol></td>
+          <td class="tc-expected">Tutors with names, subjects, ratings</td>
+          <td><div class="result-actual">&#9989; Dr. Marcus Thorne and others shown</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">TUT-002</td>
+          <td class="tc-desc">Filter by subject<small>Dropdown</small></td>
+          <td class="tc-steps"><ol><li>Select Mathematics</li></ol></td>
+          <td class="tc-expected">Only math tutors shown</td>
+          <td><div class="result-actual">&#9989; Client-side filter works</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">TUT-003</td>
+          <td class="tc-desc">Book a session<small>Pick time slot</small></td>
+          <td class="tc-steps"><ol><li>Confirm booking</li></ol></td>
+          <td class="tc-expected">Session booked, confirmation shown</td>
+          <td><div class="result-actual warn">&#9888; Booking flow present but mock backend. No real calendar integration.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-warn">Mock Booking</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">TUT-004</td>
+          <td class="tc-desc">Real data from EdNex<small>mod00_tutors</small></td>
+          <td class="tc-steps"><ol><li>View tutor profiles</li></ol></td>
+          <td class="tc-expected">Real institutional tutors</td>
+          <td><div class="result-actual warn">&#9888; Data is hardcoded mock. EdNex tutor integration not wired.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-warn">Mock Data</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>
