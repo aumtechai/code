@@ -1204,23 +1204,24 @@ const Dashboard = () => {
                     window.location.href = '/login';
                 }}
                 style={{
-                    position: 'absolute',
-                    top: '1rem',
+                    position: 'fixed',
+                    top: '1.5rem',
                     right: '1.5rem',
                     background: 'white',
                     color: '#ef4444',
                     border: '1px solid #fecaca',
                     padding: '8px 16px',
                     borderRadius: '20px',
-                    fontWeight: '700',
+                    fontWeight: '800',
                     fontSize: '0.85rem',
                     cursor: 'pointer',
-                    zIndex: 9999,
+                    zIndex: 2147483647,
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                    transition: 'all 0.2s'
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s',
+                    fontFamily: 'inherit'
                 }}
                 onMouseOver={e => { e.currentTarget.style.background = '#fef2f2'; }}
                 onMouseOut={e => { e.currentTarget.style.background = 'white'; }}
