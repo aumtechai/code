@@ -2,48 +2,78 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live QA Diagnostics - Profile Settings Mutator</title>
+<title>Aura Live Validation - Profile & Settings</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
-    <h1>🟢 Profile Settings Mutator (Live Vercel Diagnostic)</h1>
-    <p>Live programmatic routing diagnostics against https://www.aumtech.ai production cluster.</p>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>Profile Profile & Settings (Live Vercel Diagnostics)</h1>
+    <p>Profile update, change password, language, account deletion</p>
   </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span></div>
 </div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Profile & Settings
+  <span style="margin-left:auto; color:var(--gray)">Component: Dashboard.jsx / EditProfileModal</span>
+</nav>
 <div class="container">
-
   <div class="summary-strip">
-    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Automated Checks</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Metrics Passed</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Failures</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">5</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">5</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
-<div class="section">
-<table class="tc-table">
-  <thead><tr><th>Diagnostic Status</th><th>Check Type Target</th><th>Edge Latency</th><th>Response Detail</th></tr></thead>
-  <tbody>
+  <div class="section">
+    <div class="section-header"><h2>Profile Settings</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
         <tr>
+          <td class="tc-id">PROF-001</td>
+          <td class="tc-desc">Settings modal opens<br><small style="color:var(--gray)">Click Settings</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click Settings nav item</li></ol></td>
+          <td class="tc-expected">Profile modal renders</td>
+          <td><div class="result-actual">&#9989; EditProfileModal renders with all sections</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Edge Resolve: /profile</b></td>
-          <td>189ms</td>
-          <td>HTTP 200 Payload Confirmed</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">PROF-002</td>
+          <td class="tc-desc">Update full name<br><small style="color:var(--gray)">Edit field</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Change Full Name, Save</li></ol></td>
+          <td class="tc-expected">Name refreshes in sidebar</td>
+          <td><div class="result-actual">&#9989; PUT /api/users/me succeeds</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Client Routing Mount</b></td>
-          <td>75ms</td>
-          <td>DOM Instantiation OK</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">PROF-003</td>
+          <td class="tc-desc">Change password from modal<br><small style="color:var(--gray)">All 3 fields required</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Fill current/new/confirm, Update Password</li></ol></td>
+          <td class="tc-expected">Password synced to DB + EdNex</td>
+          <td><div class="result-actual">&#9989; Syncs to NeonDB and EdNex Supabase. Success message shown.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>State Pre-hydration</b></td>
-          <td>37ms</td>
-          <td>Redux/Context Intialized</td>
         </tr>
-        </tbody>
-</table>
-</div>
-</div></body></html>
+        <tr>
+          <td class="tc-id">PROF-004</td>
+          <td class="tc-desc">Mismatch validation<br><small style="color:var(--gray)">Different new/confirm</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Enter mismatched passwords</li></ol></td>
+          <td class="tc-expected">Inline error shown</td>
+          <td><div class="result-actual">&#9989; Client-side validation before API call</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">PROF-005</td>
+          <td class="tc-desc">Delete account<br><small style="color:var(--gray)">Double confirm</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click Delete, type DELETE</li></ol></td>
+          <td class="tc-expected">Account deleted, redirect to login</td>
+          <td><div class="result-actual">&#9989; Double confirmation required. DELETE /api/users/me called.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

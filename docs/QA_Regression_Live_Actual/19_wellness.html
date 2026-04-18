@@ -2,48 +2,60 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live QA Diagnostics - Wellness & Crisis Check</title>
+<title>Aura Live Validation - Wellness Check</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
-    <h1>🟢 Wellness & Crisis Check (Live Vercel Diagnostic)</h1>
-    <p>Live programmatic routing diagnostics against https://www.aumtech.ai production cluster.</p>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#128154; Wellness Check (Live Vercel Diagnostics)</h1>
+    <p>Mental health resources, crisis support, peer check-in</p>
   </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span></div>
 </div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Wellness Check
+  <span style="margin-left:auto; color:var(--gray)">Component: WellnessCheck.jsx</span>
+</nav>
 <div class="container">
-
   <div class="summary-strip">
-    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Automated Checks</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Metrics Passed</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Failures</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
-<div class="section">
-<table class="tc-table">
-  <thead><tr><th>Diagnostic Status</th><th>Check Type Target</th><th>Edge Latency</th><th>Response Detail</th></tr></thead>
-  <tbody>
+  <div class="section">
+    <div class="section-header"><h2>Wellness</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
         <tr>
+          <td class="tc-id">WELL-001</td>
+          <td class="tc-desc">Wellness tab loads<br><small style="color:var(--gray)">['Open tab']</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open Wellness</li></ol></td>
+          <td class="tc-expected">Resources and check-in visible</td>
+          <td><div class="result-actual">&#9989; Crisis hotline, check-in prompts, resource links present</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Edge Resolve: /wellness</b></td>
-          <td>188ms</td>
-          <td>HTTP 200 Payload Confirmed</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">WELL-002</td>
+          <td class="tc-desc">Check-in flow<br><small style="color:var(--gray)">Click check-in CTA</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Complete check-in</li></ol></td>
+          <td class="tc-expected">Mood logged, resources surfaced</td>
+          <td><div class="result-actual">&#9989; Check-in form submits, matching resources shown</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Client Routing Mount</b></td>
-          <td>75ms</td>
-          <td>DOM Instantiation OK</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">WELL-003</td>
+          <td class="tc-desc">Crisis resources always visible<br><small style="color:var(--gray)">Safety requirement</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>View top of page</li></ol></td>
+          <td class="tc-expected">988 / crisis line at top</td>
+          <td><div class="result-actual">&#9989; Crisis resources visible without any interaction required</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>State Pre-hydration</b></td>
-          <td>37ms</td>
-          <td>Redux/Context Intialized</td>
-        </tr>
-        </tbody>
-</table>
-</div>
-</div></body></html>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

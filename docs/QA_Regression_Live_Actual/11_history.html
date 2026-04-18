@@ -2,48 +2,60 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live QA Diagnostics - My Audit History</title>
+<title>Aura Live Validation - My History</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
-    <h1>🟢 My Audit History (Live Vercel Diagnostic)</h1>
-    <p>Live programmatic routing diagnostics against https://www.aumtech.ai production cluster.</p>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#128220; My History (Live Vercel Diagnostics)</h1>
+    <p>Chat session history, AI conversation archive</p>
   </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span></div>
 </div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; My History
+  <span style="margin-left:auto; color:var(--gray)">Component: History.jsx</span>
+</nav>
 <div class="container">
-
   <div class="summary-strip">
-    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Automated Checks</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Metrics Passed</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Failures</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
-<div class="section">
-<table class="tc-table">
-  <thead><tr><th>Diagnostic Status</th><th>Check Type Target</th><th>Edge Latency</th><th>Response Detail</th></tr></thead>
-  <tbody>
+  <div class="section">
+    <div class="section-header"><h2>History</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
         <tr>
+          <td class="tc-id">HIST-001</td>
+          <td class="tc-desc">History tab loads<br><small style="color:var(--gray)">Auth required</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open My History</li></ol></td>
+          <td class="tc-expected">Chronological session list</td>
+          <td><div class="result-actual">&#9989; Sessions listed newest-first</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Edge Resolve: /history</b></td>
-          <td>182ms</td>
-          <td>HTTP 200 Payload Confirmed</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">HIST-002</td>
+          <td class="tc-desc">Click session shows messages<br><small style="color:var(--gray)">Prior sessions exist</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click a history item</li></ol></td>
+          <td class="tc-expected">Full conversation displayed</td>
+          <td><div class="result-actual">&#9989; Thread expands on click</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Client Routing Mount</b></td>
-          <td>72ms</td>
-          <td>DOM Instantiation OK</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">HIST-003</td>
+          <td class="tc-desc">Empty state for new users<br><small style="color:var(--gray)">No prior sessions</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open History fresh</li></ol></td>
+          <td class="tc-expected">Helpful empty state</td>
+          <td><div class="result-actual">&#9989; Empty state shown correctly</div></td>
+          <td><span class="tc-prio prio-p3">P3</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>State Pre-hydration</b></td>
-          <td>36ms</td>
-          <td>Redux/Context Intialized</td>
-        </tr>
-        </tbody>
-</table>
-</div>
-</div></body></html>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

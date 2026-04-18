@@ -2,48 +2,69 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live QA Diagnostics - Flashcard AI Generator</title>
+<title>Aura Live Validation - Flashcard Generator</title>
 <link rel="stylesheet" href="_shared.css">
 </head>
 <body>
 <div class="page-header">
   <div>
-    <h1>🟢 Flashcard AI Generator (Live Vercel Diagnostic)</h1>
-    <p>Live programmatic routing diagnostics against https://www.aumtech.ai production cluster.</p>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>&#127183; Flashcard Generator (Live Vercel Diagnostics)</h1>
+    <p>AI-generated flashcards, topic or note input, flip interaction</p>
   </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Fully Functional</span></div>
 </div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Flashcard Generator
+  <span style="margin-left:auto; color:var(--gray)">Component: FlashcardGenerator.jsx / /api/ai/flashcards</span>
+</nav>
 <div class="container">
-
   <div class="summary-strip">
-    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Automated Checks</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Metrics Passed</div></div>
-    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Failures</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">4</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">4</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
   </div>
-<div class="section">
-<table class="tc-table">
-  <thead><tr><th>Diagnostic Status</th><th>Check Type Target</th><th>Edge Latency</th><th>Response Detail</th></tr></thead>
-  <tbody>
+  <div class="section">
+    <div class="section-header"><h2>Flashcards</h2><span class="badge badge-pass">&#10003; Functional</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
         <tr>
+          <td class="tc-id">FLASH-001</td>
+          <td class="tc-desc">UI renders<br><small style="color:var(--gray)">['Open tab']</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Open Flashcards</li></ol></td>
+          <td class="tc-expected">Topic input and Generate button</td>
+          <td><div class="result-actual">&#9989; UI renders with input area</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Edge Resolve: /flashcards</b></td>
-          <td>180ms</td>
-          <td>HTTP 200 Payload Confirmed</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">FLASH-002</td>
+          <td class="tc-desc">Generate from topic<br><small style="color:var(--gray)">Enter topic</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Type "Calculus", Generate</li></ol></td>
+          <td class="tc-expected">20 cards returned</td>
+          <td><div class="result-actual">&#9989; Gemini REST returns 20 cards. Mock fallback if no key.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>Client Routing Mount</b></td>
-          <td>72ms</td>
-          <td>DOM Instantiation OK</td>
         </tr>
-        
         <tr>
+          <td class="tc-id">FLASH-003</td>
+          <td class="tc-desc">Card flip interaction<br><small style="color:var(--gray)">Cards generated</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Click a card</li></ol></td>
+          <td class="tc-expected">Card flips to back</td>
+          <td><div class="result-actual">&#9989; 3D CSS flip animation works</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
           <td><span class="badge badge-pass">Pass</span></td>
-          <td><b>State Pre-hydration</b></td>
-          <td>36ms</td>
-          <td>Redux/Context Intialized</td>
         </tr>
-        </tbody>
-</table>
-</div>
-</div></body></html>
+        <tr>
+          <td class="tc-id">FLASH-004</td>
+          <td class="tc-desc">Generate from pasted notes<br><small style="color:var(--gray)">100+ char content</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Paste notes, Generate</li></ol></td>
+          <td class="tc-expected">Cards from content</td>
+          <td><div class="result-actual warn">&#9989; Works but quality depends on Gemini key.</div></td>
+          <td><span class="tc-prio prio-p3">P3</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>
