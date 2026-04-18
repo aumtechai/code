@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import { Link } from 'react-router-dom';
 import logoAsset from '../assets/logo.png';
+import iphoneLogo from '../assets/iphone_logo.jpg';
 
 import './Login.css';
 
@@ -123,7 +124,7 @@ const Login = () => {
             {/* === HEADER === */}
             <header className="landing-header">
                 <a href="/" className="header-logo-link">
-                    <img src={logoAsset} alt="Aura" />
+                    <img src={iphoneLogo} alt="Aura" style={{ borderRadius: '8px', objectFit: 'cover' }} />
                     Aura
                 </a>
                 <nav>

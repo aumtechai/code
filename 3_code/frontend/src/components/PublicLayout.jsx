@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logoAsset from '../assets/logo.png';
+import iphoneLogo from '../assets/iphone_logo.jpg';
 import './PublicLayout.css';
 
 const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => (
@@ -8,10 +8,10 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => (
         {/* ── HEADER ── */}
         <header className="pub-header">
             <Link to="/" className="pub-logo-link">
-                <img src={logoAsset} alt="Aura" className="pub-logo-img" />
+                <img src={iphoneLogo} alt="Aura" className="pub-logo-img" style={{ borderRadius: '8px', objectFit: 'cover' }} />
                 <div className="pub-logo-text">
                     <span className="pub-logo-name">Aura</span>
-                    <span className="pub-logo-tag">Your Campus Co-Pilot</span>
+                    <span className="pub-logo-tag" style={{ display: 'none' }}>Your Campus Co-Pilot</span>
                 </div>
             </Link>
             <nav className="pub-nav">

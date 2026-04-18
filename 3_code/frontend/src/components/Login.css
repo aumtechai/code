@@ -181,18 +181,15 @@ body {
 
 /* Pill container keeps the logo clipped — hides the aumtech.ai subtitle */
 .hero-brand-mark {
-  width: 200px; /* Massive logo as requested */
+  width: 200px;
   height: 200px;
-  border-radius: 36px;
-  overflow: hidden;          /* clips the logo image to the box */
-  border: 1px solid rgba(99,102,241,0.18);
-  box-shadow: 0 12px 35px rgba(99,102,241,0.16);
   flex-shrink: 0;
-  background: var(--white);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   position: relative;
+  overflow: hidden;
+  mix-blend-mode: darken; /* Natively drops the white backdrop */
 }
 
 /* The actual <img> tag is scaled up and translated to show only the icon portion */
