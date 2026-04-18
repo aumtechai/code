@@ -397,18 +397,20 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                             cursor: 'pointer', 
                             color: '#64748b',
                             width: '44px',
+                            minWidth: '44px',
                             height: '44px',
                             borderRadius: '12px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            flexShrink: 0
                         }}
                         onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'}
                         onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}
                         title="Attach Document"
                     >
-                        <Paperclip size={20} />
+                        <Paperclip size={20} color="#64748b" strokeWidth={2.5} />
                     </button>
                     <input
                         type="file"
@@ -455,18 +457,20 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                             cursor: 'pointer', 
                             color: '#64748b',
                             width: '44px',
+                            minWidth: '44px',
                             height: '44px',
                             borderRadius: '12px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            flexShrink: 0
                         }}
                         onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'}
                         onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}
                         title="AI Privacy Info"
                     >
-                        <Info size={20} />
+                        <Info size={20} color="#64748b" strokeWidth={2.5} />
                     </button>
                     <button
                         type="submit"
