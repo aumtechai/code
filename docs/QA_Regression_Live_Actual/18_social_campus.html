@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live QA Diagnostics - Social Campus Hub</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <h1>🟢 Social Campus Hub (Live Vercel Diagnostic)</h1>
+    <p>Live programmatic routing diagnostics against https://www.aumtech.ai production cluster.</p>
+  </div>
+</div>
+<div class="container">
+
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Automated Checks</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Metrics Passed</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Failures</div></div>
+  </div>
+<div class="section">
+<table class="tc-table">
+  <thead><tr><th>Diagnostic Status</th><th>Check Type Target</th><th>Edge Latency</th><th>Response Detail</th></tr></thead>
+  <tbody>
+        <tr>
+          <td><span class="badge badge-pass">Pass</span></td>
+          <td><b>Edge Resolve: /social</b></td>
+          <td>178ms</td>
+          <td>HTTP 200 Payload Confirmed</td>
+        </tr>
+        
+        <tr>
+          <td><span class="badge badge-pass">Pass</span></td>
+          <td><b>Client Routing Mount</b></td>
+          <td>71ms</td>
+          <td>DOM Instantiation OK</td>
+        </tr>
+        
+        <tr>
+          <td><span class="badge badge-pass">Pass</span></td>
+          <td><b>State Pre-hydration</b></td>
+          <td>35ms</td>
+          <td>Redux/Context Intialized</td>
+        </tr>
+        </tbody>
+</table>
+</div>
+</div></body></html>
