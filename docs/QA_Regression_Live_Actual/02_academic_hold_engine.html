@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura Live Validation - Automated Hold Tiers (GAP-005)</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Return to Suite Index</a></div>
+    <h1>&#128680; Automated Hold Tiers (GAP-005) (Validating Live Production Deploy)</h1>
+    <p>Testing the newly deployed Rules Engine on Live GPAs</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; Operational</span></div>
+</div>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">2</div><div class="lbl">Test Cases Verified</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">2</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>GPA Rule Enforcement</h2><span class="badge badge-pass">&#10003; Executed via Vercel</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">HLD-004</td>
+          <td class="tc-desc">Sub-2.0 GPA Trigger<br><small style="color:var(--gray)">Simulate dropped GPA array</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Inject mock GPA = 1.9</li><li>Navigate to Holds</li></ol></td>
+          <td class="tc-expected">Platform automatically institutes a Registration Hold flag without human input.</td>
+          <td><div class="result-actual">&#9989; System evaluated the fetched `userProfile.gpa` and programmatically inserted a High-Priority Academic Probation block dynamically!</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Verified Live</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">HLD-005</td>
+          <td class="tc-desc">Hold Disappears Post-Elevation<br><small style="color:var(--gray)">Simulate GPA rise</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Update GPA = 2.4</li><li>Refresh Holds module</li></ol></td>
+          <td class="tc-expected">The script drops the strict academic hold off the matrix naturally.</td>
+          <td><div class="result-actual">&#9989; State cleans up perfectly.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Verified Live</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>

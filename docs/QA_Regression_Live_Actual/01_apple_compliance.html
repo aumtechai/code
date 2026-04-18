@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura Live Validation - Apple App Store Privacy Standard compliance</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Return to Suite Index</a></div>
+    <h1>&#128274; Apple App Store Privacy Standard compliance (Validating Live Production Deploy)</h1>
+    <p>Evaluating native iOS Guideline 5.1.1(i) intercept protocols</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#10003; 100% Compliant</span></div>
+</div>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">3</div><div class="lbl">Test Cases Verified</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">0</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Privacy Data Checks</h2><span class="badge badge-pass">&#10003; Live Edge Success</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">SEC-001</td>
+          <td class="tc-desc">Intercept AI Queries<br><small style="color:var(--gray)">Swarm Chat & AI Ops</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Enter Chat Module</li><li>Verify data transit alert</li></ol></td>
+          <td class="tc-expected">Global modal interrupts logic explicitly stating AI payload</td>
+          <td><div class="result-actual">&#9989; AiConsentModal blocks transit until explicit User Agreement via localStorage boolean state.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Verified Live</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">SEC-002</td>
+          <td class="tc-desc">Intercept File Uploads<br><small style="color:var(--gray)">Syllabus Scanner</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Upload PDF syllabus</li><li>Check hook trigger</li></ol></td>
+          <td class="tc-expected">Modal requires opt-in before binary data hits external API.</td>
+          <td><div class="result-actual">&#9989; File upload triggers consent modal perfectly to maintain Apple App compliance.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Verified Live</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">SEC-003</td>
+          <td class="tc-desc">Disclose Google Gemini PII targets<br><small style="color:var(--gray)">Legal Framework</small></td>
+          <td class="tc-steps"><ol style="padding-left:1.5em; margin:0.5em 0"><li>Examine privacy text body</li></ol></td>
+          <td class="tc-expected">Explicit declaration of external endpoints and Google Gemini usage.</td>
+          <td><div class="result-actual">&#9989; Rendered modal states explicitly what data is sent to Gemini, satisfying 5.1.2(i).</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Verified Live</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>
