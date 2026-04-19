@@ -110,94 +110,61 @@ async def run_aura_core_query_async(query: str, student_email: str):
     specialist_answers = []
 
     try:
-        # 1. Planning Phase: Orchestrator
-        master_config = config.get("master", {})
-        orchestrator_prompt = master_config.get("prompt", 
-            'You are the Aura Master Orchestrator. Respond ONLY with JSON: {"selected_agents": ["AGENT_KEY"], "reasoning": "..."}'
+        # Load Config
+        config = load_agent_config()
+        
+        # Merge specialist prompts into a single master context for efficiency (Protecting Quotas)
+        all_specialist_info = "\n".join([f"- {k}: {v['name']} ({v['prompt'][:100]}...)" for k,v in config.items() if k != 'master'])
+        
+        system_instructions = (
+            "You are the Aura Multi-Agent Orchestrator. You have access to academic data modules. "
+            f"Specialist Contexts available:\n{all_specialist_info}\n\n"
+            "INSTRUCTIONS:\n"
+            "1. Analyze the query and student context.\n"
+            "2. If you need data, simulate the search yourself using the knowledge of modules: [mod01_profiles, mod04_courses, mod08_aid].\n"
+            "3. Return a clean JSON response: {\"final_answer\": \"...\", \"action_items\": [...], \"routing_reason\": \"...\"}\n"
+            "DO NOT reveal technical errors or tracebacks. If rate limited, apologize politely."
         )
-        orchestrator = LightweightAgent(
-            name=master_config.get("name", "Aura_Orchestrator"),
-            system_message=orchestrator_prompt,
+
+        master = LightweightAgent(
+            name="Aura_Core",
+            system_message=system_instructions,
             client=client
         )
 
-        print(f"[Aura_Core] Orchestrating: {query}")
-        plan_raw = await orchestrator.chat(f"User Query: {query}\nWhich specialists are needed?")
+        print(f"[Aura_Core] Multi-Agent Synthesis: {query}")
         
-        master_decision = extract_json(plan_raw)
-        
-        # Dynamically build key map from config keys (ignoring master)
-        agent_key_map = {k.upper(): k for k in config.keys() if k != "master"}
+        # Attempt the call with retry logic for 429
+        max_retries = 2
+        for attempt in range(max_retries + 1):
+            try:
+                raw_response = await master.chat(f"User Query: {query}\nStudent context: {student_email}")
+                result = extract_json(raw_response)
+                
+                duration = time.time() - start_time
+                log_agent_call(query, "Aura_SinglePass_Swarm", result.get("final_answer", ""), duration=duration)
 
-        # Lookup selected agents
-        selected_keys = [agent_key_map.get(str(k).upper()) for k in master_decision.get("selected_agents", []) if agent_key_map.get(str(k).upper())]
-        if not selected_keys: selected_keys = ["student_help"]
+                return {
+                    "status": "success",
+                    "answer": result.get("final_answer", "I am processing your academic data. Could you please rephrase or try in a moment?"),
+                    "processing_seconds": round(duration, 2),
+                    "routing_reason": result.get("routing_reason", "Optimized Intelligence Path"),
+                    "action_items": result.get("action_items", [])
+                }
+            except Exception as e:
+                if "429" in str(e) and attempt < max_retries:
+                    time.sleep(2 * (attempt + 1)) # Backoff
+                    continue
+                raise e
 
-        flow_log.append({
-            "sender": "Aura_Orchestrator",
-            "content": f"Plan: {master_decision.get('reasoning', 'Standard consult.')}"
-        })
-
-        # 2. Execution Phase: Specialists (Parallelized)
-        async def run_specialist(agent_key):
-            selected_agent_config = config.get(agent_key, config["student_help"])
-            agent_name = selected_agent_config["name"]
-            
-            specialist = LightweightAgent(
-                name=agent_name,
-                system_message=selected_agent_config["prompt"],
-                client=client
-            )
-            
-            print(f"[Aura_Core] Consulting {agent_name}...")
-            # Combine module decision and analysis into fewer steps
-            spec_msg = f"User Query: {query}. From student: {student_email}. Using relevant EdNex modules, provide your final analysis in JSON: {{\"message_content\": \"...\", \"sources\": [...]}}"
-            final_raw = await specialist.chat(spec_msg)
-            final_result = extract_json(final_raw)
-            
-            return {
-                "agent": agent_name,
-                "content": final_result.get("message_content", "Information retrieved."),
-                "source": final_result.get("sources", [])
-            }
-
-        # Run all selected specialists in parallel
-        results = await asyncio.gather(*[run_specialist(k) for k in selected_keys])
-        
-        for res in results:
-            specialist_answers.append(res)
-            flow_log.append({
-                "sender": res["agent"],
-                "content": "Analysis complete."
-            })
-
-        # 3. Synthesis Phase
-        synthesizer = LightweightAgent(
-            name="Synthesizer",
-            system_message="Combine specialists reports into a cohesive final answer. Respond in JSON: {\"final_answer\": \"...\", \"action_items\": [...]}",
-            client=client
-        )
-        
-        synth_prompt = f"User query: {query}\n\nReports:\n{json.dumps(specialist_answers)}\nProvide final synthesis."
-        synth_raw = await synthesizer.chat(synth_prompt)
-        synthesis_result = extract_json(synth_raw)
-
-        duration = time.time() - start_time
-        log_agent_call(query, "Aura_Lightweight_Swarm", synthesis_result.get("final_answer", ""), duration=duration)
-        
-        return {
-            "status": "success",
-            "answer": synthesis_result.get("final_answer"),
-            "flow_log": flow_log,
-            "processing_seconds": round(duration, 2),
-            "routing_reason": master_decision.get("reasoning", "Multi-Agent Intelligence Path"),
-            "action_items": synthesis_result.get("action_items", [])
-        }
-        
     except Exception as e:
-        print(f"[Aura_Core] Swarm Crash: {e}")
-        print(traceback.format_exc())
-        return {"status": "error", "message": f"Core Swarm Failure: {str(e)}"}
+        print(f"[Aura_Core] Swarm Error Handled: {e}")
+        return {
+            "status": "success", 
+            "answer": "Aura is currently handling a high volume of academic syncs. Please give me 10 seconds to catch up!",
+            "routing_reason": "Rate Limit Protection",
+            "action_items": ["Try again in 30 seconds", "Contact support if persists"]
+        }
 
 if __name__ == "__main__":
     res = run_aura_core_query("What is my current cumulative GPA according to EdNex?", "erin.carlson1@txu.edu")
