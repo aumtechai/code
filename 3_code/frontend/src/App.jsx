@@ -14,10 +14,11 @@ import SLA from './components/legal/SLA';
 import PublicPage from './components/PublicPage';
 import ArchitecturePage from './components/ArchitecturePage';
 
+import SessionGuard from './components/SessionGuard';
+
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const getParams = () => {
-    // Correctly handle search params in both standard and hash-based routing
     const pathSearch = window.location.search;
     const hashSearch = window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '';
     return new URLSearchParams(pathSearch || hashSearch);
@@ -28,34 +29,39 @@ const PrivateRoute = ({ children }) => {
 };
 
 function App() {
-  useEffect(() => {
-    // App is now University Licensed / Free.
-  }, []);
-
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public SEO Routes */}
-        <Route path="/features/:featureId" element={<FeaturePage />} />
-        <Route path="/for/:majorId" element={<MajorPage />} />
+      <SessionGuard>
+        <Routes>
+          {/* Public SEO Routes */}
+          <Route path="/features/:featureId" element={<FeaturePage />} />
+          <Route path="/for/:majorId" element={<MajorPage />} />
 
-        {/* Core Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/support" element={<Support onBack={() => window.history.back()} />} />
-        
-        {/* Footer Routes */}
-        <Route path="/privacy" element={<PrivacyPolicy onBack={() => window.history.back()} />} />
-        <Route path="/msa" element={<MSA onBack={() => window.history.back()} />} />
-        <Route path="/sla" element={<SLA onBack={() => window.history.back()} />} />
-        <Route path="/about" element={<PublicPage title="About Us" onBack={() => window.history.back()} />} />
-        <Route path="/team" element={<PublicPage title="Our Team" onBack={() => window.history.back()} />} />
-        <Route path="/careers" element={<PublicPage title="Careers" onBack={() => window.history.back()} />} />
-        <Route path="/blog" element={<PublicPage title="Blog" onBack={() => window.history.back()} />} />
-        <Route path="/architecture" element={<ArchitecturePage />} />
+          {/* Core Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          />
+          <Route path="/support" element={<Support onBack={() => window.history.back()} />} />
+          
+          {/* Footer Routes */}
+          <Route path="/privacy" element={<PrivacyPolicy onBack={() => window.history.back()} />} />
+          <Route path="/msa" element={<MSA onBack={() => window.history.back()} />} />
+          <Route path="/sla" element={<SLA onBack={() => window.history.back()} />} />
+          <Route path="/about" element={<PublicPage title="About Us" onBack={() => window.history.back()} />} />
+          <Route path="/team" element={<PublicPage title="Our Team" onBack={() => window.history.back()} />} />
+          <Route path="/careers" element={<PublicPage title="Careers" onBack={() => window.history.back()} />} />
+          <Route path="/blog" element={<PublicPage title="Blog" onBack={() => window.history.back()} />} />
+          <Route path="/architecture" element={<ArchitecturePage />} />
 
-        <Route path="/" element={<Login />} />
-      </Routes>
+          <Route path="/" element={<Login />} />
+        </Routes>
+      </SessionGuard>
     </BrowserRouter>
   );
 }
