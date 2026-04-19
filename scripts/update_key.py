@@ -13,11 +13,15 @@ from sqlmodel import Session
 from app.config_utils import set_gemini_api_key
 
 def update_key():
+    new_key = os.environ.get("GOOGLE_API_KEY")
+    if not new_key:
+        print("ERROR: No GOOGLE_API_KEY found in environment. Aborting.")
+        return
+        
     print("Connecting to DB:", os.environ.get("DATABASE_URL"))
     with Session(engine) as session:
-        new_key = "AIzaSyDCLaSuBTCW8VD6LfboqV4X64hq1d5d0o0"
         set_gemini_api_key(session, new_key)
-        print("Successfully updated database API key.")
+        print("Successfully updated database API key from environment.")
 
 if __name__ == "__main__":
     update_key()
