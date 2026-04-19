@@ -392,10 +392,10 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         style={{ 
-                            background: '#f8fafc', 
-                            border: '1px solid #e2e8f0', 
+                            background: '#eef2ff', 
+                            border: '1.5px solid #c7d2fe', 
                             cursor: 'pointer', 
-                            color: '#64748b',
+                            color: '#4f46e5',
                             width: '44px',
                             minWidth: '44px',
                             height: '44px',
@@ -406,11 +406,11 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                             transition: 'all 0.2s',
                             flexShrink: 0
                         }}
-                        onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'}
-                        onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}
+                        onMouseOver={e => { e.currentTarget.style.background = '#e0e7ff'; e.currentTarget.style.borderColor = '#a5b4fc'; }}
+                        onMouseOut={e => { e.currentTarget.style.background = '#eef2ff'; e.currentTarget.style.borderColor = '#c7d2fe'; }}
                         title="Attach Document"
                     >
-                        <Paperclip size={20} color="#64748b" strokeWidth={2.5} />
+                        <Paperclip size={20} color="#4f46e5" strokeWidth={2.5} />
                     </button>
                     <input
                         type="file"
@@ -452,10 +452,10 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                         type="button"
                         onClick={() => setShowConsentModal(true)}
                         style={{ 
-                            background: '#f8fafc', 
-                            border: '1px solid #e2e8f0', 
+                            background: '#f0fdf4', 
+                            border: '1.5px solid #bbf7d0', 
                             cursor: 'pointer', 
-                            color: '#64748b',
+                            color: '#16a34a',
                             width: '44px',
                             minWidth: '44px',
                             height: '44px',
@@ -466,27 +466,34 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                             transition: 'all 0.2s',
                             flexShrink: 0
                         }}
-                        onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'}
-                        onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}
+                        onMouseOver={e => { e.currentTarget.style.background = '#dcfce7'; e.currentTarget.style.borderColor = '#86efac'; }}
+                        onMouseOut={e => { e.currentTarget.style.background = '#f0fdf4'; e.currentTarget.style.borderColor = '#bbf7d0'; }}
                         title="AI Privacy Info"
                     >
-                        <Info size={20} color="#64748b" strokeWidth={2.5} />
+                        <Info size={20} color="#16a34a" strokeWidth={2.5} />
                     </button>
                     <button
                         type="submit"
-                        className="btn-primary"
                         disabled={loading}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             width: '52px',
+                            minWidth: '52px',
                             height: '52px',
                             borderRadius: '16px',
                             padding: 0,
-                            opacity: (loading || (!input.trim() && !attachment)) ? 0.6 : 1,
-                            cursor: (loading || (!input.trim() && !attachment)) ? 'default' : 'pointer'
+                            background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                            border: 'none',
+                            boxShadow: '0 4px 12px rgba(79,70,229,0.4)',
+                            opacity: (loading || (!input.trim() && !attachment)) ? 0.5 : 1,
+                            cursor: (loading || (!input.trim() && !attachment)) ? 'default' : 'pointer',
+                            transition: 'all 0.2s',
+                            flexShrink: 0
                         }}
+                        onMouseOver={e => { if (!loading && (input.trim() || attachment)) e.currentTarget.style.boxShadow = '0 6px 16px rgba(79,70,229,0.5)'; }}
+                        onMouseOut={e => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(79,70,229,0.4)'; }}
                     >
                         <Send size={22} color="white" />
                     </button>
