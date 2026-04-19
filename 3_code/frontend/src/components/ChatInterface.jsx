@@ -392,25 +392,25 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         style={{ 
-                            background: '#eef2ff', 
-                            border: '1.5px solid #c7d2fe', 
+                            background: '#4f46e5', 
+                            border: 'none', 
                             cursor: 'pointer', 
-                            color: '#4f46e5',
-                            width: '44px',
-                            minWidth: '44px',
-                            height: '44px',
+                            width: '46px',
+                            minWidth: '46px',
+                            height: '46px',
                             borderRadius: '12px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             transition: 'all 0.2s',
-                            flexShrink: 0
+                            flexShrink: 0,
+                            boxShadow: '0 2px 8px rgba(79,70,229,0.35)'
                         }}
-                        onMouseOver={e => { e.currentTarget.style.background = '#e0e7ff'; e.currentTarget.style.borderColor = '#a5b4fc'; }}
-                        onMouseOut={e => { e.currentTarget.style.background = '#eef2ff'; e.currentTarget.style.borderColor = '#c7d2fe'; }}
+                        onMouseOver={e => { e.currentTarget.style.background = '#4338ca'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(79,70,229,0.5)'; }}
+                        onMouseOut={e => { e.currentTarget.style.background = '#4f46e5'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(79,70,229,0.35)'; }}
                         title="Attach Document"
                     >
-                        <Paperclip size={20} color="#4f46e5" strokeWidth={2.5} />
+                        <Paperclip size={20} color="white" strokeWidth={2.5} />
                     </button>
                     <input
                         type="file"
@@ -452,25 +452,25 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                         type="button"
                         onClick={() => setShowConsentModal(true)}
                         style={{ 
-                            background: '#f0fdf4', 
-                            border: '1.5px solid #bbf7d0', 
+                            background: '#0f172a', 
+                            border: 'none', 
                             cursor: 'pointer', 
-                            color: '#16a34a',
-                            width: '44px',
-                            minWidth: '44px',
-                            height: '44px',
+                            width: '46px',
+                            minWidth: '46px',
+                            height: '46px',
                             borderRadius: '12px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             transition: 'all 0.2s',
-                            flexShrink: 0
+                            flexShrink: 0,
+                            boxShadow: '0 2px 8px rgba(15,23,42,0.25)'
                         }}
-                        onMouseOver={e => { e.currentTarget.style.background = '#dcfce7'; e.currentTarget.style.borderColor = '#86efac'; }}
-                        onMouseOut={e => { e.currentTarget.style.background = '#f0fdf4'; e.currentTarget.style.borderColor = '#bbf7d0'; }}
+                        onMouseOver={e => { e.currentTarget.style.background = '#1e293b'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(15,23,42,0.35)'; }}
+                        onMouseOut={e => { e.currentTarget.style.background = '#0f172a'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(15,23,42,0.25)'; }}
                         title="AI Privacy Info"
                     >
-                        <Info size={20} color="#16a34a" strokeWidth={2.5} />
+                        <Info size={20} color="white" strokeWidth={2.5} />
                     </button>
                     <button
                         type="submit"
