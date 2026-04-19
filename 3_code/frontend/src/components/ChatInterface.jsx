@@ -102,8 +102,9 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
 
         try {
             // Visualize background agent work
-            setTimeout(() => setThinkingStep(2), 1200);
-            setTimeout(() => setThinkingStep(3), 2400);
+            // Trigger background steps immediately or as API progresses
+            setThinkingStep(2); 
+            setTimeout(() => setThinkingStep(3), 500); 
 
             // Upload File first if exists
             let fileId = null;
@@ -179,7 +180,7 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#6366f1' }}>
-                        <Zap size={14} fill="#6366f1" /> SYSTEM ONLINE v3.1-DEBUG
+                        <Zap size={14} fill="#6366f1" /> SYSTEM ONLINE v3.1
                     </div>
                     <div style={{ width: '1px', height: '12px', background: '#e2e8f0' }} />
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -322,22 +323,6 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                                         </div>
                                     )}
 
-                                    {/* DEBUG / SWARM INSIGHT SECTION */}
-                                    {msg.routing_reason && (
-                                         <div style={{ marginTop: '1.25rem', padding: '12px', background: '#f0f9ff', borderRadius: '12px', border: '2px solid #bae6fd', fontSize: '0.75rem', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.15)' }}>
-                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', marginBottom: '6px', color: '#0369a1', textTransform: 'uppercase' }}>
-                                                 <Brain size={12} /> Aura Swarm Intelligence Insight
-                                             </div>
-                                             <div style={{ color: '#075985', fontStyle: 'italic', marginBottom: '8px', fontSize: '0.8rem' }}>
-                                                 Orchestrator Decision: "{msg.routing_reason}"
-                                             </div>
-                                             {msg.processing_seconds && (
-                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0ea5e9', fontWeight: '700' }}>
-                                                     <Zap size={10} fill="#0ea5e9" /> Swarm Processed in {parseFloat(msg.processing_seconds).toFixed(2)}s
-                                                 </div>
-                                             )}
-                                         </div>
-                                     )}
 
                                      <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
                                          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Still need help?</span>

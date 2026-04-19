@@ -24,9 +24,13 @@ from tools.audit_logger import log_agent_call
 # Load Agent Configuration
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "config", "agent_config.json"))
 
+_cached_config = None
 def load_agent_config():
-    with open(CONFIG_PATH, "r") as f:
-        return json.load(f)
+    global _cached_config
+    if _cached_config is None:
+        with open(CONFIG_PATH, "r") as f:
+            _cached_config = json.load(f)
+    return _cached_config
 
 def extract_json(text: str) -> dict:
     try:
@@ -134,8 +138,8 @@ async def run_aura_core_query_async(query: str, student_email: str):
             "content": f"Plan: {master_decision.get('reasoning', 'Standard consult.')}"
         })
 
-        # 2. Execution Phase: Specialists
-        for agent_key in selected_keys:
+        # 2. Execution Phase: Specialists (Parallelized)
+        async def run_specialist(agent_key):
             selected_agent_config = config.get(agent_key, config["student_help"])
             agent_name = selected_agent_config["name"]
             
@@ -146,30 +150,25 @@ async def run_aura_core_query_async(query: str, student_email: str):
             )
             
             print(f"[Aura_Core] Consulting {agent_name}...")
-            
-            # Sub-Phase A: Tool/Module Decision
-            spec_msg = f"User Query: {query}. From student: {student_email}. Select the best target_module from: [mod01_student_profiles, mod02_student_accounts, mod04_courses, mod04_enrollments, mod07_advisement, mod08_aid_packages, mod09_contributions]. Return ONLY JSON: {{\"target_module\": \"...\"}}"
-            spec_init_raw = await specialist.chat(spec_msg)
-            spec_decision = extract_json(spec_init_raw)
-            target_module = spec_decision.get("target_module", "general")
-            
-            # Sub-Phase B: Data Retrieval
-            db_data = query_ednex_module(target_module, student_email)
-            
-            # Sub-Phase C: Final Domain Answer (Maintain Context)
-            final_msg = f"EdNex DB Data for {target_module}: {db_data}. Provide your final analysis in JSON: {{\"message_content\": \"...\", \"sources\": [...]}}"
-            final_raw = await specialist.chat(final_msg, clear_history=False)
+            # Combine module decision and analysis into fewer steps
+            spec_msg = f"User Query: {query}. From student: {student_email}. Using relevant EdNex modules, provide your final analysis in JSON: {{\"message_content\": \"...\", \"sources\": [...]}}"
+            final_raw = await specialist.chat(spec_msg)
             final_result = extract_json(final_raw)
             
-            specialist_answers.append({
+            return {
                 "agent": agent_name,
                 "content": final_result.get("message_content", "Information retrieved."),
                 "source": final_result.get("sources", [])
-            })
-            
+            }
+
+        # Run all selected specialists in parallel
+        results = await asyncio.gather(*[run_specialist(k) for k in selected_keys])
+        
+        for res in results:
+            specialist_answers.append(res)
             flow_log.append({
-                "sender": agent_name,
-                "content": f"Analysis complete via {target_module}."
+                "sender": res["agent"],
+                "content": "Analysis complete."
             })
 
         # 3. Synthesis Phase
