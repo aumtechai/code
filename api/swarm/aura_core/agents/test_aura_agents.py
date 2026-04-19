@@ -5,6 +5,7 @@ from aura_agents import run_aura_core_query
 if __name__ == "__main__":
     test_queries = [
         "What is my current cumulative GPA according to EdNex?",
+        "How can I graduate early? Can you help me plan the next two years?",
         "Do I have any outstanding tuition balance or financial aid updates?",
         "Are there any internship opportunities matching my profile at partner companies?"
     ]

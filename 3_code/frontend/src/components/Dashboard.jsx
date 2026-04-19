@@ -36,6 +36,7 @@ import QuoteGenerator from './QuoteGenerator';
 import WeeklySchedule from './WeeklySchedule';
 import AdvisorDashboard from './AdvisorDashboard';
 import DeanDashboard from './DeanDashboard';
+import StudentCalendar from './StudentCalendar';
 
 
 
@@ -113,6 +114,22 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                     <div className={`nav-item ${activeTab === 'degree-roadmap' ? 'active' : ''}`} onClick={() => handleProtectedTab('degree-roadmap')}><Map size={20} strokeWidth={2.75} /> Degree Roadmap</div>
                     <div className={`nav-item ${activeTab === 'courses' ? 'active' : ''}`} onClick={() => handleProtectedTab('courses')}><BookOpen size={20} strokeWidth={2.75} /> Courses</div>
                     <div className={`nav-item ${activeTab === 'schedule' ? 'active' : ''}`} onClick={() => handleProtectedTab('schedule')}><Calendar size={20} strokeWidth={2.75} /> Schedule</div>
+                    <div className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => handleProtectedTab('calendar')} style={{ position: 'relative' }}>
+                        <Calendar size={20} strokeWidth={2.75} /> Student Life Calendar
+                        <span style={{ 
+                            position: 'absolute', 
+                            right: '12px', 
+                            top: '50%', 
+                            transform: 'translateY(-50%)', 
+                            background: '#ef4444', 
+                            color: 'white', 
+                            fontSize: '0.65rem', 
+                            fontWeight: '900', 
+                            padding: '2px 6px', 
+                            borderRadius: '10px',
+                            boxShadow: '0 0 8px rgba(239, 68, 68, 0.4)'
+                        }}>3</span>
+                    </div>
                     <div className={`nav-item ${activeTab === 'syllabus' ? 'active' : ''}`} onClick={() => handleProtectedTab('syllabus')}><ScanLine size={20} strokeWidth={2.75} /> Syllabus Scanner</div>
                     {/* <div className={`nav-item ${activeTab === 'cip' ? 'active' : ''}`} onClick={() => handleProtectedTab('cip')}><BookOpen size={20} strokeWidth={2.75} /> CIP Codes</div> */}
                     <div className={`nav-item ${activeTab === 'voice-notes' ? 'active' : ''}`} onClick={() => handleProtectedTab('voice-notes')}><Mic size={20} strokeWidth={2.75} /> Lecture Notes</div>
@@ -1150,6 +1167,7 @@ const Dashboard = () => {
 
                     {activeTab === 'history' && <History onBack={() => setActiveTab('dashboard')} onSelectSession={(id) => handleFeatureNavigate('chat', null, id)} />}
                     {activeTab === 'schedule' && <WeeklySchedule onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'calendar' && <StudentCalendar onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'book-advisor' && <BookAdvisor onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'courses' && <Courses onBack={() => setActiveTab('dashboard')} userData={userData} />}
                     {activeTab === 'tutoring' && <TutoringCenter onBack={() => setActiveTab('dashboard')} />}

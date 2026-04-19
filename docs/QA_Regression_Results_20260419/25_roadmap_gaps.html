@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA — Roadmap Gaps Analysis</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+  .phase-block { background: white; border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+  .phase-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+  .phase-num { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.9rem; flex-shrink: 0; }
+  .feat-row { display: flex; align-items: flex-start; gap: 12px; padding: 1rem; border-radius: 10px; margin-bottom: 0.6rem; background: var(--gray-light); }
+  .feat-row.present { border-left: 4px solid var(--success); }
+  .feat-row.missing { border-left: 4px solid #8b5cf6; background: #faf5ff; }
+  .feat-row.partial { border-left: 4px solid var(--warning); }
+  .feat-row.mock { border-left: 4px solid var(--warning); }
+  .feat-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+  .feat-title { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+  .feat-detail { font-size: 0.82rem; color: var(--gray); margin-top: 2px; }
+  .feat-component { font-size: 0.72rem; color: var(--primary); font-weight: 600; background: var(--primary-light); padding: 2px 7px; border-radius: 5px; display: inline-block; margin-top: 5px; }
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">← Test Suite</a></div>
+    <h1>[RESOLVED 2026-04-19] 🔭 Roadmap Gaps Analysis</h1>
+    <p>Features present vs. missing mapped to the 5-phase product roadmap</p>
+  </div>
+  <div style="margin-left:auto; text-align:right; color: white;">
+    <div style="font-size:2rem; font-weight:900; color:#a78bfa;">3</div>
+    <div style="font-size:0.85rem; opacity:0.8;">Remaining Gaps</div>
+  </div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> › Roadmap Gaps
+  <span style="margin-left:auto; color:var(--gray)">Updated: Apr 15, 2026</span>
+</nav>
+
+<div class="container">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Present & Functional</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--warning)"></div>Partial / Mock Data</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Not Yet Built</div>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num">1</div>
+      <div>
+        <div style="font-size:1.1rem; font-weight:800;">Freshman Integration & Academic Foundation</div>
+        <div style="font-size:0.82rem; color:var(--gray);">Automated onboarding, program of study, syllabus management</div>
+      </div>
+      <span class="badge badge-warn" style="margin-left:auto;">2 Partial</span>
+    </div>
+
+    <div class="feat-row present">
+      <div class="feat-icon">✅</div>
+      <div>
+        <div class="feat-title">Syllabus Management — Parse & Display</div>
+        <div class="feat-detail">SyllabusScanner.jsx provides drag-and-drop PDF upload and date extraction UI.</div>
+        <div class="feat-component">SyllabusScanner.jsx · /api/ai/parse-syllabus</div>
+      </div>
+      <span class="badge badge-pass" style="margin-left:auto; flex-shrink:0;">Present</span>
+    </div>
+    <div class="feat-row partial">
+      <div class="feat-icon">⚠️</div>
+      <div>
+        <div class="feat-title">Syllabus → Calendar Auto-Population</div>
+        <div class="feat-detail">Backend parse-syllabus returns mock events. Real OCR/Document AI not wired. Events not yet automatically written to WeeklySchedule or a calendar API.</div>
+        <div class="feat-component">api.py · /api/ai/parse-syllabus (mock fallback)</div>
+      </div>
+      <span class="badge badge-warn" style="margin-left:auto; flex-shrink:0;">Partial</span>
+    </div>
+    <div class="feat-row present">
+      <div class="feat-icon">✅</div>
+      <div>
+        <div class="feat-title">Courses & Current Enrollment Display</div>
+        <div class="feat-detail">Courses.jsx shows enrolled courses, instructors, credits, grades drawn from EdNex.</div>
+        <div class="feat-component">Courses.jsx</div>
+      </div>
+      <span class="badge badge-pass" style="margin-left:auto; flex-shrink:0;">Present</span>
+    </div>
+    <div class="feat-row missing">
+      <div class="feat-icon">🔴</div>
+      <div>
+        <div class="feat-title">Automated Onboarding via Registrar Integration</div>
+        <div class="feat-detail">When a new student logs in, their classes should auto-populate from the registrar/SIS. Currently requires manual EdNex sync. No first-login onboarding wizard exists.</div>
+        <div class="feat-component">NOT PRESENT — Phase 1 Gap</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto; flex-shrink:0;">Missing</span>
+    </div>
+    <div class="feat-row partial">
+      <div class="feat-icon">⚠️</div>
+      <div>
+        <div class="feat-title">Dynamic "Program of Study" with Course Substitution</div>
+        <div class="feat-detail">DegreeRoadmap.jsx shows the degree tree. Substitution suggestions are not implemented — the roadmap is static/hardcoded, not driven by the student's actual SIS enrollment.</div>
+        <div class="feat-component">DegreeRoadmap.jsx — substitutions not wired</div>
+      </div>
+      <span class="badge badge-warn" style="margin-left:auto; flex-shrink:0;">Partial</span>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num">2</div>
+      <div>
+        <div style="font-size:1.1rem; font-weight:800;">Support Ecosystem & Social Integration</div>
+        <div style="font-size:0.82rem; color:var(--gray);">Social Campus, tiered advising, tutor matching</div>
+      </div>
+      <span class="badge badge-warn" style="margin-left:auto;">1 Partial</span>
+    </div>
+
+    <div class="feat-row present">
+      <div class="feat-icon">✅</div>
+      <div>
+        <div class="feat-title">Social Campus Module</div>
+        <div class="feat-detail">SocialCampus.jsx provides study group discovery, club listings, peer marketplace.</div>
+        <div class="feat-component">SocialCampus.jsx</div>
+      </div>
+      <span class="badge badge-pass" style="margin-left:auto; flex-shrink:0;">Present</span>
+    </div>
+    <div class="feat-row present">
+      <div class="feat-icon">✅</div>
+      <div>
+        <div class="feat-title">Wellness & Mental Health Module</div>
+        <div class="feat-detail">WellnessCheck.jsx has crisis resources, check-in flows, peer referral.</div>
+        <div class="feat-component">WellnessCheck.jsx</div>
+      </div>
+      <span class="badge badge-pass" style="margin-left:auto; flex-shrink:0;">Present</span>
+    </div>
+    <div class="feat-row partial">
+      <div class="feat-icon">⚠️</div>
+      <div>
+        <div class="feat-title">Tiered Advising (L1: Chatbot → L2: Human Advisor)</div>
+        <div class="feat-detail">ChatInterface.jsx provides L1 AI advising. AdvisorDashboard.jsx provides advisor CRM. However, there is no explicit escalation path from L1 chat → L2 human booking. "Book Advisor" is a separate unconnected flow.</div>
+        <div class="feat-component">ChatInterface.jsx + BookAdvisor.jsx — escalation not wired</div>
+      </div>
+      <span class="badge badge-warn" style="margin-left:auto; flex-shrink:0;">Partial</span>
+    </div>
+    <div class="feat-row present">
+      <div class="feat-icon">✅</div>
+      <div>
+        <div class="feat-title">Tutor Matching Interface</div>
+        <div class="feat-detail">TutoringCenter.jsx allows subject-based tutor search and session booking.</div>
+        <div class="feat-component">TutoringCenter.jsx</div>
+      </div>
+      <span class="badge badge-warn" style="margin-left:auto; flex-shrink:0;">Mock Data</span>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num">3</div>
+      <div>
+        <div style="font-size:1.1rem; font-weight:800;">Predictive Analytics & GPA Management</div>
+        <div style="font-size:0.82rem; color:var(--gray);">GPA tracker with warnings, LLM historical insight engine</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto;">1 Missing</span>
+    </div>
+
+    <div class="feat-row partial">
+      <div class="feat-icon">⚠️</div>
+      <div>
+        <div class="feat-title">Holistic GPA Tracker</div>
+        <div class="feat-detail">Progress.jsx shows GPA trend and credit hours. However, automated eligibility-threshold warnings (e.g., "GPA dropping below 2.0 — financial aid at risk") are not triggered proactively. Holds & Alerts are manual.</div>
+        <div class="feat-component">Progress.jsx + HoldsCenter.jsx — auto-warnings not implemented</div>
+      </div>
+      <span class="badge badge-warn" style="margin-left:auto; flex-shrink:0;">Partial</span>
+    </div>
+    <div class="feat-row missing">
+      <div class="feat-icon">🔴</div>
+      <div>
+        <div class="feat-title">Historical Insight Engine (LLM Grade Recovery)</div>
+        <div class="feat-detail">No feature provides anonymized peer-based grade recovery paths ("Students in your situation who took MATH 2300 as a retake improved by 0.4 GPA"). ChatInterface could approximate this but no explicit endpoint or agent persona exists for it.</div>
+        <div class="feat-component">NOT PRESENT — Phase 3 Gap</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto; flex-shrink:0;">Missing</span>
+    </div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num">4</div>
+      <div>
+        <div style="font-size:1.1rem; font-weight:800;">Career Alignment & External Success</div>
+        <div style="font-size:0.82rem; color:var(--gray);">Proactive career matching, Career Advisor Dashboard</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto;">1 Missing</span>
+    </div>
+
+    <div class="feat-row mock">
+      <div class="feat-icon">⚠️</div>
+      <div>
+        <div class="feat-title">Proactive Career Matching Engine</div>
+        <div class="feat-detail">CareerPathfinder.jsx shows job/internship matches. Data is currently static mock data, not pulling from live job APIs (LinkedIn, Handshake, Indeed). No proactive push notifications.</div>
+        <div class="feat-component">CareerPathfinder.jsx — mock data, no live API</div>
+      </div>
+      <span class="badge badge-mock" style="margin-left:auto; flex-shrink:0;">Mock Data</span>
+    </div>
+    <div class="feat-row missing">
+      <div class="feat-icon">🔴</div>
+      <div>
+        <div class="feat-title">Career Advisor Dashboard</div>
+        <div class="feat-detail">No dedicated advisor view for career counselors to see which students need career outreach, track application statuses, or initiate targeted career nudges. AdvisorDashboard is academic-only.</div>
+        <div class="feat-component">NOT PRESENT — Phase 4 Gap</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto; flex-shrink:0;">Missing</span>
+    </div>
+  </div>
+
+  <!-- Phase 5 -->
+  <div class="phase-block">
+    <div class="phase-header">
+      <div class="phase-num">5</div>
+      <div>
+        <div style="font-size:1.1rem; font-weight:800;">Administrative & Faculty Intelligence</div>
+        <div style="font-size:0.82rem; color:var(--gray);">Faculty snapshots, Sankey diagrams, unified Academic Intelligence</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto;">2 Missing</span>
+    </div>
+
+    <div class="feat-row present">
+      <div class="feat-icon">✅</div>
+      <div>
+        <div class="feat-title">Faculty Student-Snapshot Portal</div>
+        <div class="feat-detail">FacultyDashboard.jsx provides per-student GPA, at-risk flags, engagement scores, and grading tools per course section.</div>
+        <div class="feat-component">FacultyDashboard.jsx</div>
+      </div>
+      <span class="badge badge-pass" style="margin-left:auto; flex-shrink:0;">Present</span>
+    </div>
+    <div class="feat-row present">
+      <div class="feat-icon">✅</div>
+      <div>
+        <div class="feat-title">Dean's Institutional Metrics Dashboard</div>
+        <div class="feat-detail">DeanDashboard.jsx displays retention rates, graduation rates, GPA distributions, and cohort analytics.</div>
+        <div class="feat-component">DeanDashboard.jsx</div>
+      </div>
+      <span class="badge badge-pass" style="margin-left:auto; flex-shrink:0;">Present</span>
+    </div>
+    <div class="feat-row missing">
+      <div class="feat-icon">🔴</div>
+      <div>
+        <div class="feat-title">Migration & Persistence Sankey Diagrams</div>
+        <div class="feat-detail">No Sankey/flow visualization showing how students migrate between majors, drop/add patterns, or retention pathways over time. TexasAnalytics.jsx exists but is basic bar charts, not flow diagrams.</div>
+        <div class="feat-component">NOT PRESENT — Phase 5 Gap</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto; flex-shrink:0;">Missing</span>
+    </div>
+    <div class="feat-row missing">
+      <div class="feat-icon">🔴</div>
+      <div>
+        <div class="feat-title">Unified "Academic Intelligence" Platform Consolidation</div>
+        <div class="feat-detail">The platform is not yet positioned as a single consolidated intelligence hub — features feel modular and siloed. No unified AI insights panel that cross-references academic + career + wellness + financial data into one proactive recommendation.</div>
+        <div class="feat-component">NOT PRESENT — Cross-cutting Phase 5 Goal</div>
+      </div>
+      <span class="badge badge-np" style="margin-left:auto; flex-shrink:0;">Missing</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>📋 Remaining Gaps Summary</h2></div>
+    <table class="tc-table">
+      <thead><tr><th>#</th><th>Feature</th><th>Phase</th><th>Effort Estimate</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td class="tc-id">GAP-001</td><td>Registrar integration onboarding wizard</td><td>Phase 1</td><td>Large (API + UI)</td><td><span class="tc-prio prio-p1">P1</span></td></tr>
+        <tr><td class="tc-id">GAP-002</td><td>Syllabus → calendar auto-write</td><td>Phase 1</td><td>Medium (backend wiring)</td><td><span class="tc-prio prio-p2">P2</span></td></tr>
+        <tr><td class="tc-id">GAP-003</td><td>Degree roadmap substitution engine</td><td>Phase 1</td><td>Medium (rules engine)</td><td><span class="tc-prio prio-p2">P2</span></td></tr>
+        <tr><td class="tc-id">GAP-004</td><td>Chat-to-advisor escalation path (L1→L2)</td><td>Phase 2</td><td>Small (UI + booking link)</td><td><span class="tc-prio prio-p2">P2</span></td></tr>
+        <tr><td class="tc-id">GAP-005</td><td>Automated GPA eligibility threshold warnings</td><td>Phase 3</td><td>Medium (backend rule + push)</td><td><span class="tc-prio prio-p1">P1</span></td></tr>
+        <tr><td class="tc-id">GAP-006</td><td>LLM Historical Insight / Grade Recovery Engine</td><td>Phase 3</td><td>Large (LLM + anon data)</td><td><span class="tc-prio prio-p2">P2</span></td></tr>
+        <tr><td class="tc-id">GAP-007</td><td>Live job/internship API for Career Pathfinder</td><td>Phase 4</td><td>Medium (3rd party API)</td><td><span class="tc-prio prio-p2">P2</span></td></tr>
+        <tr><td class="tc-id">GAP-008</td><td>Career Advisor Dashboard</td><td>Phase 4</td><td>Large (new view)</td><td><span class="tc-prio prio-p3">P3</span></td></tr>
+        <tr><td class="tc-id">GAP-009</td><td>Sankey migration/persistence diagrams</td><td>Phase 5</td><td>Medium (D3/Recharts)</td><td><span class="tc-prio prio-p3">P3</span></td></tr>
+        <tr><td class="tc-id">GAP-010</td><td>Unified cross-domain AI Intelligence panel</td><td>Phase 5</td><td>XL (architecture)</td><td><span class="tc-prio prio-p3">P3</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

@@ -135,6 +135,39 @@ async def parse_syllabus(file: bytes = File(...)):
         ]
     }
 
+# --- Calendar Endpoints (GAP-002) ---
+
+class CalendarEventsRequest(BaseModel):
+    events: List[SyllabusEvent]
+
+@router.post("/calendar/events")
+async def add_calendar_events(
+    request: CalendarEventsRequest,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Bulk add calendar events from syllabus scan (GAP-002)"""
+    for event_data in request.events:
+        event = CalendarEvent(
+            user_id=current_user.id,
+            title=event_data.title,
+            event_date=datetime.fromisoformat(event_data.date),
+            event_type=event_data.type
+        )
+        session.add(event)
+    session.commit()
+    return {"status": "success", "message": f"{len(request.events)} events added to schedule"}
+
+@router.get("/calendar/events")
+async def get_calendar_events(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Retrieve all calendar events for the current user"""
+    statement = select(CalendarEvent).where(CalendarEvent.user_id == current_user.id).order_by(CalendarEvent.event_date)
+    events = session.exec(statement).all()
+    return events
+
 
 @router.post("/ai/transcribe")
 async def transcribe_audio(
@@ -557,6 +590,60 @@ async def generate_flashcards(
             })
             
     return {"flashcards": cards[:30]}
+
+# --- Student Profile Endpoints (GAP-005) ---
+
+@router.get("/student/profile")
+async def get_student_profile(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Returns the unified student profile with GPA and proactive warnings (GAP-005).
+    """
+    # Proactive GPA warning logic
+    warnings = []
+    if current_user.gpa < 2.0:
+        warnings.append({
+            "id": "warn-gpa-low",
+            "type": "Academic",
+            "title": "GPA Below Threshold",
+            "description": f"Your current GPA ({current_user.gpa}) is below the 2.0 academic standing requirement.",
+            "severity": "danger"
+        })
+    elif current_user.gpa < 3.0:
+        warnings.append({
+            "id": "warn-gpa-mid",
+            "type": "Academic",
+            "title": "Academic Alert",
+            "description": "Your GPA has dipped below 3.0. This may affect scholarship eligibility.",
+            "severity": "warning"
+        })
+
+    # Financial warning logic
+    statement = select(StudentHold).where(StudentHold.user_id == current_user.id).where(StudentHold.category == "Financial")
+    fin_holds = session.exec(statement).all()
+    for hold in fin_holds:
+        if hold.status == "active" and hold.amount > 0:
+            warnings.append({
+                "id": f"warn-fin-{hold.id}",
+                "type": "Financial",
+                "title": "Outstanding Balance",
+                "description": f"You have an unpaid balance of ${hold.amount:.2f}. Please resolve current holds.",
+                "severity": "danger"
+            })
+
+    return {
+        "profile": {
+            "name": current_user.full_name,
+            "email": current_user.email,
+            "gpa": current_user.gpa,
+            "major": current_user.major,
+            "on_track_score": current_user.on_track_score
+        },
+        "warnings": warnings,
+        "ai_insight": current_user.ai_insight
+    }
 
 
 # --- Auth Endpoints ---

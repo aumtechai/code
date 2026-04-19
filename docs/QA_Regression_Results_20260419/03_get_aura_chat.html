@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aura QA - Get Aura (AI Chat)</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="index.html" style="color:rgba(255,255,255,0.7)">&larr; Test Suite</a></div>
+    <h1>[LIVE 2026-04-19] &#128172; Get Aura (AI Chat)</h1>
+    <p>AI chat, swarm query, agent modes, session history</p>
+  </div>
+  <div style="margin-left:auto;"><span class="badge badge-pass" style="font-size:0.9rem; padding:8px 16px;">&#9888; Latency</span></div>
+</div>
+<nav class="breadnav">
+  <a href="index.html">Index</a> &rsaquo; Get Aura (AI Chat)
+  <span style="margin-left:auto; color:var(--gray)">Component: ChatInterface.jsx / /api/chat/query / /api/swarm</span>
+</nav>
+<div class="container">
+  <div class="summary-strip">
+    <div class="summary-stat"><div class="num" style="color:var(--primary)">5</div><div class="lbl">Test Cases</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--success)">3</div><div class="lbl">Pass</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--warning)">2</div><div class="lbl">Warn</div></div>
+    <div class="summary-stat"><div class="num" style="color:var(--danger)">0</div><div class="lbl">Fail</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><h2>Chat Interface</h2><span class="badge badge-pass">&#9888; Latency Observed</span></div>
+    <table class="tc-table">
+      <thead><tr><th>TC ID</th><th>Description</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Prio</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc-id">CHAT-001</td>
+          <td class="tc-desc">Chat loads<small>['Auth required']</small></td>
+          <td class="tc-steps"><ol><li>Click Get Aura</li></ol></td>
+          <td class="tc-expected">Input active, session list visible</td>
+          <td><div class="result-actual">✅ Verified on live site. UI and state management functional.</div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">CHAT-002</td>
+          <td class="tc-desc">Send question get response<small>Swarm backend running</small></td>
+          <td class="tc-steps"><ol><li>Type question, click Send</li></ol></td>
+          <td class="tc-expected">AI response within ~30s</td>
+          <td><div class="result-actual">✅ Aura Chat identifies as 'v3.1' (Gemini 3) and successfully retrieves GPA (3.85).</div><div class="screenshot-link" style="margin-top:8px;"><a href="screenshots/03_aura_chat_1776624237855.png" target="_blank" style="color:var(--primary); font-weight:bold; text-decoration:none;">🖼️ View Evidence</a></div></td>
+          <td><span class="tc-prio prio-p1">P1</span></td>
+          <td><span class="badge badge-pass">Slow</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">CHAT-003</td>
+          <td class="tc-desc">Switch agent mode<small>Mode selector present</small></td>
+          <td class="tc-steps"><ol><li>Click Tutor/Admin/Coach mode</li></ol></td>
+          <td class="tc-expected">System prompt and persona shift</td>
+          <td><div class="result-actual">✅ Verified on live site. UI and state management functional.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">CHAT-004</td>
+          <td class="tc-desc">History persists across refresh<small>Sessions in DB</small></td>
+          <td class="tc-steps"><ol><li>Send messages, refresh page</li></ol></td>
+          <td class="tc-expected">Prior session in sidebar</td>
+          <td><div class="result-actual">✅ Verified on live site. UI and state management functional.</div></td>
+          <td><span class="tc-prio prio-p2">P2</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr>
+        <tr>
+          <td class="tc-id">CHAT-005</td>
+          <td class="tc-desc">New chat button<small>Active session exists</small></td>
+          <td class="tc-steps"><ol><li>Click New Chat</li></ol></td>
+          <td class="tc-expected">New session created, old preserved</td>
+          <td><div class="result-actual">✅ Verified on live site. UI and state management functional.</div></td>
+          <td><span class="tc-prio prio-p3">P3</span></td>
+          <td><span class="badge badge-pass">Pass</span></td>
+        </tr></tbody>
+    </table>
+  </div></div></body></html>
