@@ -69,7 +69,7 @@ class LightweightAgent:
         messages = [{"role": "system", "content": self.system_message}] + self.history
         
         response = await self.client.chat.completions.create(
-            model="gemini-1.5-flash-latest",
+            model="gemini-1.5-flash",
             messages=messages,
             temperature=0.1
         )
@@ -99,10 +99,10 @@ async def run_aura_core_query_async(query: str, student_email: str):
     
     api_key = api_key.strip()
         
-    # Initialize OpenAI-compatible Client for Gemini
+    # Initialize OpenAI-compatible Client for Gemini (v1 Production for Paid keys)
     client = AsyncOpenAI(
-        api_key=api_key,
-        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        api_key=api_key.strip() if api_key else None,
+        base_url="https://generativelanguage.googleapis.com/v1/openai/"
     )
     
     config = load_agent_config()
