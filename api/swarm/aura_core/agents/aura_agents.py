@@ -99,10 +99,10 @@ async def run_aura_core_query_async(query: str, student_email: str):
     
     api_key = api_key.strip()
         
-    # Initialize OpenAI-compatible Client for Gemini (v1 Production for Paid keys)
+    # Initialize OpenAI-compatible Client for Gemini (v1beta required for OpenAI shim)
     client = AsyncOpenAI(
         api_key=api_key.strip() if api_key else None,
-        base_url="https://generativelanguage.googleapis.com/v1/openai/"
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
     )
     
     config = load_agent_config()

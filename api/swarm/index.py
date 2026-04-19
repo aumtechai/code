@@ -12,7 +12,7 @@ swarm_backend_path = os.path.join(current_dir, "backend")
 aura_core_path = os.path.join(at_root, "api", "swarm", "aura_core")
 backend_path = os.path.join(at_root, "3_code", "backend")
 
-# Deployment Sync: 2026-04-19 11:51 AM (v1 key enforcement)
+# Deployment Sync: 2026-04-19 11:56 AM (v1beta restoration)
 for p in [at_root, swarm_backend_path, aura_core_path, backend_path]:
     if p not in sys.path:
         sys.path.insert(0, p)
