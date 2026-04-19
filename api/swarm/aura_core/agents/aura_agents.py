@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 try:
     from dotenv import load_dotenv
-    dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env.local"))
+    dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", ".env.local"))
     load_dotenv(dotenv_path)
 except ImportError:
     pass
@@ -54,10 +54,11 @@ def extract_json(text: str) -> dict:
 
 # Lightweight Agent Peer for Swarm logic
 class LightweightAgent:
-    def __init__(self, name: str, system_message: str, client: AsyncOpenAI):
+    def __init__(self, name: str, system_message: str, client: AsyncOpenAI, model: str = "gemini-3-flash-preview"):
         self.name = name
         self.system_message = system_message
         self.client = client
+        self.model = model
         self.history = []
 
     async def chat(self, message: str, clear_history: bool = True) -> str:
@@ -69,7 +70,7 @@ class LightweightAgent:
         messages = [{"role": "system", "content": self.system_message}] + self.history
         
         response = await self.client.chat.completions.create(
-            model="gemini-flash-latest",
+            model=self.model,
             messages=messages,
             temperature=0.1
         )
@@ -129,7 +130,8 @@ async def run_aura_core_query_async(query: str, student_email: str):
         master = LightweightAgent(
             name="Aura_Core",
             system_message=system_instructions,
-            client=client
+            client=client,
+            model=config.get("master", {}).get("model", "gemini-3-flash-preview")
         )
 
         print(f"[Aura_Core] Multi-Agent Synthesis: {query}")

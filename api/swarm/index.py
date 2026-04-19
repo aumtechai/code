@@ -17,6 +17,12 @@ for p in [at_root, swarm_backend_path, aura_core_path, backend_path]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(at_root, ".env.local"))
+except ImportError:
+    pass
+
 app = FastAPI(title="Aura Swarm Intelligence API")
 
 # Add CORS
