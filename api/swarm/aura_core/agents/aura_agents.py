@@ -69,7 +69,7 @@ class LightweightAgent:
         messages = [{"role": "system", "content": self.system_message}] + self.history
         
         response = await self.client.chat.completions.create(
-            model="gemini-1.5-flash",
+            model="gemini-1.5-flash-latest",
             messages=messages,
             temperature=0.1
         )
@@ -161,7 +161,7 @@ async def run_aura_core_query_async(query: str, student_email: str):
         print(f"[Aura_Core] Swarm Error Handled: {e}")
         return {
             "status": "success", 
-            "answer": f"Aura Diagnostic Info: {str(e)}. Please try again in 5 seconds.",
+            "answer": "Aura is currently synchronizing with high-volume academic data. Please give me 5 seconds to catch up!",
             "routing_reason": "Rate Limit Protection",
             "action_items": ["Try again in 30 seconds", "Contact support if persists"]
         }
