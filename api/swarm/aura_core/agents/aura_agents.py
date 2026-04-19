@@ -161,7 +161,7 @@ async def run_aura_core_query_async(query: str, student_email: str):
         print(f"[Aura_Core] Swarm Error Handled: {e}")
         return {
             "status": "success", 
-            "answer": "Aura is currently handling a high volume of academic syncs. Please give me 10 seconds to catch up!",
+            "answer": f"Aura Diagnostic Info: {str(e)}. Please try again in 5 seconds.",
             "routing_reason": "Rate Limit Protection",
             "action_items": ["Try again in 30 seconds", "Contact support if persists"]
         }
