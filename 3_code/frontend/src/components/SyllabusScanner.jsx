@@ -154,11 +154,13 @@ const SyllabusScanner = ({ onBack }) => {
                         className="card-white"
                         style={{
                             padding: '3rem',
-                            border: `2px dashed ${dragActive ? '#4f46e5' : '#e2e8f0'}`,
+                            border: `2px dashed ${dragActive ? '#4f46e5' : '#a5b4fc'}`,
                             textAlign: 'center',
                             cursor: 'pointer',
-                            background: dragActive ? '#f1f5f9' : 'white',
-                            transition: 'all 0.2s ease-in-out'
+                            background: dragActive ? '#eef2ff' : 'linear-gradient(145deg, #f5f7ff 0%, #ffffff 60%)',
+                            transition: 'all 0.2s ease-in-out',
+                            borderRadius: '20px',
+                            boxShadow: dragActive ? '0 0 0 4px rgba(99,102,241,0.12)' : '0 4px 12px rgba(99,102,241,0.08)'
                         }}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
@@ -174,8 +176,8 @@ const SyllabusScanner = ({ onBack }) => {
                             accept=".pdf,image/*"
                         />
 
-                        <div style={{ background: '#eff6ff', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
-                            <Upload size={32} color="#4f46e5" />
+                        <div style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)', width: '72px', height: '72px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', boxShadow: '0 8px 20px rgba(99,102,241,0.3)' }}>
+                            <Upload size={32} color="white" />
                         </div>
                         {file ? (
                             <div>
@@ -183,7 +185,7 @@ const SyllabusScanner = ({ onBack }) => {
                                 <p style={{ color: '#64748b' }}>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); handleScan(); }}
-                                    style={{ marginTop: '1.5rem', background: '#4f46e5', color: 'white', border: 'none', padding: '12px 32px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                                    style={{ marginTop: '1.5rem', background: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: 'white', border: 'none', padding: '12px 32px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(99,102,241,0.35)' }}
                                 >
                                     {scanning ? <Loader2 className="spin" size={20} /> : <ScanLine size={20} />}
                                     {scanning ? 'Analyzing...' : 'Scan Syllabus'}
@@ -191,8 +193,9 @@ const SyllabusScanner = ({ onBack }) => {
                             </div>
                         ) : (
                             <div>
-                                <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '0.5rem' }}>Drop your syllabus here</h3>
-                                <p style={{ color: '#64748b' }}>or click to browse files</p>
+                                <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem', color: '#1e293b' }}>Drop your syllabus here</h3>
+                                <p style={{ color: '#64748b', marginBottom: '1rem' }}>or click to browse files</p>
+                                <span style={{ display: 'inline-block', padding: '6px 16px', background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '20px', color: '#4f46e5', fontSize: '0.8rem', fontWeight: '600' }}>PDF or Image</span>
                             </div>
                         )}
                     </motion.div>

@@ -498,7 +498,7 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                         <Send size={22} color="white" />
                     </button>
                 </form>
-                <div style={{ marginTop: '0.75rem', textAlign: 'center', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '600', letterSpacing: '0.02em' }}>
+                <div style={{ marginTop: '0.75rem', textAlign: 'center', fontSize: '0.7rem', color: '#64748b', fontWeight: '600', letterSpacing: '0.02em' }}>
                     Aura AI is powered by Google Gemini. Data shared for academic processing.
                 </div>
             </div>

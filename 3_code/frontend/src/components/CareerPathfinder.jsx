@@ -121,7 +121,7 @@ const CareerPathfinder = ({ onBack }) => {
                     <h1 style={{ fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(to right, #6366f1, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
                         Career Pathfinder
                     </h1>
-                    <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: 0 }}>
+                    <p style={{ color: '#64748b', fontSize: '1.1rem', margin: 0 }}>
                         Bridge the gap between your degree and your dream career.
                     </p>
                 </div>
@@ -144,15 +144,17 @@ const CareerPathfinder = ({ onBack }) => {
                             gap: '0.5rem',
                             padding: '0.75rem 1.5rem',
                             borderRadius: '12px',
-                            border: 'none',
-                            background: activeTab === tab.id ? 'var(--primary-color)' : 'rgba(255,255,255,0.05)',
-                            color: activeTab === tab.id ? '#fff' : '#94a3b8',
-                            fontSize: '1rem',
+                            border: activeTab === tab.id ? 'none' : '1px solid #e2e8f0',
+                            background: activeTab === tab.id ? 'var(--primary-color)' : '#f8fafc',
+                            color: activeTab === tab.id ? '#fff' : '#475569',
+                            fontSize: '0.95rem',
                             fontWeight: '600',
                             cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            boxShadow: activeTab === tab.id ? '0 4px 12px rgba(99, 102, 241, 0.4)' : 'none'
+                            transition: 'all 0.2s ease',
+                            boxShadow: activeTab === tab.id ? '0 4px 12px rgba(99, 102, 241, 0.4)' : '0 1px 3px rgba(0,0,0,0.04)'
                         }}
+                        onMouseOver={e => { if (activeTab !== tab.id) { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#1e293b'; } }}
+                        onMouseOut={e => { if (activeTab !== tab.id) { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#475569'; } }}
                     >
                         <tab.icon size={18} />
                         {tab.label}
@@ -198,6 +200,23 @@ const CareerPathfinder = ({ onBack }) => {
                             </div>
                         </div>
 
+                        {loading && (
+                            <div style={{ textAlign: 'center', padding: '3rem', color: '#6366f1', fontWeight: '600', fontSize: '0.95rem' }}>
+                                <Search size={32} style={{ opacity: 0.5, marginBottom: '1rem' }} /><br />Scanning Handshake, LinkedIn &amp; Indeed...
+                            </div>
+                        )}
+                        {!loading && jobs.length === 0 && (
+                            <div style={{ textAlign: 'center', padding: '3rem 2rem', background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                <div style={{ width: '64px', height: '64px', background: '#eef2ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem auto' }}>
+                                    <Briefcase size={32} color="#6366f1" />
+                                </div>
+                                <h4 style={{ color: '#1e293b', fontWeight: '700', fontSize: '1.1rem', margin: '0 0 0.5rem 0' }}>No Matches Found Yet</h4>
+                                <p style={{ color: '#64748b', fontSize: '0.95rem', margin: '0 0 1.5rem 0' }}>Complete your profile and add courses so Aura can match you with internships and jobs tailored to your degree.</p>
+                                <button onClick={fetchJobs} style={{ padding: '0.6rem 1.5rem', background: '#6366f1', color: 'white', border: 'none', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem' }}>
+                                    Retry Search
+                                </button>
+                            </div>
+                        )}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                             {jobs.slice((currentPage - 1) * 10, currentPage * 10).map((job) => (
                                 <div key={job.id} className="card-white" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'transform 0.2s, box-shadow 0.2s', border: '1px solid #e2e8f0', position: 'relative' }}>
@@ -522,7 +541,13 @@ const CareerPathfinder = ({ onBack }) => {
                             </div>
                         )}
                         {!loading && pathways.length === 0 && (
-                            <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>No pathways found for your profile.</div>
+                            <div style={{ textAlign: 'center', padding: '3rem 2rem' }}>
+                                <div style={{ width: '64px', height: '64px', background: '#eef2ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem auto' }}>
+                                    <BarChart2 size={32} color="#6366f1" />
+                                </div>
+                                <h4 style={{ color: '#1e293b', fontWeight: '700', fontSize: '1.1rem', margin: '0 0 0.5rem 0' }}>No Career Pathways Yet</h4>
+                                <p style={{ color: '#64748b', fontSize: '0.95rem', margin: 0 }}>Add courses to your profile so Aura can map AI-powered career pathways tailored to your degree.</p>
+                            </div>
                         )}
                     </motion.div>
                 )}
