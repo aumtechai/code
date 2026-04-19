@@ -69,7 +69,7 @@ class LightweightAgent:
         messages = [{"role": "system", "content": self.system_message}] + self.history
         
         response = await self.client.chat.completions.create(
-            model="gemini-flash-latest",
+            model="gemini-1.5-flash",
             messages=messages,
             temperature=0.1
         )
