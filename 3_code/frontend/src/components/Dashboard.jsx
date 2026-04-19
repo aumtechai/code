@@ -545,8 +545,8 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                         onClick={onClose}
                         title="Close"
                         style={{
-                            background: '#f1f5f9',
-                            border: '1.5px solid #e2e8f0',
+                            background: '#1e293b',
+                            border: 'none',
                             borderRadius: '50%',
                             width: '42px',
                             height: '42px',
@@ -554,15 +554,17 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             cursor: 'pointer',
-                            color: '#334155',
+                            color: 'white',
                             flexShrink: 0,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                             transition: 'all 0.15s'
                         }}
-                        onMouseOver={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
-                        onMouseOut={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#334155'; }}
+                        onMouseOver={e => { e.currentTarget.style.transform = 'rotate(90deg)'; e.currentTarget.style.background = '#0f172a'; }}
+                        onMouseOut={e => { e.currentTarget.style.transform = 'rotate(0deg)'; e.currentTarget.style.background = '#1e293b'; }}
                     >
-                        <X size={20} strokeWidth={2.5} />
+                        <X size={20} strokeWidth={3} />
                     </button>
+
                 </div>
 
                 <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
