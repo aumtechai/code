@@ -562,7 +562,7 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                         onMouseOver={e => { e.currentTarget.style.transform = 'rotate(90deg)'; e.currentTarget.style.background = '#0f172a'; }}
                         onMouseOut={e => { e.currentTarget.style.transform = 'rotate(0deg)'; e.currentTarget.style.background = '#1e293b'; }}
                     >
-                        <X size={20} strokeWidth={3} />
+                        <X size={24} color="#ffffff" strokeWidth={3.5} />
                     </button>
 
                 </div>
