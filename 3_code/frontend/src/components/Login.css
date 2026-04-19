@@ -181,27 +181,22 @@ body {
 
 /* Pill container keeps the logo clipped — hides the aumtech.ai subtitle */
 .hero-brand-mark {
-  width: 260px;
-  height: 260px;
+  width: 280px;
+  height: 280px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: visible; /* Allow the glow to bleed if needed */
-  mix-blend-mode: darken;
+  /* Balanced symmetric container */
 }
 
 .hero-brand-logo {
-  width: 380px;
-  height: 380px;
-  object-fit: contain;
-  object-position: center top;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Shows the full image asset symmetrically */
   display: block;
   flex-shrink: 0;
-  transform: translateY(-30px);
-  /* Refined to hide only the bottom text without clipping the icon's side glows */
-  clip-path: inset(0 0 34% 0);
 }
 
 .hero-brand-text {
