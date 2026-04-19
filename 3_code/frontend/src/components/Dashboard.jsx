@@ -291,7 +291,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                     </p>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <button onClick={() => onNavigate('chat')} style={{ border: 'none', background: 'white', color: '#4f46e5', padding: '12px 24px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Chat with AI</button>
-                        <button style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'transparent', color: 'white', padding: '12px 24px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>View schedule</button>
+                        <button onClick={() => onNavigate('calendar')} style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'transparent', color: 'white', padding: '12px 24px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>View schedule</button>
                     </div>
                 </div>
 
@@ -341,6 +341,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
                 {[
                     { icon: ShieldAlert, color: '#ef4444', label: 'Holds & Alerts', sub: 'Action required', action: 'holds' },
+                    { icon: Calendar, color: '#6366f1', label: 'Life Calendar', sub: 'Month view & Alerts', action: 'calendar' },
                     { icon: Calendar, color: '#6366f1', label: 'My Schedule', sub: 'Weekly grid', action: 'schedule' },
                     { icon: Users, color: '#6366f1', label: 'Book Advisor', sub: 'Schedule a meeting', action: 'book-advisor' },
                     { icon: BookOpen, color: '#10b981', label: 'Tutoring Center', sub: 'Get study help', action: 'tutoring' },
