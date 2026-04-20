@@ -45,7 +45,13 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
         if (prefilledData && prefilledData.message) {
             setInput(prefilledData.message);
         }
-    }, [prefilledData]);
+        
+        // Apple Compliance: Proactively show consent if not yet granted
+        if (!hasConsented) {
+            const timer = setTimeout(() => setShowConsentModal(true), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [prefilledData, hasConsented]);
 
     const loadHistory = async (id) => {
         setLoading(true);

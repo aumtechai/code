@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const IDLE_TIMEOUT = 15 * 60 * 1000; // 15 Minutes
+const IDLE_TIMEOUT = 120 * 60 * 1000; // 2 Hours (120 Minutes)
 
 const SessionGuard = ({ children }) => {
     const navigate = useNavigate();

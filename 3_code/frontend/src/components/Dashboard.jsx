@@ -108,30 +108,13 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                     <div className="section-title">Home</div>
                     <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => handleProtectedTab('dashboard')}><LayoutDashboard size={20} strokeWidth={2.75} /> Dashboard</div>
                     <div className={`nav-item ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => handleProtectedTab('chat')}><MessageSquare size={20} strokeWidth={2.75} /> Get Aura</div>
-                    {/* <div className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => handleProtectedTab('analytics')}><TrendingUp size={20} strokeWidth={2.75} /> Institutional Research</div> */}
 
                     <div className="section-title">Academics</div>
                     <div className={`nav-item ${activeTab === 'degree-roadmap' ? 'active' : ''}`} onClick={() => handleProtectedTab('degree-roadmap')}><Map size={20} strokeWidth={2.75} /> Degree Roadmap</div>
                     <div className={`nav-item ${activeTab === 'courses' ? 'active' : ''}`} onClick={() => handleProtectedTab('courses')}><BookOpen size={20} strokeWidth={2.75} /> Courses</div>
                     <div className={`nav-item ${activeTab === 'schedule' ? 'active' : ''}`} onClick={() => handleProtectedTab('schedule')}><Calendar size={20} strokeWidth={2.75} /> Schedule</div>
-                    <div className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => handleProtectedTab('calendar')} style={{ position: 'relative' }}>
-                        <Calendar size={20} strokeWidth={2.75} /> Student Life Calendar
-                        <span style={{ 
-                            position: 'absolute', 
-                            right: '12px', 
-                            top: '50%', 
-                            transform: 'translateY(-50%)', 
-                            background: '#ef4444', 
-                            color: 'white', 
-                            fontSize: '0.65rem', 
-                            fontWeight: '900', 
-                            padding: '2px 6px', 
-                            borderRadius: '10px',
-                            boxShadow: '0 0 8px rgba(239, 68, 68, 0.4)'
-                        }}>3</span>
-                    </div>
+                    <div className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => handleProtectedTab('calendar')}><Calendar size={20} strokeWidth={2.75} /> Student Life Calendar</div>
                     <div className={`nav-item ${activeTab === 'syllabus' ? 'active' : ''}`} onClick={() => handleProtectedTab('syllabus')}><ScanLine size={20} strokeWidth={2.75} /> Syllabus Scanner</div>
-                    {/* <div className={`nav-item ${activeTab === 'cip' ? 'active' : ''}`} onClick={() => handleProtectedTab('cip')}><BookOpen size={20} strokeWidth={2.75} /> CIP Codes</div> */}
                     <div className={`nav-item ${activeTab === 'voice-notes' ? 'active' : ''}`} onClick={() => handleProtectedTab('voice-notes')}><Mic size={20} strokeWidth={2.75} /> Lecture Notes</div>
 
                     <div className="section-title">My Records</div>
@@ -145,9 +128,17 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                     <div className={`nav-item ${activeTab === 'tutoring' ? 'active' : ''}`} onClick={() => handleProtectedTab('tutoring')}><GraduationCap size={20} strokeWidth={2.75} /> Tutoring Center</div>
                     <div className={`nav-item ${activeTab === 'financial' ? 'active' : ''}`} onClick={() => handleProtectedTab('financial')}><GraduationCap size={20} strokeWidth={2.75} /> Financial Nexus</div>
                     <div className={`nav-item ${activeTab === 'career' ? 'active' : ''}`} onClick={() => handleProtectedTab('career')}><Briefcase size={20} strokeWidth={2.75} /> Career Pathfinder</div>
-                    <div className={`nav-item ${activeTab === 'ednex' ? 'active' : ''}`} onClick={() => handleProtectedTab('ednex')}><Briefcase size={20} strokeWidth={2.75} /> Project EdNex</div>
                     <div className={`nav-item ${activeTab === 'holds' ? 'active' : ''}`} onClick={() => handleProtectedTab('holds')}><ShieldAlert size={20} strokeWidth={2.75} /> Holds & Alerts</div>
-                    <div className={`nav-item ${activeTab === 'license' ? 'active' : ''}`} onClick={() => handleProtectedTab('license')}><Shield size={20} strokeWidth={2.75} /> Institutional Access</div>
+                    
+                    {/* Admin/Business Features - Hidden from App Review unless explicitly enabled */}
+                    {(window.location.search.includes('admin=true') || localStorage.getItem('aura_admin') === 'true') && (
+                        <>
+                            <div className="section-title">Institutional (Admin Only)</div>
+                            <div className={`nav-item ${activeTab === 'ednex' ? 'active' : ''}`} onClick={() => handleProtectedTab('ednex')}><Briefcase size={20} strokeWidth={2.75} /> Project EdNex</div>
+                            <div className={`nav-item ${activeTab === 'license' ? 'active' : ''}`} onClick={() => handleProtectedTab('license')}><Shield size={20} strokeWidth={2.75} /> Institutional Access</div>
+                            <div className={`nav-item ${activeTab === 'quote' ? 'active' : ''}`} onClick={() => onTabChange('quote')}><Calculator size={20} strokeWidth={2.75} stroke="#ec4899" /> Proposal Builder</div>
+                        </>
+                    )}
 
                     <div className="section-title">Campus Life</div>
                     <div className={`nav-item ${activeTab === 'social' ? 'active' : ''}`} onClick={() => handleProtectedTab('social')}><Users size={20} strokeWidth={2.75} /> Social Campus</div>
@@ -185,63 +176,6 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                         </>
                     )}
 
-                    {/* Bottom Config */}
-                    <div style={{ marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
-                        <div className="nav-item" onClick={() => handleProtectedTab('edit-profile')}><Settings size={20} strokeWidth={2.75} /> Settings</div>
-                        {isLoggedIn ? (
-                            <div onClick={handleLogout} className="nav-item" style={{ color: '#ef4444' }}>
-                                <LogOut size={20} strokeWidth={2.75} /> Logout
-                            </div>
-                        ) : (
-                            <div onClick={handleLogin} className="nav-item" style={{ color: '#4f46e5' }}>
-                                <User size={20} strokeWidth={2.75} /> Login / Sign Up
-                            </div>
-                        )}
-
-                        {/* User Profile Micro */}
-                        <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', background: '#f8fafc', borderRadius: '12px' }}>
-                            <div style={{ width: '40px', height: '40px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                                {userData?.full_name ? userData.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'S'}
-                            </div>
-                            <div style={{ overflow: 'hidden' }}>
-                                <div style={{ fontWeight: '600', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {userData?.full_name || 'Student'}
-                                </div>
-                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}</div>
-                            </div>
-                        </div>
-
-                        {/* Role Switcher (Admin Only) */}
-                        {userData?.is_admin && (
-                            <div style={{ marginTop: '1rem', padding: '8px', background: '#eef2ff', borderRadius: '12px', border: '1px solid #e0e7ff' }}>
-                                <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#4f46e5', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Perspective</div>
-                                <select 
-                                    value={currentRole} 
-                                    onChange={(e) => onRoleChange(e.target.value)}
-                                    style={{ 
-                                        width: '100%', 
-                                        padding: '8px 12px', 
-                                        borderRadius: '10px', 
-                                        border: '1px solid #cbd5e1', 
-                                        fontSize: '0.85rem', 
-                                        fontWeight: '700', 
-                                        color: '#334155', 
-                                        cursor: 'pointer',
-                                        fontFamily: 'inherit',
-                                        background: 'white',
-                                        outline: 'none',
-                                        appearance: 'auto',
-                                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                                    }}
-                                >
-                                    <option value="student">Student View</option>
-                                    <option value="faculty">Faculty View</option>
-                                    <option value="advisor">Advisor View</option>
-                                    <option value="dean">Dean / Exec View</option>
-                                </select>
-                            </div>
-                        )}
-
                         {/* Legal Footer */}
                         <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
                             <div style={{ marginBottom: '0.25rem' }}>© 2026 Aura | Academic Intelligence</div>
@@ -251,6 +185,24 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                                 <span onClick={() => handleProtectedTab('sla')} style={{ cursor: 'pointer', textDecoration: 'none', hover: { textDecoration: 'underline' } }}>SLA</span>
                             </div>
                         </div>
+
+                        {/* Admin Overlap Guard (Locked from Apple Review) */}
+                        {(window.location.search.includes('aura_master=true')) && (
+                            <div style={{ marginTop: '1rem', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1.5px dashed #cbd5e1' }}>
+                                <div style={{ fontSize: '0.65rem', fontWeight: '900', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Institutional Access</div>
+                                <select 
+                                    value={currentRole} 
+                                    onChange={(e) => onRoleChange(e.target.value)}
+                                    style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem', fontWeight: '700' }}
+                                >
+                                    <option value="student">Student Account</option>
+                                    <option value="faculty">Faculty Portal</option>
+                                    <option value="advisor">Advisor case Center</option>
+                                    <option value="dean">Dean's Dashboard</option>
+                                    <option value="admin">System Admin</option>
+                                </select>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
