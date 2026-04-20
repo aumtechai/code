@@ -2,9 +2,17 @@
 3_code/demo/DEMO_2/*.mp4
 3_code/demo/DEMO_2/*.webm
 
-# Environment variables
+# Environment variables — NEVER commit these
 .env
+.env.local
+.env.*.local
+.env.production
+.env.development
 3_code/backend/.env
+*.env
+
+# Demo materials — local only, do not commit
+docs/DEMO_STORY_SCRIPT.html
 
 # Python
 __pycache__/
