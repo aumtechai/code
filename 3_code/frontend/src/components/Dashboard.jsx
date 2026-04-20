@@ -205,7 +205,6 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                         )}
                     </div>
                 </div>
-            </div>
         </>
     );
 };
