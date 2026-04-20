@@ -160,11 +160,23 @@ async def run_aura_core_query_async(query: str, student_email: str):
                 raise e
 
     except Exception as e:
-        print(f"[Aura_Core] Swarm Error Handled: {e}")
+        err_str = str(e)
+        print(f"[Aura_Core] Swarm Error Handled: {err_str}")
+        
+        if "401" in err_str or "API_KEY" in err_str.upper() or "invalid" in err_str.lower():
+            msg = "Aura's AI service is temporarily unavailable. Our team has been notified and is working on a fix. Please try again in a few minutes."
+            reason = "AI Service Authentication Error"
+        elif "429" in err_str:
+            msg = "Aura is experiencing high demand right now. Please wait 30 seconds and try again."
+            reason = "Rate Limit Protection"
+        else:
+            msg = "Aura encountered an unexpected issue. Please try rephrasing your question or refresh the page."
+            reason = "Service Interruption"
+        
         return {
             "status": "success", 
-            "answer": "Aura is currently synchronizing with high-volume academic data. Please give me 5 seconds to catch up!",
-            "routing_reason": "Rate Limit Protection",
+            "answer": msg,
+            "routing_reason": reason,
             "action_items": ["Try again in 30 seconds", "Contact support if persists"]
         }
 
