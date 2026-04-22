@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import logoAsset from '../assets/logo.png';
 import iphoneLogo from '../assets/iphone_logo.jpg';
 
@@ -35,6 +36,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     React.useEffect(() => {
@@ -127,17 +129,35 @@ const Login = () => {
                     <img src={iphoneLogo} alt="Aura" style={{ borderRadius: '8px', objectFit: 'cover' }} />
                     Aura
                 </a>
-                <nav>
+                <nav className="desktop-nav">
                     <Link to="/architecture">Platform</Link>
                     <Link to="/features/student-planner">Solutions</Link>
                     <Link to="/privacy">Security</Link>
                     <Link to="/about">Company</Link>
                 </nav>
                 <div className="header-actions">
-                    <button className="header-login-link" onClick={() => {}}>Log In</button>
-                    <button className="header-btn">Get Started</button>
+                    <button className="header-login-link desktop-only" onClick={() => {}}>Log In</button>
+                    <button className="header-btn desktop-only">Get Started</button>
+                    <button 
+                        className="mobile-menu-toggle" 
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'none', alignItems: 'center', color: '#334155' }}
+                    >
+                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
                 </div>
             </header>
+
+            {isMobileMenuOpen && (
+                <div className="mobile-nav-overlay" style={{ background: 'white', padding: '1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative', zIndex: 100 }}>
+                    <Link to="/architecture" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Platform</Link>
+                    <Link to="/features/student-planner" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Solutions</Link>
+                    <Link to="/privacy" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Security</Link>
+                    <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Company</Link>
+                    <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
+                    <button onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#4f46e5', textDecoration: 'none', fontWeight: 600, background: 'none', border: 'none', textAlign: 'left', padding: 0, font: 'inherit', cursor: 'pointer' }}>Sign In</button>
+                </div>
+            )}
 
             {/* === MAIN SPLIT LAYOUT === */}
             <div className="login-main">

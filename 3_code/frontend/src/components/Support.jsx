@@ -76,7 +76,7 @@ const Support = ({ onBack }) => {
                         </div>
                         <h3 style={{ fontWeight: '700', marginBottom: '0.5rem' }}>Chat with AI</h3>
                         <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Instant answers from Aura.</p>
-                        <button onClick={() => onBack && onBack('chat')} style={{ border: 'none', background: 'none', color: '#10b981', fontWeight: '600', cursor: 'pointer' }}>Open Get Aura</button>
+                        <button onClick={() => window.location.href = '/dashboard'} style={{ border: 'none', background: 'none', color: '#10b981', fontWeight: '600', cursor: 'pointer' }}>Open Get Aura</button>
                     </div>
 
                     <div style={{ background: 'white', padding: '2rem', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center' }}>

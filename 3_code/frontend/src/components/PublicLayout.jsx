@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import iphoneLogo from '../assets/iphone_logo.jpg';
 import './PublicLayout.css';
 
-const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => (
+const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    return (
     <div className="pub-layout">
         {/* ── HEADER ── */}
         <header className="pub-header">
@@ -21,12 +25,29 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => (
                 <Link to="/about">Company</Link>
             </nav>
             <div className="pub-header-actions">
-                <Link to="/login" className="pub-back-btn">
+                <Link to="/login" className="pub-back-btn desktop-only">
                     {backLabel}
                 </Link>
-                <Link to="/login" className="pub-cta-btn">Sign In</Link>
+                <Link to="/login" className="pub-cta-btn desktop-only">Sign In</Link>
+                <button 
+                    className="mobile-menu-toggle" 
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
             </div>
         </header>
+
+        {isMobileMenuOpen && (
+            <div className="mobile-nav-overlay" style={{ background: 'white', padding: '1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <Link to="/architecture" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Platform</Link>
+                <Link to="/features/student-planner" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Solutions</Link>
+                <Link to="/privacy" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Security</Link>
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Company</Link>
+                <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#4f46e5', textDecoration: 'none', fontWeight: 600 }}>Sign In</Link>
+            </div>
+        )}
 
         {/* ── PAGE CONTENT ── */}
         <main className="pub-main">
@@ -60,6 +81,7 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => (
             </nav>
         </footer>
     </div>
-);
+    );
+};
 
 export default PublicLayout;
