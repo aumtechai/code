@@ -86,26 +86,28 @@ const CareerMapper = ({ onBack }) => {
         <div style={{ padding: '1rem', minHeight: '100%', background: '#f8fafc' }}>
             <header style={{ marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                 {onBack && (
-                    <button 
-                        onClick={onBack} 
-                        style={{ 
-                            background: 'white', 
-                            border: '1.5px solid #e2e8f0', 
-                            borderRadius: '12px', 
-                            width: '40px',
-                            height: '40px',
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center',
-                            cursor: 'pointer', 
-                            color: '#1e293b',
+                    <button
+                        onClick={onBack}
+                        style={{
+                            background: 'white',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '12px',
+                            padding: '8px 16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            color: '#475569',
+                            fontWeight: '700',
+                            fontSize: '0.9rem',
                             boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            fontFamily: 'inherit'
                         }}
-                        onMouseOver={e => e.currentTarget.style.border = '1.5px solid #4f46e5'}
-                        onMouseOut={e => e.currentTarget.style.border = '1.5px solid #e2e8f0'}
+                        onMouseOver={e => { e.currentTarget.style.borderColor = '#4f46e5'; e.currentTarget.style.color = '#4f46e5'; }}
+                        onMouseOut={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#475569'; }}
                     >
-                        <ChevronLeft size={20} strokeWidth={3} />
+                        <ChevronLeft size={18} strokeWidth={3} color="#475569" /> Back
                     </button>
                 )}
                 <div style={{ textAlign: 'left' }}>
