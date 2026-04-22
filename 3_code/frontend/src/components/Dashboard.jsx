@@ -48,7 +48,6 @@ import {
 
 import { motion } from 'framer-motion';
 import logoAsset from '../assets/logo.png';
-import iphoneLogo from '../assets/iphone_logo.jpg';
 
 
 
@@ -983,7 +982,7 @@ const Dashboard = () => {
                         background: 'white',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
                     }}>
-                        <img src={iphoneLogo} alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '8px', objectFit: 'cover' }} />
+                        <img src={logoAsset} alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '8px', objectFit: 'cover' }} />
                     </div>
 
                     <span style={{ fontWeight: '800', fontSize: '1.4rem', color: '#0f172a', letterSpacing: '-0.02em' }}>Aura</span>
