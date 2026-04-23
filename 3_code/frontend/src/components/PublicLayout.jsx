@@ -21,7 +21,7 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back', backUrl = '/lo
             <nav className="pub-nav">
                 <Link to="/architecture">Platform</Link>
                 <Link to="/features/student-planner">Solutions</Link>
-                <Link to="/privacy">Security</Link>
+                <Link to="/security">Security</Link>
                 <Link to="/publications/ednex">Publications</Link>
                 <Link to="/about">Company</Link>
             </nav>
@@ -43,7 +43,7 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back', backUrl = '/lo
             <div className="mobile-nav-overlay" style={{ background: 'white', padding: '1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <Link to="/architecture" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Platform</Link>
                 <Link to="/features/student-planner" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Solutions</Link>
-                <Link to="/privacy" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Security</Link>
+                <Link to="/security" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Security</Link>
                 <Link to="/publications/ednex" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Publications</Link>
                 <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Company</Link>
                 <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />

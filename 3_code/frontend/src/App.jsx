@@ -15,6 +15,7 @@ import PublicPage from './components/PublicPage';
 import ArchitecturePage from './components/ArchitecturePage';
 import EdNexArticle from './components/EdNexArticle';
 import AboutAumtech from './components/AboutAumtech';
+import SecurityPage from './components/SecurityPage';
 import RequestDemo from './components/RequestDemo';
 import RequestQuote from './components/RequestQuote';
 
@@ -58,6 +59,7 @@ function App() {
           <Route path="/msa" element={<MSA onBack={() => window.history.back()} />} />
           <Route path="/sla" element={<SLA onBack={() => window.history.back()} />} />
           <Route path="/about" element={<AboutAumtech />} />
+          <Route path="/security" element={<SecurityPage />} />
           <Route path="/team" element={<PublicPage title="Our Team" onBack={() => window.history.back()} />} />
           <Route path="/careers" element={<PublicPage title="Careers" onBack={() => window.history.back()} />} />
           <Route path="/blog" element={<PublicPage title="Blog" onBack={() => window.history.back()} />} />

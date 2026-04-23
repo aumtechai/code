@@ -56,16 +56,13 @@ const FeaturePage = () => {
                 <div className="hero-full-bleed">
                     <div className="hero-full-bleed-spacer"></div>
                     
-                    <div className="hero-full-bleed-content hero-full-bleed-content-1280">
+                    <div className="hero-full-bleed-content hero-full-bleed-content-1000">
                         {/* Hero Info */}
                         <motion.div
                             initial={{ opacity: 0, y: 16 }}
                             animate={{ opacity: 1, y: 0 }}
                             style={{ textAlign: 'left' }}
                         >
-                            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'white', borderRadius: '18px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(99,102,241,0.1)', marginBottom: '1.5rem' }}>
-                                {feature.icon}
-                            </div>
                             <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '0.75rem' }}>Solutions</span>
                             <h1 style={{ fontSize: '2.75rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a' }}>
                                 {feature.title}
