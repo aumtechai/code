@@ -1,6 +1,6 @@
 import React from 'react';
 import PublicLayout from './PublicLayout';
-import { Layers, Briefcase, UserPlus, FileText, BarChart2, Monitor } from 'lucide-react';
+import { Layers, Briefcase, UserPlus, FileText, BarChart2, Monitor, CheckCircle } from 'lucide-react';
 import logo from '../assets/logo.png';
 import './AboutAumtech.css';
 
@@ -12,13 +12,24 @@ const AboutAumtech = () => {
                 <div className="hero-full-bleed">
                     <div className="hero-full-bleed-spacer"></div>
                     <div className="hero-full-bleed-content hero-full-bleed-content-1000">
-                        <p className="about-eyebrow" style={{ textAlign: 'left' }}>BUILT BY PRACTITIONERS</p>
-                        <h1 className="about-title" style={{ textAlign: 'left' }}>
+                        <p className="about-eyebrow" style={{ textAlign: 'left', fontSize: '1rem', background: 'linear-gradient(135deg, #4f46e5, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 800, letterSpacing: '0.15em', marginBottom: '1rem' }}>BUILT BY PRACTITIONERS</p>
+                        <h1 className="about-title" style={{ textAlign: 'left', fontSize: '3.5rem', lineHeight: '1.1', marginBottom: '1.5rem' }}>
                             50+ years of combined higher education experience
                         </h1>
-                        <p className="about-lead" style={{ textAlign: 'left', marginLeft: 0 }}>
-                            EdNex was not designed in a vacuum. It was built by a team of senior leaders, advisors, career counselors, faculty, and administrators who spent their careers in the trenches of student success at top AAU and flagship US universities — and then channeled every lesson learned into this platform.
-                        </p>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem 0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#475569', fontSize: '1.15rem', lineHeight: '1.6' }}>
+                                <div style={{ minWidth: '8px', height: '8px', background: '#4f46e5', borderRadius: '50%', marginTop: '10px' }} />
+                                Designed by senior leaders, advisors, and faculty from top AAU and flagship US universities.
+                            </li>
+                            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#475569', fontSize: '1.15rem', lineHeight: '1.6' }}>
+                                <div style={{ minWidth: '8px', height: '8px', background: '#ec4899', borderRadius: '50%', marginTop: '10px' }} />
+                                Built from decades of on-the-ground experience in student success and career counseling.
+                            </li>
+                            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#475569', fontSize: '1.15rem', lineHeight: '1.6' }}>
+                                <div style={{ minWidth: '8px', height: '8px', background: '#10b981', borderRadius: '50%', marginTop: '10px' }} />
+                                Every workflow channels real-world lessons learned into an actionable, proactive platform.
+                            </li>
+                        </ul>
                     </div>
                     <div className="hero-full-bleed-logo-wrap">
                         <img src={logo} alt="Aumtech Logo" className="hero-full-bleed-logo" />
@@ -47,13 +58,33 @@ const AboutAumtech = () => {
                         </div>
                     </div>
 
-                    <div className="about-text-blocks">
-                        <p>
-                            The EdNex founding team has held multiple leadership and academic positions at flagship US universities — including roles in student services, academic affairs, financial aid, career success, and research administration. They have personally advised thousands of students, led teams of advisors, coordinated early intervention programs, and guided students through some of the most challenging transitions in their academic and career journeys.
-                        </p>
-                        <p>
-                            This is not a product built by engineers who read about advising. Every workflow, every alert, every dashboard view was designed by people who sat across the table from struggling students, who managed advisor caseloads under resource pressure, and who understood that the difference between a student who graduates and one who drops out often comes down to a single timely intervention.
-                        </p>
+                    <div className="about-text-blocks" style={{ marginTop: '2rem' }}>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#475569', fontSize: '1.1rem', lineHeight: '1.6' }}>
+                                <CheckCircle size={22} color="#4f46e5" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                <div>
+                                    <strong style={{ color: '#0f172a' }}>Comprehensive Leadership:</strong> Experience spanning student services, academic affairs, financial aid, and career success.
+                                </div>
+                            </li>
+                            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#475569', fontSize: '1.1rem', lineHeight: '1.6' }}>
+                                <CheckCircle size={22} color="#4f46e5" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                <div>
+                                    <strong style={{ color: '#0f172a' }}>Hands-On Advising:</strong> Personally guided thousands of students through critical academic transitions and early interventions.
+                                </div>
+                            </li>
+                            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#475569', fontSize: '1.1rem', lineHeight: '1.6' }}>
+                                <CheckCircle size={22} color="#4f46e5" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                <div>
+                                    <strong style={{ color: '#0f172a' }}>Practitioner-Designed:</strong> Built by professionals who managed advisor caseloads under pressure—not just engineers who read about it.
+                                </div>
+                            </li>
+                            <li style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#475569', fontSize: '1.1rem', lineHeight: '1.6' }}>
+                                <CheckCircle size={22} color="#4f46e5" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                <div>
+                                    <strong style={{ color: '#0f172a' }}>ROI Focused:</strong> Designed with the understanding that a single timely intervention is often the difference between graduating and dropping out.
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </section>
 
