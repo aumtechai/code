@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PublicLayout from './PublicLayout';
 import { BookOpen, Briefcase, Bell, BarChart2, User, Calendar } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 import logo from '../assets/logo.png';
 import './EdNexArticle.css';
 
@@ -320,8 +321,12 @@ const EdNexArticle = () => {
                         <h2 className="cta-title">Ready to transform student success at your institution?</h2>
                         <p className="cta-sub">Join leading universities and colleges already using EdNex to close equity gaps, improve retention, and launch students into meaningful careers.</p>
                         <div className="cta-buttons">
-                            <button className="btn-primary" onClick={() => navigate("/request-demo")}>Request a demo ↗</button>
-                            <button className="btn-secondary" onClick={() => navigate("/request-quote")}>Explore pricing & implementation ↗</button>
+                            {!Capacitor.isNativePlatform() && (
+                                <>
+                                    <button className="btn-primary" onClick={() => navigate("/request-demo")}>Request a demo ↗</button>
+                                    <button className="btn-secondary" onClick={() => navigate("/request-quote")}>Explore pricing & implementation ↗</button>
+                                </>
+                            )}
                         </div>
                         <p style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "1.5rem" }}>EdNex is a product of aumtech.ai &nbsp;·&nbsp; Built for higher education &nbsp;·&nbsp; Trusted by institutions nationwide</p>
                     </div>
