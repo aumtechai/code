@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react';
 import iphoneLogo from '../assets/iphone_logo.jpg';
 import './PublicLayout.css';
 
-const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => {
+const PublicLayout = ({ children, onBack, backLabel = '← Back', backUrl = '/login' }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
@@ -22,10 +22,11 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => {
                 <Link to="/architecture">Platform</Link>
                 <Link to="/features/student-planner">Solutions</Link>
                 <Link to="/privacy">Security</Link>
+                <Link to="/publications/ednex">Publications</Link>
                 <Link to="/about">Company</Link>
             </nav>
             <div className="pub-header-actions">
-                <Link to="/login" className="pub-back-btn desktop-only">
+                <Link to={backUrl} className="pub-back-btn desktop-only" onClick={onBack}>
                     {backLabel}
                 </Link>
                 <Link to="/login" className="pub-cta-btn desktop-only">Sign In</Link>
@@ -43,6 +44,7 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => {
                 <Link to="/architecture" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Platform</Link>
                 <Link to="/features/student-planner" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Solutions</Link>
                 <Link to="/privacy" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Security</Link>
+                <Link to="/publications/ednex" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Publications</Link>
                 <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Company</Link>
                 <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#4f46e5', textDecoration: 'none', fontWeight: 600 }}>Sign In</Link>
@@ -69,6 +71,7 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back' }) => {
                 <Link to="/features/student-planner">Student Planner</Link>
                 <Link to="/features/at-risk-prediction">At-Risk</Link>
                 <Link to="/architecture">Platform</Link>
+                <Link to="/publications/ednex">Publications</Link>
                 <Link to="/about">Company</Link>
                 <Link to="/careers">Careers</Link>
             </nav>

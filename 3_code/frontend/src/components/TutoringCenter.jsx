@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { BookOpen, Calendar, Clock, Upload, CheckCircle, AlertCircle, RefreshCw, ChevronLeft } from 'lucide-react';
+import { BookOpen, Calendar, Clock, Upload, CheckCircle, AlertCircle, RefreshCw, ChevronLeft, Star, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Demo fallback so the UI never shows empty/stuck in recording
@@ -9,6 +9,27 @@ const DEMO_COURSES = [
     { enrollment_id: 2, course_code: 'MATH 102', course_name: 'Calculus II', section_id: 1002, term: 'Fall 2024' },
     { enrollment_id: 3, course_code: 'ENG 101', course_name: 'Academic Writing', section_id: 1003, term: 'Fall 2024' },
 ];
+
+// Tutor roster per course code (fallback to general pool)
+const TUTORS_BY_COURSE = {
+    'CS 101': [
+        { id: 't1', name: 'Alex Patel', initials: 'AP', specialty: 'Data Structures & Algorithms', rating: 4.9, available: true, color: '#6366f1' },
+        { id: 't2', name: 'Maria Chen', initials: 'MC', specialty: 'Python & Web Dev', rating: 4.8, available: true, color: '#10b981' },
+        { id: 't3', name: 'Jordan Kim', initials: 'JK', specialty: 'Debugging & OOP', rating: 4.7, available: false, color: '#f59e0b' },
+    ],
+    'MATH 102': [
+        { id: 't4', name: 'Dr. Sofia Reyes', initials: 'SR', specialty: 'Calculus & Differential Eq.', rating: 5.0, available: true, color: '#8b5cf6' },
+        { id: 't5', name: 'Tom Wallace', initials: 'TW', specialty: 'Integration & Series', rating: 4.6, available: true, color: '#ec4899' },
+    ],
+    'ENG 101': [
+        { id: 't6', name: 'Priya Sharma', initials: 'PS', specialty: 'Essay Structure & MLA', rating: 4.8, available: true, color: '#14b8a6' },
+        { id: 't7', name: 'Chris Morgan', initials: 'CM', specialty: 'Research & Citations', rating: 4.5, available: true, color: '#f97316' },
+    ],
+    _default: [
+        { id: 'td1', name: 'Jamie Liu', initials: 'JL', specialty: 'General Academic Support', rating: 4.7, available: true, color: '#6366f1' },
+        { id: 'td2', name: 'Sam Rivera', initials: 'SR', specialty: 'Study Skills & Planning', rating: 4.6, available: true, color: '#10b981' },
+    ],
+};
 
 const TutoringCenter = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState('courses'); // 'courses' or 'history'
@@ -19,6 +40,7 @@ const TutoringCenter = ({ onBack }) => {
 
     // Booking State
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedTutor, setSelectedTutor] = useState('any'); // 'any' or tutor id
     const [bookingDate, setBookingDate] = useState('');
     const [bookingTime, setBookingTime] = useState('');
     const [triageNote, setTriageNote] = useState('');
@@ -92,6 +114,7 @@ const TutoringCenter = ({ onBack }) => {
 
             formData.append('start_time', isoDateTime);
             formData.append('triage_note', triageNote);
+            formData.append('preferred_tutor', selectedTutor);
             if (triageFile) {
                 formData.append('triage_image', triageFile);
             }
@@ -107,6 +130,7 @@ const TutoringCenter = ({ onBack }) => {
             setTimeout(() => {
                 setBookingStatus('idle');
                 setSelectedCourse(null);
+                setSelectedTutor('any');
                 setTriageNote('');
                 setTriageFile(null);
             }, 3000);
@@ -244,6 +268,67 @@ const TutoringCenter = ({ onBack }) => {
                                         <div style={{ fontWeight: '600', color: '#4f46e5', marginBottom: '0.5rem' }}>Selected Course</div>
                                         <div style={{ padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                                             <strong>{selectedCourse.course_code}: {selectedCourse.course_name}</strong>
+                                        </div>
+                                    </div>
+
+                                    {/* Tutor Selection */}
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <div style={{ fontWeight: '600', color: '#1e293b', marginBottom: '0.75rem', fontSize: '0.9rem' }}>Select a Tutor</div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            {/* Any Available Option */}
+                                            <div
+                                                onClick={() => setSelectedTutor('any')}
+                                                style={{
+                                                    display: 'flex', alignItems: 'center', gap: '12px',
+                                                    padding: '12px 14px', borderRadius: '10px', cursor: 'pointer',
+                                                    border: selectedTutor === 'any' ? '2px solid #4f46e5' : '1.5px solid #e2e8f0',
+                                                    background: selectedTutor === 'any' ? '#eef2ff' : 'white',
+                                                    transition: 'all 0.15s'
+                                                }}
+                                            >
+                                                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f1f5f9', border: '2px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                    <User size={18} color="#94a3b8" />
+                                                </div>
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ fontWeight: '700', fontSize: '0.95rem', color: selectedTutor === 'any' ? '#4f46e5' : '#1e293b' }}>Any Available Tutor</div>
+                                                    <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Auto-assigned · Fastest response time</div>
+                                                </div>
+                                                {selectedTutor === 'any' && <CheckCircle size={18} color="#4f46e5" />}
+                                            </div>
+
+                                            {/* Named tutors */}
+                                            {(TUTORS_BY_COURSE[selectedCourse.course_code] || TUTORS_BY_COURSE._default).map(tutor => (
+                                                <div
+                                                    key={tutor.id}
+                                                    onClick={() => tutor.available && setSelectedTutor(tutor.id)}
+                                                    style={{
+                                                        display: 'flex', alignItems: 'center', gap: '12px',
+                                                        padding: '12px 14px', borderRadius: '10px',
+                                                        cursor: tutor.available ? 'pointer' : 'not-allowed',
+                                                        opacity: tutor.available ? 1 : 0.5,
+                                                        border: selectedTutor === tutor.id ? '2px solid #4f46e5' : '1.5px solid #e2e8f0',
+                                                        background: selectedTutor === tutor.id ? '#eef2ff' : 'white',
+                                                        transition: 'all 0.15s'
+                                                    }}
+                                                >
+                                                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: tutor.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', color: 'white', fontSize: '0.85rem', flexShrink: 0 }}>
+                                                        {tutor.initials}
+                                                    </div>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div style={{ fontWeight: '700', fontSize: '0.95rem', color: selectedTutor === tutor.id ? '#4f46e5' : '#1e293b' }}>{tutor.name}</div>
+                                                        <div style={{ fontSize: '0.78rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tutor.specialty}</div>
+                                                    </div>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px', flexShrink: 0 }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.78rem', fontWeight: '700', color: '#f59e0b' }}>
+                                                            <Star size={12} fill="#f59e0b" color="#f59e0b" />{tutor.rating}
+                                                        </div>
+                                                        <div style={{ fontSize: '0.7rem', fontWeight: '600', color: tutor.available ? '#10b981' : '#ef4444' }}>
+                                                            {tutor.available ? '● Available' : '● Busy'}
+                                                        </div>
+                                                    </div>
+                                                    {selectedTutor === tutor.id && <CheckCircle size={18} color="#4f46e5" />}
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
 

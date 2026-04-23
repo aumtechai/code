@@ -3,16 +3,63 @@ import { Calendar, Clock, User, FileText, CheckCircle, AlertCircle, ChevronLeft 
 import { motion } from 'framer-motion';
 import api from '../api';
 
-const BookAdvisor = ({ onBack }) => {
+const DIVISION_CONFIG = {
+    tutor: {
+        title: 'Academic Tutoring Appointment',
+        subtitle: 'Connect with a subject-matter tutor for 1-on-1 academic support.',
+        defaultReason: 'I need help understanding course material and would like a 1-on-1 tutoring session.',
+        badge: '🎓',
+        color: '#8b5cf6'
+    },
+    admin: {
+        title: 'Registrar Office Appointment',
+        subtitle: 'Schedule a session with the Registrar for forms, enrollment, or records questions.',
+        defaultReason: 'I have a question about registration, enrollment, or official records.',
+        badge: '🏛️',
+        color: '#0369a1'
+    },
+    fafsa: {
+        title: 'Financial Aid Office Appointment',
+        subtitle: 'Meet with a financial aid specialist for FAFSA, scholarships, or loan guidance.',
+        defaultReason: 'I need assistance with my financial aid application or funding questions.',
+        badge: '💰',
+        color: '#b45309'
+    },
+    coach: {
+        title: 'Wellness Counseling Appointment',
+        subtitle: 'Schedule a confidential session with a licensed wellness counselor.',
+        defaultReason: 'I would like to speak with a counselor about my mental health and well-being.',
+        badge: '🧠',
+        color: '#16a34a'
+    },
+    strategist: {
+        title: 'Academic Advisor Appointment',
+        subtitle: 'Get strategic guidance on grade recovery, retake options, and degree planning.',
+        defaultReason: 'I want to discuss grade recovery options and academic planning strategies.',
+        badge: '📊',
+        color: '#dc2626'
+    },
+    'career-advisor': {
+        title: 'Career Counseling Appointment',
+        subtitle: 'Meet your Career Counselor for job search strategy, resume review, or internship guidance.',
+        defaultReason: 'I need help with my career planning, job search strategy, or internship applications.',
+        badge: '💼',
+        color: '#6366f1'
+    },
+};
+
+const BookAdvisor = ({ onBack, advisorDivision }) => {
     const [advisorList, setAdvisorList] = useState([]);
     const [loadingAdvisors, setLoadingAdvisors] = useState(true);
     const [fetchError, setFetchError] = useState(null);
+
+    const divisionCfg = advisorDivision && DIVISION_CONFIG[advisorDivision] ? DIVISION_CONFIG[advisorDivision] : null;
 
     const [formData, setFormData] = useState({
         advisor_name: '',
         date: '',
         time: '',
-        reason: ''
+        reason: divisionCfg ? divisionCfg.defaultReason : ''
     });
     const [status, setStatus] = useState(null); // null, 'loading', 'success', 'error'
     const [responseMsg, setResponseMsg] = useState('');
@@ -113,8 +160,25 @@ const BookAdvisor = ({ onBack }) => {
                     <ChevronLeft size={20} strokeWidth={3} /> Back
                 </button>
                 <div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>Advisor Booking</h2>
-                    <p style={{ color: '#64748b', margin: 0 }}>Schedule a session with your academic advisor.</p>
+                    {divisionCfg && (
+                        <div style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '6px',
+                            background: `${divisionCfg.color}15`,
+                            color: divisionCfg.color,
+                            border: `1px solid ${divisionCfg.color}30`,
+                            borderRadius: '20px', padding: '3px 12px',
+                            fontSize: '0.75rem', fontWeight: '800',
+                            marginBottom: '6px'
+                        }}>
+                            {divisionCfg.badge} {divisionCfg.title.split(' ')[0]} Division
+                        </div>
+                    )}
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>
+                        {divisionCfg ? divisionCfg.title : 'Advisor Booking'}
+                    </h2>
+                    <p style={{ color: '#64748b', margin: 0 }}>
+                        {divisionCfg ? divisionCfg.subtitle : 'Schedule a session with your academic advisor.'}
+                    </p>
                 </div>
             </div>
 

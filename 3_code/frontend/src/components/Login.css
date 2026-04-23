@@ -77,10 +77,10 @@ body {
 }
 
 .header-logo-link img {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid var(--slate-200);
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.12);
 }
 
 .landing-header nav {

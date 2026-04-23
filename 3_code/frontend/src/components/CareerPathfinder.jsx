@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2, ChevronLeft, BellRing, Bell, ExternalLink, Zap } from 'lucide-react';
+import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2, ChevronLeft, BellRing, Bell, ExternalLink, Zap, Calendar, MapPin, Users, MessageSquare } from 'lucide-react';
 import api from '../api';
 
-const CareerPathfinder = ({ onBack }) => {
+const CareerPathfinder = ({ onBack, onNavigate }) => {
     const [activeTab, setActiveTab] = useState('jobs'); // 'resume', 'jobs', 'skills'
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -134,6 +134,7 @@ const CareerPathfinder = ({ onBack }) => {
                     { id: 'resume', label: 'AI Resume Builder', icon: FileText },
                     { id: 'skills', label: 'Skill Gap Analysis', icon: Target },
                     { id: 'pathways', label: 'AI Career Pathways', icon: BarChart2 },
+                    { id: 'events', label: 'Hiring Events', icon: Calendar },
                 ].map((tab) => (
                     <button
                         key={tab.id}
@@ -551,7 +552,115 @@ const CareerPathfinder = ({ onBack }) => {
                         )}
                     </motion.div>
                 )}
+
+                {activeTab === 'events' && (
+                    <motion.div key="events" variants={tabVariants} initial="hidden" animate="visible" exit="exit">
+                        {/* Header Banner */}
+                        <div style={{ background: 'linear-gradient(135deg, #6366f1, #ec4899)', borderRadius: '20px', padding: '2rem', marginBottom: '1.5rem', color: 'white' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', fontWeight: '700', opacity: 0.9, marginBottom: '0.5rem' }}>
+                                <Calendar size={16} /> UPCOMING EVENTS
+                            </div>
+                            <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: '900' }}>Upcoming Hiring Events</h2>
+                            <p style={{ margin: '0.5rem 0 0 0', opacity: 0.85 }}>Campus career fairs, company info sessions, and virtual networking events matched to your degree.</p>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {[
+                                { id: 1, company: 'Google', type: 'Info Session', title: 'Google Campus Recruiting — SWE & PM Roles', date: 'May 6, 2026', time: '2:00 PM – 4:00 PM', format: 'In-Person', location: 'Engineering Hall, Room 201', spots: 45, logo: 'G', color: '#4285f4', tags: ['Software Engineering', 'Product Management', 'Data Science'] },
+                                { id: 2, company: 'Deloitte', type: 'Career Fair', title: 'Big 4 Accounting & Consulting Recruitment Drive', date: 'May 9, 2026', time: '10:00 AM – 3:00 PM', format: 'In-Person', location: 'Student Union Ballroom', spots: 200, logo: 'D', color: '#86bc25', tags: ['Consulting', 'Finance', 'Business Analytics'] },
+                                { id: 3, company: 'Amazon', type: 'Virtual', title: 'Amazon SDE Intern Info & Interview Prep', date: 'May 12, 2026', time: '6:00 PM – 7:30 PM', format: 'Virtual (Zoom)', location: 'Online', spots: 300, logo: 'A', color: '#ff9900', tags: ['Software Engineering', 'Cloud Computing', 'Operations'] },
+                                { id: 4, company: 'Texas Health Resources', type: 'Hiring Fair', title: 'Healthcare & Pre-Med Networking Fair', date: 'May 15, 2026', time: '11:00 AM – 2:00 PM', format: 'In-Person', location: 'Health Sciences Building', spots: 80, logo: 'TX', color: '#e11d48', tags: ['Nursing', 'Pre-Med', 'Public Health', 'Lab Research'] },
+                                { id: 5, company: 'JPMorgan Chase', type: 'Workshop', title: 'Finance & Investment Banking Career Workshop', date: 'May 19, 2026', time: '3:00 PM – 5:00 PM', format: 'Hybrid', location: 'Business School + Zoom', spots: 60, logo: 'JP', color: '#003087', tags: ['Finance', 'Banking', 'Economics'] },
+                                { id: 6, company: 'General Mills', type: 'Info Session', title: 'FMCG & Supply Chain Leadership Program', date: 'May 22, 2026', time: '1:00 PM – 2:30 PM', format: 'Virtual', location: 'Online', spots: 120, logo: 'GM', color: '#0070c0', tags: ['Supply Chain', 'Marketing', 'Operations'] },
+                            ].map(event => (
+                                <motion.div
+                                    key={event.id}
+                                    whileHover={{ y: -2 }}
+                                    style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex' }}
+                                >
+                                    {/* Color sidebar */}
+                                    <div style={{ width: '6px', background: event.color, flexShrink: 0 }} />
+
+                                    <div style={{ flex: 1, padding: '1.25rem 1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                                        {/* Logo */}
+                                        <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: event.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', color: 'white', fontSize: '0.9rem', flexShrink: 0 }}>
+                                            {event.logo}
+                                        </div>
+
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
+                                                <div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                                        <span style={{ background: `${event.color}18`, color: event.color, padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: '800', textTransform: 'uppercase' }}>{event.type}</span>
+                                                        <span style={{ background: event.format === 'Virtual' || event.format === 'Hybrid' ? '#f0fdf4' : '#eff6ff', color: event.format === 'Virtual' || event.format === 'Hybrid' ? '#16a34a' : '#2563eb', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: '700' }}>{event.format}</span>
+                                                    </div>
+                                                    <h3 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontWeight: '800', color: '#0f172a' }}>{event.title}</h3>
+                                                </div>
+                                                <button
+                                                    style={{ background: event.color, color: 'white', border: 'none', borderRadius: '10px', padding: '8px 18px', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', flexShrink: 0, fontFamily: 'inherit', transition: 'opacity 0.2s' }}
+                                                    onMouseOver={e => e.currentTarget.style.opacity = '0.85'}
+                                                    onMouseOut={e => e.currentTarget.style.opacity = '1'}
+                                                >
+                                                    RSVP Now
+                                                </button>
+                                            </div>
+
+                                            <div style={{ display: 'flex', gap: '1rem', fontSize: '0.82rem', color: '#475569', marginTop: '6px', flexWrap: 'wrap' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <Calendar size={13} color="#6366f1" /> {event.date}, {event.time}
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <MapPin size={13} color="#ec4899" /> {event.location}
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <Users size={13} color="#10b981" /> {event.spots} spots
+                                                </div>
+                                            </div>
+
+                                            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px' }}>
+                                                {event.tags.map(tag => (
+                                                    <span key={tag} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '2px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: '600' }}>{tag}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
             </AnimatePresence>
+
+            {/* Floating Career Success Advisor button */}
+            <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onNavigate && onNavigate('chat', 'career-advisor')}
+                style={{
+                    position: 'fixed',
+                    bottom: 'min(1.5rem, calc(1.5rem + env(safe-area-inset-bottom)))',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(135deg, #6366f1, #ec4899)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50px',
+                    padding: '0.85rem 1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    boxShadow: '0 10px 25px rgba(99,102,241,0.45)',
+                    cursor: 'pointer',
+                    fontWeight: '800',
+                    zIndex: 500,
+                    fontSize: '0.9rem',
+                    fontFamily: 'inherit',
+                    whiteSpace: 'nowrap'
+                }}
+            >
+                <MessageSquare size={18} strokeWidth={2.5} />
+                Chat with Career Success Advisor
+            </motion.button>
         </div>
     );
 };

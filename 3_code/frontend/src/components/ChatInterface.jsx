@@ -4,7 +4,25 @@ import { Send, BookOpen, CheckSquare, Paperclip, X, Brain, Shield, User, Zap, Ac
 import { motion, AnimatePresence } from 'framer-motion';
 import AiConsentModal from './AiConsentModal';
 
-const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, onNavigate }) => {
+const MODE_LABELS = {
+    tutor: { label: '🎓 Tutor Mode', color: '#8b5cf6', bg: '#f5f3ff' },
+    admin: { label: '🏛️ Admin Mode', color: '#0369a1', bg: '#f0f9ff' },
+    fafsa: { label: '💰 FAFSA Expert Mode', color: '#b45309', bg: '#fffbeb' },
+    coach: { label: '🧠 Wellness Coach Mode', color: '#16a34a', bg: '#f0fdf4' },
+    strategist: { label: '📊 Strategist Mode', color: '#dc2626', bg: '#fef2f2' },
+    'career-advisor': { label: '💼 Career Advisor Mode', color: '#6366f1', bg: '#eef2ff' },
+};
+
+const ESCALATE_LABELS = {
+    tutor:            { label: 'Escalate to Academic Tutor',     short: 'Connect to Tutor (L2)' },
+    admin:            { label: 'Escalate to Registrar Office',   short: 'Registrar Office (L2)' },
+    fafsa:            { label: 'Escalate to Financial Aid',      short: 'Financial Aid (L2)' },
+    coach:            { label: 'Escalate to Wellness Counselor', short: 'Wellness Counselor (L2)' },
+    strategist:       { label: 'Escalate to Academic Advisor',   short: 'Academic Advisor (L2)' },
+    'career-advisor': { label: 'Escalate to Career Counselor',   short: 'Career Counselor (L2)' },
+};
+
+const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, onNavigate, onDismissMode }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -165,6 +183,7 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
         if (mode === 'fafsa') return { title: "Hello! I am your FAFSA Expert.", sub: "I can guide you through the FAFSA application, explain financial terms, and help with tax data questions." };
         if (mode === 'coach') return { title: "Hello! I am The Coach.", sub: "I'm here to support your mental health and well-being." };
         if (mode === 'strategist') return { title: "Hello! I am The Strategist.", sub: "I can query anonymized historical student outcomes to provide peer-based grade recovery pathways and retake analysis." };
+        if (mode === 'career-advisor') return { title: "Hello! I am your Career Success Advisor.", sub: "I specialize in internships, job search strategy, hiring events, resume tips, and networking. Let's build your career roadmap together." };
         return { title: "Hello! I am Student Success.", sub: "Ask me about your courses, grades, deadlines, or how you're feeling." };
     };
     const intro = getIntro();
@@ -192,6 +211,31 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <Activity size={14} /> EDNEX SYNCED
                     </div>
+                    {/* Active agent mode badge */}
+                    {mode && MODE_LABELS[mode] && (
+                        <div style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            background: MODE_LABELS[mode].bg,
+                            color: MODE_LABELS[mode].color,
+                            border: `1px solid ${MODE_LABELS[mode].color}30`,
+                            borderRadius: '20px',
+                            padding: '3px 10px 3px 10px',
+                            fontSize: '0.72rem',
+                            fontWeight: '800',
+                            letterSpacing: '0.01em'
+                        }}>
+                            {MODE_LABELS[mode].label}
+                            {onDismissMode && (
+                                <button
+                                    onClick={onDismissMode}
+                                    title="Return to default Aura"
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 4px', color: MODE_LABELS[mode].color, display: 'flex', alignItems: 'center', lineHeight: 1 }}
+                                >
+                                    <X size={12} strokeWidth={3} />
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#94a3b8' }}>3 AGENTS ACTIVE</span>
@@ -204,7 +248,7 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                         onClick={() => onNavigate && onNavigate('book-advisor')}
                         style={{ marginLeft: '12px', padding: '6px 12px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px rgba(239, 68, 68, 0.2)' }}
                     >
-                        <ShieldAlert size={14} /> Escalate to L2 Human
+                        <ShieldAlert size={14} /> {mode && ESCALATE_LABELS[mode] ? ESCALATE_LABELS[mode].label : 'Escalate to L2 Human'}
                     </button>
                 </div>
             </div>
@@ -338,7 +382,7 @@ const ChatInterface = ({ mode, initialSessionId = null, prefilledData = null, on
                                              onMouseOver={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
                                              onMouseOut={(e) => { e.currentTarget.style.background = '#fef2f2'; }}
                                          >
-                                             <User size={14} /> Escalate to Human Advisor (L2)
+                                             <User size={14} /> {mode && ESCALATE_LABELS[mode] ? ESCALATE_LABELS[mode].short : 'Escalate to Human Advisor (L2)'}
                                          </button>
                                      </div>
                                 </div>

@@ -133,6 +133,7 @@ const Login = () => {
                     <Link to="/architecture">Platform</Link>
                     <Link to="/features/student-planner">Solutions</Link>
                     <Link to="/privacy">Security</Link>
+                    <Link to="/publications/ednex">Publications</Link>
                     <Link to="/about">Company</Link>
                 </nav>
                 <div className="header-actions">
@@ -153,6 +154,7 @@ const Login = () => {
                     <Link to="/architecture" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Platform</Link>
                     <Link to="/features/student-planner" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Solutions</Link>
                     <Link to="/privacy" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Security</Link>
+                    <Link to="/publications/ednex" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Publications</Link>
                     <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#475569', textDecoration: 'none', fontWeight: 500 }}>Company</Link>
                     <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
                     <button onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#4f46e5', textDecoration: 'none', fontWeight: 600, background: 'none', border: 'none', textAlign: 'left', padding: 0, font: 'inherit', cursor: 'pointer' }}>Sign In</button>
@@ -417,6 +419,7 @@ const Login = () => {
                     <Link to="/features/student-planner">Student Planner</Link>
                     <Link to="/features/at-risk-prediction">At-Risk</Link>
                     <Link to="/architecture">Platform</Link>
+                    <Link to="/publications/ednex">Publications</Link>
                     <Link to="/about">Company</Link>
                     <Link to="/careers">Careers</Link>
                 </nav>

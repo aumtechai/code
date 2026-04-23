@@ -943,6 +943,13 @@ const Dashboard = () => {
         }
     };
 
+    // Sidebar nav always resets chatMode to null so "Get Aura" gives the
+    // default Aura assistant — not whatever specialist was last launched.
+    const handleSidebarTabChange = (tab) => {
+        if (tab === 'chat') setChatMode(null);
+        setActiveTab(tab);
+    };
+
     useEffect(() => {
         fetchUser();
         fetchHolds();
@@ -1009,7 +1016,7 @@ const Dashboard = () => {
             <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                 <Sidebar 
                     activeTab={activeTab} 
-                    onTabChange={setActiveTab} 
+                    onTabChange={handleSidebarTabChange} 
                     userData={userData} 
                     isOpen={isMobileMenuOpen} 
                     onClose={() => setIsMobileMenuOpen(false)} 
@@ -1109,9 +1116,35 @@ const Dashboard = () => {
 
                     {activeTab === 'chat' && (
                         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1.5rem' }}>
-                            <h2 style={{ marginBottom: '1rem' }}>Get Aura AI</h2>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                                <button
+                                    onClick={() => setActiveTab('dashboard')}
+                                    style={{
+                                        background: 'white',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '12px',
+                                        padding: '8px 16px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        cursor: 'pointer',
+                                        color: '#475569',
+                                        fontWeight: '700',
+                                        fontSize: '0.9rem',
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                        flexShrink: 0,
+                                        transition: 'all 0.2s',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    onMouseOver={e => e.currentTarget.style.background = '#f8fafc'}
+                                    onMouseOut={e => e.currentTarget.style.background = 'white'}
+                                >
+                                    &#8592; Back
+                                </button>
+                                <h2 style={{ margin: 0 }}>Get Aura AI</h2>
+                            </div>
                             <div style={{ flex: 1, background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden' }}>
-                                <ChatInterface mode={chatMode} initialSessionId={chatSessionId} prefilledData={prefilledData} onNavigate={handleFeatureNavigate} />
+                                <ChatInterface mode={chatMode} initialSessionId={chatSessionId} prefilledData={prefilledData} onNavigate={handleFeatureNavigate} onDismissMode={() => setChatMode(null)} />
                             </div>
                         </div>
                     )}
@@ -1119,7 +1152,7 @@ const Dashboard = () => {
                     {activeTab === 'history' && <History onBack={() => setActiveTab('dashboard')} onSelectSession={(id) => handleFeatureNavigate('chat', null, id)} />}
                     {activeTab === 'schedule' && <WeeklySchedule onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'calendar' && <StudentCalendar onBack={() => setActiveTab('dashboard')} />}
-                    {activeTab === 'book-advisor' && <BookAdvisor onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'book-advisor' && <BookAdvisor onBack={() => setActiveTab('chat')} advisorDivision={chatMode} />}
                     {activeTab === 'courses' && <Courses onBack={() => setActiveTab('dashboard')} userData={userData} />}
                     {activeTab === 'tutoring' && <TutoringCenter onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'wellness' && <WellnessCheck onBack={() => setActiveTab('dashboard')} />}
@@ -1129,7 +1162,7 @@ const Dashboard = () => {
                     {activeTab === 'syllabus' && <SyllabusScanner onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'holds' && <HoldsCenter onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'financial' && <FinancialAidNexus onBack={() => setActiveTab('dashboard')} onNavigate={handleFeatureNavigate} />}
-                    {activeTab === 'career' && <CareerPathfinder onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'career' && <CareerPathfinder onBack={() => setActiveTab('dashboard')} onNavigate={handleFeatureNavigate} />}
                     {activeTab === 'ednex' && <CareerMapper onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'forms' && <DropAddForms onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'progress' && <Progress onBack={() => setActiveTab('dashboard')} />}

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck, BookOpen, Clock, Bot, ArrowRight, BrainCircuit } from 'lucide-react';
 import PublicLayout from './PublicLayout';
+import logo from '../assets/logo.png';
 
 const featureData = {
     'syllabus-scanner': {
@@ -52,42 +53,43 @@ const FeaturePage = () => {
     return (
         <PublicLayout onBack={() => window.history.back()}>
             <div style={{ background: '#faf7f2', flex: 1 }}>
-                <div style={{
-                    maxWidth: '1280px',
-                    margin: '0 auto',
-                    padding: '3rem 2.5rem',
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
-                    gap: '4rem',
-                    minHeight: 'calc(100vh - 140px)'
-                }}>
-                    {/* Left: Hero Info */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        style={{ flex: '1 1 480px', textAlign: 'left' }}
-                    >
-                        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'white', borderRadius: '18px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(99,102,241,0.1)', marginBottom: '1.5rem' }}>
-                            {feature.icon}
-                        </div>
-                        <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '0.75rem' }}>Solutions</span>
-                        <h1 style={{ fontSize: '2.75rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a' }}>
-                            {feature.title}
-                        </h1>
-                        <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: '1.7', maxWidth: '580px' }}>
-                            {feature.subtitle}
-                        </p>
-                        <p style={{ fontSize: '1rem', color: '#475569', marginBottom: '2.5rem', lineHeight: '1.7', maxWidth: '540px' }}>
-                            {feature.heroText}
-                        </p>
-                        <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: 'white', padding: '0.85rem 2rem', borderRadius: '10px', textDecoration: 'none', fontWeight: '700', fontSize: '1rem', boxShadow: '0 4px 14px rgba(79,70,229,0.35)' }}>
-                            Access Dashboard <ArrowRight size={18} />
-                        </Link>
-                    </motion.div>
+                <div className="hero-full-bleed">
+                    <div className="hero-full-bleed-spacer"></div>
+                    
+                    <div className="hero-full-bleed-content hero-full-bleed-content-1280">
+                        {/* Hero Info */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{ textAlign: 'left' }}
+                        >
+                            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '72px', height: '72px', background: 'white', borderRadius: '18px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(99,102,241,0.1)', marginBottom: '1.5rem' }}>
+                                {feature.icon}
+                            </div>
+                            <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '0.75rem' }}>Solutions</span>
+                            <h1 style={{ fontSize: '2.75rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a' }}>
+                                {feature.title}
+                            </h1>
+                            <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: '1.7', maxWidth: '580px' }}>
+                                {feature.subtitle}
+                            </p>
+                            <p style={{ fontSize: '1rem', color: '#475569', marginBottom: '2.5rem', lineHeight: '1.7', maxWidth: '540px' }}>
+                                {feature.heroText}
+                            </p>
+                            <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: 'white', padding: '0.85rem 2rem', borderRadius: '10px', textDecoration: 'none', fontWeight: '700', fontSize: '1rem', boxShadow: '0 4px 14px rgba(79,70,229,0.35)' }}>
+                                Access Dashboard <ArrowRight size={18} />
+                            </Link>
+                        </motion.div>
+                    </div>
 
-                    {/* Right: Benefit Cards */}
-                    <div style={{ flex: '1 1 420px', display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr)', gap: '1.25rem' }}>
+                    <div className="hero-full-bleed-logo-wrap">
+                        <img src={logo} alt="Aumtech Logo" className="hero-full-bleed-logo" />
+                    </div>
+                </div>
+
+                <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '1rem 2.5rem 4rem' }}>
+                    {/* Benefit Cards */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
                         {feature.benefits.map((benefit, idx) => (
                             <div key={idx} style={{ background: 'white', padding: '1.75rem', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.5rem' }}>

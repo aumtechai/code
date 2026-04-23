@@ -55,9 +55,9 @@
 }
 
 .pub-logo-img {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
   border: 1px solid var(--slate-200);
   box-shadow: 0 2px 8px rgba(99,102,241,0.12);
 }
@@ -219,4 +219,63 @@
   .pub-header { padding: 0 1.25rem; }
   .pub-footer { flex-direction: column; gap: 0.75rem; padding: 1rem 1.25rem; text-align: center; }
   .pub-footer-nav { flex-wrap: wrap; justify-content: center; }
+}
+
+/* ── Full Bleed Hero Layout (Logo on far right) ── */
+.hero-full-bleed {
+    display: flex;
+    width: 100%;
+    padding: 3rem 2.5rem 2rem;
+    align-items: center;
+}
+
+.hero-full-bleed-spacer {
+    flex: 1;
+    min-width: 0;
+}
+
+.hero-full-bleed-content {
+    width: 100%;
+}
+
+.hero-full-bleed-content-1000 {
+    max-width: 1000px;
+}
+
+.hero-full-bleed-content-1280 {
+    max-width: 1280px;
+}
+
+.hero-full-bleed-logo-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hero-full-bleed-logo {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 1024px) {
+    .hero-full-bleed {
+        flex-direction: column;
+        padding: 2rem 1.5rem;
+        gap: 2rem;
+    }
+    .hero-full-bleed-spacer {
+        display: none;
+    }
+    .hero-full-bleed-logo-wrap {
+        justify-content: center;
+        width: 100%;
+        flex: none;
+    }
+    .hero-full-bleed-logo {
+        max-width: 200px;
+    }
 }
