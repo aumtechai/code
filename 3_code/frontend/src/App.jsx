@@ -18,6 +18,7 @@ import AboutAumtech from './components/AboutAumtech';
 import SecurityPage from './components/SecurityPage';
 import RequestDemo from './components/RequestDemo';
 import RequestQuote from './components/RequestQuote';
+import CareersPage from './components/CareersPage';
 
 import SessionGuard from './components/SessionGuard';
 
@@ -61,7 +62,7 @@ function App() {
           <Route path="/about" element={<AboutAumtech />} />
           <Route path="/security" element={<SecurityPage />} />
           <Route path="/team" element={<PublicPage title="Our Team" onBack={() => window.history.back()} />} />
-          <Route path="/careers" element={<PublicPage title="Careers" onBack={() => window.history.back()} />} />
+          <Route path="/careers" element={<CareersPage onBack={() => window.history.back()} />} />
           <Route path="/blog" element={<PublicPage title="Blog" onBack={() => window.history.back()} />} />
           <Route path="/publications/ednex" element={<EdNexArticle />} />
           <Route path="/architecture" element={<ArchitecturePage />} />
