@@ -63,8 +63,8 @@ const FeaturePage = () => {
                             animate={{ opacity: 1, y: 0 }}
                             style={{ textAlign: 'left' }}
                         >
-                            <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '0.75rem' }}>Solutions</span>
-                            <h1 style={{ fontSize: '2.75rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a' }}>
+                            <span style={{ display: 'block', fontSize: '1.4rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', background: 'linear-gradient(135deg, #4f46e5, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1rem' }}>Solutions</span>
+                            <h1 style={{ fontSize: '3.5rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a' }}>
                                 {feature.title}
                             </h1>
                             <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: '1.7', maxWidth: '580px' }}>

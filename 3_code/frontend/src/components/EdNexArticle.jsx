@@ -17,8 +17,8 @@ const EdNexArticle = () => {
                 <div className="hero-full-bleed" style={{ marginBottom: '1rem' }}>
                     <div className="hero-full-bleed-spacer"></div>
                     <div className="hero-full-bleed-content hero-full-bleed-content-1000">
-                        <p className="hero-eyebrow" style={{ textAlign: 'left' }}>AUMTECH.AI &nbsp;·&nbsp; EDNEX PLATFORM</p>
-                        <h1 className="hero-title" style={{ textAlign: 'left', marginLeft: 0 }}>The intelligence layer for <span>student success</span></h1>
+                        <p className="hero-eyebrow" style={{ textAlign: 'left', fontSize: '1.4rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', background: 'linear-gradient(135deg, #4f46e5, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1rem' }}>AUMTECH.AI &nbsp;·&nbsp; EDNEX PLATFORM</p>
+                        <h1 className="hero-title" style={{ textAlign: 'left', marginLeft: 0, fontSize: '3.5rem', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a', marginBottom: '1rem' }}>The intelligence layer for <span>student success</span></h1>
                         <p className="hero-sub" style={{ textAlign: 'left', marginLeft: 0 }}>EdNex unifies academic advising, career readiness, early intervention, and institutional analytics into a single platform — purpose-built for every student, every program, and every institution.</p>
                         <div className="hero-badges" style={{ justifyContent: 'flex-start' }}>
                             <span className="badge highlight">Academic Success</span>

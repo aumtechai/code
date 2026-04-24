@@ -12,7 +12,7 @@ const AboutAumtech = () => {
                 <div className="hero-full-bleed">
                     <div className="hero-full-bleed-spacer"></div>
                     <div className="hero-full-bleed-content hero-full-bleed-content-1000">
-                        <p className="about-eyebrow" style={{ textAlign: 'left', fontSize: '1rem', background: 'linear-gradient(135deg, #4f46e5, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 800, letterSpacing: '0.15em', marginBottom: '1rem' }}>BUILT BY PRACTITIONERS</p>
+                        <p className="about-eyebrow" style={{ textAlign: 'left', fontSize: '1.4rem', background: 'linear-gradient(135deg, #4f46e5, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 800, letterSpacing: '0.15em', marginBottom: '1rem', textTransform: 'uppercase' }}>BUILT BY PRACTITIONERS</p>
                         <h1 className="about-title" style={{ textAlign: 'left', fontSize: '3.5rem', lineHeight: '1.1', marginBottom: '1.5rem' }}>
                             50+ years of combined higher education experience
                         </h1>
