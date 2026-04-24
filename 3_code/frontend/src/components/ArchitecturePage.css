@@ -49,8 +49,7 @@
     align-items: center;
     justify-content: center;
     padding: 2.5rem 2rem;
-    /* Dark canvas behind the interactive diagram */
-    background: radial-gradient(ellipse at center, #1e1b4b 0%, #0f172a 100%);
+    background: #faf7f2;
     min-height: 480px;
 }
 
