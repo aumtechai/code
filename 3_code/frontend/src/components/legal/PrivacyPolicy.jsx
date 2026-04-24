@@ -2,7 +2,7 @@ import React from 'react';
 import LegalPage from './LegalPage';
 
 const PrivacyPolicy = ({ onBack }) => (
-    <LegalPage title="Privacy Policy" onBack={onBack}>
+    <LegalPage title="Privacy Policy" eyebrow="Aura · Legal" subtitle="How we collect, protect, and respect your personal and academic information." onBack={onBack}>
         <p><strong>Effective Date:</strong> January 1, 2026</p>
         <p style={{ marginTop: '1rem' }}>At Aura, we take your privacy seriously. This policy describes how we collect, use, and protect your personal information.</p>
 

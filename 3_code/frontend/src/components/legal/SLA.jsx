@@ -2,7 +2,7 @@ import React from 'react';
 import LegalPage from './LegalPage';
 
 const SLA = ({ onBack }) => (
-    <LegalPage title="Service Level Agreement" onBack={onBack}>
+    <LegalPage title="Service Level Agreement" eyebrow="Aura · Legal" subtitle="Our uptime commitment, support response times, and scheduled maintenance policy." onBack={onBack}>
         <p><strong>Effective Date:</strong> January 1, 2026</p>
         <p style={{ marginTop: '1rem' }}>This Service Level Agreement defines the expected level of service for the Aura platform.</p>
 

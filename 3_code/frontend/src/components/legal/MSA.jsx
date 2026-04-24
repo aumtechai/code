@@ -2,7 +2,7 @@ import React from 'react';
 import LegalPage from './LegalPage';
 
 const MSA = ({ onBack }) => (
-    <LegalPage title="Master Services Agreement" onBack={onBack}>
+    <LegalPage title="Master Services Agreement" eyebrow="Aura · Legal" subtitle="The terms governing your institution's access to and use of the Aura platform." onBack={onBack}>
         <p><strong>Last Updated:</strong> January 1, 2026</p>
         <p style={{ marginTop: '1rem' }}>This Master Services Agreement ("Agreement") governs your use of the Aura platform.</p>
 
