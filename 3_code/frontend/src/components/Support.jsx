@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle, Mail, Phone, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import PublicLayout from './PublicLayout';
+import logo from '../assets/logo.png';
 
 const FAQItem = ({ question, answer }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +30,7 @@ const FAQItem = ({ question, answer }) => {
 
 const Support = ({ onBack }) => {
     const [submitted, setSubmitted] = useState(false);
+    useEffect(() => { window.scrollTo(0, 0); }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -37,26 +39,26 @@ const Support = ({ onBack }) => {
 
     return (
         <PublicLayout onBack={onBack || (() => window.history.back())}>
-        <div 
-            style={{ 
-                background: '#faf7f2',
-                flex: 1,
-                padding: '3rem 2rem',
-            }}
-        >
-            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                {/* Header */}
-                <div style={{ marginBottom: '3rem' }}>
-                    <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4f46e5', marginBottom: '0.5rem' }}>Aura · Support</span>
-                    <h1 style={{ fontSize: '2rem', fontWeight: '900', letterSpacing: '-0.04em', color: '#0f172a', margin: 0 }}>Support Center</h1>
-                </div>
+        <div style={{ background: '#faf7f2', flex: 1 }}>
 
-                {/* Hero */}
-                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                    <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1e293b', marginBottom: '1rem' }}>How can we help you?</h2>
-                    <p style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
-                        We're here to support your academic journey. Browse our FAQs or get in touch with our student success team.
-                    </p>
+            {/* Standardized Hero */}
+            <div className="hero-full-bleed" style={{ alignItems: 'flex-start' }}>
+                <div className="hero-full-bleed-spacer"></div>
+                <div className="hero-full-bleed-content hero-full-bleed-content-1000" style={{ paddingTop: '1rem' }}>
+                    <span style={{ display: 'block', fontSize: '1.4rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', background: 'linear-gradient(135deg, #4f46e5, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1rem' }}>Aura · Support</span>
+                    <h1 style={{ fontSize: '3.5rem', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: '1.1', color: '#0f172a', margin: '0 0 1rem 0' }}>Support Center</h1>
+                    <p style={{ fontSize: '1.15rem', color: '#475569', lineHeight: '1.7', maxWidth: '560px', margin: 0 }}>We're here to support your academic journey. Browse FAQs or reach our team directly.</p>
+                </div>
+                <div className="hero-full-bleed-logo-wrap">
+                    <img src={logo} alt="Aumtech Logo" className="hero-full-bleed-logo" />
+                </div>
+            </div>
+
+            <div style={{ maxWidth: '800px', margin: '2rem auto 0', padding: '0 2rem 4rem' }}>
+
+                {/* How can we help */}
+                <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                    <h2 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.75rem' }}>How can we help you?</h2>
                 </div>
 
                 {/* Contact Cards */}
