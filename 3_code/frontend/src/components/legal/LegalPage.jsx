@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PublicLayout from '../PublicLayout';
 import logo from '../../assets/logo.png';
 
-const LegalPage = ({ title, subtitle, eyebrow = 'Aura · Legal', onBack, children }) => (
+const LegalPage = ({ title, subtitle, eyebrow = 'Aura · Legal', onBack, children }) => {
+    useEffect(() => { window.scrollTo(0, 0); }, []);
+    return (
     <PublicLayout onBack={onBack || (() => window.history.back())}>
         <div style={{ background: '#faf7f2', flex: 1 }}>
             <div className="hero-full-bleed" style={{ alignItems: 'flex-start' }}>
@@ -25,5 +27,7 @@ const LegalPage = ({ title, subtitle, eyebrow = 'Aura · Legal', onBack, childre
         </div>
     </PublicLayout>
 );
+
+};
 
 export default LegalPage;

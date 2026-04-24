@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PublicLayout from './PublicLayout';
 import logo from '../assets/logo.png';
 
-const PublicPage = ({ title, eyebrow = 'Aura', subtitle, onBack }) => (
+const PublicPage = ({ title, eyebrow = 'Aura', subtitle, onBack }) => {
+    useEffect(() => { window.scrollTo(0, 0); }, []);
+    return (
     <PublicLayout onBack={onBack || (() => window.history.back())}>
         <div style={{ background: '#faf7f2', flex: 1 }}>
             <div className="hero-full-bleed" style={{ alignItems: 'flex-start' }}>
@@ -28,5 +30,7 @@ const PublicPage = ({ title, eyebrow = 'Aura', subtitle, onBack }) => (
         </div>
     </PublicLayout>
 );
+
+};
 
 export default PublicPage;
