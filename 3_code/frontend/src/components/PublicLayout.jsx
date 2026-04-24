@@ -69,7 +69,6 @@ const PublicLayout = ({ children, onBack, backLabel = '← Back', backUrl = '/lo
 
             <nav className="pub-footer-nav">
                 <Link to="/features/student-planner">Student Planner</Link>
-                <Link to="/features/at-risk-prediction">At-Risk</Link>
                 <Link to="/architecture">Platform</Link>
                 <Link to="/publications/ednex">Publications</Link>
                 <Link to="/about">Company</Link>
