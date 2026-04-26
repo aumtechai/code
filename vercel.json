@@ -2,7 +2,7 @@
   "version": 2,
   "name": "aura-stable-final",
   "trailingSlash": false,
-  "buildCommand": "npm run build",
+  "buildCommand": "bash build.sh",
   "outputDirectory": "3_code/frontend/dist",
   "functions": {
     "api/core/index.py": {
