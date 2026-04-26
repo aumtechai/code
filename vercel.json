@@ -2,8 +2,6 @@
   "version": 2,
   "name": "aura-stable-final",
   "trailingSlash": false,
-  "buildCommand": "sh -c 'cd 3_code/frontend && npm install && npm run build'",
-  "outputDirectory": "3_code/frontend/dist",
   "functions": {
     "api/core/index.py": {
       "maxDuration": 300
