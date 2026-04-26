@@ -417,6 +417,12 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
     const [pwLoading, setPwLoading] = useState(false);
     const [pwMsg, setPwMsg] = useState(null); // { type: 'success'|'error', text }
 
+    // Account Deletion Modal state
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState('');
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [deleteError, setDeleteError] = useState('');
+
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
@@ -470,27 +476,147 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
         }
     };
 
-    const handleDeleteAccount = async () => {
-        const confirmed = window.confirm("Are you sure you want to PERMANENTLY delete your account? This action cannot be undone and all your data (history, notes, profile) will be erased.");
-        if (!confirmed) return;
+    const handleDeleteAccount = () => {
+        // Open the in-app confirmation modal (Apple-compliant flow)
+        setDeleteConfirmText('');
+        setDeleteError('');
+        setShowDeleteModal(true);
+    };
 
-        const doubleConfirmed = window.prompt("To confirm deletion, please type 'DELETE' below:");
-        if (doubleConfirmed !== 'DELETE') {
-            alert("Deletion cancelled. You must type 'DELETE' to confirm.");
+    const handleConfirmDelete = async () => {
+        if (deleteConfirmText !== 'DELETE') {
+            setDeleteError("Please type DELETE (in capitals) to confirm.");
             return;
         }
-
+        setDeleteLoading(true);
+        setDeleteError('');
         try {
             await api.delete('/api/users/me');
             localStorage.removeItem('token');
             window.location.href = '/login';
         } catch (error) {
             console.error("Deletion failed:", error);
-            alert("Failed to delete account. Please contact support.");
+            const detail = error.response?.data?.detail;
+            setDeleteError(typeof detail === 'string' ? detail : 'Failed to delete account. Please try again or contact support.');
+            setDeleteLoading(false);
         }
     };
 
     return (
+        <>
+        {/* ── Account Deletion Confirmation Modal ── */}
+        {showDeleteModal && (
+            <div id="delete-account-modal" style={{
+                position: 'fixed', inset: 0,
+                background: 'rgba(15, 23, 42, 0.85)',
+                backdropFilter: 'blur(8px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                zIndex: 2000, padding: '1.5rem'
+            }}>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    style={{
+                        background: 'white', borderRadius: '24px',
+                        padding: '2.5rem', maxWidth: '480px', width: '100%',
+                        boxShadow: '0 32px 64px -12px rgba(0,0,0,0.5)'
+                    }}
+                >
+                    {/* Icon */}
+                    <div style={{
+                        width: '64px', height: '64px',
+                        background: 'linear-gradient(135deg, #fee2e2, #fecaca)',
+                        borderRadius: '16px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        marginBottom: '1.5rem'
+                    }}>
+                        <ShieldAlert size={32} color="#ef4444" strokeWidth={2.5} />
+                    </div>
+
+                    <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#111827', marginBottom: '0.75rem' }}>
+                        Delete Account Permanently
+                    </h3>
+                    <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '1.25rem', fontSize: '0.95rem' }}>
+                        This will <strong style={{ color: '#b91c1c' }}>permanently delete</strong> your account and all associated data — including chat history, lecture notes, academic records, and profile information. <strong>This action cannot be undone.</strong>
+                    </p>
+
+                    {/* Checklist */}
+                    <div style={{ background: '#fef2f2', borderRadius: '12px', padding: '1rem 1.25rem', marginBottom: '1.5rem', border: '1px solid #fecaca' }}>
+                        {['All chat sessions and AI conversation history', 'Lecture voice notes and transcripts', 'Academic progress and course records', 'Your profile and all personal data'].map((item, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#7f1d1d', marginBottom: i < 3 ? '0.5rem' : 0 }}>
+                                <span style={{ color: '#ef4444', fontWeight: '700', flexShrink: 0 }}>✕</span> {item}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Type confirmation */}
+                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '700', color: '#374151', marginBottom: '0.5rem' }}>
+                        Type <span style={{ fontFamily: 'monospace', background: '#f3f4f6', padding: '2px 6px', borderRadius: '4px', color: '#b91c1c' }}>DELETE</span> to confirm:
+                    </label>
+                    <input
+                        id="delete-confirm-input"
+                        type="text"
+                        value={deleteConfirmText}
+                        onChange={e => { setDeleteConfirmText(e.target.value); setDeleteError(''); }}
+                        placeholder="Type DELETE here"
+                        autoComplete="off"
+                        style={{
+                            width: '100%', padding: '0.875rem 1rem',
+                            borderRadius: '12px',
+                            border: `2px solid ${deleteError ? '#fca5a5' : deleteConfirmText === 'DELETE' ? '#86efac' : '#e5e7eb'}`,
+                            fontSize: '1rem', fontFamily: 'monospace',
+                            outline: 'none', marginBottom: '0.75rem',
+                            boxSizing: 'border-box',
+                            transition: 'border-color 0.2s'
+                        }}
+                    />
+
+                    {deleteError && (
+                        <div style={{ color: '#b91c1c', fontSize: '0.85rem', fontWeight: '600', marginBottom: '1rem', background: '#fef2f2', padding: '8px 12px', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                            {deleteError}
+                        </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                        <button
+                            id="cancel-delete-btn"
+                            onClick={() => setShowDeleteModal(false)}
+                            disabled={deleteLoading}
+                            style={{
+                                flex: 1, padding: '0.875rem',
+                                borderRadius: '12px',
+                                border: '1.5px solid #e5e7eb',
+                                background: 'white', fontWeight: '700',
+                                color: '#374151', cursor: 'pointer',
+                                fontSize: '0.95rem', fontFamily: 'inherit'
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="confirm-delete-btn"
+                            onClick={handleConfirmDelete}
+                            disabled={deleteLoading || deleteConfirmText !== 'DELETE'}
+                            style={{
+                                flex: 1.5, padding: '0.875rem',
+                                borderRadius: '12px', border: 'none',
+                                background: deleteConfirmText === 'DELETE' ? 'linear-gradient(135deg, #dc2626, #b91c1c)' : '#f3f4f6',
+                                color: deleteConfirmText === 'DELETE' ? 'white' : '#9ca3af',
+                                fontWeight: '700', fontSize: '0.95rem',
+                                cursor: deleteConfirmText === 'DELETE' ? 'pointer' : 'not-allowed',
+                                fontFamily: 'inherit',
+                                boxShadow: deleteConfirmText === 'DELETE' ? '0 4px 12px rgba(220,38,38,0.4)' : 'none',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {deleteLoading ? 'Deleting…' : '🗑️ Delete My Account'}
+                        </button>
+                    </div>
+                </motion.div>
+            </div>
+        )}
+        {/* ── End Deletion Modal ── */}
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -802,6 +928,7 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                 </form>
             </motion.div>
         </div>
+        </>
     );
 };
 

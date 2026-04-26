@@ -392,7 +392,7 @@ const Login = () => {
                         <div className="signup-toggle" onClick={() => setIsRegistering(!isRegistering)}>
                             {isRegistering
                                 ? <>Already have an account? <span>Sign in</span></>
-                                : <>Don't have an account? <span>Sign up free</span></>
+                                : <>Don't have an account? <span>Sign up</span></>
                             }
                         </div>
 
