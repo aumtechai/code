@@ -52,7 +52,7 @@ import logoAsset from '../assets/logo.png';
 
 
 
-const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRole, onRoleChange }) => {
+const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRole, onRoleChange, onEditProfile }) => {
     const navigate = useNavigate();
     const isLoggedIn = !!localStorage.getItem('token');
     const handleLogout = () => {
@@ -174,6 +174,25 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                             <div className={`nav-item ${activeTab === 'quoteGen' ? 'active' : ''}`} onClick={() => handleProtectedTab('quoteGen')}><Calculator size={20} strokeWidth={2.75} /> Quote Generator</div>
                         </>
                     )}
+
+                    {/* Account Section */}
+                    <div className="section-title">Account</div>
+                    <div
+                        className={`nav-item ${activeTab === 'edit-profile' ? 'active' : ''}`}
+                        onClick={() => { onEditProfile ? onEditProfile() : handleProtectedTab('edit-profile'); if (window.innerWidth <= 768) onClose(); }}
+                        id="settings-nav-btn"
+                    >
+                        <Settings size={20} strokeWidth={2.75} /> Settings
+                    </div>
+                    <div
+                        className="nav-item"
+                        onClick={isLoggedIn ? handleLogout : handleLogin}
+                        id="logout-nav-btn"
+                        style={{ color: isLoggedIn ? '#ef4444' : '#4f46e5', fontWeight: '700' }}
+                    >
+                        <LogOut size={20} strokeWidth={2.75} />
+                        {isLoggedIn ? 'Log Out' : 'Log In'}
+                    </div>
 
                         {/* Legal Footer */}
                         <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', fontSize: '0.65rem', color: '#94a3b8' }}>
@@ -1149,6 +1168,7 @@ const Dashboard = () => {
                     onClose={() => setIsMobileMenuOpen(false)} 
                     currentRole={currentRole}
                     onRoleChange={handleRoleChange}
+                    onEditProfile={() => setIsEditModalOpen(true)}
                 />
 
                 <main
