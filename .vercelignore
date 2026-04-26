@@ -20,13 +20,14 @@ venv
 __pycache__
 **/__pycache__/**
 
-# Ignore Frontend Source (Only Keep the Compiled Dist)
-3_code/frontend/src
+# Frontend source is REQUIRED for Vite build-from-source on Vercel
+# 3_code/frontend/src is intentionally NOT ignored
 3_code/frontend/android
 3_code/frontend/ios
 3_code/frontend/resources
 3_code/frontend/public
-# Keep 3_code/frontend/dist (This is the actual site!)
+# Vercel builds dist/ fresh on every deploy — don't ignore dist
+
 
 # CRITICAL: Exclude backend test/script/migration files
 # These were being auto-discovered by Vercel as lambda functions,
