@@ -2,9 +2,8 @@
   "version": 2,
   "name": "aura-stable-final",
   "trailingSlash": false,
-  "buildCommand": "npm install --prefix 3_code/frontend && npm run build --prefix 3_code/frontend",
+  "buildCommand": "npm run build",
   "outputDirectory": "3_code/frontend/dist",
-  "installCommand": "echo done",
   "functions": {
     "api/core/index.py": {
       "maxDuration": 300
@@ -16,6 +15,6 @@
   "rewrites": [
     { "source": "/api/swarm/:path*", "destination": "/api/swarm/index.py" },
     { "source": "/api/:path*",       "destination": "/api/core/index.py" },
-    { "source": "/((?!api/).*)",     "destination": "/index.html" }
+    { "source": "/((?!api/|assets/|static/|favicon.ico|manifest.json|logo.png|bookmark_logo.png|robots.txt|sitemap.xml).*)", "destination": "/index.html" }
   ]
 }
