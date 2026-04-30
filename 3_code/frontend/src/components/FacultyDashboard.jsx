@@ -89,7 +89,8 @@ const FacultyDashboard = ({ onBack }) => {
                 'Attendance': `Hi ${selectedStudent.name},\n\nI noticed you've missed a few recent classes, and I wanted to check in to make sure everything is okay. We value your presence in the course, and I want to support you in getting back on track.\n\nPlease let me know if there's anything I can do to help or if you'd like to meet briefly to discuss the material you missed.\n\nBest,\nProfessor`,
                 'Grades': `Hi ${selectedStudent.name},\n\nI was reviewing recent quiz scores and noticed you might be finding the current module challenging. I want to ensure you have the support you need to succeed.\n\nCould we set up a brief time to chat about how I can better support your learning?\n\nBest,\nProfessor`,
                 'Wellness': `Hi ${selectedStudent.name},\n\nI've sensed you might be under some stress lately, and I just wanted to reach out and remind you that we have resources available to support you. Your well-being is the priority.\n\nPlease don't hesitate to let me know if you need flexibility or support.\n\nBest,\nProfessor`,
-                'Financial': `Hi ${selectedStudent.name},\n\nI wanted to make sure you are aware of the financial aid workshop and resources available this semester. Let me know if you need a referral to the Financial Aid office.\n\nBest,\nProfessor`
+                'Financial': `Hi ${selectedStudent.name},\n\nI wanted to make sure you are aware of the financial aid workshop and resources available this semester. Let me know if you need a referral to the Financial Aid office.\n\nBest,\nProfessor`,
+                'OfficeHoursNudge': `Hi ${selectedStudent.name},\n\nI wanted to personally invite you to stop by my office hours this week. It's totally optional and not mandatory at all, but I think it could be a great opportunity to review some concepts, clarify any confusing topics, or just chat about the material.\n\nYou can easily book a time that works for you through the Aura portal.\n\nBest,\nProfessor`
             };
 
             const draft = drafts[signalIssue] || `Hi ${selectedStudent.name},\n\nI wanted to touch base regarding your progress in the course. Let's connect soon.\n\nBest,\nProfessor`;
@@ -488,6 +489,7 @@ const FacultyDashboard = ({ onBack }) => {
                                             style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }}
                                         >
                                             <option value="">Select an issue...</option>
+                                            <option value="OfficeHoursNudge">Invite to Office Hours (Proactive Nudge)</option>
                                             <option value="Attendance">Attendance Concern</option>
                                             <option value="Grades">Low Academic Performance</option>
                                             <option value="Wellness">Wellness/Behavioral Concern</option>

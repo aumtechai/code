@@ -186,6 +186,23 @@ const AdminPanel = ({ onBack }) => {
                 >
                     <Settings size={18} /> Site Settings
                 </button>
+                <button
+                    onClick={() => setActiveSection('compliance')}
+                    style={{
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: activeSection === 'compliance' ? '#4f46e5' : 'white',
+                        color: activeSection === 'compliance' ? 'white' : '#64748b',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        boxShadow: activeSection === 'compliance' ? '0 4px 6px -1px rgba(79, 70, 229, 0.2)' : '0 1px 2px 0 rgba(0,0,0,0.05)',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    <ShieldCheck size={18} /> Customization & Compliance
+                </button>
             </div>
 
             <div className="card-white" style={{ minHeight: '400px' }}>
@@ -203,6 +220,8 @@ const AdminPanel = ({ onBack }) => {
                     <FormsManager />
                 ) : activeSection === 'site_settings' ? (
                     <SiteSettingsManager />
+                ) : activeSection === 'compliance' ? (
+                    <ComplianceManager />
                 ) : (
                     <TutorsManager />
                 )}
@@ -1130,5 +1149,94 @@ const SiteSettingsManager = () => {
         </div>
     );
 };
+
+const ComplianceManager = () => {
+    const [config, setConfig] = useState(() => {
+        const stored = localStorage.getItem('aura_nav_config');
+        return stored ? JSON.parse(stored) : {
+            showDailyTools: true,
+            showAcademics: true,
+            showRecords: true,
+            showTools: true,
+            showCampusLife: true,
+            showWellness: true,
+            showSocial: true,
+            showCareer: true,
+            showTutoring: true
+        };
+    });
+    
+    const [saveSuccess, setSaveSuccess] = useState(false);
+
+    const handleToggle = (key) => {
+        setConfig(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const handleSave = () => {
+        localStorage.setItem('aura_nav_config', JSON.stringify(config));
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 2000);
+        window.dispatchEvent(new Event('aura_nav_updated'));
+    };
+
+    return (
+        <div style={{ padding: '1rem' }}>
+            <div style={{ marginBottom: '2rem' }}>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: '#1e293b' }}>Institutional Customization & Compliance</h2>
+                <p style={{ margin: '0.5rem 0 0 0', color: '#64748b' }}>Adapt the platform to local privacy laws, state regulations, and institutional preferences.</p>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
+                {/* Navigation Toggle Card */}
+                <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '1rem', color: '#1e293b' }}>Navigation Modules</h3>
+                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.5rem' }}>Enable or disable entire sections of the student sidebar to fit your institution's specific offerings.</p>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <ToggleRow label="Daily Tools Section" value={config.showDailyTools} onChange={() => handleToggle('showDailyTools')} />
+                        <ToggleRow label="Academics Section" value={config.showAcademics} onChange={() => handleToggle('showAcademics')} />
+                        <ToggleRow label="My Records Section" value={config.showRecords} onChange={() => handleToggle('showRecords')} />
+                        <ToggleRow label="Tools & Support Section" value={config.showTools} onChange={() => handleToggle('showTools')} />
+                        <ToggleRow label="Campus Life Section" value={config.showCampusLife} onChange={() => handleToggle('showCampusLife')} />
+                    </div>
+                </div>
+
+                {/* Compliance Toggles Card */}
+                <div style={{ background: '#fffbeb', padding: '1.5rem', borderRadius: '16px', border: '1px solid #fef3c7' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                        <ShieldAlert size={20} color="#b45309" />
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: '800', margin: 0, color: '#b45309' }}>State Compliance Features</h3>
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: '#92400e', marginBottom: '1.5rem' }}>Toggle features that may be restricted by local privacy laws, data protection policies, or state regulations.</p>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <ToggleRow label="Mental Health & Wellness (HIPAA/FERPA constraints)" value={config.showWellness} onChange={() => handleToggle('showWellness')} highlight="#f59e0b" />
+                        <ToggleRow label="Social Campus & Forums (Content moderation constraints)" value={config.showSocial} onChange={() => handleToggle('showSocial')} highlight="#f59e0b" />
+                        <ToggleRow label="Career Pathfinder (State employment data laws)" value={config.showCareer} onChange={() => handleToggle('showCareer')} highlight="#f59e0b" />
+                        <ToggleRow label="Tutoring Center (Staff union/contract constraints)" value={config.showTutoring} onChange={() => handleToggle('showTutoring')} highlight="#f59e0b" />
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button onClick={handleSave} style={{ padding: '12px 24px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' }}>
+                    Save Configuration
+                </button>
+                {saveSuccess && <span style={{ color: '#10b981', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={18} /> Settings Applied Globally</span>}
+            </div>
+        </div>
+    );
+};
+
+const ToggleRow = ({ label, value, onChange, highlight }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontWeight: '600', fontSize: '0.9rem', color: highlight ? '#b45309' : '#475569' }}>{label}</span>
+        <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '40px', height: '24px' }}>
+            <input type="checkbox" checked={value} onChange={onChange} style={{ opacity: 0, width: 0, height: 0 }} />
+            <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: value ? (highlight || '#10b981') : '#cbd5e1', borderRadius: '34px', transition: '.4s' }}></span>
+            <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: value ? '20px' : '4px', bottom: '4px', backgroundColor: 'white', borderRadius: '50%', transition: '.4s' }}></span>
+        </label>
+    </div>
+);
 
 export default AdminPanel;

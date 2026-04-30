@@ -10,25 +10,26 @@ const DEMO_COURSES = [
     { enrollment_id: 3, course_code: 'ENG 101', course_name: 'Academic Writing', section_id: 1003, term: 'Fall 2024' },
 ];
 
-// Tutor roster per course code (fallback to general pool)
-const TUTORS_BY_COURSE = {
-    'CS 101': [
-        { id: 't1', name: 'Alex Patel', initials: 'AP', specialty: 'Data Structures & Algorithms', rating: 4.9, available: true, color: '#6366f1' },
-        { id: 't2', name: 'Maria Chen', initials: 'MC', specialty: 'Python & Web Dev', rating: 4.8, available: true, color: '#10b981' },
-        { id: 't3', name: 'Jordan Kim', initials: 'JK', specialty: 'Debugging & OOP', rating: 4.7, available: false, color: '#f59e0b' },
-    ],
-    'MATH 102': [
-        { id: 't4', name: 'Dr. Sofia Reyes', initials: 'SR', specialty: 'Calculus & Differential Eq.', rating: 5.0, available: true, color: '#8b5cf6' },
-        { id: 't5', name: 'Tom Wallace', initials: 'TW', specialty: 'Integration & Series', rating: 4.6, available: true, color: '#ec4899' },
-    ],
-    'ENG 101': [
-        { id: 't6', name: 'Priya Sharma', initials: 'PS', specialty: 'Essay Structure & MLA', rating: 4.8, available: true, color: '#14b8a6' },
-        { id: 't7', name: 'Chris Morgan', initials: 'CM', specialty: 'Research & Citations', rating: 4.5, available: true, color: '#f97316' },
-    ],
-    _default: [
-        { id: 'td1', name: 'Jamie Liu', initials: 'JL', specialty: 'General Academic Support', rating: 4.7, available: true, color: '#6366f1' },
-        { id: 'td2', name: 'Sam Rivera', initials: 'SR', specialty: 'Study Skills & Planning', rating: 4.6, available: true, color: '#10b981' },
-    ],
+// Flat list of tutors with explicit subjects/departments to strictly verify filters
+const ALL_TUTORS = [
+    { id: 't1', name: 'Alex Patel', initials: 'AP', specialty: 'Data Structures & Algorithms', rating: 4.9, available: true, color: '#6366f1', depts: ['CS'] },
+    { id: 't2', name: 'Maria Chen', initials: 'MC', specialty: 'Python & Web Dev', rating: 4.8, available: true, color: '#10b981', depts: ['CS'] },
+    { id: 't3', name: 'Jordan Kim', initials: 'JK', specialty: 'Debugging & OOP', rating: 4.7, available: false, color: '#f59e0b', depts: ['CS'] },
+    { id: 't4', name: 'Dr. Sofia Reyes', initials: 'SR', specialty: 'Calculus & Differential Eq.', rating: 5.0, available: true, color: '#8b5cf6', depts: ['MATH', 'STAT'] },
+    { id: 't5', name: 'Tom Wallace', initials: 'TW', specialty: 'Integration & Series', rating: 4.6, available: true, color: '#ec4899', depts: ['MATH'] },
+    { id: 't6', name: 'Priya Sharma', initials: 'PS', specialty: 'Essay Structure & MLA', rating: 4.8, available: true, color: '#14b8a6', depts: ['ENG', 'HIS'] },
+    { id: 't7', name: 'Chris Morgan', initials: 'CM', specialty: 'Research & Citations', rating: 4.5, available: true, color: '#f97316', depts: ['ENG', 'ART', 'BUS'] },
+    { id: 'td1', name: 'Jamie Liu', initials: 'JL', specialty: 'General Academic Support', rating: 4.7, available: true, color: '#6366f1', depts: ['_ALL'] },
+    { id: 'td2', name: 'Sam Rivera', initials: 'SR', specialty: 'Study Skills & Planning', rating: 4.6, available: true, color: '#10b981', depts: ['_ALL'] },
+];
+
+const getTutorsForCourse = (courseCode) => {
+    // Strip numbers and spaces to get the department prefix (e.g. "ENG101" -> "ENG")
+    const prefix = courseCode.replace(/[^a-zA-Z]/g, '').toUpperCase();
+    const matched = ALL_TUTORS.filter(t => t.depts.includes(prefix));
+    // Strictly prevent mismatched assignments by falling back ONLY to general support
+    if (matched.length > 0) return matched;
+    return ALL_TUTORS.filter(t => t.depts.includes('_ALL'));
 };
 
 const TutoringCenter = ({ onBack }) => {
@@ -297,7 +298,7 @@ const TutoringCenter = ({ onBack }) => {
                                             </div>
 
                                             {/* Named tutors */}
-                                            {(TUTORS_BY_COURSE[selectedCourse.course_code] || TUTORS_BY_COURSE._default).map(tutor => (
+                                            {getTutorsForCourse(selectedCourse.course_code).map(tutor => (
                                                 <div
                                                     key={tutor.id}
                                                     onClick={() => tutor.available && setSelectedTutor(tutor.id)}

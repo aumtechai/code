@@ -37,13 +37,14 @@ import WeeklySchedule from './WeeklySchedule';
 import AdvisorDashboard from './AdvisorDashboard';
 import DeanDashboard from './DeanDashboard';
 import StudentCalendar from './StudentCalendar';
+import MarketIntelligence from './MarketIntelligence';
 
 
 
 import {
     LayoutDashboard, MessageSquare, Calendar, BookOpen,
     TrendingUp, User, Settings, LogOut, Clock,
-    Users, FileText, Heart, GraduationCap, ChevronRight, Edit3, Menu, X, Shield, History as HistoryIcon, Brain, ScanLine, Mic, ShieldAlert, AlertTriangle, Briefcase, Map, CreditCard, Database, Calculator, Activity, ShieldCheck
+    Users, FileText, Heart, GraduationCap, ChevronRight, Edit3, Menu, X, Shield, History as HistoryIcon, Brain, ScanLine, Mic, ShieldAlert, AlertTriangle, Briefcase, Map, CreditCard, Database, Calculator, Activity, ShieldCheck, Target
 } from 'lucide-react';
 
 import { motion } from 'framer-motion';
@@ -73,6 +74,30 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
             }
         }
     };
+
+    const [navConfig, setNavConfig] = useState(() => {
+        const stored = localStorage.getItem('aura_nav_config');
+        return stored ? JSON.parse(stored) : {
+            showDailyTools: true,
+            showAcademics: true,
+            showRecords: true,
+            showTools: true,
+            showCampusLife: true,
+            showWellness: true,
+            showSocial: true,
+            showCareer: true,
+            showTutoring: true
+        };
+    });
+
+    useEffect(() => {
+        const updateNav = () => {
+            const stored = localStorage.getItem('aura_nav_config');
+            if (stored) setNavConfig(JSON.parse(stored));
+        };
+        window.addEventListener('aura_nav_updated', updateNav);
+        return () => window.removeEventListener('aura_nav_updated', updateNav);
+    }, []);
 
     return (
         <>
@@ -108,26 +133,44 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                     <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => handleProtectedTab('dashboard')}><LayoutDashboard size={20} strokeWidth={2.75} /> Dashboard</div>
                     <div className={`nav-item ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => handleProtectedTab('chat')}><MessageSquare size={20} strokeWidth={2.75} /> Get Aura</div>
 
-                    <div className="section-title">Academics</div>
-                    <div className={`nav-item ${activeTab === 'degree-roadmap' ? 'active' : ''}`} onClick={() => handleProtectedTab('degree-roadmap')}><Map size={20} strokeWidth={2.75} /> Degree Roadmap</div>
-                    <div className={`nav-item ${activeTab === 'courses' ? 'active' : ''}`} onClick={() => handleProtectedTab('courses')}><BookOpen size={20} strokeWidth={2.75} /> Courses</div>
-                    <div className={`nav-item ${activeTab === 'schedule' ? 'active' : ''}`} onClick={() => handleProtectedTab('schedule')}><Calendar size={20} strokeWidth={2.75} /> Schedule</div>
-                    <div className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => handleProtectedTab('calendar')}><Calendar size={20} strokeWidth={2.75} /> Student Life Calendar</div>
-                    <div className={`nav-item ${activeTab === 'syllabus' ? 'active' : ''}`} onClick={() => handleProtectedTab('syllabus')}><ScanLine size={20} strokeWidth={2.75} /> Syllabus Scanner</div>
-                    <div className={`nav-item ${activeTab === 'voice-notes' ? 'active' : ''}`} onClick={() => handleProtectedTab('voice-notes')}><Mic size={20} strokeWidth={2.75} /> Lecture Notes</div>
+                    {navConfig.showDailyTools && (
+                        <>
+                            <div className="section-title">Daily Tools</div>
+                            <div className={`nav-item ${activeTab === 'syllabus' ? 'active' : ''}`} onClick={() => handleProtectedTab('syllabus')}><ScanLine size={20} strokeWidth={2.75} /> Syllabus Scanner</div>
+                            <div className={`nav-item ${activeTab === 'voice-notes' ? 'active' : ''}`} onClick={() => handleProtectedTab('voice-notes')}><Mic size={20} strokeWidth={2.75} /> Lecture Notes</div>
+                            <div className={`nav-item ${activeTab === 'forms' ? 'active' : ''}`} onClick={() => handleProtectedTab('forms')}><FileText size={20} strokeWidth={2.75} /> Drop/Add Forms</div>
+                        </>
+                    )}
 
-                    <div className="section-title">My Records</div>
-                    <div className={`nav-item ${activeTab === 'forms' ? 'active' : ''}`} onClick={() => handleProtectedTab('forms')}><FileText size={20} strokeWidth={2.75} /> Drop/Add Forms</div>
-                    <div className={`nav-item ${activeTab === 'progress' ? 'active' : ''}`} onClick={() => handleProtectedTab('progress')}><TrendingUp size={20} strokeWidth={2.75} /> Progress</div>
-                    <div className={`nav-item ${activeTab === 'history' ? 'active' : ''}`} onClick={() => handleProtectedTab('history')}><HistoryIcon size={20} strokeWidth={2.75} /> My History</div>
+                    {navConfig.showAcademics && (
+                        <>
+                            <div className="section-title">Academics</div>
+                            <div className={`nav-item ${activeTab === 'degree-roadmap' ? 'active' : ''}`} onClick={() => handleProtectedTab('degree-roadmap')}><Map size={20} strokeWidth={2.75} /> Degree Roadmap</div>
+                            <div className={`nav-item ${activeTab === 'courses' ? 'active' : ''}`} onClick={() => handleProtectedTab('courses')}><BookOpen size={20} strokeWidth={2.75} /> Courses</div>
+                            <div className={`nav-item ${activeTab === 'schedule' ? 'active' : ''}`} onClick={() => handleProtectedTab('schedule')}><Calendar size={20} strokeWidth={2.75} /> Schedule</div>
+                            <div className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => handleProtectedTab('calendar')}><Calendar size={20} strokeWidth={2.75} /> Student Life Calendar</div>
+                        </>
+                    )}
 
-                    <div className="section-title">Tools & Support</div>
-                    <div className={`nav-item ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => handleProtectedTab('timer')}><Clock size={20} strokeWidth={2.75} /> Study Timer</div>
-                    <div className={`nav-item ${activeTab === 'smart-study' ? 'active' : ''}`} onClick={() => handleProtectedTab('smart-study')}><Brain size={20} strokeWidth={2.75} /> Flashcards</div>
-                    <div className={`nav-item ${activeTab === 'tutoring' ? 'active' : ''}`} onClick={() => handleProtectedTab('tutoring')}><GraduationCap size={20} strokeWidth={2.75} /> Tutoring Center</div>
-                    <div className={`nav-item ${activeTab === 'financial' ? 'active' : ''}`} onClick={() => handleProtectedTab('financial')}><GraduationCap size={20} strokeWidth={2.75} /> Financial Nexus</div>
-                    <div className={`nav-item ${activeTab === 'career' ? 'active' : ''}`} onClick={() => handleProtectedTab('career')}><Briefcase size={20} strokeWidth={2.75} /> Career Pathfinder</div>
-                    <div className={`nav-item ${activeTab === 'holds' ? 'active' : ''}`} onClick={() => handleProtectedTab('holds')}><ShieldAlert size={20} strokeWidth={2.75} /> Holds & Alerts</div>
+                    {navConfig.showRecords && (
+                        <>
+                            <div className="section-title">My Records</div>
+                            <div className={`nav-item ${activeTab === 'progress' ? 'active' : ''}`} onClick={() => handleProtectedTab('progress')}><TrendingUp size={20} strokeWidth={2.75} /> Progress</div>
+                            <div className={`nav-item ${activeTab === 'history' ? 'active' : ''}`} onClick={() => handleProtectedTab('history')}><HistoryIcon size={20} strokeWidth={2.75} /> My History</div>
+                        </>
+                    )}
+
+                    {navConfig.showTools && (
+                        <>
+                            <div className="section-title">Tools & Support</div>
+                            <div className={`nav-item ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => handleProtectedTab('timer')}><Clock size={20} strokeWidth={2.75} /> Study Timer</div>
+                            <div className={`nav-item ${activeTab === 'smart-study' ? 'active' : ''}`} onClick={() => handleProtectedTab('smart-study')}><Brain size={20} strokeWidth={2.75} /> Flashcards</div>
+                            {navConfig.showTutoring && <div className={`nav-item ${activeTab === 'tutoring' ? 'active' : ''}`} onClick={() => handleProtectedTab('tutoring')}><GraduationCap size={20} strokeWidth={2.75} /> Tutoring Center</div>}
+                            <div className={`nav-item ${activeTab === 'financial' ? 'active' : ''}`} onClick={() => handleProtectedTab('financial')}><GraduationCap size={20} strokeWidth={2.75} /> Financial Nexus</div>
+                            {navConfig.showCareer && <div className={`nav-item ${activeTab === 'career' ? 'active' : ''}`} onClick={() => handleProtectedTab('career')}><Briefcase size={20} strokeWidth={2.75} /> Career Pathfinder</div>}
+                            <div className={`nav-item ${activeTab === 'holds' ? 'active' : ''}`} onClick={() => handleProtectedTab('holds')}><ShieldAlert size={20} strokeWidth={2.75} /> Holds & Alerts</div>
+                        </>
+                    )}
                     
                     {/* Admin/Business Features - Hidden from App Review unless explicitly enabled */}
                     {(window.location.search.includes('admin=true') || localStorage.getItem('aura_admin') === 'true') && (
@@ -139,9 +182,13 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                         </>
                     )}
 
-                    <div className="section-title">Campus Life</div>
-                    <div className={`nav-item ${activeTab === 'social' ? 'active' : ''}`} onClick={() => handleProtectedTab('social')}><Users size={20} strokeWidth={2.75} /> Social Campus</div>
-                    <div className={`nav-item ${activeTab === 'wellness' ? 'active' : ''}`} onClick={() => handleProtectedTab('wellness')}><Heart size={20} strokeWidth={2.75} /> Wellness</div>
+                    {navConfig.showCampusLife && (
+                        <>
+                            <div className="section-title">Campus Life</div>
+                            {navConfig.showSocial && <div className={`nav-item ${activeTab === 'social' ? 'active' : ''}`} onClick={() => handleProtectedTab('social')}><Users size={20} strokeWidth={2.75} /> Social Campus</div>}
+                            {navConfig.showWellness && <div className={`nav-item ${activeTab === 'wellness' ? 'active' : ''}`} onClick={() => handleProtectedTab('wellness')}><Heart size={20} strokeWidth={2.75} /> Wellness</div>}
+                        </>
+                    )}
 
                     {(userData?.is_faculty || userData?.is_admin || currentRole === 'faculty') && (
                         <>
@@ -161,6 +208,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                         <>
                             <div className="section-title">Executive</div>
                             <div className={`nav-item ${activeTab === 'dean' ? 'active' : ''}`} onClick={() => handleProtectedTab('dean')}><TrendingUp size={20} strokeWidth={2.75} /> Dean's Dashboard</div>
+                            <div className={`nav-item ${activeTab === 'market-intel' ? 'active' : ''}`} onClick={() => handleProtectedTab('market-intel')}><Target size={20} strokeWidth={2.75} /> Market Intelligence</div>
                         </>
                     )}
 
@@ -309,14 +357,15 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
             <h3 className="section-title">Quick Actions</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
                 {[
+                    { icon: ScanLine, color: '#8b5cf6', label: 'Syllabus Scanner', sub: 'Auto-extract dates', action: 'syllabus' },
+                    { icon: Mic, color: '#4f46e5', label: 'Lecture Notes', sub: 'Transcribe audio', action: 'voice-notes' },
+                    { icon: FileText, color: '#f59e0b', label: 'Drop/Add Forms', sub: 'Deadline: Oct 15', action: 'forms' },
                     { icon: ShieldAlert, color: '#ef4444', label: 'Holds & Alerts', sub: 'Action required', action: 'holds' },
                     { icon: Calendar, color: '#6366f1', label: 'Life Calendar', sub: 'Month view & Alerts', action: 'calendar' },
                     { icon: Calendar, color: '#6366f1', label: 'My Schedule', sub: 'Weekly grid', action: 'schedule' },
                     { icon: Users, color: '#6366f1', label: 'Book Advisor', sub: 'Schedule a meeting', action: 'book-advisor' },
                     { icon: BookOpen, color: '#10b981', label: 'Tutoring Center', sub: 'Get study help', action: 'tutoring' },
-                    { icon: FileText, color: '#f59e0b', label: 'Drop/Add Forms', sub: 'Deadline: Oct 15', action: 'forms' },
                     { icon: Clock, color: '#eab308', label: 'Study Timer', sub: 'Stay focused', action: 'timer' },
-                    { icon: Mic, color: '#4f46e5', label: 'Voice Notes', sub: 'Transcribe lectures', action: 'voice-notes' },
                     { icon: Briefcase, color: '#ec4899', label: 'Career Finder', sub: 'Find internships', action: 'career' },
                 ].map((item, idx) => (
                     <motion.div
@@ -1322,6 +1371,7 @@ const Dashboard = () => {
                     {activeTab === 'faculty' && currentRole !== 'faculty' && <FacultyDashboard onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'advisor' && currentRole !== 'advisor' && <AdvisorDashboard onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'dean' && currentRole !== 'dean' && <DeanDashboard onBack={() => setActiveTab('dashboard')} />}
+                    {activeTab === 'market-intel' && <MarketIntelligence />}
 
                     {activeTab === 'degree-roadmap' && <DegreeRoadmap onBack={() => setActiveTab('dashboard')} />}
                     {activeTab === 'support' && <Support onBack={() => setActiveTab('dashboard')} />}

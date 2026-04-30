@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { BookOpen, Plus, Trash2, TrendingUp, Award, RefreshCw, Settings, Calendar, ChevronLeft, Check, Loader2, Upload, ScanLine, X } from 'lucide-react';
+import { BookOpen, Plus, Trash2, TrendingUp, Award, RefreshCw, Settings, Calendar, ChevronLeft, Check, Loader2, Upload, ScanLine, X, Search, BarChart2 } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -98,6 +98,62 @@ const SyllabusScanModal = ({ course, onClose, onSuccess }) => {
     );
 };
 
+const CourseSubstituteModal = ({ course, onClose }) => {
+    // Generate deterministic alternatives based on course code length
+    const isMath = course.code.includes('MATH') || course.code.includes('CS') || course.code.includes('STAT');
+    const alternatives = [
+        { code: isMath ? 'STAT210' : 'HUM205', name: isMath ? 'Applied Statistics' : 'Modern Humanities', prof: 'Dr. T. Alan', avgGrade: 'A-', distribution: { A: 45, B: 35, C: 15, D: 5 } },
+        { code: isMath ? 'MATH220' : 'SOC110', name: isMath ? 'Discrete Math II' : 'Sociology Basics', prof: 'Prof. L. Chen', avgGrade: 'B+', distribution: { A: 25, B: 45, C: 20, D: 10 } },
+        { code: course.code + 'X', name: course.name + ' (Honors)', prof: 'Dr. M. Thorne', avgGrade: 'B-', distribution: { A: 15, B: 25, C: 40, D: 20 } }
+    ];
+
+    return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: '1rem' }}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="card-white" style={{ width: '100%', maxWidth: '650px', maxHeight: '90vh', overflowY: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                    <div>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><Search size={20} color="#4f46e5" /> Substitute Courses</h3>
+                        <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '4px 0 0 0' }}>Historical grades and alternatives for {course.name} ({course.code})</p>
+                    </div>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {alternatives.map((alt, i) => (
+                        <div key={i} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1rem', background: '#f8fafc' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                                <div>
+                                    <h4 style={{ margin: 0, fontWeight: '700', color: '#1e293b', fontSize: '1.1rem' }}>{alt.code} - {alt.name}</h4>
+                                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>Instructor: <span style={{ fontWeight: '600' }}>{alt.prof}</span></div>
+                                </div>
+                                <div style={{ background: '#dcfce7', color: '#166534', padding: '4px 12px', borderRadius: '20px', fontWeight: '800', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <Award size={14} /> Avg: {alt.avgGrade}
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#475569', marginBottom: '6px', fontWeight: '600' }}>
+                                <BarChart2 size={14} /> Historical Grade Distribution
+                            </div>
+                            <div style={{ display: 'flex', height: '16px', borderRadius: '8px', overflow: 'hidden', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)' }}>
+                                <div style={{ width: `${alt.distribution.A}%`, background: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'white', fontWeight: 'bold' }} title={`A: ${alt.distribution.A}%`}>{alt.distribution.A > 10 ? 'A' : ''}</div>
+                                <div style={{ width: `${alt.distribution.B}%`, background: '#eab308', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'white', fontWeight: 'bold' }} title={`B: ${alt.distribution.B}%`}>{alt.distribution.B > 10 ? 'B' : ''}</div>
+                                <div style={{ width: `${alt.distribution.C}%`, background: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'white', fontWeight: 'bold' }} title={`C: ${alt.distribution.C}%`}>{alt.distribution.C > 10 ? 'C' : ''}</div>
+                                <div style={{ width: `${alt.distribution.D}%`, background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: 'white', fontWeight: 'bold' }} title={`D/F: ${alt.distribution.D}%`}>{alt.distribution.D > 10 ? 'D/F' : ''}</div>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b', marginTop: '6px', fontWeight: '500' }}>
+                                <span>A ({alt.distribution.A}%)</span>
+                                <span>B ({alt.distribution.B}%)</span>
+                                <span>C ({alt.distribution.C}%)</span>
+                                <span>D/F ({alt.distribution.D}%)</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
 const gradePoints = {
     'A': 4.0, 'A-': 3.7,
     'B+': 3.3, 'B': 3.0, 'B-': 2.7,
@@ -112,6 +168,7 @@ const Courses = ({ userData: externalUserData, onBack }) => {
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncStatus, setSyncStatus] = useState(null);
     const [scannerCourse, setScannerCourse] = useState(null);
+    const [substituteCourse, setSubstituteCourse] = useState(null);
     const [newCourse, setNewCourse] = useState({ name: '', code: '', grade: 'B', credits: 3 });
 
     useEffect(() => {
@@ -404,6 +461,9 @@ const Courses = ({ userData: externalUserData, onBack }) => {
                                         </td>
                                         <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                                             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                <button onClick={() => setSubstituteCourse(course)} style={{ border: '1px solid #bfdbfe', background: '#eff6ff', color: '#3b82f6', cursor: 'pointer', padding: '6px 12px', borderRadius: '8px', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', fontWeight: '700' }}>
+                                                    <Search size={14} strokeWidth={2.5} /> Substitutes & Grades
+                                                </button>
                                                 <button onClick={() => handleDelete(course.id)} style={{ border: 'none', background: '#fee2e2', color: '#ef4444', cursor: 'pointer', padding: '8px', borderRadius: '8px', transition: 'all 0.2s' }}>
                                                     <Trash2 size={16} />
                                                 </button>
@@ -427,6 +487,12 @@ const Courses = ({ userData: externalUserData, onBack }) => {
                             setScannerCourse(null);
                             fetchCourses();
                         }} 
+                    />
+                )}
+                {substituteCourse && (
+                    <CourseSubstituteModal
+                        course={substituteCourse}
+                        onClose={() => setSubstituteCourse(null)}
                     />
                 )}
             </AnimatePresence>

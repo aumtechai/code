@@ -14,6 +14,7 @@ const AdvisorDashboard = ({ onBack }) => {
     const [appointments, setAppointments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [migrations, setMigrations] = useState([]);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
 
     useEffect(() => {
         const fetchAdvisorData = async () => {
@@ -352,10 +353,39 @@ const AdvisorDashboard = ({ onBack }) => {
                                             </div>
                                             <div style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600' }}>{app.type}</div>
                                             <div style={{ display: 'flex', gap: '1rem', marginTop: '12px' }}>
-                                                 <button style={{ background: 'none', border: 'none', color: '#4f46e5', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', padding: 0 }}>Launch Meeting</button>
+                                                 <button onClick={() => setSelectedAppointment(selectedAppointment === idx ? null : idx)} style={{ background: 'none', border: 'none', color: '#4f46e5', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', padding: 0 }}>
+                                                     {selectedAppointment === idx ? 'Close Workspace' : 'Launch Workspace'}
+                                                 </button>
                                                  <button style={{ background: 'none', border: 'none', color: '#64748b', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', padding: 0 }}>View Profile</button>
                                             </div>
                                         </div>
+                                        
+                                        {/* Workspace Expansion for Scripts & Pre-Meeting Notes */}
+                                        {selectedAppointment === idx && (
+                                            <div style={{ width: '100%', marginTop: '1rem', paddingTop: '1.25rem', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '1.5rem', flexDirection: window.innerWidth <= 768 ? 'column' : 'row' }}>
+                                                {/* Pre-Meeting Notes */}
+                                                <div style={{ flex: 1, background: 'white', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem', fontWeight: '800', color: '#1e293b', fontSize: '0.95rem' }}>
+                                                        <AlertTriangle size={16} color="#f59e0b" /> Pre-Meeting AI Notes
+                                                    </div>
+                                                    <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#475569', fontSize: '0.85rem', lineHeight: 1.6, fontWeight: '500' }}>
+                                                        <li>Student requested help with {app.type.toLowerCase()}.</li>
+                                                        <li>Currently tracking {app.student === 'Alex Rivera' ? 'Low' : 'Good'} academic standing overall.</li>
+                                                        {app.status === 'Critical' && <li>Action Required: Needs immediate schedule adjustment.</li>}
+                                                        <li>Last touchpoint was more than 3 weeks ago.</li>
+                                                    </ul>
+                                                </div>
+                                                {/* Advising Scripts */}
+                                                <div style={{ flex: 1, background: '#eef2ff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #c7d2fe' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem', fontWeight: '800', color: '#4f46e5', fontSize: '0.95rem' }}>
+                                                        <MessageSquare size={16} /> Recommended Script
+                                                    </div>
+                                                    <p style={{ margin: 0, color: '#4338ca', fontSize: '0.85rem', lineHeight: 1.6, fontStyle: 'italic', fontWeight: '500' }}>
+                                                        "Hi {app.student.split(' ')[0]}, I wanted to review your {app.type.toLowerCase()} today. I noticed you might be facing some challenges recently. Our priority is your success—how can we best support your current workload?"
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                              </div>

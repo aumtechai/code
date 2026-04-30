@@ -127,6 +127,25 @@ const WellnessCheck = ({ onBack }) => {
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Visual Bait / Previews */}
+                        <div style={{ marginTop: '3rem', borderTop: '1px solid #f1f5f9', paddingTop: '2rem', textAlign: 'left' }}>
+                            <h4 style={{ fontWeight: '700', fontSize: '1rem', color: '#1e293b', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}><Sparkles size={18} color="#f59e0b" /> Unlock personalized support</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '4px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                                    <div style={{ fontWeight: '700', color: '#4f46e5', display: 'flex', alignItems: 'center', gap: '6px' }}><Users size={14}/> Counseling</div>
+                                    <div style={{ color: '#64748b' }}>Free professional sessions</div>
+                                </div>
+                                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '4px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                                    <div style={{ fontWeight: '700', color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px' }}><Wind size={14}/> Meditation</div>
+                                    <div style={{ color: '#64748b' }}>Guided daily relaxation</div>
+                                </div>
+                                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '4px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                                    <div style={{ fontWeight: '700', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '6px' }}><ShieldAlert size={14}/> Crisis Support</div>
+                                    <div style={{ color: '#64748b' }}>24/7 immediate assistance</div>
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
                 )}
 
