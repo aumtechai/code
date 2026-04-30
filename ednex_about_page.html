@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/bookmark_logo.png" />
+
+  <!-- SEO Meta Tags -->
+  <title>Aura | Your Campus Co-Pilot</title>
+  <meta name="description"
+    content="Aura is your campus co-pilot, an advanced AI infrastructure deeply integrated with institutional networks to empower students, faculty, and administrators." />
+  <meta name="keywords" content="Aura, AI Campus Co-Pilot, Student Success, EdNex, AI Agent" />
+  <meta name="author" content="Aura" />
+  <link rel="canonical" href="https://aumtech.ai" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://aumtech.ai" />
+  <meta property="og:title" content="Aura | Your Campus Co-Pilot" />
+  <meta property="og:description" content="Aura is your campus co-pilot, empowering stakeholders with FERPA-compliant AI intelligence." />
+  <meta property="og:image" content="https://aumtech.ai/assets/logo.png" />
+
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://aumtech.ai" />
+  <meta property="twitter:title" content="Aura | Your Campus Co-Pilot" />
+  <meta property="twitter:description"
+    content="Aura is your campus co-pilot, empowering stakeholders with FERPA-compliant AI intelligence." />
+  <meta property="twitter:image" content="https://aumtech.ai/assets/logo.png" />
+
+  <!-- iOS-optimized viewport with safe area support -->
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+  <!-- iOS Status Bar and Theme -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#4f46e5" />
+
+  <!-- iOS Touch Icons -->
+  <link rel="apple-touch-icon" href="/bookmark_logo.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/bookmark_logo.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/bookmark_logo.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="/bookmark_logo.png" />
+
+  <!-- JSON-LD Structured Data for AEO & Rich Snippets -->
+  <script type="application/ld+json">
+    [{
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Aumtech.ai",
+      "url": "https://aumtech.ai/",
+      "logo": "https://aumtech.ai/assets/logo.png",
+      "sameAs": [
+        "https://www.linkedin.com/company/aumtech-inc/"
+      ]
+    }, {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Aumtech.ai",
+      "url": "https://aumtech.ai/"
+    }, {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Aura - Your Campus Co-Pilot",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Aura",
+        "url": "https://aumtech.ai",
+        "logo": "https://aumtech.ai/assets/logo.png"
+      },
+      "description": "An AI-powered multi-agent system designed to support students with academic, administrative, and wellness queries."
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "How does Aura track my GPA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Aura acts as your personal AI student platform by integrating directly with your syllabus to calculate and forecast your GPA in real-time."
+        }
+      }, {
+        "@type": "Question",
+        "name": "What is Aura?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It is an intelligent academic platform that uses AI to track courses, plan study schedules, and offer wellness check-ins, serving as an automated college advisor."
+        }
+      }]
+    }]
+  </script>
+  <script type="module" crossorigin src="/assets/index-qepdTNp8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-X31vR5FR.css">
+</head>
+<body>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+
+  .hero { padding: 4rem 2rem 3rem; text-align: center; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .hero-eyebrow { font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #185FA5; margin-bottom: 1rem; }
+  .hero-title { font-size: 36px; font-weight: 500; color: var(--color-text-primary); line-height: 1.2; max-width: 680px; margin: 0 auto 1.25rem; }
+  .hero-title span { color: #185FA5; }
+  .hero-sub { font-size: 17px; color: var(--color-text-secondary); max-width: 580px; margin: 0 auto 2rem; line-height: 1.7; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .badge { font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 20px; border: 0.5px solid; }
+  .badge-blue { background: #E6F1FB; color: #0C447C; border-color: #B5D4F4; }
+  .badge-teal { background: #E1F5EE; color: #085041; border-color: #9FE1CB; }
+  .badge-purple { background: #EEEDFE; color: #3C3489; border-color: #CECBF6; }
+  .badge-amber { background: #FAEEDA; color: #633806; border-color: #FAC775; }
+  .badge-coral { background: #FAECE7; color: #712B13; border-color: #F5C4B3; }
+
+  .section { padding: 3rem 2rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 0.5rem; }
+  .section-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; }
+  .section-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.7; max-width: 620px; margin-bottom: 2rem; }
+
+  .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .module-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; display: flex; flex-direction: column; gap: 10px; }
+  .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .module-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .module-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; flex: 1; }
+
+  .feature-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .feature-card { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.5rem; }
+  .feature-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
+  .feature-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .feature-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .feature-list li { font-size: 13px; color: var(--color-text-secondary); padding-left: 14px; position: relative; line-height: 1.5; }
+  .feature-list li::before { content: '–'; position: absolute; left: 0; color: var(--color-text-tertiary); }
+
+  .inst-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .inst-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center; }
+  .inst-icon-wrap { width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
+  .inst-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .inst-sub { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 2rem; }
+  .stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
+  .stat-num { font-size: 28px; font-weight: 500; color: var(--color-text-primary); }
+  .stat-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.4; }
+  .stat-accent { color: #185FA5; }
+
+  .quote-block { background: #E6F1FB; border-left: 3px solid #185FA5; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+  .quote-text { font-size: 15px; color: #0C447C; line-height: 1.7; font-style: italic; }
+  .quote-attr { font-size: 12px; color: #185FA5; margin-top: 8px; font-weight: 500; }
+
+  .journey-steps { display: flex; flex-direction: column; gap: 0; }
+  .journey-step { display: flex; gap: 16px; padding: 1rem 0; position: relative; }
+  .step-line-wrap { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+  .step-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+  .step-connector { flex: 1; width: 1px; background: var(--color-border-tertiary); margin-top: 4px; }
+  .step-content { flex: 1; padding-bottom: 0.5rem; }
+  .step-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .step-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+
+  .cta-section { padding: 3rem 2rem; text-align: center; background: var(--color-background-secondary); }
+  .cta-title { font-size: 24px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; }
+  .cta-sub { font-size: 15px; color: var(--color-text-secondary); max-width: 500px; margin: 0 auto 1.75rem; line-height: 1.7; }
+  .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: #185FA5; color: #fff; border: none; padding: 10px 24px; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; cursor: pointer; }
+  .btn-primary:hover { background: #0C447C; }
+  .btn-secondary { background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); padding: 10px 24px; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; cursor: pointer; }
+  .btn-secondary:hover { background: var(--color-background-tertiary); }
+
+  .divider-label { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
+  .divider-label span { font-size: 13px; font-weight: 500; color: var(--color-text-tertiary); white-space: nowrap; }
+  .divider-line { flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+
+  svg.icon { width: 18px; height: 18px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">EdNex platform by aumtech.ai – About page describing student success modules for academic and career outcomes</h2>
+
+<div class="hero">
+  <p class="hero-eyebrow">aumtech.ai &nbsp;·&nbsp; EdNex Platform</p>
+  <h1 class="hero-title">The intelligence layer for <span>student success</span></h1>
+  <p class="hero-sub">EdNex unifies academic advising, career readiness, early intervention, and institutional analytics into a single platform — purpose-built for every student, every program, and every institution.</p>
+  <div class="hero-badges">
+    <span class="badge badge-blue">Academic Success</span>
+    <span class="badge badge-teal">Career Readiness</span>
+    <span class="badge badge-purple">Early Alert & Retention</span>
+    <span class="badge badge-amber">Institutional Analytics</span>
+    <span class="badge badge-coral">All Programs & Disciplines</span>
+  </div>
+</div>
+
+<div class="section">
+  <p class="section-label">The problem we solve</p>
+  <h2 class="section-title">Student success is fragmented. EdNex connects it.</h2>
+  <p class="section-desc">Across universities, advising teams, career centers, faculty, and student affairs operate in silos. Students fall through the cracks not because of a lack of resources, but because those resources can't see or communicate with each other. EdNex changes that.</p>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num stat-accent">40%</div><div class="stat-label">of students who struggle never connect with an advisor</div></div>
+    <div class="stat-card"><div class="stat-num stat-accent">67%</div><div class="stat-label">of employers say graduates lack career readiness skills</div></div>
+    <div class="stat-card"><div class="stat-num stat-accent">1 in 3</div><div class="stat-label">students do not complete their degree within 6 years</div></div>
+    <div class="stat-card"><div class="stat-num stat-accent">5+</div><div class="stat-label">disconnected systems the average advising team uses daily</div></div>
+  </div>
+
+  <div class="quote-block">
+    <p class="quote-text">EdNex gives every advisor, career counselor, and faculty member a unified, real-time picture of every student — so no one is invisible, and no opportunity is missed.</p>
+    <p class="quote-attr">— EdNex platform philosophy</p>
+  </div>
+</div>
+
+<div class="section">
+  <p class="section-label">Platform modules</p>
+  <h2 class="section-title">Everything student success requires, in one platform</h2>
+  <p class="section-desc">EdNex is built around four interconnected modules that share a single student record, a unified workflow engine, and institution-wide analytics.</p>
+
+  <div class="module-grid">
+    <div class="module-card">
+      <div class="module-icon" style="background:#E6F1FB;">
+        <svg class="icon" style="stroke:#185FA5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="module-title">Academic Advising Hub</div>
+      <div class="module-desc">Degree audit, course planning, what-if analysis, graduation roadmaps, and advisor caseload management across all majors and programs.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon" style="background:#E1F5EE;">
+        <svg class="icon" style="stroke:#0F6E56" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+      </div>
+      <div class="module-title">Career Success Studio</div>
+      <div class="module-desc">Career exploration, résumé builder, employer matching, internship and co-op tracking, interview prep, and alumni mentorship networks.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon" style="background:#EEEDFE;">
+        <svg class="icon" style="stroke:#534AB7" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="module-title">Early Alert & Intervention</div>
+      <div class="module-desc">Predictive risk scoring, attendance and grade-flag triggers, coordinated care teams, progress reports, and automated outreach workflows.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon" style="background:#FAEEDA;">
+        <svg class="icon" style="stroke:#854F0B" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div class="module-title">Institutional Intelligence</div>
+      <div class="module-desc">Enrollment trends, retention dashboards, equity gap analytics, program-level outcomes, accreditation reporting, and executive scorecards.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon" style="background:#FAECE7;">
+        <svg class="icon" style="stroke:#993C1D" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      </div>
+      <div class="module-title">Holistic Student Profile</div>
+      <div class="module-desc">A unified 360° view of every student: academics, extracurriculars, financial aid flags, wellness indicators, and engagement history.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon" style="background:#EAF3DE;">
+        <svg class="icon" style="stroke:#3B6D11" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="module-title">Engagement & Appointments</div>
+      <div class="module-desc">Self-service scheduling, walk-in queuing, virtual advising, group campaigns, nudge messaging, and service utilization tracking.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <p class="section-label">Academic success features</p>
+  <h2 class="section-title">Built for every discipline — from pre-med to architecture</h2>
+  <p class="section-desc">EdNex supports institutions with complex multi-disciplinary catalogs including engineering, STEM, fine arts, architecture, law, medicine, dentistry, and all professional programs.</p>
+
+  <div class="feature-row">
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#185FA5;"></div>
+        <span class="feature-title">Degree planning</span>
+      </div>
+      <ul class="feature-list">
+        <li>Multi-year graduation roadmaps by major</li>
+        <li>What-if major/minor exploration</li>
+        <li>Real-time degree audit with credit mapping</li>
+        <li>Transfer credit equivalency engine</li>
+        <li>Professional licensure requirement tracking</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#534AB7;"></div>
+        <span class="feature-title">Risk & retention</span>
+      </div>
+      <ul class="feature-list">
+        <li>Predictive success scoring updated weekly</li>
+        <li>Grade and attendance flag automation</li>
+        <li>Faculty-initiated progress reports</li>
+        <li>Coordinated care team case management</li>
+        <li>First-generation and equity-gap dashboards</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#0F6E56;"></div>
+        <span class="feature-title">Advising workflows</span>
+      </div>
+      <ul class="feature-list">
+        <li>Caseload assignment and balancing tools</li>
+        <li>Appointment notes with structured templates</li>
+        <li>Automated pre-registration checklists</li>
+        <li>Integrated messaging and nudge campaigns</li>
+        <li>Advisor performance and activity reports</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <p class="section-label">Career success features</p>
+  <h2 class="section-title">From classroom to career — every step connected</h2>
+  <p class="section-desc">EdNex bridges the gap between academic milestones and career outcomes, making career development a continuous thread through every semester.</p>
+
+  <div class="feature-row">
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#854F0B;"></div>
+        <span class="feature-title">Career exploration</span>
+      </div>
+      <ul class="feature-list">
+        <li>Major-to-career pathway mapping</li>
+        <li>Occupational outlook and salary data</li>
+        <li>Skills gap assessment and learning plans</li>
+        <li>Interest and strength profiling tools</li>
+        <li>Alumni career outcome comparisons</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#993C1D;"></div>
+        <span class="feature-title">Employer & opportunity hub</span>
+      </div>
+      <ul class="feature-list">
+        <li>Job, internship, and co-op board</li>
+        <li>Employer relationship management</li>
+        <li>On-campus recruiting coordination</li>
+        <li>Research, fellowship, and grant postings</li>
+        <li>Outcome tracking and placement reporting</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#185FA5;"></div>
+        <span class="feature-title">Readiness development</span>
+      </div>
+      <ul class="feature-list">
+        <li>AI-assisted résumé and cover letter builder</li>
+        <li>Mock interview scheduling and feedback</li>
+        <li>Professional milestone badge tracking</li>
+        <li>Mentorship matching with alumni network</li>
+        <li>Graduate and professional school prep</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <p class="section-label">Student journey</p>
+  <h2 class="section-title">Supporting students from day one through graduation and beyond</h2>
+  <p class="section-desc">EdNex meets students at every critical moment in their academic journey with the right intervention, resource, or opportunity.</p>
+
+  <div class="journey-steps">
+    <div class="journey-step">
+      <div class="step-line-wrap">
+        <div class="step-circle" style="background:#E6F1FB;color:#185FA5;">1</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">Enrollment & orientation</div>
+        <div class="step-desc">Pre-enrollment advising, placement assessment integration, first-semester roadmap generation, and orientation task completion tracking.</div>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-line-wrap">
+        <div class="step-circle" style="background:#EEEDFE;color:#534AB7;">2</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">Early academic milestones</div>
+        <div class="step-desc">Proactive outreach for at-risk students, major declaration workflows, financial aid progress flags, and learning community coordination.</div>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-line-wrap">
+        <div class="step-circle" style="background:#E1F5EE;color:#0F6E56;">3</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">Mid-program development</div>
+        <div class="step-desc">Internship and research opportunity matching, skills portfolio building, academic standing review, and graduate school exploration.</div>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-line-wrap">
+        <div class="step-circle" style="background:#FAEEDA;color:#854F0B;">4</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">Pre-graduation & career launch</div>
+        <div class="step-desc">Graduation application workflows, licensure exam prep tracking, employer recruiting, job offer logging, and outcomes survey automation.</div>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-line-wrap">
+        <div class="step-circle" style="background:#FAECE7;color:#993C1D;">5</div>
+      </div>
+      <div class="step-content">
+        <div class="step-title">Alumni & institutional outcomes</div>
+        <div class="step-desc">Alumni mentorship network activation, placement rate reporting, program accreditation data exports, and longitudinal outcome analytics.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <p class="section-label">Who EdNex serves</p>
+  <h2 class="section-title">Designed for every institution</h2>
+  <p class="section-desc">Whether you lead a flagship research university or a regional community college, EdNex scales to your mission, your structure, and your students.</p>
+
+  <div class="inst-grid">
+    <div class="inst-card">
+      <div class="inst-icon-wrap" style="background:#E6F1FB;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="inst-label">Research universities</div>
+      <div class="inst-sub">Multi-college complexity, professional programs, graduate schools</div>
+    </div>
+    <div class="inst-card">
+      <div class="inst-icon-wrap" style="background:#EEEDFE;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="inst-label">State colleges</div>
+      <div class="inst-sub">Regional access, workforce alignment, transfer pathways</div>
+    </div>
+    <div class="inst-card">
+      <div class="inst-icon-wrap" style="background:#E1F5EE;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="inst-label">Community colleges</div>
+      <div class="inst-sub">Two-year programs, dual enrollment, continuing education</div>
+    </div>
+    <div class="inst-card">
+      <div class="inst-icon-wrap" style="background:#FAEEDA;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+      </div>
+      <div class="inst-label">Technical schools</div>
+      <div class="inst-sub">CTE programs, certifications, industry credentialing</div>
+    </div>
+    <div class="inst-card">
+      <div class="inst-icon-wrap" style="background:#FAECE7;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#993C1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <div class="inst-label">Professional schools</div>
+      <div class="inst-sub">Law, medicine, dental, pharmacy, and allied health</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <p class="section-label">Technology & integration</p>
+  <h2 class="section-title">Built to connect — not replace — your existing stack</h2>
+  <p class="section-desc">EdNex integrates natively with leading SIS, LMS, financial aid, and HR systems so your teams work in one place without rebuilding what already works.</p>
+
+  <div class="feature-row">
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#185FA5;"></div>
+        <span class="feature-title">SIS & LMS connectors</span>
+      </div>
+      <ul class="feature-list">
+        <li>Banner, PeopleSoft, Workday Student</li>
+        <li>Canvas, Blackboard, Moodle, D2L</li>
+        <li>Real-time grade and enrollment sync</li>
+        <li>FERPA-compliant data handling</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#534AB7;"></div>
+        <span class="feature-title">AI & data engine</span>
+      </div>
+      <ul class="feature-list">
+        <li>Predictive risk models trained per institution</li>
+        <li>Natural language advisor note summaries</li>
+        <li>Intelligent appointment routing</li>
+        <li>Equity-aware algorithmic design</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="feature-dot" style="background:#0F6E56;"></div>
+        <span class="feature-title">Security & compliance</span>
+      </div>
+      <ul class="feature-list">
+        <li>FERPA, SOC 2 Type II, WCAG 2.1 AA</li>
+        <li>SSO via SAML 2.0 and OAuth</li>
+        <li>Role-based access and audit trails</li>
+        <li>Cloud-native with 99.9% SLA uptime</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2 class="cta-title">Ready to transform student success at your institution?</h2>
+  <p class="cta-sub">Join leading universities and colleges already using EdNex to close equity gaps, improve retention, and launch students into meaningful careers.</p>
+  <div class="cta-buttons">
+    <button class="btn-primary" onclick="sendPrompt('I want to request a demo of EdNex from aumtech.ai')">Request a demo ↗</button>
+    <button class="btn-secondary" onclick="sendPrompt('Tell me more about EdNex pricing and implementation')">Explore pricing & implementation ↗</button>
+  </div>
+  <p style="font-size:12px;color:var(--color-text-tertiary);margin-top:1.5rem;">EdNex is a product of aumtech.ai &nbsp;·&nbsp; Built for higher education &nbsp;·&nbsp; Trusted by institutions nationwide</p>
+</div>
+< / b o d y > < / h t m l > 
+ 
+ 
+</body>
+</html>

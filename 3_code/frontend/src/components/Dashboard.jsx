@@ -132,9 +132,9 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                     {/* Admin/Business Features - Hidden from App Review unless explicitly enabled */}
                     {(window.location.search.includes('admin=true') || localStorage.getItem('aura_admin') === 'true') && (
                         <>
-                            <div className="section-title">Institutional (Admin Only)</div>
+                            <div className="section-title">School Administration</div>
                             <div className={`nav-item ${activeTab === 'ednex' ? 'active' : ''}`} onClick={() => handleProtectedTab('ednex')}><Briefcase size={20} strokeWidth={2.75} /> Project EdNex</div>
-                            <div className={`nav-item ${activeTab === 'license' ? 'active' : ''}`} onClick={() => handleProtectedTab('license')}><Shield size={20} strokeWidth={2.75} /> Institutional Access</div>
+                            <div className={`nav-item ${activeTab === 'license' ? 'active' : ''}`} onClick={() => handleProtectedTab('license')}><Shield size={20} strokeWidth={2.75} /> Access & Subscription</div>
                             <div className={`nav-item ${activeTab === 'quote' ? 'active' : ''}`} onClick={() => onTabChange('quote')}><Calculator size={20} strokeWidth={2.75} stroke="#ec4899" /> Proposal Builder</div>
                         </>
                     )}
@@ -170,7 +170,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                             <div className={`nav-item ${activeTab === 'adminPanel' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminPanel')}><Shield size= {20} strokeWidth={2.75} /> Admin Panel</div>
                             <div className={`nav-item ${activeTab === 'adminEdnex' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminEdnex')}><Database size={20} strokeWidth={2.75} /> EdNex Config</div>
                             <div className={`nav-item ${activeTab === 'adminAgentConfig' ? 'active' : ''}`} onClick={() => handleProtectedTab('adminAgentConfig')}><Brain size={20} strokeWidth={2.75} /> Agent Swarm Config</div>
-                            <div className={`nav-item ${activeTab === 'integration' ? 'active' : ''}`} onClick={() => handleProtectedTab('integration')}><Map size={20} strokeWidth={2.75} /> Institution Integration</div>
+                            <div className={`nav-item ${activeTab === 'integration' ? 'active' : ''}`} onClick={() => handleProtectedTab('integration')}><Map size={20} strokeWidth={2.75} /> Data Integration</div>
                             <div className={`nav-item ${activeTab === 'quoteGen' ? 'active' : ''}`} onClick={() => handleProtectedTab('quoteGen')}><Calculator size={20} strokeWidth={2.75} /> Quote Generator</div>
                         </>
                     )}
@@ -207,7 +207,7 @@ const Sidebar = ({ activeTab, onTabChange, userData, isOpen, onClose, currentRol
                         {/* Admin Overlap Guard (Locked from Apple Review) */}
                         {(window.location.search.includes('aura_master=true')) && (
                             <div style={{ marginTop: '1rem', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1.5px dashed #cbd5e1' }}>
-                                <div style={{ fontSize: '0.65rem', fontWeight: '900', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Institutional Access</div>
+                                <div style={{ fontSize: '0.65rem', fontWeight: '900', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Role Switcher</div>
                                 <select 
                                     value={currentRole} 
                                     onChange={(e) => onRoleChange(e.target.value)}
@@ -300,7 +300,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
 
                 {userData?.is_ednex_verified && (
                     <div className="license-badge">
-                        Institutional License Active
+                        ✓ Access Active
                     </div>
                 )}
             </motion.div>
@@ -682,7 +682,7 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
 
                 <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
-                    {/* Section 1: Institutional Identity */}
+                    {/* Section 1: Account Identity */}
                     <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                             <div>
@@ -804,7 +804,7 @@ const EditProfileModal = ({ userData, onClose, onRefresh }) => {
                             🔑 Change Password
                         </h4>
                         <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.25rem' }}>
-                            Update your login credentials. Changes are synced to your institutional account.
+                            Update your login credentials. Changes take effect immediately.
                         </p>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                             <div>

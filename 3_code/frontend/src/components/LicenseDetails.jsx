@@ -34,7 +34,7 @@ const LicenseDetails = ({ userData, onBack }) => {
                 )}
                 <div>
                     <h2 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0 }}>Access Control</h2>
-                    <p style={{ color: '#64748b', margin: 0 }}>View your institutional license details.</p>
+                    <p style={{ color: '#64748b', margin: 0 }}>View your platform access and subscription details.</p>
                 </div>
             </div>
 
@@ -44,7 +44,7 @@ const LicenseDetails = ({ userData, onBack }) => {
                     animate={{ opacity: 1, scale: 1 }}
                     style={{ display: 'inline-flex', padding: '8px 16px', background: '#e0e7ff', color: '#4338ca', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '1.5rem' }}
                 >
-                    INSTITUTIONAL ACCESS
+                    FULL PLATFORM ACCESS
                 </motion.div>
                 <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '1rem', background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     University Portal
@@ -75,7 +75,7 @@ const LicenseDetails = ({ userData, onBack }) => {
                     </div>
 
                     <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-                        <h3 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.75rem', color: '#1e293b' }}>Institutional License</h3>
+                        <h3 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.75rem', color: '#1e293b' }}>Full Platform License</h3>
                         <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem' }}>Enjoy the complete Aura Campus Co-Pilot suite via your university partnership.</p>
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center' }}>
                             <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#10b981' }}>UNLOCKED</span>
@@ -91,7 +91,7 @@ const LicenseDetails = ({ userData, onBack }) => {
                         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
                             <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.05rem', fontWeight: '600', color: '#1e293b' }}><Check size={20} color="#10b981" /> Career Mapper</li>
                             <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.05rem', fontWeight: '600', color: '#1e293b' }}><Check size={20} color="#10b981" /> Wellness Insights</li>
-                            <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.05rem', fontWeight: '600', color: '#1e293b' }}><Check size={20} color="#10b981" /> Institutional Analytics</li>
+                            <li style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.05rem', fontWeight: '600', color: '#1e293b' }}><Check size={20} color="#10b981" /> Campus Analytics</li>
                         </ul>
                     </div>
 
@@ -124,7 +124,7 @@ const LicenseDetails = ({ userData, onBack }) => {
 
             <div style={{ marginTop: '4rem', textAlign: 'center' }}>
                 <p style={{ color: '#64748b', fontSize: '1rem', marginBottom: '1.5rem' }}>
-                    Need help with your institutional access?
+                    Need help with your account or access?
                 </p>
                 <button onClick={() => window.location.href='mailto:support@aumtech.ai'} style={{ background: 'none', border: '1px solid #cbd5e1', padding: '10px 24px', borderRadius: '8px', color: '#1e293b', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
                     Contact Support

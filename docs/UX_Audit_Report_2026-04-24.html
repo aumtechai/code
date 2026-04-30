@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>UX Audit — aumtech.ai</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+  header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:3rem 2.5rem}
+  header h1{font-size:2.2rem;font-weight:900;letter-spacing:-0.03em}
+  header p{opacity:.85;margin-top:.5rem;font-size:1rem}
+  header .meta{margin-top:1.5rem;display:flex;gap:2rem;flex-wrap:wrap}
+  header .meta span{background:rgba(255,255,255,.15);border-radius:8px;padding:.3rem .9rem;font-size:.8rem;font-weight:600}
+  main{max-width:1100px;margin:2rem auto;padding:0 1.5rem 4rem}
+  .score-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:2rem 0}
+  .score-card{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:1.25rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .score-card .num{font-size:2.5rem;font-weight:900;line-height:1}
+  .score-card .label{font-size:.78rem;color:#64748b;margin-top:.3rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .green{color:#10b981} .amber{color:#f59e0b} .red{color:#ef4444} .blue{color:#4f46e5}
+  section{margin-top:2.5rem}
+  h2{font-size:1.4rem;font-weight:800;color:#0f172a;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid #e2e8f0}
+  h3{font-size:1.05rem;font-weight:700;color:#1e293b;margin:.75rem 0 .4rem}
+  .page-block{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+  .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+  .page-title{font-size:1.1rem;font-weight:800;color:#0f172a}
+  .page-url{font-size:.78rem;color:#64748b;background:#f1f5f9;padding:.2rem .6rem;border-radius:6px}
+  .badge{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .badge-green{background:#d1fae5;color:#065f46}
+  .badge-amber{background:#fef3c7;color:#92400e}
+  .badge-red{background:#fee2e2;color:#991b1b}
+  .findings{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem}
+  .findings li{display:flex;gap:.75rem;align-items:flex-start;font-size:.88rem;color:#334155}
+  .findings li::before{content:'';flex-shrink:0;width:8px;height:8px;border-radius:50%;margin-top:.45rem}
+  .f-good::before{background:#10b981}
+  .f-warn::before{background:#f59e0b}
+  .f-bad::before{background:#ef4444}
+  .rec-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:.75rem}
+  .rec-table th{background:#f8fafc;text-align:left;padding:.6rem 1rem;font-weight:700;color:#475569;border-bottom:2px solid #e2e8f0}
+  .rec-table td{padding:.6rem 1rem;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  .rec-table tr:last-child td{border-bottom:none}
+  .p1{color:#ef4444;font-weight:700} .p2{color:#f59e0b;font-weight:700} .p3{color:#10b981;font-weight:700}
+  .summary-box{background:linear-gradient(135deg,#ede9fe,#fce7f3);border-radius:14px;padding:1.5rem;margin-top:1.5rem;border:1px solid #c4b5fd}
+  .summary-box h3{color:#4f46e5;margin-bottom:.75rem}
+  .summary-box p{color:#3730a3;font-size:.92rem;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔍 UX Audit Report — aumtech.ai</h1>
+  <p>Honest review of the public-facing marketing website and landing page</p>
+  <div class="meta">
+    <span>📅 April 24, 2026</span>
+    <span>🌐 aumtech.ai</span>
+    <span>👤 Reviewer: Antigravity AI (UX Hat)</span>
+    <span>📄 Pages Reviewed: 7</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Overall Scores -->
+  <section>
+    <h2>Overall Scores</h2>
+    <div class="score-bar">
+      <div class="score-card"><div class="num amber">6.5</div><div class="label">Visual Design /10</div></div>
+      <div class="score-card"><div class="num amber">6.0</div><div class="label">Navigation /10</div></div>
+      <div class="score-card"><div class="num red">4.5</div><div class="label">First Impression /10</div></div>
+      <div class="score-card"><div class="num amber">7.0</div><div class="label">Brand Consistency /10</div></div>
+      <div class="score-card"><div class="num red">3.5</div><div class="label">CTA Clarity /10</div></div>
+      <div class="score-card"><div class="num green">8.0</div><div class="label">Legal / Compliance /10</div></div>
+      <div class="score-card"><div class="num amber">5.5</div><div class="label">Overall UX /10</div></div>
+    </div>
+  </section>
+
+  <!-- CRITICAL ISSUE: Landing Page = Login -->
+  <section>
+    <h2>⚠️ Critical Finding: Landing Page Is a Login Form</h2>
+    <div class="page-block" style="border-color:#ef4444;border-width:2px">
+      <div class="page-header">
+        <span class="page-title">/ (Root — aumtech.ai)</span>
+        <span class="badge badge-red">🚨 Critical</span>
+      </div>
+      <ul class="findings">
+        <li class="f-bad"><strong>The homepage IS the login page.</strong> A first-time visitor landing on aumtech.ai is immediately presented with a login form — no product explanation, no value proposition, no "what is this?" context. This is the #1 UX anti-pattern for a marketing/product site.</li>
+        <li class="f-bad">Prospective buyers (university administrators, procurement teams) will bounce immediately. There is nothing to read, no demo, no "learn more."</li>
+        <li class="f-bad">The page title is "Aura | Your Campus Co-Pilot" but a visitor has no idea what Aura does before being asked to sign in.</li>
+        <li class="f-bad">No social proof (logos, testimonials, user count) is visible anywhere on the landing experience.</li>
+        <li class="f-warn">The "Forgot password" link exists but there is no "Request Access" or "Contact Sales" escape hatch for new prospects.</li>
+        <li class="f-good">SEO meta tags are properly set. JSON-LD structured data exists.</li>
+      </ul>
+      <div class="summary-box" style="margin-top:1rem">
+        <h3>💡 Recommendation</h3>
+        <p>Create a proper marketing homepage at <strong>/</strong> with a hero headline, product screenshots or demo video, trust badges, and clear CTAs ("Request Demo" / "Sign In"). Move the login to <strong>/login</strong>. This single change will dramatically improve conversion from cold traffic.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Per-Page Review -->
+  <section>
+    <h2>Per-Page Findings</h2>
+
+    <!-- Architecture -->
+    <div class="page-block">
+      <div class="page-header">
+        <span class="page-title">Platform / Architecture</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="page-url">aumtech.ai/architecture</span>
+          <span class="badge badge-amber">Needs Work</span>
+        </div>
+      </div>
+      <ul class="findings">
+        <li class="f-good">Animated SVG dataflow diagram is visually impressive and unique.</li>
+        <li class="f-good">Hero typography (gradient eyebrow + large h1) is professional and consistent.</li>
+        <li class="f-warn">The diagram is cut off at the bottom — no visible end/footer boundary. Users don't know if there is more content below.</li>
+        <li class="f-warn">No explanatory text below the diagram. The diagram shows "SIS → PostgreSQL → API Gateway → LLM Engine → Aura App" but a non-technical buyer won't understand what this means without labels or a legend.</li>
+        <li class="f-bad">No CTA anywhere on this page. After viewing the architecture, what should a visitor do? There is no "Request Demo," "Learn More," or "Contact Us" prompt.</li>
+        <li class="f-warn">Page title in browser tab still reads "Aura | Your Campus Co-Pilot" — should be "Platform Architecture | Aura."</li>
+      </ul>
+    </div>
+
+    <!-- About -->
+    <div class="page-block">
+      <div class="page-header">
+        <span class="page-title">About / Company</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="page-url">aumtech.ai/about</span>
+          <span class="badge badge-green">Good</span>
+        </div>
+      </div>
+      <ul class="findings">
+        <li class="f-good">Strong "Built by Practitioners" narrative — clear differentiator.</li>
+        <li class="f-good">Gradient hero typography is polished and consistent with the brand.</li>
+        <li class="f-warn">Content reads as one long text block on mobile. No iconography or visual breaks in the body text.</li>
+        <li class="f-warn">Team/leadership section is missing. Institutional buyers want to know who is behind the product.</li>
+        <li class="f-bad">No CTA at the bottom of the page. This is a missed conversion opportunity after building trust with the company story.</li>
+      </ul>
+    </div>
+
+    <!-- Security -->
+    <div class="page-block">
+      <div class="page-header">
+        <span class="page-title">Security</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="page-url">aumtech.ai/security</span>
+          <span class="badge badge-amber">Needs Work</span>
+        </div>
+      </div>
+      <ul class="findings">
+        <li class="f-good">FERPA / SOC 2 / HIPAA compliance claims are visible — builds trust.</li>
+        <li class="f-good">Hero layout consistent with other pages.</li>
+        <li class="f-warn">Content appears in bullet-point prose but lacks visual hierarchy — no icons, no callout boxes, no diagrams to reinforce security claims.</li>
+        <li class="f-bad">Claims like "enterprise-grade encryption" have no evidence — no certifications, no auditor logos, no links to reports. Institutional IT teams will require this.</li>
+        <li class="f-warn">The word "HIPAA" appears in the footer badge but HIPAA doesn't typically apply to student academic data. This could raise red flags with compliance officers.</li>
+      </ul>
+    </div>
+
+    <!-- Support -->
+    <div class="page-block">
+      <div class="page-header">
+        <span class="page-title">Support / Ethics Hotline</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="page-url">aumtech.ai/support</span>
+          <span class="badge badge-green">Good</span>
+        </div>
+      </div>
+      <ul class="findings">
+        <li class="f-good">Three support cards now side by side — clean and scannable.</li>
+        <li class="f-good">FAQ accordion adds interactivity and reduces cognitive load.</li>
+        <li class="f-warn">"Ethics Hotline" label in the footer links to the Support page — this conflation is confusing. Ethics hotlines are for reporting misconduct, not for tech support.</li>
+        <li class="f-warn">The contact form is dark navy on a light page — stark contrast break. Consider matching the form card to the page style.</li>
+        <li class="f-bad">No phone number or live chat. "Aura Voice AI Integration in Progress" is not confidence-inspiring for an enterprise buyer seeking support SLAs.</li>
+      </ul>
+    </div>
+
+    <!-- Careers -->
+    <div class="page-block">
+      <div class="page-header">
+        <span class="page-title">Careers</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="page-url">aumtech.ai/careers</span>
+          <span class="badge badge-green">Good</span>
+        </div>
+      </div>
+      <ul class="findings">
+        <li class="f-good">Two-column layout makes excellent use of screen real estate — fits in one viewport.</li>
+        <li class="f-good">Culture grid (Mission-Driven, AI-First, etc.) is compelling and honest.</li>
+        <li class="f-good">"No Open Positions Right Now" is far better than "Page Coming Soon."</li>
+        <li class="f-warn">Email CTA (careers@aumtech.ai) links to a mailto — consider a short form instead so submissions don't get lost in email.</li>
+      </ul>
+    </div>
+
+    <!-- Legal Pages -->
+    <div class="page-block">
+      <div class="page-header">
+        <span class="page-title">Privacy Policy / MSA / SLA</span>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="page-url">aumtech.ai/privacy · /msa · /sla</span>
+          <span class="badge badge-green">Good</span>
+        </div>
+      </div>
+      <ul class="findings">
+        <li class="f-good">Two-column layout is an elegant use of space — sticky branding on left, scrollable content on right.</li>
+        <li class="f-good">Content is concise and readable — not buried in legalese.</li>
+        <li class="f-warn">Privacy Policy mentions "Google Gemini AI" by name — ensure this is disclosed in your actual data agreements with partner institutions.</li>
+        <li class="f-warn">MSA and SLA are very brief for enterprise contracts. Institutional legal/procurement teams will want more detail or at least a "full contract on request" CTA.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Global Issues -->
+  <section>
+    <h2>🌐 Global / Cross-Page Issues</h2>
+    <div class="page-block">
+      <ul class="findings">
+        <li class="f-bad"><strong>Browser tab title is the same on every page</strong> — "Aura | Your Campus Co-Pilot." Each page should have a unique title (e.g., "Security | Aura," "Architecture | Aura"). This hurts SEO and tab management.</li>
+        <li class="f-bad"><strong>No social proof anywhere</strong> — no university logos, no testimonial quotes, no "X students use Aura" counter. Institutional buyers need this before they trust you.</li>
+        <li class="f-bad"><strong>No demo video or screenshots</strong> of the actual product on any public page. Buyers cannot evaluate the product without requesting access.</li>
+        <li class="f-warn"><strong>Footer scrolls away on long pages</strong> (fixed in this session for public pages, but Login.jsx still has the old layout). Double-check the authenticated dashboard footer too.</li>
+        <li class="f-warn"><strong>"Aura" vs "Aumtech.ai" brand confusion</strong> — the product is called Aura, the company is Aumtech. This dual branding is inconsistent. The logo says "AURA," the domain is aumtech.ai, the footer says "Aura Academic Intelligence." Pick a primary brand name and stick to it.</li>
+        <li class="f-warn"><strong>No "Request Demo" CTA in the top navigation</strong> — the highest-value conversion action is absent from the one element visible on every page.</li>
+        <li class="f-warn"><strong>Mobile hamburger menu</strong> exists but secondary nav items (Sign In, Back) disappear — a mobile user cannot sign in without the hamburger.</li>
+        <li class="f-good">FERPA compliance messaging is consistent across footer badges — good trust signal.</li>
+        <li class="f-good">Inter font and indigo/pink gradient color system is distinctive and premium.</li>
+        <li class="f-good">Scroll-to-top on page navigation is implemented correctly.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Priority Recommendations -->
+  <section>
+    <h2>🎯 Prioritized Recommendations</h2>
+    <table class="rec-table">
+      <thead>
+        <tr><th>Priority</th><th>Issue</th><th>Recommendation</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="p1">P1 — Critical</td><td>Homepage = Login form</td><td>Build a dedicated marketing homepage at / with hero, product screenshots, social proof, and CTAs. Move login to /login.</td><td>High</td></tr>
+        <tr><td class="p1">P1 — Critical</td><td>Zero social proof</td><td>Add 3–5 university logos or a "Trusted by X students" counter to the homepage hero.</td><td>Low</td></tr>
+        <tr><td class="p1">P1 — Critical</td><td>No CTAs on interior pages</td><td>Add "Request Demo" or "Book a Call" buttons to Architecture, About, and Security page footers.</td><td>Low</td></tr>
+        <tr><td class="p2">P2 — High</td><td>Duplicate browser tab titles</td><td>Add per-page &lt;title&gt; tags. Easy win for SEO.</td><td>Low</td></tr>
+        <tr><td class="p2">P2 — High</td><td>No product screenshots</td><td>Add 1–2 dashboard screenshots or an animated product GIF to the Architecture/About pages.</td><td>Medium</td></tr>
+        <tr><td class="p2">P2 — High</td><td>"Ethics Hotline" → Support conflation</td><td>Create a separate Ethics Hotline page (or rename footer link to "Contact Support").</td><td>Low</td></tr>
+        <tr><td class="p2">P2 — High</td><td>Aura vs Aumtech branding</td><td>Decide on the primary brand. Use "Aura by Aumtech" or just "Aura" consistently everywhere.</td><td>Medium</td></tr>
+        <tr><td class="p2">P2 — High</td><td>Security page lacks evidence</td><td>Add SOC 2 report request link, auditor name/logo, and a data flow diagram.</td><td>Medium</td></tr>
+        <tr><td class="p3">P3 — Medium</td><td>Architecture page has no CTA</td><td>Add "See it in action — Request a Demo" button below the diagram.</td><td>Low</td></tr>
+        <tr><td class="p3">P3 — Medium</td><td>MSA/SLA content too thin</td><td>Either expand or add "Full agreement available on request — contact legal@aumtech.ai."</td><td>Low</td></tr>
+        <tr><td class="p3">P3 — Medium</td><td>About page: no team section</td><td>Add founder/leadership profiles with LinkedIn links to build credibility.</td><td>Medium</td></tr>
+        <tr><td class="p3">P3 — Medium</td><td>Mobile Sign In button hidden</td><td>Keep Sign In visible in the mobile hamburger menu or add it as a persistent mobile button.</td><td>Low</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Verdict -->
+  <section>
+    <h2>📋 Honest Verdict</h2>
+    <div class="summary-box">
+      <h3>What's Working</h3>
+      <p>The visual design system (cream background, indigo/pink gradient eyebrows, large headings, Inter font) is polished and consistent. The animated architecture diagram is genuinely impressive and differentiating. The legal and compliance pages are clean and well-structured. The Careers page is a great example of content-rich single-screen design.</p>
+    </div>
+    <div class="summary-box" style="background:linear-gradient(135deg,#fee2e2,#fef3c7);border-color:#fca5a5;margin-top:1rem">
+      <h3 style="color:#991b1b">What Needs Urgent Attention</h3>
+      <p style="color:#7f1d1d">The site currently functions as an internal tool portal, not a marketing website. A university CIO landing on aumtech.ai sees a login form — and leaves. The single most impactful change is building a proper marketing homepage. Until that exists, all the beautiful interior pages are effectively invisible to the people who need to evaluate and buy the product. Everything else (social proof, CTAs, product screenshots, per-page titles) is secondary but should follow quickly.</p>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

@@ -267,7 +267,7 @@ const Login = () => {
                                 )}
 
                                 <div className="form-field">
-                                    <label className="form-label" htmlFor="email">Institutional Email</label>
+                                    <label className="form-label" htmlFor="email">Email Address</label>
                                     <input
                                         id="email"
                                         name="username"
@@ -312,7 +312,7 @@ const Login = () => {
                         ) : (
                             <form onSubmit={handleChangePassword}>
                                 <div className="form-field">
-                                    <label className="form-label" htmlFor="reset-email">Institutional Email</label>
+                                    <label className="form-label" htmlFor="reset-email">Email Address</label>
                                     <input
                                         id="reset-email"
                                         type="email"
