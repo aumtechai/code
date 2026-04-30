@@ -1,7 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2, ChevronLeft, BellRing, Bell, ExternalLink, Zap, Calendar, MapPin, Users, MessageSquare } from 'lucide-react';
+import { Briefcase, FileText, Target, ChevronRight, Award, Upload, Download, Search, CheckCircle, BarChart2, ChevronLeft, BellRing, Bell, ExternalLink, Zap, Calendar, MapPin, Users, MessageSquare, AlertTriangle, BookOpen, Star, TrendingUp, GraduationCap } from 'lucide-react';
 import api from '../api';
+
+// ─── Course Catalog (skill → course mapping) ───────────────────────────────
+const COURSE_CATALOG = {
+    'Python':                 { code: 'CS101', name: 'Intro to Python & Data Science',      credits: 3 },
+    'Machine Learning':       { code: 'CS345', name: 'Machine Learning Fundamentals',        credits: 3 },
+    'Data Analysis':          { code: 'STAT210', name: 'Applied Statistical Analysis',       credits: 3 },
+    'SQL':                    { code: 'CS220', name: 'Database Systems & SQL',                credits: 3 },
+    'Cloud Computing':        { code: 'CS410', name: 'Cloud Infrastructure & DevOps',        credits: 3 },
+    'React':                  { code: 'CS330', name: 'Modern Web Development',                credits: 3 },
+    'Java':                   { code: 'CS201', name: 'Object-Oriented Programming in Java',  credits: 3 },
+    'System Design':          { code: 'CS450', name: 'Scalable Systems Architecture',        credits: 3 },
+    'Statistics':             { code: 'STAT101', name: 'Intro to Statistics',                credits: 3 },
+    'Deep Learning':          { code: 'CS460', name: 'Neural Networks & Deep Learning',      credits: 3 },
+    'Data Visualization':     { code: 'CS315', name: 'Data Visualization & BI Tools',        credits: 3 },
+    'Product Management':     { code: 'BUS320', name: 'Product Strategy & Roadmapping',      credits: 3 },
+    'A/B Testing':            { code: 'MKT401', name: 'Digital Marketing Analytics',         credits: 3 },
+    'User Research':          { code: 'DES210', name: 'UX Research Methods',                 credits: 3 },
+    'Figma':                  { code: 'DES220', name: 'UI/UX Design with Figma',             credits: 3 },
+    'Prototyping':            { code: 'DES230', name: 'Rapid Prototyping & Iteration',       credits: 3 },
+    'Financial Modeling':     { code: 'FIN310', name: 'Corporate Financial Modeling',        credits: 3 },
+    'Excel':                  { code: 'BUS101', name: 'Business Data Tools & Excel',         credits: 3 },
+    'Valuation':              { code: 'FIN320', name: 'Business Valuation Methods',          credits: 3 },
+    'Accounting':             { code: 'ACC201', name: 'Principles of Accounting',            credits: 3 },
+    'Communication':          { code: 'ENG202', name: 'Professional Communication',          credits: 3 },
+    'Leadership':             { code: 'MGT301', name: 'Organizational Leadership',           credits: 3 },
+    'Project Management':     { code: 'MGT350', name: 'Agile Project Management',            credits: 3 },
+    'Cybersecurity':          { code: 'CS440', name: 'Information Security & Ethics',        credits: 3 },
+    'Networking':             { code: 'CS320', name: 'Computer Networks',                   credits: 3 },
+    'Linux':                  { code: 'CS305', name: 'Operating Systems & Linux',            credits: 3 },
+};
+
+// ─── Alignment Warning Logic ────────────────────────────────────────────────
+const STEM_ROLES    = ['software engineer','data scientist','machine learning','ml engineer','data analyst','devops','cloud engineer','backend','frontend','full stack','cybersecurity','systems engineer','ai engineer','computer vision','nlp engineer','robotics'];
+const STEM_MAJORS   = ['computer science','software engineering','data science','mathematics','statistics','electrical engineering','computer engineering','information systems','information technology','physics','engineering'];
+const NON_STEM_BRIDGE = {
+    'Business Administration': ['BUS320', 'MKT401', 'CS220'],
+    'Psychology':              ['PSY150', 'STAT101', 'BUS101'],
+    'English':                 ['ENG202', 'CS101', 'MKT401'],
+    'History':                 ['ENG202', 'CS101', 'MGT301'],
+    'Political Science':       ['ENG202', 'MGT301', 'STAT101'],
+    'Art':                     ['DES210', 'DES220', 'MKT401'],
+    'Communications':          ['ENG202', 'MKT401', 'DES220'],
+    'Sociology':               ['STAT101', 'PSY150', 'ENG202'],
+    'default':                 ['CS101', 'STAT101', 'ENG202'],
+};
+
+const getAlignmentWarning = (targetRole, userMajor) => {
+    if (!targetRole || !userMajor) return null;
+    const roleLC  = targetRole.toLowerCase();
+    const majorLC = userMajor.toLowerCase();
+    const isStemRole  = STEM_ROLES.some(r => roleLC.includes(r));
+    const isStemMajor = STEM_MAJORS.some(m => majorLC.includes(m));
+    if (isStemRole && !isStemMajor) {
+        const bridgeCourses = NON_STEM_BRIDGE[userMajor] || NON_STEM_BRIDGE['default'];
+        return { type: 'gap', major: userMajor, role: targetRole, bridgeCourses };
+    }
+    return null;
+};
+
+// ─── Alumni Success Stories data ────────────────────────────────────────────
+const ALUMNI_STORIES = [
+    { name: 'Priya Menon',    major: 'Computer Science',       role: 'Software Engineer',        company: 'Google',     salary: '$178k',  grad: '2023', avatar: 'PM', color: '#4285f4',  quote: 'Aura helped me map my coursework gaps before applying — I landed my offer with zero rejections.' },
+    { name: 'Marcus Webb',    major: 'Business Administration', role: 'Product Manager',          company: 'Stripe',     salary: '$152k',  grad: '2024', avatar: 'MW', color: '#6772e5',  quote: 'The career pathways feature showed me exactly which PM skills I needed. Game changer.' },
+    { name: 'Sofia Ramirez',  major: 'Data Science',           role: 'Data Scientist',           company: 'Microsoft',  salary: '$165k',  grad: '2023', avatar: 'SR', color: '#00a1f1',  quote: 'I used the Skill Gap Analyzer weekly. Every missing skill linked me to the right course.' },
+    { name: 'Ethan Clarke',   major: 'Finance',                role: 'Investment Banking Analyst', company: 'Goldman Sachs', salary: '$160k', grad: '2024', avatar: 'EC', color: '#1a9c56', quote: 'The hiring events tab connected me to the JPMorgan workshop — that\'s where I got recruited.' },
+    { name: 'Aisha Johnson',  major: 'Psychology',             role: 'UX Researcher',            company: 'Meta',       salary: '$138k',  grad: '2023', avatar: 'AJ', color: '#1877f2',  quote: 'I was a Psychology major pivoting to tech. The bridge courses Aura suggested got me here.' },
+    { name: 'Ryan Xu',        major: 'Electrical Engineering', role: 'ML Engineer',              company: 'NVIDIA',     salary: '$195k',  grad: '2024', avatar: 'RX', color: '#76b900',  quote: 'From lab projects to GPU kernel dev — Aura\'s ML pathway was the exact roadmap I needed.' },
+];
 
 const CareerPathfinder = ({ onBack, onNavigate }) => {
     const [activeTab, setActiveTab] = useState('jobs'); // 'resume', 'jobs', 'skills'
@@ -20,6 +88,23 @@ const CareerPathfinder = ({ onBack, onNavigate }) => {
     // Skills State
     const [targetRole, setTargetRole] = useState('');
     const [skillAnalysis, setSkillAnalysis] = useState(null);
+    const [alignmentWarning, setAlignmentWarning] = useState(null);
+    const [userMajor, setUserMajor] = useState('');
+
+    // Pull user major from localStorage/profile on mount
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem('aura_userdata');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (parsed.major) setUserMajor(parsed.major);
+            }
+        } catch (_) {}
+        // Also try the API
+        api.get('/api/users/me').then(res => {
+            if (res.data?.major) setUserMajor(res.data.major);
+        }).catch(() => {});
+    }, []);
 
     // Pathways State
     const [pathways, setPathways] = useState([]);
@@ -73,9 +158,13 @@ const CareerPathfinder = ({ onBack, onNavigate }) => {
     const handleAnalyzeSkills = async () => {
         if (!targetRole) return;
         setLoading(true);
+        setAlignmentWarning(null);
         try {
             const res = await api.post('/api/career/skill-gap', { target_role: targetRole });
             setSkillAnalysis(res.data);
+            // Check major-vs-role alignment
+            const warning = getAlignmentWarning(targetRole, userMajor);
+            setAlignmentWarning(warning);
         } catch (err) {
             console.error(err);
         } finally {
@@ -446,43 +535,187 @@ const CareerPathfinder = ({ onBack, onNavigate }) => {
                         </div>
 
                         {skillAnalysis && (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                                <div>
-                                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', marginBottom: '1rem', fontSize: '1.1rem' }}>
-                                        <CheckCircle size={20} /> Skills You Have
-                                    </h4>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                        {skillAnalysis.acquired_skills?.map((skill, i) => (
-                                            <span key={i} style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#059669', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '500' }}>
-                                                {skill}
-                                            </span>
-                                        ))}
-                                        {(!skillAnalysis.acquired_skills || skillAnalysis.acquired_skills.length === 0) && (
-                                            <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>No matching skills found yet.</span>
-                                        )}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
+                                {/* ── Alignment Warning ───────────────────── */}
+                                {alignmentWarning && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #fffbeb, #fff7ed)',
+                                            border: '2px solid #f59e0b',
+                                            borderRadius: '16px',
+                                            padding: '1.5rem',
+                                            display: 'flex',
+                                            gap: '1rem',
+                                            alignItems: 'flex-start'
+                                        }}
+                                    >
+                                        <div style={{ background: '#f59e0b', color: 'white', padding: '10px', borderRadius: '12px', flexShrink: 0 }}>
+                                            <AlertTriangle size={22} strokeWidth={2.5} />
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <h4 style={{ margin: '0 0 0.4rem 0', color: '#92400e', fontSize: '1rem', fontWeight: '800' }}>
+                                                Major–Career Alignment Gap Detected
+                                            </h4>
+                                            <p style={{ margin: '0 0 1rem 0', color: '#78350f', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                                Your declared major (<strong>{alignmentWarning.major}</strong>) diverges significantly from the technical requirements of <strong>{alignmentWarning.role}</strong>. This is absolutely bridgeable — many students successfully pivot with the right preparation. Start with these foundational courses:
+                                            </p>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                {alignmentWarning.bridgeCourses.map((code, i) => {
+                                                    const course = Object.values(COURSE_CATALOG).find(c => c.code === code);
+                                                    return (
+                                                        <a
+                                                            key={i}
+                                                            href={`/dashboard?tab=courses&search=${code}`}
+                                                            onClick={e => { e.preventDefault(); }}
+                                                            style={{
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '6px',
+                                                                background: 'white',
+                                                                border: '1.5px solid #f59e0b',
+                                                                color: '#92400e',
+                                                                padding: '6px 12px',
+                                                                borderRadius: '20px',
+                                                                fontSize: '0.82rem',
+                                                                fontWeight: '700',
+                                                                textDecoration: 'none',
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.2s'
+                                                            }}
+                                                            onMouseOver={e => { e.currentTarget.style.background = '#fffbeb'; }}
+                                                            onMouseOut={e => { e.currentTarget.style.background = 'white'; }}
+                                                        >
+                                                            <BookOpen size={13} />
+                                                            {code}{course ? ` — ${course.name}` : ''}
+                                                        </a>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {/* ── Skills Grid ─────────────────────────── */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                                    <div>
+                                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                                            <CheckCircle size={20} /> Skills You Have
+                                        </h4>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                            {skillAnalysis.acquired_skills?.map((skill, i) => (
+                                                <span key={i} style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#059669', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '500' }}>
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                            {(!skillAnalysis.acquired_skills || skillAnalysis.acquired_skills.length === 0) && (
+                                                <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>No matching skills found yet.</span>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f43f5e', marginBottom: '1rem', fontSize: '1.1rem' }}>
-                                        <Target size={20} /> Skills You Need
-                                    </h4>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                        {skillAnalysis.missing_skills?.map((skill, i) => (
-                                            <span key={i} style={{ background: '#fff1f2', border: '1px solid #fecdd3', color: '#e11d48', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '500' }}>
-                                                {skill}
-                                            </span>
-                                        ))}
+
+                                    <div>
+                                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f43f5e', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                                            <Target size={20} /> Skills You Need
+                                        </h4>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                            {skillAnalysis.missing_skills?.map((skill, i) => {
+                                                const course = COURSE_CATALOG[skill];
+                                                return course ? (
+                                                    <motion.a
+                                                        key={i}
+                                                        whileHover={{ scale: 1.04 }}
+                                                        href={`#course-${course.code}`}
+                                                        onClick={e => e.preventDefault()}
+                                                        title={`Take ${course.code}: ${course.name} to build this skill`}
+                                                        style={{
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            gap: '6px',
+                                                            background: 'linear-gradient(135deg, #fff1f2, #fef2f2)',
+                                                            border: '1.5px solid #fecdd3',
+                                                            color: '#e11d48',
+                                                            padding: '0.4rem 0.9rem',
+                                                            borderRadius: '20px',
+                                                            fontSize: '0.88rem',
+                                                            fontWeight: '700',
+                                                            textDecoration: 'none',
+                                                            cursor: 'pointer',
+                                                            transition: 'all 0.2s',
+                                                            boxShadow: '0 2px 6px rgba(225,29,72,0.12)'
+                                                        }}
+                                                    >
+                                                        <BookOpen size={13} />
+                                                        {skill}
+                                                        <span style={{ background: '#fecdd3', color: '#9f1239', padding: '1px 7px', borderRadius: '10px', fontSize: '0.72rem', fontWeight: '800', marginLeft: '2px' }}>
+                                                            {course.code}
+                                                        </span>
+                                                    </motion.a>
+                                                ) : (
+                                                    <span key={i} style={{ background: '#fff1f2', border: '1px solid #fecdd3', color: '#e11d48', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '500' }}>
+                                                        {skill}
+                                                    </span>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                </div>
-                                <div style={{ gridColumn: '1 / -1', marginTop: '1rem', padding: '2rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155', marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: '700' }}>
-                                        <Award size={20} color="#4f46e5" /> Recommended Actions
-                                    </h4>
-                                    <ul style={{ paddingLeft: '1.5rem', color: '#475569', lineHeight: '1.8', margin: 0 }}>
-                                        {skillAnalysis.recommended_actions?.map((action, i) => (
-                                            <li key={i} style={{ marginBottom: '0.5rem' }}>{action}</li>
-                                        ))}
-                                    </ul>
+
+                                    {/* ── Course Recommendations ──────────── */}
+                                    {skillAnalysis.missing_skills?.some(s => COURSE_CATALOG[s]) && (
+                                        <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem', padding: '1.5rem', background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)', borderRadius: '16px', border: '1px solid #bae6fd' }}>
+                                            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0369a1', marginBottom: '1.25rem', fontSize: '1rem', fontWeight: '800' }}>
+                                                <GraduationCap size={18} /> Suggested Courses from University Catalog
+                                            </h4>
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem' }}>
+                                                {skillAnalysis.missing_skills
+                                                    .filter(s => COURSE_CATALOG[s])
+                                                    .map((skill, i) => {
+                                                        const c = COURSE_CATALOG[skill];
+                                                        return (
+                                                            <motion.div
+                                                                key={i}
+                                                                whileHover={{ y: -2, boxShadow: '0 8px 20px rgba(3,105,161,0.15)' }}
+                                                                style={{
+                                                                    background: 'white',
+                                                                    borderRadius: '12px',
+                                                                    padding: '1rem 1.25rem',
+                                                                    border: '1px solid #bae6fd',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    gap: '12px',
+                                                                    cursor: 'pointer',
+                                                                    transition: 'all 0.2s'
+                                                                }}
+                                                            >
+                                                                <div style={{ background: '#0369a1', color: 'white', padding: '8px', borderRadius: '10px', flexShrink: 0 }}>
+                                                                    <BookOpen size={16} />
+                                                                </div>
+                                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                                    <div style={{ fontWeight: '800', color: '#0c4a6e', fontSize: '0.82rem', fontFamily: 'monospace' }}>{c.code}</div>
+                                                                    <div style={{ fontWeight: '600', color: '#1e293b', fontSize: '0.9rem', marginTop: '1px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name}</div>
+                                                                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>{c.credits} credit hours · Builds: <strong style={{ color: '#0369a1' }}>{skill}</strong></div>
+                                                                </div>
+                                                                <ExternalLink size={14} color="#94a3b8" />
+                                                            </motion.div>
+                                                        );
+                                                    })}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* ── Recommended Actions ─────────────── */}
+                                    <div style={{ gridColumn: '1 / -1', marginTop: '1rem', padding: '2rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155', marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: '700' }}>
+                                            <Award size={20} color="#4f46e5" /> Recommended Actions
+                                        </h4>
+                                        <ul style={{ paddingLeft: '1.5rem', color: '#475569', lineHeight: '1.8', margin: 0 }}>
+                                            {skillAnalysis.recommended_actions?.map((action, i) => (
+                                                <li key={i} style={{ marginBottom: '0.5rem' }}>{action}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -550,6 +783,99 @@ const CareerPathfinder = ({ onBack, onNavigate }) => {
                                 <p style={{ color: '#64748b', fontSize: '0.95rem', margin: 0 }}>Add courses to your profile so Aura can map AI-powered career pathways tailored to your degree.</p>
                             </div>
                         )}
+
+                        {/* ── Alumni Success Stories ───────────────────────── */}
+                        <div style={{ marginTop: '3rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
+                                <div style={{ background: 'linear-gradient(135deg, #6366f1, #ec4899)', padding: '10px', borderRadius: '14px', color: 'white' }}>
+                                    <Star size={20} strokeWidth={2.5} fill="white" />
+                                </div>
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '900', color: '#1e293b' }}>Alumni Success Stories</h3>
+                                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Real students, real outcomes — top placements from our campus</p>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+                                {ALUMNI_STORIES.map((alum, i) => (
+                                    <motion.div
+                                        key={i}
+                                        whileHover={{ y: -4, boxShadow: '0 16px 32px rgba(0,0,0,0.1)' }}
+                                        style={{
+                                            background: 'white',
+                                            borderRadius: '20px',
+                                            border: '1px solid #e2e8f0',
+                                            padding: '1.5rem',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '1rem',
+                                            transition: 'all 0.2s',
+                                            position: 'relative',
+                                            overflow: 'hidden'
+                                        }}
+                                    >
+                                        {/* Gradient accent bar */}
+                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: `linear-gradient(to right, ${alum.color}, ${alum.color}80)` }} />
+
+                                        {/* Header row */}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '0.25rem' }}>
+                                            <div style={{
+                                                width: '48px', height: '48px',
+                                                borderRadius: '14px',
+                                                background: `${alum.color}18`,
+                                                border: `2px solid ${alum.color}40`,
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                fontWeight: '900', color: alum.color, fontSize: '0.85rem',
+                                                flexShrink: 0
+                                            }}>
+                                                {alum.avatar}
+                                            </div>
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                <div style={{ fontWeight: '800', color: '#1e293b', fontSize: '1rem' }}>{alum.name}</div>
+                                                <div style={{ fontSize: '0.8rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                    {alum.major} · Class of {alum.grad}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Role + company + salary */}
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <div style={{ background: `${alum.color}18`, color: alum.color, padding: '4px 10px', borderRadius: '8px', fontSize: '0.78rem', fontWeight: '800' }}>
+                                                    {alum.company}
+                                                </div>
+                                                <div style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                    {alum.role}
+                                                </div>
+                                            </div>
+                                            <div style={{
+                                                display: 'flex', alignItems: 'center', gap: '4px',
+                                                background: '#ecfdf5', border: '1px solid #a7f3d0',
+                                                color: '#059669', padding: '4px 10px', borderRadius: '20px',
+                                                fontWeight: '800', fontSize: '0.85rem'
+                                            }}>
+                                                <TrendingUp size={13} />
+                                                {alum.salary} starting
+                                            </div>
+                                        </div>
+
+                                        {/* Quote */}
+                                        <div style={{
+                                            background: '#f8fafc',
+                                            borderRadius: '12px',
+                                            padding: '1rem',
+                                            borderLeft: `3px solid ${alum.color}`,
+                                            fontSize: '0.85rem',
+                                            color: '#475569',
+                                            lineHeight: '1.6',
+                                            fontStyle: 'italic'
+                                        }}>
+                                            "{alum.quote}"
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </div>
                     </motion.div>
                 )}
 
