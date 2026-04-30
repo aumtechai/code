@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Users, Briefcase, Zap, Search, Send, MessageSquare, CheckCircle, Bot, BarChart2, Activity, AlertTriangle, ChevronLeft, Settings, FileText } from 'lucide-react';
+import { Plus, X, Users, Briefcase, Zap, Search, Send, MessageSquare, CheckCircle, Bot, BarChart2, Activity, AlertTriangle, ChevronLeft, Settings, FileText, ShieldAlert, ShieldCheck } from 'lucide-react';
 import api from '../api';
 import { motion, AnimatePresence } from 'framer-motion';
 
