@@ -2818,6 +2818,43 @@ async def get_financial_summary(current_user: User = Depends(get_current_user)):
         "aid_disbursed": round(estimated_aid / 2, 2),
     }
 
+@router.get("/financial/grants")
+async def get_financial_grants(current_user: User = Depends(get_current_user)):
+    """Fetch live grants from simpler.grants.gov API if key exists, otherwise fallback."""
+    api_key = os.getenv("SIMPLER_GRANTS_API_KEY")
+    if api_key:
+        import httpx
+        try:
+            url = "https://api.simpler.grants.gov/v1/opportunities/search"
+            headers = {"X-API-Key": api_key, "Content-Type": "application/json"}
+            payload = {"pagination": {"page_offset": 1, "page_size": 10}}
+            async with httpx.AsyncClient(verify=False) as client:
+                resp = await client.post(url, headers=headers, json=payload, timeout=8.0)
+                if resp.status_code == 200:
+                    data = resp.json().get("data", [])
+                    grants = []
+                    for item in data:
+                        grants.append({
+                            "title": item.get("opportunity_title", "Unknown Grant")[:50] + "...",
+                            "type": "Grant",
+                            "amount": item.get("estimated_total_program_funding", 0) or 5000,
+                            "status": "Active",
+                            "disbursed": 0
+                        })
+                    if grants:
+                        return {"grants": grants, "source": "simpler.grants.gov"}
+        except Exception as e:
+            print(f"Simpler Grants API Error: {e}")
+            
+    # Fallback
+    return {
+        "grants": [
+            {"title": 'Federal Pell Grant', "type": 'Grant', "amount": 7395, "status": 'Active', "disbursed": 3697.50},
+            {"title": 'University Merit Scholarship', "type": 'Scholarship', "amount": 5000, "status": 'Active', "disbursed": 2500.00},
+            {"title": 'Federal Direct Subsidized Loan', "type": 'Loan', "amount": 3500, "status": 'Accepted', "disbursed": 1750.00}
+        ],
+        "source": "fallback"
+    }
 
 @router.get("/dean/migration-tracker")
 async def get_migration_tracker(current_user: User = Depends(get_current_user)):

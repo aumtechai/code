@@ -23,6 +23,7 @@ import api from '../api';
 const FinancialAidNexus = ({ onNavigate, onBack }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [financialData, setFinancialData] = useState(null);
+    const [grantsList, setGrantsList] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -43,6 +44,17 @@ const FinancialAidNexus = ({ onNavigate, onBack }) => {
                     aid_status: 'Accepted',
                     aid_disbursed: 4000.00,
                 });
+            }
+            try {
+                const grantsRes = await api.get('/api/financial/grants');
+                setGrantsList(grantsRes.data.grants);
+            } catch (err) {
+                console.warn('Grants feed unavailable', err);
+                setGrantsList([
+                    { title: 'Federal Pell Grant', type: 'Grant', amount: 7395, status: 'Active', disbursed: 3697.50 },
+                    { title: 'University Merit Scholarship', type: 'Scholarship', amount: 5000, status: 'Active', disbursed: 2500.00 },
+                    { title: 'Federal Direct Subsidized Loan', type: 'Loan', amount: 3500, status: 'Accepted', disbursed: 1750.00 }
+                ]);
             } finally {
                 setLoading(false);
             }
@@ -188,11 +200,7 @@ const FinancialAidNexus = ({ onNavigate, onBack }) => {
             <div className="card-white">
                 <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '1rem' }}>Active Grants & Loans</h3>
                 <div style={{ display: 'grid', gap: '1rem' }}>
-                    {[
-                        { title: 'Federal Pell Grant', type: 'Grant', amount: 7395, status: 'Active', disbursed: 3697.50 },
-                        { title: 'University Merit Scholarship', type: 'Scholarship', amount: 5000, status: 'Active', disbursed: 2500.00 },
-                        { title: 'Federal Direct Subsidized Loan', type: 'Loan', amount: 3500, status: 'Accepted', disbursed: 1750.00 },
-                    ].map((item, idx) => (
+                    {(grantsList || []).map((item, idx) => (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                             <div>
                                 <h4 style={{ margin: 0, fontSize: '1rem' }}>{item.title}</h4>
