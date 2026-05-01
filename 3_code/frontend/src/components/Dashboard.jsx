@@ -291,7 +291,7 @@ const DashboardHome = ({ onNavigate, userData, onEditStats }) => {
                         <Shield size={14} strokeWidth={3} /> EdNex Verified
                     </div>
                 )}
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: '1 1 auto', width: '100%' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', opacity: 0.9 }}>
                         <Brain size={18} strokeWidth={2.5} /> Aura Intelligence Engine
                     </div>
